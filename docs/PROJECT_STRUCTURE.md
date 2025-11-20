@@ -8,7 +8,24 @@ Angular 20+ web application built with Nx, following modern best practices and m
 MicroservicesArchitecture-Web/
 ├── .github/
 │   └── .copilot-instructions.md     # GitHub Copilot coding standards
-├── libs/
+├── apps/                            # All applications
+│   ├── web-app/                     # Main application
+│   │   ├── project.json             # Project configuration
+│   │   └── src/
+│   │       ├── app/                 # Application code
+│   │       ├── styles/              # App-specific styles
+│   │       ├── index.html
+│   │       ├── main.ts
+│   │       └── styles.scss
+│   └── playground/                  # Playground application
+│       ├── project.json             # Project configuration
+│       └── src/
+│           ├── app/                 # Application code
+│           ├── styles/              # App-specific styles
+│           ├── index.html
+│           ├── main.ts
+│           └── styles.scss
+├── libs/                            # Shared libraries
 │   ├── core/                        # Core library
 │   │   └── src/lib/
 │   │       ├── models/              # Interfaces + Classes
@@ -21,31 +38,27 @@ MicroservicesArchitecture-Web/
 │           ├── pipes/               # Custom pipes
 │           ├── directives/          # Custom directives
 │           └── utils/               # Utility functions
-├── src/
-│   ├── app/                         # Main application
-│   └── styles/                      # Global styles
-│       ├── _variables.scss          # CSS variables
-│       ├── _material-theme.scss     # Material theme
-│       ├── _mixins.scss             # SCSS mixins
-│       └── styles.scss              # Main stylesheet
 └── e2e/                             # End-to-end tests
 ```
 
 ## 🎯 Core Principles
 
 ### 1. **MINIMAL CODE**
+
 - Write only what's necessary
 - No over-engineering or premature optimization
 - Delete unused code immediately
 - Prefer built-in features over custom solutions
 
 ### 2. **Naming Conventions**
+
 - **Private variables**: `_variableName` (underscore prefix)
 - **Public variables**: `variableName` (no prefix)
 - **Observables**: `variable$` (dollar suffix)
 - **Signals**: `variableName` (no special prefix)
 
 ### 3. **Entity Pattern (MANDATORY)**
+
 Always create both Interface and Class for each entity:
 
 ```typescript
@@ -74,6 +87,7 @@ export class User implements IUser {
 ```
 
 ### 4. **Signal-Based Components (MANDATORY)**
+
 **NEVER** use `@Input()` or `@Output()` decorators:
 
 ```typescript
@@ -87,12 +101,13 @@ userChanged = output<User>();
 ```
 
 ### 5. **Dependency Injection**
+
 Use `inject()` function instead of constructor injection:
 
 ```typescript
 export class UserService {
   private _http = inject(HttpClient);
-  
+
   getUsers() {
     return this._http.get<User[]>('/api/users');
   }
@@ -102,6 +117,7 @@ export class UserService {
 ## 🎨 Styling Standards
 
 ### CSS Variables
+
 All colors and theme values use CSS variables:
 
 ```scss
@@ -119,6 +135,7 @@ All colors and theme values use CSS variables:
 ```
 
 ### SCSS Nesting (MANDATORY)
+
 - Always nest from `:host`
 - Never wrap content in unnecessary divs
 - Style the component host element directly
@@ -163,6 +180,7 @@ import { MatIconModule } from '@angular/material/icon';
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js 18+ and npm
 - Angular CLI 20+
 - Nx CLI 22+
@@ -208,6 +226,7 @@ npx nx build web
 ## 🎨 Theme Support
 
 ### Switching Themes
+
 ```typescript
 import { ThemeService } from '@core/services/theme.service';
 
@@ -225,12 +244,14 @@ export class AppComponent {
 ```
 
 ### Available Themes
+
 - `light` - Default light theme
 - `dark` - Dark mode
 - `blue` - Blue theme
 - `green` - Green theme
 
 ### RTL/LTR Support
+
 - `ltr` - Left-to-right (default)
 - `rtl` - Right-to-left
 

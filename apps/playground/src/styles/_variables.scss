@@ -1,0 +1,147 @@
+:root {
+  // Spacing
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+
+  // Border Radius
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+
+  // Font Sizes
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-xxl: 32px;
+
+  // Shadows
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+  // Z-Index
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+}
+
+// Light Theme
+:root,
+[data-theme='light'] {
+  // Primary Colors
+  --primary-color: #3f51b5;
+  --primary-color-50: #e8eaf6;
+  --primary-color-100: #c5cae9;
+  --primary-color-200: #9fa8da;
+  --primary-color-300: #7986cb;
+  --primary-color-400: #5c6bc0;
+  --primary-color-500: #3f51b5;
+  --primary-color-600: #3949ab;
+  --primary-color-700: #303f9f;
+  --primary-color-800: #283593;
+  --primary-color-900: #1a237e;
+
+  // Accent Colors
+  --accent-color: #ff4081;
+  --accent-color-50: #fce4ec;
+  --accent-color-100: #f8bbd0;
+  --accent-color-200: #f48fb1;
+  --accent-color-300: #f06292;
+  --accent-color-400: #ec407a;
+  --accent-color-500: #e91e63;
+  --accent-color-600: #d81b60;
+  --accent-color-700: #c2185b;
+  --accent-color-800: #ad1457;
+  --accent-color-900: #880e4f;
+
+  // Background Colors
+  --background-color: #ffffff;
+  --background-color-secondary: #f5f5f5;
+  --background-color-tertiary: #eeeeee;
+
+  // Text Colors
+  --text-color: #212121;
+  --text-color-secondary: #757575;
+  --text-color-tertiary: #9e9e9e;
+  --text-color-disabled: #bdbdbd;
+
+  // Border Colors
+  --border-color: #e0e0e0;
+  --border-color-light: #eeeeee;
+  --border-color-dark: #bdbdbd;
+
+  // Success/Error/Warning/Info
+  --success-color: #4caf50;
+  --error-color: #f44336;
+  --warning-color: #ff9800;
+  --info-color: #2196f3;
+}
+
+// Dark Theme
+[data-theme='dark'] {
+  // Primary Colors (slightly lighter for dark mode)
+  --primary-color: #7986cb;
+  --primary-color-50: #1a237e;
+  --primary-color-100: #283593;
+  --primary-color-200: #303f9f;
+  --primary-color-300: #3949ab;
+  --primary-color-400: #3f51b5;
+  --primary-color-500: #5c6bc0;
+  --primary-color-600: #7986cb;
+  --primary-color-700: #9fa8da;
+  --primary-color-800: #c5cae9;
+  --primary-color-900: #e8eaf6;
+
+  // Accent Colors
+  --accent-color: #f48fb1;
+  --accent-color-50: #880e4f;
+  --accent-color-100: #ad1457;
+  --accent-color-200: #c2185b;
+  --accent-color-300: #d81b60;
+  --accent-color-400: #e91e63;
+  --accent-color-500: #ec407a;
+  --accent-color-600: #f06292;
+  --accent-color-700: #f48fb1;
+  --accent-color-800: #f8bbd0;
+  --accent-color-900: #fce4ec;
+
+  // Background Colors
+  --background-color: #121212;
+  --background-color-secondary: #1e1e1e;
+  --background-color-tertiary: #2a2a2a;
+
+  // Text Colors
+  --text-color: #ffffff;
+  --text-color-secondary: #b0b0b0;
+  --text-color-tertiary: #808080;
+  --text-color-disabled: #606060;
+
+  // Border Colors
+  --border-color: #333333;
+  --border-color-light: #2a2a2a;
+  --border-color-dark: #404040;
+
+  // Success/Error/Warning/Info (lighter for dark mode)
+  --success-color: #66bb6a;
+  --error-color: #ef5350;
+  --warning-color: #ffa726;
+  --info-color: #42a5f5;
+
+  // Shadows (lighter for dark mode)
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+}

@@ -10,25 +10,28 @@ Modern Angular 20+ web application built with **Nx monorepo**, following **minim
 # Install dependencies
 npm install
 
-# Start development server
-npm start
+# Start web-app development server (port 4200)
+npx nx serve web-app
+
+# Start playground development server (port 4201)
+npx nx serve playground
 
 # Build for production
-npm run build
+npx nx build web-app
 
 # Run tests
-npm test
+npx nx test web-app
 
 # Run linter
-npm run lint
+npx nx lint web-app
 ```
 
 ## 📚 Documentation
 
 - **[docs/QUICK_START.md](./docs/QUICK_START.md)** - Quick reference for common tasks
 - **[docs/PROJECT_STRUCTURE.md](./docs/PROJECT_STRUCTURE.md)** - Detailed project structure and patterns
-- **[docs/ADDING_NEW_APPS.md](./docs/ADDING_NEW_APPS.md)** - How to add multiple Angular applications
 - **[docs/SETUP_COMPLETE.md](./docs/SETUP_COMPLETE.md)** - Setup completion summary
+- **[apps/README.md](./apps/README.md)** - Applications folder structure
 - **[.github/.copilot-instructions.md](./.github/.copilot-instructions.md)** - GitHub Copilot coding standards
 
 ## 🎯 Key Features
@@ -48,13 +51,13 @@ npm run lint
 
 ```
 MicroservicesArchitecture-Web/
+├── apps/               # All applications (supports 50+ apps)
+│   ├── web-app/       # Main application
+│   └── playground/    # Playground application
 ├── libs/
-│   ├── core/           # Services, guards, interceptors, models
-│   └── shared/         # Reusable components, pipes, directives
-├── src/
-│   ├── app/            # Main application
-│   └── styles/         # Global styles and themes
-└── e2e/                # End-to-end tests
+│   ├── core/          # Services, guards, interceptors, models
+│   └── shared/        # Reusable components, pipes, directives
+└── e2e/               # End-to-end tests
 ```
 
 ## 🎨 Core Principles
@@ -140,17 +143,24 @@ switchTheme() {
 ## 📦 Nx Commands
 
 ```bash
-# Serve application
-npx nx serve web-app
+# Serve applications
+npx nx serve web-app       # Port 4200
+npx nx serve playground    # Port 4201
 
-# Build application
+# Build applications
 npx nx build web-app
+npx nx build playground
 
 # Test specific library
 npx nx test core
+npx nx test web-app
 
-# Lint specific library
+# Lint specific project
 npx nx lint shared
+npx nx lint playground
+
+# Generate new application
+npx nx g @nx/angular:application my-app --directory=apps
 
 # Generate component
 npx nx g @nx/angular:component my-component --project=shared --standalone
@@ -163,6 +173,9 @@ npx nx g @nx/angular:library my-feature --directory=libs/features/my-feature
 
 # View dependency graph
 npx nx graph
+
+# List all projects
+npx nx show projects
 ```
 
 ## ✅ Best Practices

@@ -3,17 +3,26 @@
 ## ⚡ Quick Commands
 
 ```bash
-# Start development
-npm start
+# Start development (web-app on port 4200)
+npx nx serve web-app
+
+# Start playground (on port 4201)
+npx nx serve playground
 
 # Build
-npm run build
+npx nx build web-app
+npx nx build playground
 
 # Test
-npm test
+npx nx test web-app
+npx nx test playground
 
 # Lint
-npm run lint
+npx nx lint web-app
+npx nx lint playground
+
+# Generate new application
+npx nx g @nx/angular:application my-app --directory=apps
 
 # Generate component
 npx nx g @nx/angular:component my-component --project=shared --standalone
@@ -28,21 +37,25 @@ npx nx g @nx/angular:library my-feature --directory=libs/features/my-feature
 ## 📁 Where to Put Your Code
 
 ### Models (Interfaces + Classes)
+
 ```
 libs/core/src/lib/models/your-model.model.ts
 ```
 
 ### Services
+
 ```
 libs/core/src/lib/services/your-service.service.ts
 ```
 
 ### Reusable Components
+
 ```
 libs/shared/src/lib/components/your-component/
 ```
 
 ### Feature Modules
+
 ```
 libs/features/feature-name/
 ```
@@ -65,13 +78,13 @@ import { User } from '@core/models/user.model';
 export class UserListComponent {
   // Inputs
   users = input.required<User[]>();
-  
+
   // Outputs
   userSelected = output<User>();
-  
+
   // State
   private _selectedId = signal<string>('');
-  
+
   onSelect(user: User): void {
     this._selectedId.set(user.id);
     this.userSelected.emit(user);
@@ -156,25 +169,25 @@ export class UserService {
   getUsers(): Observable<User[]> {
     return this._http
       .get<IUser[]>(this._baseUrl)
-      .pipe(map(users => users.map(u => new User(u))));
+      .pipe(map((users) => users.map((u) => new User(u))));
   }
 
   getUserById(id: string): Observable<User> {
     return this._http
       .get<IUser>(`${this._baseUrl}/${id}`)
-      .pipe(map(user => new User(user)));
+      .pipe(map((user) => new User(user)));
   }
 
   createUser(user: Partial<IUser>): Observable<User> {
     return this._http
       .post<IUser>(this._baseUrl, user)
-      .pipe(map(u => new User(u)));
+      .pipe(map((u) => new User(u)));
   }
 
   updateUser(id: string, user: Partial<IUser>): Observable<User> {
     return this._http
       .put<IUser>(`${this._baseUrl}/${id}`, user)
-      .pipe(map(u => new User(u)));
+      .pipe(map((u) => new User(u)));
   }
 
   deleteUser(id: string): Observable<void> {
@@ -244,13 +257,13 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () =>
-      import('./features/auth/login.component').then(m => m.LoginComponent),
+      import('./features/auth/login.component').then((m) => m.LoginComponent),
   },
   {
     path: 'dashboard',
     loadComponent: () =>
       import('./features/dashboard/dashboard.component').then(
-        m => m.DashboardComponent
+        (m) => m.DashboardComponent
       ),
     canActivate: [authGuard],
   },
@@ -266,7 +279,10 @@ export const routes: Routes = [
 ```typescript
 // user.service.spec.ts
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { UserService } from './user.service';
 import { User } from '@core/models/user.model';
 
@@ -290,7 +306,7 @@ describe('UserService', () => {
   it('should fetch users', () => {
     const mockUsers = [{ id: '1', name: 'John', email: 'john@example.com' }];
 
-    service.getUsers().subscribe(users => {
+    service.getUsers().subscribe((users) => {
       expect(users).toHaveLength(1);
       expect(users[0]).toBeInstanceOf(User);
       expect(users[0].name).toBe('John');
