@@ -18,7 +18,8 @@ html {
 }
 
 // M3 Dark theme
-[data-theme='dark'] {
+[data-theme='dark'],
+[data-mode='dark'][data-color-scheme='default'] {
   $dark-theme: mat.define-theme(
     (
       color: (
@@ -29,4 +30,70 @@ html {
   );
 
   @include mat.all-component-themes($dark-theme);
+}
+
+// M3 Blue theme
+[data-theme='blue'],
+[data-theme='blue-light'],
+[data-mode='light'][data-color-scheme='blue'] {
+  $blue-theme: mat.define-theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$blue-palette,
+        tertiary: mat.$azure-palette,
+      ),
+    )
+  );
+
+  @include mat.all-component-themes($blue-theme);
+}
+
+// M3 Green theme
+[data-theme='green'],
+[data-theme='green-light'],
+[data-mode='light'][data-color-scheme='green'] {
+  $green-theme: mat.define-theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$green-palette,
+        tertiary: mat.$chartreuse-palette,
+      ),
+    )
+  );
+
+  @include mat.all-component-themes($green-theme);
+}
+
+// M3 Blue Dark theme
+[data-theme='blue-dark'],
+[data-mode='dark'][data-color-scheme='blue'] {
+  $blue-dark-theme: mat.define-theme(
+    (
+      color: (
+        theme-type: dark,
+        primary: mat.$blue-palette,
+        tertiary: mat.$azure-palette,
+      ),
+    )
+  );
+
+  @include mat.all-component-themes($blue-dark-theme);
+}
+
+// M3 Green Dark theme
+[data-theme='green-dark'],
+[data-mode='dark'][data-color-scheme='green'] {
+  $green-dark-theme: mat.define-theme(
+    (
+      color: (
+        theme-type: dark,
+        primary: mat.$green-palette,
+        tertiary: mat.$chartreuse-palette,
+      ),
+    )
+  );
+
+  @include mat.all-component-themes($green-dark-theme);
 }

@@ -1,0 +1,233 @@
+<div class="theme-tester">
+  <div class="theme-tester__header">
+    <div class="header-actions">
+      <button class="btn btn-secondary back-btn" (click)="goBack()">
+        ← Back to Home
+      </button>
+    </div>
+    <h1>Theme Tester</h1>
+    <p class="subtitle">Test and customize your application theme</p>
+  </div>
+
+  <div class="theme-tester__controls">
+    <!-- Color Scheme Selection -->
+    <div class="control-section">
+      <h2>Color Scheme</h2>
+      <div class="theme-info">
+        <span class="current-theme-badge"> Scheme: {{ colorScheme() }} </span>
+      </div>
+      <div class="theme-buttons">
+        @for (scheme of colorSchemes; track scheme.value) {
+        <button
+          class="theme-btn"
+          [class.active]="colorScheme() === scheme.value"
+          [style.--theme-color]="scheme.color"
+          (click)="setColorScheme(scheme.value)"
+        >
+          {{ scheme.label }}
+        </button>
+        }
+      </div>
+    </div>
+
+    <!-- Mode Selection -->
+    <div class="control-section">
+      <h2>Theme Mode</h2>
+      <div class="theme-info">
+        <span class="current-theme-badge">
+          <span class="mode-badge" [class.dark]="mode() === 'dark'">
+            {{ mode() === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode' }}
+          </span>
+        </span>
+      </div>
+      <div class="theme-actions">
+        <button
+          class="btn"
+          [class.btn-primary]="mode() === 'light'"
+          [class.btn-secondary]="mode() === 'dark'"
+          (click)="setMode('light')"
+        >
+          ☀️ Light
+        </button>
+        <button
+          class="btn"
+          [class.btn-primary]="mode() === 'dark'"
+          [class.btn-secondary]="mode() === 'light'"
+          (click)="setMode('dark')"
+        >
+          🌙 Dark
+        </button>
+        <button class="btn btn-secondary" (click)="toggleMode()">
+          Toggle Mode
+        </button>
+      </div>
+    </div>
+
+    <!-- Direction Control -->
+    <div class="control-section">
+      <h2>Text Direction</h2>
+      <div class="direction-toggle">
+        <span>Current: {{ currentDirection() | uppercase }}</span>
+        <button class="btn btn-primary" (click)="toggleDirection()">
+          Toggle Direction
+        </button>
+      </div>
+    </div>
+
+    <!-- Color Customization -->
+    <div class="control-section">
+      <h2>Custom Colors</h2>
+      <div class="color-inputs">
+        <div class="color-input-group">
+          <label for="primary-color">Primary Color:</label>
+          <input
+            id="primary-color"
+            type="color"
+            [(ngModel)]="primaryColor"
+            class="color-picker"
+          />
+          <span class="color-value">{{ primaryColor }}</span>
+        </div>
+        <div class="color-input-group">
+          <label for="accent-color">Accent Color:</label>
+          <input
+            id="accent-color"
+            type="color"
+            [(ngModel)]="accentColor"
+            class="color-picker"
+          />
+          <span class="color-value">{{ accentColor }}</span>
+        </div>
+      </div>
+      <div class="color-actions">
+        <button class="btn btn-success" (click)="applyCustomColors()">
+          Apply Colors
+        </button>
+        <button class="btn btn-warning" (click)="resetColors()">
+          Reset to Default
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Theme Preview -->
+  <div class="theme-preview">
+    <h2>Theme Preview</h2>
+
+    <!-- Colors Preview -->
+    <div class="preview-section">
+      <h3>Colors</h3>
+      <div class="color-swatches">
+        <div class="swatch primary">
+          <div class="swatch-color"></div>
+          <span>Primary</span>
+        </div>
+        <div class="swatch accent">
+          <div class="swatch-color"></div>
+          <span>Accent</span>
+        </div>
+        <div class="swatch success">
+          <div class="swatch-color"></div>
+          <span>Success</span>
+        </div>
+        <div class="swatch error">
+          <div class="swatch-color"></div>
+          <span>Error</span>
+        </div>
+        <div class="swatch warning">
+          <div class="swatch-color"></div>
+          <span>Warning</span>
+        </div>
+        <div class="swatch info">
+          <div class="swatch-color"></div>
+          <span>Info</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Typography Preview -->
+    <div class="preview-section">
+      <h3>Typography</h3>
+      <div class="typography-samples">
+        <h1>Heading 1</h1>
+        <h2>Heading 2</h2>
+        <h3>Heading 3</h3>
+        <p class="body-text">
+          This is body text. Lorem ipsum dolor sit amet, consectetur adipiscing
+          elit.
+        </p>
+        <p class="secondary-text">
+          This is secondary text with lower contrast.
+        </p>
+        <p class="disabled-text">This is disabled text.</p>
+      </div>
+    </div>
+
+    <!-- Components Preview -->
+    <div class="preview-section">
+      <h3>Components</h3>
+
+      <!-- Buttons -->
+      <div class="component-group">
+        <h4>Buttons</h4>
+        <div class="button-samples">
+          <button class="btn btn-primary">Primary Button</button>
+          <button class="btn btn-secondary">Secondary Button</button>
+          <button class="btn btn-success">Success Button</button>
+          <button class="btn btn-error">Error Button</button>
+          <button class="btn btn-warning">Warning Button</button>
+          <button class="btn btn-info">Info Button</button>
+        </div>
+      </div>
+
+      <!-- Cards -->
+      <div class="component-group">
+        <h4>Cards</h4>
+        <div class="card-samples">
+          <div class="card">
+            <div class="card-header">Card Header</div>
+            <div class="card-body">
+              <p>This is a card with primary background and text colors.</p>
+            </div>
+            <div class="card-footer">Card Footer</div>
+          </div>
+          <div class="card card-secondary">
+            <div class="card-header">Secondary Card</div>
+            <div class="card-body">
+              <p>This card uses secondary background color.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Elements -->
+      <div class="component-group">
+        <h4>Form Elements</h4>
+        <div class="form-samples">
+          <input type="text" placeholder="Text Input" class="input" />
+          <input type="text" value="Disabled Input" disabled class="input" />
+          <select class="select">
+            <option>Select Option</option>
+            <option>Option 1</option>
+            <option>Option 2</option>
+          </select>
+          <label class="checkbox-label">
+            <input type="checkbox" checked />
+            <span>Checkbox Option</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div class="component-group">
+        <h4>Alerts</h4>
+        <div class="alert-samples">
+          <div class="alert alert-success">Success alert message</div>
+          <div class="alert alert-error">Error alert message</div>
+          <div class="alert alert-warning">Warning alert message</div>
+          <div class="alert alert-info">Info alert message</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

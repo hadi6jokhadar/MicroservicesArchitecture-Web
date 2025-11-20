@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatIconModule],
+  imports: [RouterLink, MatCardModule, MatButtonModule, MatIconModule],
   template: `
     <div class="container">
       <mat-card>
@@ -34,6 +35,10 @@ import { MatIconModule } from '@angular/material/icon';
           <button mat-raised-button color="primary">
             <mat-icon>build</mat-icon>
             Start Building
+          </button>
+          <button mat-raised-button color="accent" routerLink="/theme-tester">
+            <mat-icon>palette</mat-icon>
+            Theme Tester
           </button>
         </mat-card-actions>
       </mat-card>

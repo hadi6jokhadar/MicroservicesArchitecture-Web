@@ -39,7 +39,8 @@
 
 // Light Theme
 :root,
-[data-theme='light'] {
+[data-theme='light'],
+[data-mode='light'][data-color-scheme='default'] {
   // Primary Colors
   --primary-color: #3f51b5;
   --primary-color-50: #e8eaf6;
@@ -90,7 +91,8 @@
 }
 
 // Dark Theme
-[data-theme='dark'] {
+[data-theme='dark'],
+[data-mode='dark'][data-color-scheme='default'] {
   // Primary Colors (slightly lighter for dark mode)
   --primary-color: #7986cb;
   --primary-color-50: #1a237e;
@@ -132,6 +134,228 @@
   --border-color: #333333;
   --border-color-light: #2a2a2a;
   --border-color-dark: #404040;
+
+  // Success/Error/Warning/Info (lighter for dark mode)
+  --success-color: #66bb6a;
+  --error-color: #ef5350;
+  --warning-color: #ffa726;
+  --info-color: #42a5f5;
+
+  // Shadows (lighter for dark mode)
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+}
+
+// Blue Theme
+[data-theme='blue'],
+[data-theme='blue-light'],
+[data-mode='light'][data-color-scheme='blue'] {
+  // Primary Colors - Blue
+  --primary-color: #2196f3;
+  --primary-color-50: #e3f2fd;
+  --primary-color-100: #bbdefb;
+  --primary-color-200: #90caf9;
+  --primary-color-300: #64b5f6;
+  --primary-color-400: #42a5f5;
+  --primary-color-500: #2196f3;
+  --primary-color-600: #1e88e5;
+  --primary-color-700: #1976d2;
+  --primary-color-800: #1565c0;
+  --primary-color-900: #0d47a1;
+
+  // Accent Colors - Cyan
+  --accent-color: #00bcd4;
+  --accent-color-50: #e0f7fa;
+  --accent-color-100: #b2ebf2;
+  --accent-color-200: #80deea;
+  --accent-color-300: #4dd0e1;
+  --accent-color-400: #26c6da;
+  --accent-color-500: #00bcd4;
+  --accent-color-600: #00acc1;
+  --accent-color-700: #0097a7;
+  --accent-color-800: #00838f;
+  --accent-color-900: #006064;
+
+  // Background Colors
+  --background-color: #ffffff;
+  --background-color-secondary: #f5f9fc;
+  --background-color-tertiary: #e3f2fd;
+
+  // Text Colors
+  --text-color: #212121;
+  --text-color-secondary: #546e7a;
+  --text-color-tertiary: #90a4ae;
+  --text-color-disabled: #b0bec5;
+
+  // Border Colors
+  --border-color: #bbdefb;
+  --border-color-light: #e3f2fd;
+  --border-color-dark: #90caf9;
+
+  // Success/Error/Warning/Info
+  --success-color: #4caf50;
+  --error-color: #f44336;
+  --warning-color: #ff9800;
+  --info-color: #2196f3;
+}
+
+// Green Theme
+[data-theme='green'],
+[data-theme='green-light'],
+[data-mode='light'][data-color-scheme='green'] {
+  // Primary Colors - Green
+  --primary-color: #4caf50;
+  --primary-color-50: #e8f5e9;
+  --primary-color-100: #c8e6c9;
+  --primary-color-200: #a5d6a7;
+  --primary-color-300: #81c784;
+  --primary-color-400: #66bb6a;
+  --primary-color-500: #4caf50;
+  --primary-color-600: #43a047;
+  --primary-color-700: #388e3c;
+  --primary-color-800: #2e7d32;
+  --primary-color-900: #1b5e20;
+
+  // Accent Colors - Teal
+  --accent-color: #009688;
+  --accent-color-50: #e0f2f1;
+  --accent-color-100: #b2dfdb;
+  --accent-color-200: #80cbc4;
+  --accent-color-300: #4db6ac;
+  --accent-color-400: #26a69a;
+  --accent-color-500: #009688;
+  --accent-color-600: #00897b;
+  --accent-color-700: #00796b;
+  --accent-color-800: #00695c;
+  --accent-color-900: #004d40;
+
+  // Background Colors
+  --background-color: #ffffff;
+  --background-color-secondary: #f1f8f4;
+  --background-color-tertiary: #e8f5e9;
+
+  // Text Colors
+  --text-color: #212121;
+  --text-color-secondary: #558b2f;
+  --text-color-tertiary: #9ccc65;
+  --text-color-disabled: #c5e1a5;
+
+  // Border Colors
+  --border-color: #c8e6c9;
+  --border-color-light: #e8f5e9;
+  --border-color-dark: #a5d6a7;
+
+  // Success/Error/Warning/Info
+  --success-color: #4caf50;
+  --error-color: #f44336;
+  --warning-color: #ff9800;
+  --info-color: #2196f3;
+}
+
+// Blue Dark Theme
+[data-theme='blue-dark'],
+[data-mode='dark'][data-color-scheme='blue'] {
+  // Primary Colors - Blue (lighter for dark mode)
+  --primary-color: #64b5f6;
+  --primary-color-50: #0d47a1;
+  --primary-color-100: #1565c0;
+  --primary-color-200: #1976d2;
+  --primary-color-300: #1e88e5;
+  --primary-color-400: #2196f3;
+  --primary-color-500: #42a5f5;
+  --primary-color-600: #64b5f6;
+  --primary-color-700: #90caf9;
+  --primary-color-800: #bbdefb;
+  --primary-color-900: #e3f2fd;
+
+  // Accent Colors - Cyan (lighter for dark mode)
+  --accent-color: #4dd0e1;
+  --accent-color-50: #006064;
+  --accent-color-100: #00838f;
+  --accent-color-200: #0097a7;
+  --accent-color-300: #00acc1;
+  --accent-color-400: #00bcd4;
+  --accent-color-500: #26c6da;
+  --accent-color-600: #4dd0e1;
+  --accent-color-700: #80deea;
+  --accent-color-800: #b2ebf2;
+  --accent-color-900: #e0f7fa;
+
+  // Background Colors
+  --background-color: #121212;
+  --background-color-secondary: #1a1f2e;
+  --background-color-tertiary: #1e2533;
+
+  // Text Colors
+  --text-color: #ffffff;
+  --text-color-secondary: #90caf9;
+  --text-color-tertiary: #64b5f6;
+  --text-color-disabled: #546e7a;
+
+  // Border Colors
+  --border-color: #1e88e5;
+  --border-color-light: #1565c0;
+  --border-color-dark: #42a5f5;
+
+  // Success/Error/Warning/Info (lighter for dark mode)
+  --success-color: #66bb6a;
+  --error-color: #ef5350;
+  --warning-color: #ffa726;
+  --info-color: #42a5f5;
+
+  // Shadows (lighter for dark mode)
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+}
+
+// Green Dark Theme
+[data-theme='green-dark'],
+[data-mode='dark'][data-color-scheme='green'] {
+  // Primary Colors - Green (lighter for dark mode)
+  --primary-color: #81c784;
+  --primary-color-50: #1b5e20;
+  --primary-color-100: #2e7d32;
+  --primary-color-200: #388e3c;
+  --primary-color-300: #43a047;
+  --primary-color-400: #4caf50;
+  --primary-color-500: #66bb6a;
+  --primary-color-600: #81c784;
+  --primary-color-700: #a5d6a7;
+  --primary-color-800: #c8e6c9;
+  --primary-color-900: #e8f5e9;
+
+  // Accent Colors - Teal (lighter for dark mode)
+  --accent-color: #4db6ac;
+  --accent-color-50: #004d40;
+  --accent-color-100: #00695c;
+  --accent-color-200: #00796b;
+  --accent-color-300: #00897b;
+  --accent-color-400: #009688;
+  --accent-color-500: #26a69a;
+  --accent-color-600: #4db6ac;
+  --accent-color-700: #80cbc4;
+  --accent-color-800: #b2dfdb;
+  --accent-color-900: #e0f2f1;
+
+  // Background Colors
+  --background-color: #121212;
+  --background-color-secondary: #1a2e1a;
+  --background-color-tertiary: #1e331e;
+
+  // Text Colors
+  --text-color: #ffffff;
+  --text-color-secondary: #a5d6a7;
+  --text-color-tertiary: #81c784;
+  --text-color-disabled: #558b2f;
+
+  // Border Colors
+  --border-color: #43a047;
+  --border-color-light: #388e3c;
+  --border-color-dark: #66bb6a;
 
   // Success/Error/Warning/Info (lighter for dark mode)
   --success-color: #66bb6a;

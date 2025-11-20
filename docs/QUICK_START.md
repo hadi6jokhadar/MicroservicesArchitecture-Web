@@ -129,26 +129,44 @@ export class UserListComponent {
 
 ```typescript
 // app.component.ts
-import { Component, inject, OnInit } from '@angular/core';
-import { ThemeService } from '@core/services/theme.service';
+import { Component, inject } from '@angular/core';
+import { ThemeService } from '@web-app/core';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   template: `
-    <button (click)="toggleTheme()">Toggle Theme</button>
-    <button (click)="toggleDirection()">Toggle Direction</button>
+    <div>
+      <h2>
+        Current: {{ themeService.colorScheme() }} - {{ themeService.mode() }}
+      </h2>
+
+      <!-- Color Scheme Selection -->
+      <button (click)="setColorScheme('default')">Default Theme</button>
+      <button (click)="setColorScheme('blue')">Blue Theme</button>
+      <button (click)="setColorScheme('green')">Green Theme</button>
+
+      <!-- Mode Toggle -->
+      <button (click)="toggleMode()">Toggle Light/Dark</button>
+
+      <!-- Direction Toggle -->
+      <button (click)="toggleDirection()">Toggle Direction</button>
+    </div>
   `,
 })
 export class AppComponent {
-  private _themeService = inject(ThemeService);
+  themeService = inject(ThemeService);
 
-  toggleTheme(): void {
-    this._themeService.toggleTheme();
+  setColorScheme(scheme: string): void {
+    this.themeService.setColorScheme(scheme);
+  }
+
+  toggleMode(): void {
+    this.themeService.toggleMode();
   }
 
   toggleDirection(): void {
-    this._themeService.toggleDirection();
+    this.themeService.toggleDirection();
   }
 }
 ```

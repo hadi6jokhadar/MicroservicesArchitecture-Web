@@ -1,24 +1,66 @@
 import { Injectable, signal } from '@angular/core';
 
-export type Theme = 'light' | 'dark' | 'blue' | 'green';
+export type ThemeMode = 'light' | 'dark';
 export type Direction = 'ltr' | 'rtl';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-  private _currentTheme = signal<Theme>('light');
+  private _colorScheme = signal<string>('default');
+  private _mode = signal<ThemeMode>('light');
   private _direction = signal<Direction>('ltr');
 
-  currentTheme = this._currentTheme.asReadonly();
+  colorScheme = this._colorScheme.asReadonly();
+  mode = this._mode.asReadonly();
   direction = this._direction.asReadonly();
 
   constructor() {
     this.initializeTheme();
   }
 
-  setTheme(theme: Theme): void {
-    this._currentTheme.set(theme);
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
+  /**
+   * Set the color scheme (e.g., 'default', 'blue', 'green', or any custom name)
+   */
+  setColorScheme(scheme: string): void {
+    this._colorScheme.set(scheme);
+    this.applyTheme();
+    localStorage.setItem('colorScheme', scheme);
+  }
+
+  /**
+   * Set the theme mode (light or dark)
+   */
+  setMode(mode: ThemeMode): void {
+    this._mode.set(mode);
+    this.applyTheme();
+    localStorage.setItem('mode', mode);
+  }
+
+  /**
+   * Toggle between light and dark mode
+   */
+  toggleMode(): void {
+    const newMode = this._mode() === 'light' ? 'dark' : 'light';
+    this.setMode(newMode);
+  }
+
+  /**
+   * Set both color scheme and mode at once
+   */
+  setTheme(scheme: string, mode: ThemeMode): void {
+    this._colorScheme.set(scheme);
+    this._mode.set(mode);
+    this.applyTheme();
+    localStorage.setItem('colorScheme', scheme);
+    localStorage.setItem('mode', mode);
+  }
+
+  /**
+   * Get the current theme as a combined string (e.g., 'blue-dark', 'default-light')
+   */
+  getCurrentTheme(): string {
+    const scheme = this._colorScheme();
+    const mode = this._mode();
+    return scheme === 'default' ? mode : `${scheme}-${mode}`;
   }
 
   setDirection(dir: Direction): void {
@@ -27,23 +69,34 @@ export class ThemeService {
     localStorage.setItem('direction', dir);
   }
 
-  toggleTheme(): void {
-    const newTheme = this._currentTheme() === 'light' ? 'dark' : 'light';
-    this.setTheme(newTheme);
-  }
-
   toggleDirection(): void {
     const newDir = this._direction() === 'ltr' ? 'rtl' : 'ltr';
     this.setDirection(newDir);
   }
 
+  private applyTheme(): void {
+    const scheme = this._colorScheme();
+    const mode = this._mode();
+
+    // Build theme attribute value
+    const themeValue = scheme === 'default' ? mode : `${scheme}-${mode}`;
+
+    // Set data-theme attribute
+    document.documentElement.setAttribute('data-theme', themeValue);
+
+    // Also set data-color-scheme and data-mode for more flexible CSS targeting
+    document.documentElement.setAttribute('data-color-scheme', scheme);
+    document.documentElement.setAttribute('data-mode', mode);
+  }
+
   private initializeTheme(): void {
-    const savedTheme = localStorage.getItem('theme') as Theme;
+    const savedScheme = localStorage.getItem('colorScheme') || 'default';
+    const savedMode = (localStorage.getItem('mode') as ThemeMode) || 'light';
     const savedDir = localStorage.getItem('direction') as Direction;
 
-    if (savedTheme) {
-      this.setTheme(savedTheme);
-    }
+    this._colorScheme.set(savedScheme);
+    this._mode.set(savedMode);
+    this.applyTheme();
 
     if (savedDir) {
       this.setDirection(savedDir);

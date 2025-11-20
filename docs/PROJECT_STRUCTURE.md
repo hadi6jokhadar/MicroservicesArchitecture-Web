@@ -100,7 +100,60 @@ userId = input.required<string>();
 userChanged = output<User>();
 ```
 
-### 5. **Dependency Injection**
+### 5. **Component Organization (MANDATORY)**
+
+All files related to a component must be colocated in the same folder:
+
+```
+user/
+├── user.component.ts           # Component
+├── user.component.html         # Template
+├── user.component.scss         # Styles
+├── user.service.ts             # Service
+├── user.model.ts               # Entity (Interface + Class)
+├── user.resolver.ts            # Resolver (if needed)
+├── user.guard.ts               # Guard (if needed)
+└── user.types.ts               # Type definitions (if needed)
+```
+
+**Example Structure:**
+
+```typescript
+// user/user.model.ts
+export interface IUser {
+  id: string;
+  name: string;
+}
+
+export class User implements IUser {
+  constructor(public id: string, public name: string) {}
+}
+
+// user/user.service.ts
+export class UserService {
+  private _http = inject(HttpClient);
+
+  getUser(id: string) {
+    return this._http.get<User>(`/api/users/${id}`);
+  }
+}
+
+// user/user.component.ts
+export class UserComponent {
+  private _userService = inject(UserService);
+  userId = input.required<string>();
+  user = signal<User | null>(null);
+}
+```
+
+**Key Rules:**
+
+- ✅ Component and its service in same folder
+- ✅ All related files (models, resolvers, guards) colocated
+- ✅ No separate `/services`, `/models`, `/resolvers` folders per component
+- ❌ Don't scatter component files across different directories
+
+### 6. **Dependency Injection**
 
 Use `inject()` function instead of constructor injection:
 
@@ -225,30 +278,100 @@ npx nx build web
 
 ## 🎨 Theme Support
 
-### Switching Themes
+### Dynamic Theme System
+
+The theme system uses a **flexible, dynamic approach** with separate color scheme and mode management:
 
 ```typescript
-import { ThemeService } from '@core/services/theme.service';
+import { ThemeService } from '@web-app/core';
 
 export class AppComponent {
   private _themeService = inject(ThemeService);
 
-  switchTheme() {
-    this._themeService.setTheme('dark');
+  // Set color scheme (any string)
+  switchColorScheme() {
+    this._themeService.setColorScheme('blue'); // 'default', 'blue', 'green', 'purple', etc.
   }
 
+  // Set mode
+  switchToLight() {
+    this._themeService.setMode('light');
+  }
+
+  switchToDark() {
+    this._themeService.setMode('dark');
+  }
+
+  // Toggle mode
+  toggleMode() {
+    this._themeService.toggleMode();
+  }
+
+  // Set both at once
+  setFullTheme() {
+    this._themeService.setTheme('blue', 'dark');
+  }
+
+  // Get current combined theme
+  getCurrentTheme() {
+    return this._themeService.getCurrentTheme(); // Returns 'blue-dark', 'light', etc.
+  }
+
+  // Direction
   toggleDirection() {
     this._themeService.toggleDirection();
   }
 }
 ```
 
-### Available Themes
+### Built-in Color Schemes
 
-- `light` - Default light theme
-- `dark` - Dark mode
+- `default` - Default violet/pink theme
 - `blue` - Blue theme
 - `green` - Green theme
+- **Any custom string** - Add your own!
+
+### Theme Modes
+
+- `light` - Light mode
+- `dark` - Dark mode
+
+### HTML Attributes
+
+The service automatically sets these attributes on `<html>`:
+
+- `data-theme="blue-dark"` - Combined (backward compatible)
+- `data-color-scheme="blue"` - Color scheme only
+- `data-mode="dark"` - Mode only
+
+### CSS Targeting
+
+Target themes using flexible selectors:
+
+```scss
+// Target specific color scheme in light mode
+[data-mode='light'][data-color-scheme='blue'] {
+  --primary-color: #2196f3;
+}
+
+// Target specific color scheme in dark mode
+[data-mode='dark'][data-color-scheme='blue'] {
+  --primary-color: #64b5f6;
+}
+
+// Or use combined attribute for backward compatibility
+[data-theme='blue-dark'] {
+  --primary-color: #64b5f6;
+}
+```
+
+### Adding Custom Themes
+
+No TypeScript changes needed! Just add CSS:
+
+1. Define CSS variables in `_variables.scss`
+2. Define Material theme in `_material-theme.scss`
+3. Use: `themeService.setColorScheme('your-theme-name')`
 
 ### RTL/LTR Support
 

@@ -12,6 +12,11 @@ export const routes: Routes = [
       import('./features/home/home').then((m) => m.HomeComponent),
   },
   {
+    path: 'theme-tester',
+    loadComponent: () =>
+      import('@web-app/shared').then((m) => m.ThemeTesterComponent),
+  },
+  {
     path: '**',
     redirectTo: 'home',
   },
