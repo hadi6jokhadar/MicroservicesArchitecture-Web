@@ -1,0 +1,30 @@
+<mat-card>
+  <mat-card-header>
+    @if (userAvatar()) {
+    <img mat-card-avatar [src]="userAvatar()" [alt]="userName()" />
+    } @else {
+    <div mat-card-avatar class="avatar-placeholder">
+      {{ userName().charAt(0).toUpperCase() }}
+    </div>
+    }
+    <mat-card-title>{{ userName() }}</mat-card-title>
+    <mat-card-subtitle>{{ userEmail() }}</mat-card-subtitle>
+  </mat-card-header>
+
+  @if (showActions()) {
+  <mat-card-actions>
+    <button mat-button (click)="onView()">
+      <mat-icon>visibility</mat-icon>
+      View
+    </button>
+    <button mat-button (click)="onEdit()">
+      <mat-icon>edit</mat-icon>
+      Edit
+    </button>
+    <button mat-button color="warn" (click)="onDelete()">
+      <mat-icon>delete</mat-icon>
+      Delete
+    </button>
+  </mat-card-actions>
+  }
+</mat-card>

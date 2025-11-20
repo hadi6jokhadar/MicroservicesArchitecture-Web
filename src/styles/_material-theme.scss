@@ -1,0 +1,65 @@
+@use '@angular/material' as mat;
+
+// Include Material core styles
+@include mat.core();
+
+// Create light theme using simplified API
+$light-theme: mat.define-theme();
+
+// Create dark theme
+$dark-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: dark,
+    ),
+  )
+);
+
+// Apply light theme by default
+html {
+  @include mat.all-component-themes($light-theme);
+}
+
+// Apply dark theme when data-theme="dark"
+[data-theme='dark'] {
+  @include mat.all-component-colors($dark-theme);
+}
+
+// Override Material components with CSS variables
+.mat-mdc-card {
+  background-color: var(--surface-color) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--border-radius-md) !important;
+}
+
+.mat-mdc-button {
+  border-radius: var(--border-radius-sm) !important;
+}
+
+.mat-mdc-raised-button {
+  border-radius: var(--border-radius-md) !important;
+}
+
+.mat-mdc-outlined-button {
+  border-radius: var(--border-radius-md) !important;
+}
+
+.mat-mdc-form-field {
+  font-family: var(--font-family) !important;
+}
+
+.mat-mdc-dialog-container {
+  border-radius: var(--border-radius-lg) !important;
+  background-color: var(--surface-color) !important;
+}
+
+// RTL Support
+[dir='rtl'] {
+  .mat-drawer-container {
+    direction: rtl;
+  }
+
+  .mat-menu-panel {
+    direction: rtl;
+  }
+}

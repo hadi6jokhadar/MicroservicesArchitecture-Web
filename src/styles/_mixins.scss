@@ -1,0 +1,77 @@
+// Common SCSS Mixins
+
+// Flexbox center
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Flexbox column
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// Flexbox row
+@mixin flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+// Text ellipsis
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Multi-line ellipsis
+@mixin text-ellipsis-multi($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Card shadow
+@mixin card-shadow {
+  box-shadow: var(--shadow);
+  transition: box-shadow var(--transition-normal);
+
+  &:hover {
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+// Responsive breakpoints
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == 'xs' {
+    @media (max-width: 599px) {
+      @content;
+    }
+  } @else if $breakpoint == 'sm' {
+    @media (min-width: 600px) and (max-width: 959px) {
+      @content;
+    }
+  } @else if $breakpoint == 'md' {
+    @media (min-width: 960px) and (max-width: 1279px) {
+      @content;
+    }
+  } @else if $breakpoint == 'lg' {
+    @media (min-width: 1280px) and (max-width: 1919px) {
+      @content;
+    }
+  } @else if $breakpoint == 'xl' {
+    @media (min-width: 1920px) {
+      @content;
+    }
+  }
+}
+
+// RTL support
+@mixin rtl {
+  :host-context([dir='rtl']) & {
+    @content;
+  }
+}
