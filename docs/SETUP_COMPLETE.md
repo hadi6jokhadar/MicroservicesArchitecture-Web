@@ -31,6 +31,9 @@ Your modern Angular 20+ project with Nx monorepo is ready to use.
 
 ## 🚀 Getting Started
 
+> **⚠️ Important:** This project requires `@angular/animations` package. It should already be installed.
+> If you encounter build errors, see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).
+
 ```bash
 # Start web-app development server (port 4200)
 npx nx serve web-app
@@ -156,6 +159,7 @@ npx nx g @nx/angular:library my-feature --directory=libs/features/my-feature
 
    - GitHub Copilot coding standards
    - Complete reference for AI-assisted coding
+   - Critical error prevention guidelines
 
 2. **`PROJECT_STRUCTURE.md`**
 
@@ -169,7 +173,15 @@ npx nx g @nx/angular:library my-feature --directory=libs/features/my-feature
    - Common tasks and patterns
    - Code snippets
 
-4. **`README.md`**
+4. **`TROUBLESHOOTING.md`** ⚠️
+
+   - Common build/serve errors
+   - PowerShell terminal issues
+   - Angular animations & Material theming
+   - Path resolution problems
+   - **READ THIS WHEN YOU ENCOUNTER ERRORS**
+
+5. **`README.md`**
    - Main project overview
    - Quick start guide
    - Key features
@@ -266,6 +278,21 @@ Your project is fully set up and ready for development. Start building amazing f
 
 **Need Help?**
 
-- Check `QUICK_START.md` for quick reference
-- Read `PROJECT_STRUCTURE.md` for detailed documentation
-- Review `.github/.copilot-instructions.md` for coding standards
+- **Errors or issues?** → Check `TROUBLESHOOTING.md` FIRST
+- **Quick reference?** → Check `QUICK_START.md`
+- **Architecture details?** → Read `PROJECT_STRUCTURE.md`
+- **Coding standards?** → Review `.github/.copilot-instructions.md`
+
+## 🚨 Critical Dependencies
+
+This project requires these key dependencies:
+
+```json
+{
+  "@angular/animations": "~20.3.0",
+  "@angular/material": "^20.2.14",
+  "@angular/cdk": "^20.2.14"
+}
+```
+
+**Angular Material 20+ uses M3 theming API** - see `TROUBLESHOOTING.md` if you encounter SCSS errors.

@@ -28,6 +28,7 @@ npx nx lint web-app
 
 ## 📚 Documentation
 
+- **[docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)** ⚠️ - **Common errors and solutions (READ FIRST when encountering issues)**
 - **[docs/QUICK_START.md](./docs/QUICK_START.md)** - Quick reference for common tasks
 - **[docs/PROJECT_STRUCTURE.md](./docs/PROJECT_STRUCTURE.md)** - Detailed project structure and patterns
 - **[docs/SETUP_COMPLETE.md](./docs/SETUP_COMPLETE.md)** - Setup completion summary

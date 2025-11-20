@@ -1,5 +1,7 @@
 # Quick Start Guide
 
+> **⚠️ Having issues?** Check [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) for common errors and solutions.
+
 ## ⚡ Quick Commands
 
 ```bash
@@ -333,4 +335,31 @@ describe('UserService', () => {
 
 ---
 
-**Need help?** Check `PROJECT_STRUCTURE.md` or `.github/.copilot-instructions.md`
+**Need help?**
+
+- **Errors?** → Check `TROUBLESHOOTING.md` first
+- **Architecture?** → Check `PROJECT_STRUCTURE.md`
+- **Coding standards?** → Check `.github/.copilot-instructions.md`
+
+## 🚨 Common Issues
+
+### Error: Cannot find module '@angular/animations/browser'
+
+```bash
+npm install @angular/animations@~20.3.0
+```
+
+### Error: Undefined function mat.define-palette()
+
+Angular Material 20+ uses M3 API. Update your theme file to use `mat.define-theme()` instead.
+See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) for details.
+
+### Error: The current directory isn't part of an Nx workspace
+
+In PowerShell, use quotes for paths with spaces:
+
+```powershell
+cd "C:\Users\Name With Spaces\..." ; npx nx serve playground
+```
+
+For more issues, see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)

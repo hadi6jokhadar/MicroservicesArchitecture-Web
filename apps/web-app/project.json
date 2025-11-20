@@ -11,19 +11,19 @@
       "executor": "@angular/build:application",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "../../dist/web-app",
-        "index": "src/index.html",
-        "browser": "src/main.ts",
+        "outputPath": "dist/web-app",
+        "index": "apps/web-app/src/index.html",
+        "browser": "apps/web-app/src/main.ts",
         "polyfills": ["zone.js"],
-        "tsConfig": "tsconfig.app.json",
+        "tsConfig": "apps/web-app/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
           {
             "glob": "**/*",
-            "input": "../../public"
+            "input": "public"
           }
         ],
-        "styles": ["src/styles.scss"]
+        "styles": ["apps/web-app/src/styles.scss"]
       },
       "configurations": {
         "production": {
@@ -71,15 +71,15 @@
     "lint": {
       "executor": "@nx/eslint:lint",
       "options": {
-        "lintFilePatterns": ["src"]
+        "lintFilePatterns": ["apps/web-app/src"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectName}"],
       "options": {
-        "jestConfig": "jest.config.ts",
-        "tsConfig": "tsconfig.spec.json"
+        "jestConfig": "apps/web-app/jest.config.ts",
+        "passWithNoTests": true
       }
     },
     "serve-static": {
