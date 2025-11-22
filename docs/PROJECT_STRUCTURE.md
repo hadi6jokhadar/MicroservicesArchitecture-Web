@@ -283,7 +283,7 @@ npx nx build web
 The theme system uses a **flexible, dynamic approach** with separate color scheme and mode management:
 
 ```typescript
-import { ThemeService } from '@web-app/core';
+import { ThemeService } from '@ihsan/core';
 
 export class AppComponent {
   private _themeService = inject(ThemeService);

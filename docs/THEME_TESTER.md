@@ -7,7 +7,7 @@ A reusable theme testing component that allows you to test and customize theme c
 ## Location
 
 - **Component**: `libs/shared/src/lib/components/theme-tester/`
-- **Exported from**: `@web-app/shared`
+- **Exported from**: `@ihsan/shared`
 
 ## Features
 
@@ -44,7 +44,7 @@ Preview all theme elements including:
 ### 1. Import the Component
 
 ```typescript
-import { ThemeTesterComponent } from '@web-app/shared';
+import { ThemeTesterComponent } from '@ihsan/shared';
 ```
 
 ### 2. Add Route
@@ -53,7 +53,7 @@ import { ThemeTesterComponent } from '@web-app/shared';
 {
   path: 'theme-tester',
   loadComponent: () =>
-    import('@web-app/shared').then((m) => m.ThemeTesterComponent),
+    import('@ihsan/shared').then((m) => m.ThemeTesterComponent),
 }
 ```
 
@@ -84,7 +84,7 @@ The theme tester has been integrated into the playground app:
 
 ### Theme Service Integration
 
-The component uses the **dynamic** `ThemeService` from `@web-app/core`:
+The component uses the **dynamic** `ThemeService` from `@ihsan/core`:
 
 **Color Scheme Management:**
 

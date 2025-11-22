@@ -36,6 +36,51 @@ npx nx g @nx/angular:service my-service --project=core
 npx nx g @nx/angular:library my-feature --directory=libs/features/my-feature
 ```
 
+## 📦 Import Paths & Component Prefix
+
+### Import Paths
+
+**ALWAYS** use `@ihsan/` prefix for importing from shared libraries:
+
+```typescript
+// ✅ Correct
+import { ThemeService, tokenInterceptor } from '@ihsan/core';
+import { ThemeTesterComponent } from '@ihsan/shared';
+
+// ❌ Wrong - Never use relative paths for cross-library imports
+import { ThemeService } from '../../libs/core/src/lib/theme/theme.service';
+```
+
+**Available Import Paths:**
+
+- `@ihsan/core` - Core services, guards, models, interceptors
+- `@ihsan/shared` - Shared components, pipes, utilities
+
+### Component Prefix
+
+All components in `libs/core` and `libs/shared` use the `shared-` prefix:
+
+```typescript
+// Component selector
+@Component({
+  selector: 'shared-theme-tester',  // ✅ Correct
+  // ...
+})
+```
+
+```html
+<!-- Usage in templates -->
+<shared-theme-tester></shared-theme-tester>
+```
+
+This is configured in each library's `project.json`:
+
+```json
+{
+  "prefix": "shared-"
+}
+```
+
 ## 📁 Where to Put Your Code
 
 ### Models (Interfaces + Classes)
@@ -130,7 +175,7 @@ export class UserListComponent {
 ```typescript
 // app.component.ts
 import { Component, inject } from '@angular/core';
-import { ThemeService } from '@web-app/core';
+import { ThemeService } from '@ihsan/core';
 
 @Component({
   selector: 'app-root',

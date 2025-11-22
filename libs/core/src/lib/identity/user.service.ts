@@ -1,0 +1,24 @@
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { IUser, IUpdateProfileRequest } from './models';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UserService {
+  private _http = inject(HttpClient);
+  private readonly _baseUrl = '/api/user';
+
+  getProfile(): Observable<IUser> {
+    return this._http.get<IUser>(`${this._baseUrl}/profile`);
+  }
+
+  updateProfile(request: IUpdateProfileRequest): Observable<object> {
+    return this._http.put(`${this._baseUrl}/profile`, request);
+  }
+
+  deleteAccount(): Observable<object> {
+    return this._http.delete(`${this._baseUrl}/me`);
+  }
+}

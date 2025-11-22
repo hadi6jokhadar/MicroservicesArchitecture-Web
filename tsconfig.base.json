@@ -8,8 +8,8 @@
     "lib": ["es2020", "dom"],
     "baseUrl": ".",
     "paths": {
-      "@web-app/core": ["libs/core/src/index.ts"],
-      "@web-app/shared": ["libs/shared/src/index.ts"]
+      "@ihsan/core": ["libs/core/src/index.ts"],
+      "@ihsan/shared": ["libs/shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

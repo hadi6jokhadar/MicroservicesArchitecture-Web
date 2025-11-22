@@ -14,7 +14,7 @@ export const routes: Routes = [
   {
     path: 'theme-tester',
     loadComponent: () =>
-      import('@web-app/shared').then((m) => m.ThemeTesterComponent),
+      import('@ihsan/shared').then((m) => m.ThemeTesterComponent),
   },
   {
     path: '**',

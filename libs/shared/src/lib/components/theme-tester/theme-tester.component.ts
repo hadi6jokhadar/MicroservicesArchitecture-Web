@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ThemeService, ThemeMode } from '@web-app/core';
+import { ThemeService, ThemeMode } from '@ihsan/core';
 
 @Component({
   selector: 'lib-theme-tester',
