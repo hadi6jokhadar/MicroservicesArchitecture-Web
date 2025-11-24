@@ -82,11 +82,11 @@ export class ThemeService {
     const themeValue = scheme === 'default' ? mode : `${scheme}-${mode}`;
 
     // Set data-theme attribute
-    document.documentElement.setAttribute('data-theme', themeValue);
+    document.documentElement.setAttribute('data-theme', themeValue); // greed-dark
 
     // Also set data-color-scheme and data-mode for more flexible CSS targeting
-    document.documentElement.setAttribute('data-color-scheme', scheme);
-    document.documentElement.setAttribute('data-mode', mode);
+    document.documentElement.setAttribute('data-color-scheme', scheme); // green
+    document.documentElement.setAttribute('data-mode', mode); // dark
   }
 
   private initializeTheme(): void {

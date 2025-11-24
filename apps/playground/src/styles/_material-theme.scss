@@ -97,3 +97,36 @@ html {
 
   @include mat.all-component-themes($green-dark-theme);
 }
+
+// M3 Ihsan theme
+[data-theme='ihsan'],
+[data-theme='ihsan-light'],
+[data-mode='light'][data-color-scheme='ihsan'] {
+  $ihsan-theme: mat.define-theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$orange-palette,
+        tertiary: mat.$yellow-palette,
+      ),
+    )
+  );
+
+  @include mat.all-component-themes($ihsan-theme);
+}
+
+// M3 Ihsan Dark theme
+[data-theme='ihsan-dark'],
+[data-mode='dark'][data-color-scheme='ihsan'] {
+  $ihsan-dark-theme: mat.define-theme(
+    (
+      color: (
+        theme-type: dark,
+        primary: mat.$orange-palette,
+        tertiary: mat.$yellow-palette,
+      ),
+    )
+  );
+
+  @include mat.all-component-themes($ihsan-dark-theme);
+}

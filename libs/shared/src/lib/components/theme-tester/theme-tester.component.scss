@@ -5,13 +5,13 @@
 
   &__header {
     text-align: center;
-    margin-bottom: var(--spacing-xxl);
+    margin-block-end: var(--spacing-xxl);
     position: relative;
 
     .header-actions {
       display: flex;
       justify-content: flex-start;
-      margin-bottom: var(--spacing-md);
+      margin-block-end: var(--spacing-md);
     }
 
     .back-btn {
@@ -22,7 +22,7 @@
     h1 {
       color: var(--text-color);
       font-size: var(--font-size-xxl);
-      margin-bottom: var(--spacing-sm);
+      margin-block-end: var(--spacing-sm);
     }
 
     .subtitle {
@@ -34,7 +34,7 @@
   &__controls {
     display: grid;
     gap: var(--spacing-xl);
-    margin-bottom: var(--spacing-xxl);
+    margin-block-end: var(--spacing-xxl);
   }
 }
 
@@ -47,13 +47,13 @@
   h2 {
     color: var(--text-color);
     font-size: var(--font-size-xl);
-    margin-bottom: var(--spacing-md);
+    margin-block-end: var(--spacing-md);
   }
 }
 
 // Theme Selection
 .theme-info {
-  margin-bottom: var(--spacing-md);
+  margin-block-end: var(--spacing-md);
 
   .current-theme-badge {
     display: inline-flex;
@@ -84,7 +84,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-md);
+  margin-block-end: var(--spacing-md);
 }
 
 .theme-btn {
@@ -103,8 +103,8 @@
   &::before {
     content: '';
     position: absolute;
-    left: 0;
-    top: 0;
+    inset-inline-start: 0;
+    inset-block-start: 0;
     width: 4px;
     height: 100%;
     background: var(--theme-color, var(--primary-color));
@@ -157,7 +157,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
+  margin-block-end: var(--spacing-md);
 }
 
 .color-input-group {
@@ -252,25 +252,25 @@
   > h2 {
     color: var(--text-color);
     font-size: var(--font-size-xxl);
-    margin-bottom: var(--spacing-xl);
+    margin-block-end: var(--spacing-xl);
   }
 }
 
 .preview-section {
-  margin-bottom: var(--spacing-xxl);
+  margin-block-end: var(--spacing-xxl);
 
   h3 {
     color: var(--text-color);
     font-size: var(--font-size-xl);
-    margin-bottom: var(--spacing-lg);
-    padding-bottom: var(--spacing-sm);
-    border-bottom: 2px solid var(--border-color);
+    margin-block-end: var(--spacing-lg);
+    padding-block-end: var(--spacing-sm);
+    border-block-end: 2px solid var(--border-color);
   }
 
   h4 {
     color: var(--text-color);
     font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-md);
+    margin-block-end: var(--spacing-md);
   }
 }
 
@@ -287,7 +287,7 @@
   &-color {
     height: 80px;
     border-radius: var(--border-radius-md);
-    margin-bottom: var(--spacing-sm);
+    margin-block-end: var(--spacing-sm);
     box-shadow: var(--shadow-md);
   }
 
@@ -328,17 +328,17 @@
   h2,
   h3 {
     color: var(--text-color);
-    margin-bottom: var(--spacing-sm);
+    margin-block-end: var(--spacing-sm);
   }
 
   .body-text {
     color: var(--text-color);
-    margin-bottom: var(--spacing-sm);
+    margin-block-end: var(--spacing-sm);
   }
 
   .secondary-text {
     color: var(--text-color-secondary);
-    margin-bottom: var(--spacing-sm);
+    margin-block-end: var(--spacing-sm);
   }
 
   .disabled-text {
@@ -348,7 +348,7 @@
 
 // Components
 .component-group {
-  margin-bottom: var(--spacing-xl);
+  margin-block-end: var(--spacing-xl);
 }
 
 .button-samples {
@@ -387,7 +387,7 @@
     padding: var(--spacing-md);
     background: var(--background-color-secondary);
     color: var(--text-color-secondary);
-    border-top: 1px solid var(--border-color);
+    border-block-start: 1px solid var(--border-color);
     font-size: var(--font-size-sm);
   }
 

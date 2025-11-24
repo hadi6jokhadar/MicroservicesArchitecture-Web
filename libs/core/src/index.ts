@@ -12,3 +12,7 @@ export * from './lib/file-manager';
 
 // Interceptors
 export * from './lib/interceptors';
+
+// Services
+export * from './lib/services/theme.service';
+export * from './lib/services/page-title.service';

@@ -28,13 +28,13 @@
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 
   // Z-Index
-  --z-index-dropdown: 1000;
-  --z-index-sticky: 1020;
-  --z-index-fixed: 1030;
-  --z-index-modal-backdrop: 1040;
-  --z-index-modal: 1050;
-  --z-index-popover: 1060;
-  --z-index-tooltip: 1070;
+  --z-index-dropdown: 100;
+  --z-index-sticky: 120;
+  --z-index-fixed: 130;
+  --z-index-modal-backdrop: 140;
+  --z-index-modal: 150;
+  --z-index-popover: 160;
+  --z-index-tooltip: 170;
 }
 
 // Light Theme
@@ -53,6 +53,7 @@
   --primary-color-700: #303f9f;
   --primary-color-800: #283593;
   --primary-color-900: #1a237e;
+  --primary-contrast-color: #ffffff;
 
   // Accent Colors
   --accent-color: #ff4081;
@@ -66,6 +67,7 @@
   --accent-color-700: #c2185b;
   --accent-color-800: #ad1457;
   --accent-color-900: #880e4f;
+  --accent-contrast-color: #ffffff;
 
   // Background Colors
   --background-color: #ffffff;
@@ -105,6 +107,7 @@
   --primary-color-700: #9fa8da;
   --primary-color-800: #c5cae9;
   --primary-color-900: #e8eaf6;
+  --primary-contrast-color: #000000;
 
   // Accent Colors
   --accent-color: #f48fb1;
@@ -118,6 +121,7 @@
   --accent-color-700: #f48fb1;
   --accent-color-800: #f8bbd0;
   --accent-color-900: #fce4ec;
+  --accent-contrast-color: #000000;
 
   // Background Colors
   --background-color: #121212;
@@ -164,6 +168,7 @@
   --primary-color-700: #1976d2;
   --primary-color-800: #1565c0;
   --primary-color-900: #0d47a1;
+  --primary-contrast-color: #ffffff;
 
   // Accent Colors - Cyan
   --accent-color: #00bcd4;
@@ -177,6 +182,7 @@
   --accent-color-700: #0097a7;
   --accent-color-800: #00838f;
   --accent-color-900: #006064;
+  --accent-contrast-color: #ffffff;
 
   // Background Colors
   --background-color: #ffffff;
@@ -217,6 +223,7 @@
   --primary-color-700: #388e3c;
   --primary-color-800: #2e7d32;
   --primary-color-900: #1b5e20;
+  --primary-contrast-color: #ffffff;
 
   // Accent Colors - Teal
   --accent-color: #009688;
@@ -230,6 +237,7 @@
   --accent-color-700: #00796b;
   --accent-color-800: #00695c;
   --accent-color-900: #004d40;
+  --accent-contrast-color: #ffffff;
 
   // Background Colors
   --background-color: #ffffff;
@@ -269,6 +277,7 @@
   --primary-color-700: #90caf9;
   --primary-color-800: #bbdefb;
   --primary-color-900: #e3f2fd;
+  --primary-contrast-color: #000000;
 
   // Accent Colors - Cyan (lighter for dark mode)
   --accent-color: #4dd0e1;
@@ -282,6 +291,7 @@
   --accent-color-700: #80deea;
   --accent-color-800: #b2ebf2;
   --accent-color-900: #e0f7fa;
+  --accent-contrast-color: #000000;
 
   // Background Colors
   --background-color: #121212;
@@ -327,6 +337,7 @@
   --primary-color-700: #a5d6a7;
   --primary-color-800: #c8e6c9;
   --primary-color-900: #e8f5e9;
+  --primary-contrast-color: #000000;
 
   // Accent Colors - Teal (lighter for dark mode)
   --accent-color: #4db6ac;
@@ -340,6 +351,7 @@
   --accent-color-700: #80cbc4;
   --accent-color-800: #b2dfdb;
   --accent-color-900: #e0f2f1;
+  --accent-contrast-color: #000000;
 
   // Background Colors
   --background-color: #121212;
@@ -368,4 +380,119 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+}
+
+// Ihsan Theme - Light
+[data-theme='ihsan'],
+[data-theme='ihsan-light'],
+[data-mode='light'][data-color-scheme='ihsan'] {
+  // Primary Colors - Bright Amber
+  --primary-color: #ffcd00;
+  --primary-color-50: #fffbeb;
+  --primary-color-100: #fff4c6;
+  --primary-color-200: #ffed9f;
+  --primary-color-300: #ffe578;
+  --primary-color-400: #ffde51;
+  --primary-color-500: #ffcd00;
+  --primary-color-600: #e6b800;
+  --primary-color-700: #cca300;
+  --primary-color-800: #b38e00;
+  --primary-color-900: #997900;
+  --primary-contrast-color: #000000;
+
+  // Accent Colors - Orange to Blaze Orange
+  --accent-color: #ffab02;
+  --accent-color-50: #fff8eb;
+  --accent-color-100: #ffedd1;
+  --accent-color-200: #ffe2b8;
+  --accent-color-300: #ffd79e;
+  --accent-color-400: #ffcc85;
+  --accent-color-500: #ffab02;
+  --accent-color-600: #ff9500;
+  --accent-color-700: #ff7f00;
+  --accent-color-800: #ff6900;
+  --accent-color-900: #ff5500;
+  --accent-contrast-color: #000000;
+
+  // Background Colors
+  --background-color: #ffffff;
+  --background-color-secondary: #fffbf5;
+  --background-color-tertiary: #fff8eb;
+
+  // Text Colors
+  --text-color: #000000;
+  --text-color-secondary: #4a4a4a;
+  --text-color-tertiary: #757575;
+  --text-color-disabled: #9e9e9e;
+
+  // Border Colors
+  --border-color: #ffe578;
+  --border-color-light: #fff4c6;
+  --border-color-dark: #ffcd00;
+
+  // Success/Error/Warning/Info
+  --success-color: #4caf50;
+  --error-color: #ff5500;
+  --warning-color: #ffab02;
+  --info-color: #ffcd00;
+}
+
+// Ihsan Theme - Dark
+[data-theme='ihsan-dark'],
+[data-mode='dark'][data-color-scheme='ihsan'] {
+  // Primary Colors - Bright Amber (adjusted for dark)
+  --primary-color: #ffcd00;
+  --primary-color-50: #997900;
+  --primary-color-100: #b38e00;
+  --primary-color-200: #cca300;
+  --primary-color-300: #e6b800;
+  --primary-color-400: #ffcd00;
+  --primary-color-500: #ffde51;
+  --primary-color-600: #ffe578;
+  --primary-color-700: #ffed9f;
+  --primary-color-800: #fff4c6;
+  --primary-color-900: #fffbeb;
+  --primary-contrast-color: #000000;
+
+  // Accent Colors - Orange to Blaze Orange
+  --accent-color: #ff9500;
+  --accent-color-50: #ff5500;
+  --accent-color-100: #ff6900;
+  --accent-color-200: #ff7f00;
+  --accent-color-300: #ff9500;
+  --accent-color-400: #ffab02;
+  --accent-color-500: #ffcc85;
+  --accent-color-600: #ffd79e;
+  --accent-color-700: #ffe2b8;
+  --accent-color-800: #ffedd1;
+  --accent-color-900: #fff8eb;
+  --accent-contrast-color: #000000;
+
+  // Background Colors
+  --background-color: #000000;
+  --background-color-secondary: #1a1a1a;
+  --background-color-tertiary: #2a2a2a;
+
+  // Text Colors
+  --text-color: #ffffff;
+  --text-color-secondary: #ffcd00;
+  --text-color-tertiary: #ffab02;
+  --text-color-disabled: #757575;
+
+  // Border Colors
+  --border-color: #ffab02;
+  --border-color-light: #997900;
+  --border-color-dark: #ffcd00;
+
+  // Success/Error/Warning/Info
+  --success-color: #66bb6a;
+  --error-color: #ff6900;
+  --warning-color: #ffab02;
+  --info-color: #ffcd00;
+
+  // Shadows (enhanced for dark mode)
+  --shadow-sm: 0 1px 2px 0 rgba(255, 205, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(255, 205, 0, 0.15);
+  --shadow-lg: 0 10px 15px -3px rgba(255, 205, 0, 0.2);
+  --shadow-xl: 0 20px 25px -5px rgba(255, 205, 0, 0.25);
 }

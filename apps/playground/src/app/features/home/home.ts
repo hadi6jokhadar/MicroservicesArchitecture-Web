@@ -40,6 +40,10 @@ import { MatIconModule } from '@angular/material/icon';
             <mat-icon>palette</mat-icon>
             Theme Tester
           </button>
+          <button mat-raised-button color="accent" routerLink="/admin">
+            <mat-icon>dashboard</mat-icon>
+            Admin Dashboard
+          </button>
         </mat-card-actions>
       </mat-card>
     </div>

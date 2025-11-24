@@ -1,0 +1,19 @@
+<div
+  class="theme-toggle"
+  role="button"
+  tabindex="0"
+  (click)="toggleTheme()"
+  (keyup.enter)="toggleTheme()"
+  (keyup.space)="toggleTheme()"
+>
+  <div class="toggle-track" [class.dark]="isDarkMode() === 'dark'">
+    <div class="toggle-thumb">
+      <mat-icon class="thumb-icon">
+        {{ isDarkMode() === 'dark' ? 'dark_mode' : 'light_mode' }}
+      </mat-icon>
+    </div>
+    <span class="toggle-label">
+      {{ isDarkMode() === 'dark' ? 'NIGHT MODE' : 'DAY MODE' }}
+    </span>
+  </div>
+</div>

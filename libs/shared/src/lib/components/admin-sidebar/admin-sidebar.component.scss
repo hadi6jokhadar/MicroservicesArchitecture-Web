@@ -1,0 +1,181 @@
+:host {
+  display: block;
+  position: fixed;
+  inset-inline-start: var(--spacing-md);
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  z-index: var(--z-index-sticky);
+  max-height: calc(100vh - 200px);
+
+  // Visibility toggle button
+  .visibility-toggle {
+    cursor: pointer;
+    position: fixed;
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+    font-size: 70px;
+    width: 70px;
+    height: 70px;
+    color: var(--text-color);
+    z-index: calc(var(--z-index-sticky) + 1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+    // When sidebar is visible - button at sidebar edge
+    inset-inline-start: -40px;
+    animation: pulse-horizontal 2s infinite ease-in-out;
+
+    &:hover {
+      transform: translateY(-50%) scale(1.1);
+      animation: none; // Stop animation on hover
+      mat-icon {
+        transform: rotate(180deg);
+      }
+    }
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+
+  @keyframes pulse-horizontal {
+    0% {
+      transform: translateY(-50%) translateX(0);
+    }
+    50% {
+      transform: translateY(-50%) translateX(6px);
+    }
+    100% {
+      transform: translateY(-50%) translateX(0);
+    }
+  }
+
+  .sidebar-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background-color: var(--primary-color);
+    border-radius: 40px;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    cursor: grab;
+    opacity: 1;
+    transform: translateX(0);
+
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+
+    &.dragging {
+      cursor: grabbing;
+      user-select: none;
+    }
+
+    &.expanded {
+      width: 200px;
+    }
+
+    // Hide animation
+    &.hidden {
+      opacity: 0;
+      transform: translateX(-100%);
+      pointer-events: none;
+    }
+
+    .toggle-container {
+      display: flex;
+      justify-content: center;
+      padding-block-end: var(--spacing-sm);
+      border-block-end: 2px solid rgba(0, 0, 0, 0.1);
+
+      .toggle-button {
+        width: 40px;
+        height: 40px;
+        color: #000;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: scale(1.1);
+        }
+
+        mat-icon {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+
+      .nav-item {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #000;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+
+        // When sidebar is collapsed (mat-icon-button)
+        &:not(.has-label) {
+          border-radius: 50%;
+          width: 48px;
+          height: 48px;
+        }
+
+        // When sidebar is expanded (mat-button)
+        &.has-label {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-md);
+          padding: var(--spacing-md);
+          min-height: 48px;
+          justify-content: flex-start;
+          border-radius: var(--border-radius-lg);
+        }
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.2);
+          transform: translateInlineStart(4px);
+        }
+
+        &.active {
+          background-color: rgba(255, 255, 255, 0.3);
+          box-shadow: var(--shadow-md);
+
+          .nav-icon {
+            transform: scale(1.1);
+          }
+        }
+
+        .nav-icon {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+          transition: transform 0.3s ease;
+          flex-shrink: 0;
+        }
+
+        .nav-label {
+          font-size: var(--font-size-md);
+          font-weight: 500;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+}
+
+::ng-deep .sidebar-tooltip {
+  padding-inline-start: 12px;
+}

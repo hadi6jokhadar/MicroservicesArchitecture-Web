@@ -17,6 +17,13 @@ export const routes: Routes = [
       import('@ihsan/shared').then((m) => m.ThemeTesterComponent),
   },
   {
+    path: 'admin',
+    loadComponent: () =>
+      import('./features/admin-dashboard/admin-dashboard').then(
+        (m) => m.AdminDashboardComponent
+      ),
+  },
+  {
     path: '**',
     redirectTo: 'home',
   },

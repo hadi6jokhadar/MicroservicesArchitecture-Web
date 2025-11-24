@@ -1,0 +1,111 @@
+:host {
+  display: block;
+}
+
+.theme-toggle {
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+
+  &:focus-visible {
+    .toggle-track {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+  }
+
+  .toggle-track {
+    position: relative;
+    width: 150px;
+    height: 50px;
+    border-radius: 25px;
+    background-color: var(--background-color-secondary);
+    border: 2px solid var(--border-color);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    overflow: hidden;
+
+    &.dark {
+      background-color: #000;
+      border-color: #000;
+
+      .toggle-thumb {
+        transform: translateX(0);
+        background-color: #fff;
+        border-color: #fff;
+
+        .thumb-icon {
+          color: #000;
+        }
+      }
+
+      .toggle-label {
+        transform: translateX(0);
+        color: #fff;
+        text-align: end;
+        width: 100%;
+        padding-inline-end: 10px;
+      }
+    }
+
+    &:not(.dark) {
+      .toggle-thumb {
+        transform: translateX(100px);
+        background-color: #fff;
+        border-color: var(--border-color);
+
+        .thumb-icon {
+          color: #000;
+        }
+      }
+
+      .toggle-label {
+        transform: translateX(10px);
+        color: var(--text-color);
+        text-align: start;
+        width: 100%;
+        padding-inline-start: 10px;
+      }
+    }
+
+    .toggle-thumb {
+      position: absolute;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      border: 2px solid;
+      z-index: 2;
+
+      .thumb-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .toggle-label {
+      position: absolute;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1;
+      white-space: nowrap;
+    }
+  }
+
+  &:hover .toggle-track {
+    transform: scale(1.02);
+  }
+
+  &:active .toggle-track {
+    transform: scale(0.98);
+  }
+}

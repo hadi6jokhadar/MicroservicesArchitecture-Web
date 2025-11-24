@@ -1,7 +1,11 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--primary-color-50) 0%, var(--accent-color-50) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-color-50) 0%,
+    var(--accent-color-50) 100%
+  );
   padding: var(--spacing-xl);
 
   .container {
@@ -35,7 +39,7 @@
         p {
           color: var(--text-color);
           font-size: var(--font-size-md);
-          margin-bottom: var(--spacing-md);
+          margin-block-end: var(--spacing-md);
         }
 
         ul {
@@ -62,17 +66,6 @@
           display: flex;
           align-items: center;
           gap: var(--spacing-xs);
-        }
-      }
-    }
-  }
-
-  // RTL Support
-  :host-context([dir='rtl']) & {
-    .container {
-      mat-card {
-        mat-card-actions {
-          flex-direction: row-reverse;
         }
       }
     }

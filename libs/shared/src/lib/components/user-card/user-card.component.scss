@@ -45,20 +45,8 @@
 
       button {
         mat-icon {
-          margin-right: var(--spacing-xs);
+          margin-inline-end: var(--spacing-xs);
         }
-      }
-    }
-  }
-
-  // RTL Support
-  :host-context([dir='rtl']) & {
-    mat-card-actions {
-      flex-direction: row-reverse;
-
-      button mat-icon {
-        margin-right: 0;
-        margin-left: var(--spacing-xs);
       }
     }
   }

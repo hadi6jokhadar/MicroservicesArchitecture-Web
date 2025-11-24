@@ -158,7 +158,7 @@ export class FileManagerService {
     return this._http.delete(`${this._adminUrl}/files/temp/all`);
   }
 
-  deleteOldTempFiles(olderThanDays: number = 7): Observable<object> {
+  deleteOldTempFiles(olderThanDays = 7): Observable<object> {
     const params = new HttpParams().set(
       'olderThanDays',
       olderThanDays.toString()
