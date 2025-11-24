@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ENVIRONMENT } from '../core/environment.token';
 import { IUser, IUpdateProfileRequest } from './models';
 
 @Injectable({
@@ -8,7 +9,8 @@ import { IUser, IUpdateProfileRequest } from './models';
 })
 export class UserService {
   private _http = inject(HttpClient);
-  private readonly _baseUrl = '/api/user';
+  private _env = inject(ENVIRONMENT);
+  private readonly _baseUrl = `${this._env.apiUrls.identity}/api/user`;
 
   getProfile(): Observable<IUser> {
     return this._http.get<IUser>(`${this._baseUrl}/profile`);

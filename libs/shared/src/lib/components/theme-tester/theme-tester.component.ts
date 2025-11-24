@@ -27,6 +27,7 @@ export class ThemeTesterComponent {
     { value: 'default', label: 'Default', color: '#3f51b5' },
     { value: 'blue', label: 'Blue', color: '#2196f3' },
     { value: 'green', label: 'Green', color: '#4caf50' },
+    { value: 'ihsan', label: 'Ihsan', color: '#ffcd00' },
   ];
 
   setColorScheme(scheme: string): void {

@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ENVIRONMENT } from '../core/environment.token';
 import { IUser, ICreateUserRequest, IUpdateUserRequest } from './models';
 
 @Injectable({
@@ -8,7 +9,8 @@ import { IUser, ICreateUserRequest, IUpdateUserRequest } from './models';
 })
 export class AdminService {
   private _http = inject(HttpClient);
-  private readonly _baseUrl = '/api/admin';
+  private _env = inject(ENVIRONMENT);
+  private readonly _baseUrl = `${this._env.apiUrls.identity}/api/admin`;
 
   getUsers(): Observable<IUser[]> {
     return this._http.get<IUser[]>(`${this._baseUrl}/users`);

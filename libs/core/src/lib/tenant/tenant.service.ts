@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ENVIRONMENT } from '../core/environment.token';
 import {
   ITenant,
   ITenantConfig,
@@ -13,8 +14,9 @@ import {
 })
 export class TenantService {
   private _http = inject(HttpClient);
-  private readonly _baseUrl = '/api/tenant';
-  private readonly _adminUrl = '/api/admin/tenant';
+  private _env = inject(ENVIRONMENT);
+  private readonly _baseUrl = `${this._env.apiUrls.tenant}/api/tenant`;
+  private readonly _adminUrl = `${this._env.apiUrls.tenant}/api/admin/tenant`;
 
   // Public Endpoints
   getTenantById(tenantId: string): Observable<ITenant> {

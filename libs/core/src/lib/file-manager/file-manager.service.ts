@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ENVIRONMENT } from '../core/environment.token';
 import {
   IFileManagerResponse,
   IFileManagerListRequest,
@@ -14,8 +15,9 @@ import {
 })
 export class FileManagerService {
   private _http = inject(HttpClient);
-  private readonly _baseUrl = '/api/filemanager';
-  private readonly _adminUrl = '/api/filemanager/admin';
+  private _env = inject(ENVIRONMENT);
+  private readonly _baseUrl = `${this._env.apiUrls.fileManager}/api/filemanager`;
+  private readonly _adminUrl = `${this._env.apiUrls.fileManager}/api/filemanager/admin`;
 
   // Tenant User Endpoints
   uploadFile(

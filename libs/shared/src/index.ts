@@ -7,6 +7,7 @@ export * from './lib/components/mode-toggle/mode-toggle.component';
 export * from './lib/components/error/error.component';
 export * from './lib/components/error/error.model';
 export * from './lib/interceptors/error.interceptor';
+export * from './lib/components/admin-login/admin-login.component';
 
 // Shared component (can be removed if not needed)
 export * from './lib/shared/shared';

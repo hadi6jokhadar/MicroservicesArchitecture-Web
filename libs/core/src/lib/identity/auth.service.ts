@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { ENVIRONMENT } from '../core/environment.token';
 import {
   IAuthResponse,
   ILoginRequest,
@@ -15,7 +16,8 @@ import {
 })
 export class AuthService {
   private _http = inject(HttpClient);
-  private readonly _baseUrl = '/api/auth';
+  private _env = inject(ENVIRONMENT);
+  private readonly _baseUrl = `${this._env.apiUrls.identity}/api/auth`;
 
   currentUser = signal<UserClass | null>(null);
 

@@ -24,6 +24,11 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'login',
+    loadComponent: () =>
+      import('@ihsan/shared').then((m) => m.AdminLoginComponent),
+  },
+  {
     path: '**',
     redirectTo: 'home',
   },

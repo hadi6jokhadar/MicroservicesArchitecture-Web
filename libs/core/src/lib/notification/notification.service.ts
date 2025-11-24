@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ENVIRONMENT } from '../core/environment.token';
 import {
   INotificationResponse,
   ISendNotificationResponse,
@@ -14,7 +15,8 @@ import {
 })
 export class NotificationService {
   private _http = inject(HttpClient);
-  private readonly _baseUrl = '/api/notifications';
+  private _env = inject(ENVIRONMENT);
+  private readonly _baseUrl = `${this._env.apiUrls.notification}/api/notifications`;
 
   // User Endpoints
   getUserNotifications(): Observable<INotificationResponse[]> {

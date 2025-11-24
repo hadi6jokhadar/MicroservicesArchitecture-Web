@@ -4,7 +4,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
-import { ErrorComponent, ErrorDialogData } from '@ihsan/shared';
+import { ErrorComponent } from '@ihsan/shared/lib/components/error/error.component';
+import { ErrorDialogData } from '@ihsan/shared/lib/components/error/error.model';
 
 @Component({
   selector: 'app-home',
@@ -45,6 +46,10 @@ import { ErrorComponent, ErrorDialogData } from '@ihsan/shared';
           <button mat-raised-button color="accent" routerLink="/admin">
             <mat-icon>dashboard</mat-icon>
             Admin Dashboard
+          </button>
+          <button mat-raised-button color="accent" routerLink="/login">
+            <mat-icon>login</mat-icon>
+            Admin Login
           </button>
         </mat-card-actions>
         <mat-card-actions class="actions-container">
