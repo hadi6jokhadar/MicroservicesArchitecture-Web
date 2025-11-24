@@ -1,0 +1,31 @@
+<h2 mat-dialog-title class="error-title">
+  <mat-icon>error_outline</mat-icon>
+  {{ data.title || 'Error' }}
+</h2>
+
+<mat-dialog-content class="error-content">
+  <p class="error-message">{{ data.message }}</p>
+
+  @if (hasValidationErrors) {
+  <div class="validation-errors">
+    @for (error of validationErrors; track error.key) {
+    <div class="validation-group">
+      <strong>{{ error.key }}:</strong>
+      <ul>
+        @for (msg of error.messages; track msg) {
+        <li>{{ msg }}</li>
+        }
+      </ul>
+    </div>
+    }
+  </div>
+  } @if (data.traceId) {
+  <div class="trace-id">
+    <small>Trace ID: {{ data.traceId }}</small>
+  </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+</mat-dialog-actions>
