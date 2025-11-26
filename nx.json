@@ -32,6 +32,7 @@
   ],
   "generators": {
     "@nx/angular:application": {
+      "e2eTestRunner": "none",
       "linter": "eslint",
       "style": "scss",
       "unitTestRunner": "none",
