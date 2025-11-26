@@ -13,15 +13,31 @@ export interface IUser {
   firstName: string;
   lastName: string;
   phoneNumber: string;
-  role: string;
-  isActive: boolean;
+  role: number; // Backend sends numeric role (1=User, 2=Admin, 3=SuperAdmin)
+  roleName: string; // Backend sends roleName as string
+  status: boolean; // Backend uses 'status'
+  isActive?: boolean; // Frontend computed property
   emailConfirmed: boolean;
-  phoneNumberConfirmed: boolean;
+  phoneNumberConfirmed?: boolean;
   created: string;
-  profilePictureId?: number;
-  profilePicture?: IFileManagerResponse;
-  verificationCode?: string;
-  data?: string;
+  lastLogin?: string | null;
+  profilePictureId?: number | null;
+  profilePicture?: IFileManagerResponse | null;
+  verificationCode?: string | null;
+  data?: string | null;
+  isArchived: boolean;
+  createdBy?: string | null;
+  lastModified?: string;
+  lastModifiedBy?: string | null;
+}
+
+export interface IPaginatedResponse<T> {
+  items: T[];
+  pageNumber: number;
+  totalPages: number;
+  totalCount: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
 }
 
 export class UserClass implements IUser {
@@ -30,16 +46,23 @@ export class UserClass implements IUser {
   firstName: string;
   lastName: string;
   phoneNumber: string;
-  role: string;
+  role: number;
+  roleName: string;
+  status: boolean;
   isActive: boolean;
   emailConfirmed: boolean;
-  phoneNumberConfirmed: boolean;
+  phoneNumberConfirmed?: boolean;
   created: string;
+  lastLogin?: string | null;
+  isArchived: boolean;
+  createdBy?: string | null;
+  lastModified?: string;
+  lastModifiedBy?: string | null;
 
-  profilePictureId?: number;
-  profilePicture?: IFileManagerResponse;
-  verificationCode?: string;
-  data?: string;
+  profilePictureId?: number | null;
+  profilePicture?: IFileManagerResponse | null;
+  verificationCode?: string | null;
+  data?: string | null;
 
   constructor(data: Partial<IUser> = {}) {
     this.id = data.id || 0;
@@ -47,11 +70,19 @@ export class UserClass implements IUser {
     this.firstName = data.firstName || '';
     this.lastName = data.lastName || '';
     this.phoneNumber = data.phoneNumber || '';
-    this.role = data.role || '';
-    this.isActive = data.isActive ?? true;
+    this.role = data.role || 1;
+    this.roleName = data.roleName || 'User';
+    // Map backend 'status' to frontend 'isActive'
+    this.status = data.status ?? true;
+    this.isActive = data.status ?? true;
+    this.isArchived = data.isArchived ?? false;
     this.emailConfirmed = data.emailConfirmed ?? false;
-    this.phoneNumberConfirmed = data.phoneNumberConfirmed ?? false;
+    this.phoneNumberConfirmed = data.phoneNumberConfirmed;
     this.created = data.created || '';
+    this.lastLogin = data.lastLogin;
+    this.createdBy = data.createdBy;
+    this.lastModified = data.lastModified;
+    this.lastModifiedBy = data.lastModifiedBy;
     this.profilePictureId = data.profilePictureId;
     this.profilePicture = data.profilePicture;
     this.verificationCode = data.verificationCode;
@@ -60,20 +91,20 @@ export class UserClass implements IUser {
 }
 
 export interface IAuthResponse {
-  token: string;
+  accessToken: string;
   refreshToken: string;
   refreshTokenExpiryTime: string;
   user: IUser;
 }
 
 export class AuthResponseClass implements IAuthResponse {
-  token: string;
+  accessToken: string;
   refreshToken: string;
   refreshTokenExpiryTime: string;
   user: IUser;
 
   constructor(data: Partial<IAuthResponse> = {}) {
-    this.token = data.token || '';
+    this.accessToken = data.accessToken || '';
     this.refreshToken = data.refreshToken || '';
     this.refreshTokenExpiryTime = data.refreshTokenExpiryTime || '';
     this.user = data.user ? new UserClass(data.user) : new UserClass();
@@ -94,7 +125,7 @@ export interface IRegisterRequest {
 }
 
 export interface IRefreshTokenRequest {
-  token: string;
+  accessToken: string;
   refreshToken: string;
 }
 

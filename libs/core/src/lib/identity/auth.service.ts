@@ -88,27 +88,22 @@ export class AuthService {
   }
 
   private _handleAuthResponse(response: IAuthResponse) {
-    localStorage.setItem('token', response.token);
+    localStorage.setItem('token', response.accessToken);
     localStorage.setItem('refreshToken', response.refreshToken);
-    localStorage.setItem('user', JSON.stringify(response.user));
     this.currentUser.set(new UserClass(response.user));
   }
 
   private _clearAuth() {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
     this.currentUser.set(null);
   }
 
   private _loadUserFromStorage() {
-    const userJson = localStorage.getItem('user');
-    if (userJson) {
-      try {
-        this.currentUser.set(new UserClass(JSON.parse(userJson)));
-      } catch {
-        this._clearAuth();
-      }
+    // Only load user if token exists
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.currentUser.set(null);
     }
   }
 
