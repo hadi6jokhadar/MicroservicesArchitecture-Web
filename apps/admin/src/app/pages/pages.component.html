@@ -1,55 +1,12 @@
 <div class="pages-container">
-  <div class="p-6">
-    <!-- Test Card with Button -->
-    <z-card
-      [zTitle]="'Product Management'"
-      [zDescription]="'Testing @ngzard/ui card and button components'"
-    >
-      <div class="space-y-4">
-        <p>
-          Welcome to the Product Management section. Below you can see some
-          sample products.
-        </p>
-
-        <div class="flex gap-2">
-          <button z-button>View Products</button>
-          <button z-button [zType]="'outline'">Add Product</button>
-          <button z-button [zType]="'ghost'">Cancel</button>
-        </div>
-      </div>
-    </z-card>
-
-    <!-- Products Display Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-      @for (product of products; track product.id) {
-      <z-card [zTitle]="product.name" [zDescription]="product.category">
-        <div class="space-y-2">
-          <p class="text-sm">
-            <span class="font-semibold">Price:</span>
-            {{ product.price | currency }}
-          </p>
-          <p class="text-sm">
-            <span class="font-semibold">Quantity:</span> {{ product.quantity }}
-          </p>
-          <p class="text-sm">
-            <span class="font-semibold">Status:</span>
-            <span
-              [class]="
-                product.status === 'In Stock'
-                  ? 'text-green-600'
-                  : 'text-red-600'
-              "
-            >
-              {{ product.status }}
-            </span>
-          </p>
-          <div class="flex gap-2 mt-4">
-            <button z-button [zType]="'outline'" [zSize]="'sm'">Edit</button>
-            <button z-button [zType]="'ghost'" [zSize]="'sm'">Delete</button>
-          </div>
-        </div>
-      </z-card>
-      }
-    </div>
-  </div>
+  <shared-sidebar
+    [pages]="sidebarPages()"
+    [currentUser]="currentUser()"
+    [appTitle]="appTitle()"
+    (pageClicked)="onPageClick($event)"
+    (darkModeToggled)="toggleDarkMode()"
+  />
+  <main class="main-content">
+    <router-outlet />
+  </main>
 </div>
