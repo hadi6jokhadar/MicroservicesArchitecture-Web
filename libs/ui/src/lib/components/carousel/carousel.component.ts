@@ -11,7 +11,12 @@ import {
 } from '@angular/core';
 
 import { type ClassValue } from 'clsx';
-import type { EmblaCarouselType, EmblaEventType, EmblaPluginType, EmblaOptionsType } from 'embla-carousel';
+import type {
+  EmblaCarouselType,
+  EmblaEventType,
+  EmblaPluginType,
+  EmblaOptionsType,
+} from 'embla-carousel';
 import { EmblaCarouselDirective } from 'embla-carousel-angular';
 
 import {
@@ -21,13 +26,18 @@ import {
   ZardCarouselControlsVariants,
   ZardCarouselOrientationVariants,
 } from './carousel.variants';
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import { ZardButtonComponent } from '../button/button.component';
 import { ZardIconComponent } from '../icon/icon.component';
 
 @Component({
   selector: 'z-carousel',
-  imports: [CommonModule, EmblaCarouselDirective, ZardButtonComponent, ZardIconComponent],
+  imports: [
+    CommonModule,
+    EmblaCarouselDirective,
+    ZardButtonComponent,
+    ZardIconComponent,
+  ],
   template: `
     <div class="relative">
       <div
@@ -44,11 +54,10 @@ import { ZardIconComponent } from '../icon/icon.component';
       >
         <ng-content />
 
-        @let controls = zControls();
-        @if (controls === 'button') {
-          <ng-container *ngTemplateOutlet="buttonControls" />
+        @let controls = zControls(); @if (controls === 'button') {
+        <ng-container *ngTemplateOutlet="buttonControls" />
         } @else if (controls === 'dot') {
-          <ng-container *ngTemplateOutlet="dotControls" />
+        <ng-container *ngTemplateOutlet="dotControls" />
         }
       </div>
     </div>
@@ -81,19 +90,25 @@ import { ZardIconComponent } from '../icon/icon.component';
     <ng-template #dotControls>
       <div class="mt-2 flex justify-center gap-1">
         @for (dot of dots(); track index; let index = $index) {
-          <span
-            [class]="index === selectedIndex() ? 'cursor-default' : 'cursor-pointer'"
-            role="button"
-            tabindex="0"
-            (click)="goTo(index)"
-          >
-            <z-icon
-              zType="circle-small"
-              [zStrokeWidth]="1"
-              class="block size-3"
-              [class]="index === selectedIndex() ? 'fill-primary stroke-primary' : 'fill-border stroke-border'"
-            />
-          </span>
+        <span
+          [class]="
+            index === selectedIndex() ? 'cursor-default' : 'cursor-pointer'
+          "
+          role="button"
+          tabindex="0"
+          (click)="goTo(index)"
+        >
+          <z-icon
+            zType="circle-small"
+            [zStrokeWidth]="1"
+            class="block size-3"
+            [class]="
+              index === selectedIndex()
+                ? 'fill-primary stroke-primary'
+                : 'fill-border stroke-border'
+            "
+          />
+        </span>
         }
       </div>
     </ng-template>
@@ -119,12 +134,22 @@ export class ZardCarouselComponent {
   protected readonly canScrollPrev = signal<boolean>(false);
   protected readonly canScrollNext = signal<boolean>(false);
   protected readonly scrollSnaps = signal<number[]>([]);
-  protected readonly subscribeToEvents: EmblaEventType[] = ['init', 'select', 'reInit'];
+  protected readonly subscribeToEvents: EmblaEventType[] = [
+    'init',
+    'select',
+    'reInit',
+  ];
   protected readonly options = computed(
-    () => ({ ...this.zOptions(), axis: this.zOrientation() === 'horizontal' ? 'x' : 'y' }) as EmblaOptionsType,
+    () =>
+      ({
+        ...this.zOptions(),
+        axis: this.zOrientation() === 'horizontal' ? 'x' : 'y',
+      } as EmblaOptionsType)
   );
 
-  protected readonly dots = computed(() => new Array<string>(this.scrollSnaps().length).fill('.'));
+  protected readonly dots = computed(() =>
+    new Array<string>(this.scrollSnaps().length).fill('.')
+  );
 
   #index = -1;
 
@@ -186,14 +211,21 @@ export class ZardCarouselComponent {
   }
 
   protected readonly classes = computed(() =>
-    mergeClasses(carouselVariants({ zOrientation: this.zOrientation() }), this.class()),
+    mergeClasses(
+      carouselVariants({ zOrientation: this.zOrientation() }),
+      this.class()
+    )
   );
 
   protected readonly prevBtnClasses = computed(() =>
-    mergeClasses(carouselPreviousButtonVariants({ zOrientation: this.zOrientation() })),
+    mergeClasses(
+      carouselPreviousButtonVariants({ zOrientation: this.zOrientation() })
+    )
   );
 
   protected readonly nextBtnClasses = computed(() =>
-    mergeClasses(carouselNextButtonVariants({ zOrientation: this.zOrientation() })),
+    mergeClasses(
+      carouselNextButtonVariants({ zOrientation: this.zOrientation() })
+    )
   );
 }

@@ -1,4 +1,9 @@
-import { Overlay, OverlayModule, OverlayPositionBuilder, type OverlayRef } from '@angular/cdk/overlay';
+import {
+  Overlay,
+  OverlayModule,
+  OverlayPositionBuilder,
+  type OverlayRef,
+} from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { isPlatformBrowser, NgTemplateOutlet } from '@angular/common';
 import {
@@ -22,9 +27,12 @@ import {
 
 import { merge, Subject, take, takeUntil } from 'rxjs';
 
-import { TOOLTIP_POSITIONS_MAP, type ZardTooltipPositions } from './tooltip-positions';
+import {
+  TOOLTIP_POSITIONS_MAP,
+  type ZardTooltipPositions,
+} from './tooltip-positions';
 import { tooltipVariants } from './tooltip.variants';
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 
 export type ZardTooltipTriggers = 'click' | 'hover';
 
@@ -66,7 +74,9 @@ export class ZardTooltipDirective implements OnInit, OnDestroy {
     this.setTriggers();
 
     if (isPlatformBrowser(this.platformId)) {
-      const positionStrategy = this.overlayPositionBuilder.flexibleConnectedTo(this.elementRef).withPositions([TOOLTIP_POSITIONS_MAP[this.zPosition()]]);
+      const positionStrategy = this.overlayPositionBuilder
+        .flexibleConnectedTo(this.elementRef)
+        .withPositions([TOOLTIP_POSITIONS_MAP[this.zPosition()]]);
       this.overlayRef = this.overlay.create({ positionStrategy });
     }
   }
@@ -86,7 +96,11 @@ export class ZardTooltipDirective implements OnInit, OnDestroy {
     this.componentRef = this.overlayRef?.attach(tooltipPortal);
     if (!this.componentRef) return;
 
-    this.componentRef.instance.setProps(tooltipText, this.zPosition(), this.zTrigger());
+    this.componentRef.instance.setProps(
+      tooltipText,
+      this.zPosition(),
+      this.zTrigger()
+    );
     this.componentRef.instance.state.set('opened');
 
     this.componentRef.instance.onLoad$.pipe(take(1)).subscribe(() => {
@@ -98,7 +112,9 @@ export class ZardTooltipDirective implements OnInit, OnDestroy {
 
           this.overlayRef
             .outsidePointerEvents()
-            .pipe(takeUntil(merge(this.destroy$, this.overlayRef.detachments())))
+            .pipe(
+              takeUntil(merge(this.destroy$, this.overlayRef.detachments()))
+            )
             .subscribe(() => this.hide());
           break;
         case 'hover':
@@ -109,7 +125,7 @@ export class ZardTooltipDirective implements OnInit, OnDestroy {
               event.preventDefault();
               this.hide();
             },
-            { once: true },
+            { once: true }
           );
           break;
       }
@@ -139,10 +155,14 @@ export class ZardTooltipDirective implements OnInit, OnDestroy {
   private setTriggers() {
     const showTrigger = this.zTrigger() === 'click' ? 'click' : 'mouseenter';
 
-    this.renderer.listen(this.elementRef.nativeElement, showTrigger, (event: Event) => {
-      event.preventDefault();
-      this.show();
-    });
+    this.renderer.listen(
+      this.elementRef.nativeElement,
+      showTrigger,
+      (event: Event) => {
+        event.preventDefault();
+        this.show();
+      }
+    );
   }
 }
 
@@ -151,9 +171,9 @@ export class ZardTooltipDirective implements OnInit, OnDestroy {
   imports: [NgTemplateOutlet],
   template: `
     @if (templateContent) {
-      <ng-container *ngTemplateOutlet="templateContent"></ng-container>
+    <ng-container *ngTemplateOutlet="templateContent"></ng-container>
     } @else if (stringContent) {
-      {{ stringContent }}
+    {{ stringContent }}
     }
   `,
   host: {
@@ -188,7 +208,11 @@ export class ZardTooltipComponent implements OnInit, OnDestroy {
     this.onLoadSubject$.complete();
   }
 
-  setProps(text: string | TemplateRef<void> | null, position: ZardTooltipPositions, trigger: ZardTooltipTriggers) {
+  setProps(
+    text: string | TemplateRef<void> | null,
+    position: ZardTooltipPositions,
+    trigger: ZardTooltipTriggers
+  ) {
     if (text) this.text = text;
     this.position.set(position);
     this.trigger.set(trigger);

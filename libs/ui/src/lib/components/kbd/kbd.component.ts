@@ -1,9 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 
 import type { ClassValue } from 'clsx';
 
 import { kbdVariants } from './kbd.variants';
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 
 @Component({
   selector: 'z-kbd, [z-kbd]',
@@ -19,5 +25,7 @@ import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
 export class ZardKbdComponent {
   readonly class = input<ClassValue>('');
 
-  protected readonly classes = computed(() => mergeClasses(kbdVariants(), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(kbdVariants(), this.class())
+  );
 }

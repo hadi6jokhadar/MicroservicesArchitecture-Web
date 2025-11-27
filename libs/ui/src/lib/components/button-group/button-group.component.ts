@@ -1,9 +1,22 @@
-import { ChangeDetectionStrategy, Component, computed, Directive, inject, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  Directive,
+  inject,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 
 import { type ClassValue } from 'clsx';
 
-import { buttonGroupDividerVariants, buttonGroupTextVariants, buttonGroupVariants, type ZardButtonGroupVariants } from './button-group.variants';
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import {
+  buttonGroupDividerVariants,
+  buttonGroupTextVariants,
+  buttonGroupVariants,
+  type ZardButtonGroupVariants,
+} from './button-group.variants';
+import { mergeClasses } from '../../utils';
 import { ZardDividerComponent } from '../divider/divider.component';
 import { type ZardDividerVariants } from '../divider/divider.variants';
 
@@ -20,7 +33,8 @@ import { type ZardDividerVariants } from '../divider/divider.variants';
   template: `<ng-content />`,
 })
 export class ZardButtonGroupComponent {
-  readonly zOrientation = input<Required<ZardButtonGroupVariants>['zOrientation']>('horizontal');
+  readonly zOrientation =
+    input<Required<ZardButtonGroupVariants>['zOrientation']>('horizontal');
   readonly class = input<ClassValue>('');
 
   protected readonly classes = computed(() =>
@@ -28,8 +42,8 @@ export class ZardButtonGroupComponent {
       buttonGroupVariants({
         zOrientation: this.zOrientation(),
       }),
-      this.class(),
-    ),
+      this.class()
+    )
   );
 }
 
@@ -42,7 +56,12 @@ export class ZardButtonGroupComponent {
   host: {
     class: 'contents',
   },
-  template: `<z-divider [class]="classes()" zSpacing="none" aria-hidden="true" [zOrientation]="orientation()" />`,
+  template: `<z-divider
+    [class]="classes()"
+    zSpacing="none"
+    aria-hidden="true"
+    [zOrientation]="orientation()"
+  />`,
 })
 export class ZardButtonGroupDividerComponent {
   readonly zOrientation = input<ZardDividerVariants['zOrientation']>(null);
@@ -58,7 +77,9 @@ export class ZardButtonGroupDividerComponent {
       return this.zOrientation();
     }
 
-    return this.parent.zOrientation() === 'vertical' ? 'horizontal' : 'vertical';
+    return this.parent.zOrientation() === 'vertical'
+      ? 'horizontal'
+      : 'vertical';
   });
 
   protected readonly classes = computed(() =>
@@ -66,8 +87,8 @@ export class ZardButtonGroupDividerComponent {
       buttonGroupDividerVariants({
         zOrientation: this.orientation(),
       }),
-      this.class(),
-    ),
+      this.class()
+    )
   );
 }
 
@@ -81,5 +102,7 @@ export class ZardButtonGroupDividerComponent {
 export class ZardButtonGroupTextDirective {
   readonly class = input<ClassValue>('');
 
-  protected readonly classes = computed(() => mergeClasses(buttonGroupTextVariants(), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(buttonGroupTextVariants(), this.class())
+  );
 }

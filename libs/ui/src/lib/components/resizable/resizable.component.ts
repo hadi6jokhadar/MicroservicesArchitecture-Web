@@ -19,9 +19,12 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
-import { mergeClasses, transform } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses, transform } from '../../utils';
 import { ZardResizablePanelComponent } from './resizable-panel.component';
-import { resizableVariants, type ZardResizableVariants } from './resizable.variants';
+import {
+  resizableVariants,
+  type ZardResizableVariants,
+} from './resizable.variants';
 
 export interface ZardResizeEvent {
   sizes: number[];
@@ -60,7 +63,9 @@ export class ZardResizableComponent implements AfterContentInit, OnDestroy {
   readonly panelSizes = signal<number[]>([]);
   protected readonly isResizing = signal(false);
   protected readonly activeHandleIndex = signal<number | null>(null);
-  protected readonly classes = computed(() => mergeClasses(resizableVariants({ zLayout: this.zLayout() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(resizableVariants({ zLayout: this.zLayout() }), this.class())
+  );
 
   ngAfterContentInit(): void {
     this.initializePanelSizes();
@@ -95,7 +100,7 @@ export class ZardResizableComponent implements AfterContentInit, OnDestroy {
     if (totalPanels === 0) return;
 
     const containerSize = this.getContainerSize();
-    const sizes = panels.map(panel => {
+    const sizes = panels.map((panel) => {
       const defaultSize = panel.zDefaultSize();
       if (defaultSize !== undefined) {
         return this.convertToPercentage(defaultSize, containerSize);
@@ -148,7 +153,12 @@ export class ZardResizableComponent implements AfterContentInit, OnDestroy {
     }
   }
 
-  private handleResize(event: MouseEvent | TouchEvent, handleIndex: number, startPosition: number, startSizes: number[]): void {
+  private handleResize(
+    event: MouseEvent | TouchEvent,
+    handleIndex: number,
+    startPosition: number,
+    startSizes: number[]
+  ): void {
     const currentPosition = this.getEventPosition(event);
     const delta = currentPosition - startPosition;
     const containerSize = this.getContainerSize();
@@ -186,7 +196,10 @@ export class ZardResizableComponent implements AfterContentInit, OnDestroy {
         this.updatePanelStyles();
       }
 
-      this.zResize.emit({ sizes: newSizes, layout: this.zLayout() ?? 'horizontal' });
+      this.zResize.emit({
+        sizes: newSizes,
+        layout: this.zLayout() ?? 'horizontal',
+      });
     }
   }
 
@@ -249,7 +262,10 @@ export class ZardResizableComponent implements AfterContentInit, OnDestroy {
 
     if (isCollapsed) {
       const containerSize = this.getContainerSize();
-      const defaultSize = this.convertToPercentage(panel.zDefaultSize() ?? 100 / panels.length, containerSize);
+      const defaultSize = this.convertToPercentage(
+        panel.zDefaultSize() ?? 100 / panels.length,
+        containerSize
+      );
 
       sizes[index] = defaultSize;
 

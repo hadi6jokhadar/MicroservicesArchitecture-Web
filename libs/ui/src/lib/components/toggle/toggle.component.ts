@@ -1,9 +1,20 @@
-import { ChangeDetectionStrategy, Component, forwardRef, HostListener, ViewEncapsulation, signal, computed, input, output, linkedSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  forwardRef,
+  HostListener,
+  ViewEncapsulation,
+  signal,
+  computed,
+  input,
+  output,
+  linkedSignal,
+} from '@angular/core';
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import type { ClassValue } from 'clsx';
 
 import { toggleVariants, type ZardToggleVariants } from './toggle.variants';
-import { mergeClasses, transform } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses, transform } from '../../utils';
 
 type OnTouchedType = () => void;
 type OnChangeType = (value: boolean) => void;
@@ -49,11 +60,18 @@ export class ZardToggleComponent implements ControlValueAccessor {
 
   private readonly isUsingNgModel = signal(false);
 
-  protected readonly value = linkedSignal(() => this.zValue() ?? this.zDefault());
+  protected readonly value = linkedSignal(
+    () => this.zValue() ?? this.zDefault()
+  );
 
   protected readonly disabled = linkedSignal(() => this.zDisabled());
 
-  protected readonly classes = computed(() => mergeClasses(toggleVariants({ zSize: this.zSize(), zType: this.zType() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(
+      toggleVariants({ zSize: this.zSize(), zType: this.zType() }),
+      this.class()
+    )
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   private onTouched: OnTouchedType = () => {};

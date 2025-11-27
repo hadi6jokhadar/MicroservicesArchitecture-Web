@@ -25,7 +25,7 @@ import {
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { clamp, convertValueToPercentage, roundToStep } from 'libs\ui\src\lib\utils/number';
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import { sliderOrientationVariants, sliderRangeVariants, sliderThumbVariants, sliderTrackVariants, sliderVariants } from './slider.variants';
 
 import type { ClassValue } from 'clsx';

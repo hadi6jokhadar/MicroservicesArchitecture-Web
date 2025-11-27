@@ -1,10 +1,18 @@
-import { type AfterContentInit, ChangeDetectionStrategy, Component, computed, contentChildren, input, ViewEncapsulation } from '@angular/core';
+import {
+  type AfterContentInit,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  contentChildren,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 
 import type { ClassValue } from 'clsx';
 
 import { ZardAccordionItemComponent } from './accordion-item.component';
 import { accordionVariants } from './accordion.variants';
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 
 @Component({
   selector: 'z-accordion',
@@ -25,24 +33,26 @@ export class ZardAccordionComponent implements AfterContentInit {
   readonly zCollapsible = input<boolean>(true);
   readonly zDefaultValue = input<string | string[]>('');
 
-  protected readonly classes = computed(() => mergeClasses(accordionVariants(), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(accordionVariants(), this.class())
+  );
 
   ngAfterContentInit(): void {
     setTimeout(() => {
-      this.items().forEach(item => {
+      this.items().forEach((item) => {
         item.accordion = this;
       });
 
       const defaultValue = this.zDefaultValue();
       if (defaultValue) {
         if (typeof defaultValue === 'string') {
-          const item = this.items().find(i => i.zValue() === defaultValue);
+          const item = this.items().find((i) => i.zValue() === defaultValue);
           if (item) {
             item.setOpen(true);
           }
         } else if (Array.isArray(defaultValue)) {
-          defaultValue.forEach(value => {
-            const item = this.items().find(i => i.zValue() === value);
+          defaultValue.forEach((value) => {
+            const item = this.items().find((i) => i.zValue() === value);
             if (item) {
               item.setOpen(true);
             }
@@ -60,7 +70,7 @@ export class ZardAccordionComponent implements AfterContentInit {
         return;
       }
 
-      this.items().forEach(item => {
+      this.items().forEach((item) => {
         const shouldBeOpen = item === selectedItem ? !item.isOpen() : false;
         item.setOpen(shouldBeOpen);
       });
@@ -78,7 +88,7 @@ export class ZardAccordionComponent implements AfterContentInit {
 
   private countOpenItems(): number {
     let count = 0;
-    this.items().forEach(item => {
+    this.items().forEach((item) => {
       if (item.isOpen()) {
         count++;
       }

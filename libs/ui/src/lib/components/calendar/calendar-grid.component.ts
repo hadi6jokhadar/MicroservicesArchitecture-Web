@@ -1,9 +1,24 @@
-import { ChangeDetectionStrategy, Component, computed, ElementRef, HostListener, input, output, signal, viewChild, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  HostListener,
+  input,
+  output,
+  signal,
+  viewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import type { CalendarDay } from './calendar.types';
 import { getDayAriaLabel, getDayId } from './calendar.utils';
-import { calendarDayButtonVariants, calendarDayVariants, calendarWeekdayVariants } from './calendar.variants';
+import {
+  calendarDayButtonVariants,
+  calendarDayVariants,
+  calendarWeekdayVariants,
+} from './calendar.variants';
 
 @Component({
   selector: 'z-calendar-grid',
@@ -19,36 +34,40 @@ import { calendarDayButtonVariants, calendarDayVariants, calendarWeekdayVariants
       <!-- Weekdays Header -->
       <div class="grid grid-cols-7 text-center w-fit" role="row">
         @for (weekday of weekdays; track $index) {
-          <div [class]="weekdayClasses()" role="columnheader">
-            {{ weekday }}
-          </div>
+        <div [class]="weekdayClasses()" role="columnheader">
+          {{ weekday }}
+        </div>
         }
       </div>
 
       <!-- Calendar Days Grid -->
-      <div class="grid grid-cols-7 gap-0 mt-2 auto-rows-min w-fit" role="rowgroup">
+      <div
+        class="grid grid-cols-7 gap-0 mt-2 auto-rows-min w-fit"
+        role="rowgroup"
+      >
         @for (day of calendarDays(); track day.date.getTime(); let i = $index) {
-          <div [class]="dayContainerClasses()" role="gridcell">
-            <button
-              [id]="getDayId(i)"
-              [class]="dayButtonClasses(day)"
-              (click)="onDayClick(day.date, i)"
-              [disabled]="day.isDisabled"
-              [attr.aria-selected]="day.isSelected"
-              [attr.aria-label]="getDayAriaLabel(day)"
-              [attr.tabindex]="getFocusedDayIndex() === i ? 0 : -1"
-              role="button"
-            >
-              {{ day.date.getDate() }}
-            </button>
-          </div>
+        <div [class]="dayContainerClasses()" role="gridcell">
+          <button
+            [id]="getDayId(i)"
+            [class]="dayButtonClasses(day)"
+            (click)="onDayClick(day.date, i)"
+            [disabled]="day.isDisabled"
+            [attr.aria-selected]="day.isSelected"
+            [attr.aria-label]="getDayAriaLabel(day)"
+            [attr.tabindex]="getFocusedDayIndex() === i ? 0 : -1"
+            role="button"
+          >
+            {{ day.date.getDate() }}
+          </button>
+        </div>
         }
       </div>
     </div>
   `,
 })
 export class ZardCalendarGridComponent {
-  private readonly gridContainer = viewChild.required<ElementRef<HTMLElement>>('gridContainer');
+  private readonly gridContainer =
+    viewChild.required<ElementRef<HTMLElement>>('gridContainer');
 
   // Inputs
   readonly calendarDays = input.required<CalendarDay[]>();
@@ -65,9 +84,13 @@ export class ZardCalendarGridComponent {
 
   private readonly focusedDayIndex = signal<number>(-1);
 
-  protected readonly weekdayClasses = computed(() => mergeClasses(calendarWeekdayVariants()));
+  protected readonly weekdayClasses = computed(() =>
+    mergeClasses(calendarWeekdayVariants())
+  );
 
-  protected readonly dayContainerClasses = computed(() => mergeClasses(calendarDayVariants()));
+  protected readonly dayContainerClasses = computed(() =>
+    mergeClasses(calendarDayVariants())
+  );
 
   protected dayButtonClasses(day: CalendarDay): string {
     return mergeClasses(
@@ -79,7 +102,7 @@ export class ZardCalendarGridComponent {
         rangeStart: day.isRangeStart ?? false,
         rangeEnd: day.isRangeEnd ?? false,
         inRange: day.isInRange ?? false,
-      }),
+      })
     );
   }
 
@@ -103,14 +126,18 @@ export class ZardCalendarGridComponent {
 
     // Default focus to selected date or today
     const days = this.calendarDays();
-    const selectedIndex = days.findIndex(day => day.isSelected);
+    const selectedIndex = days.findIndex((day) => day.isSelected);
     if (selectedIndex >= 0) return selectedIndex;
 
-    const todayIndex = days.findIndex(day => day.isToday && day.isCurrentMonth);
+    const todayIndex = days.findIndex(
+      (day) => day.isToday && day.isCurrentMonth
+    );
     if (todayIndex >= 0) return todayIndex;
 
     // Fall back to first enabled day of current month
-    const firstCurrentMonthIndex = days.findIndex(day => day.isCurrentMonth && !day.isDisabled);
+    const firstCurrentMonthIndex = days.findIndex(
+      (day) => day.isCurrentMonth && !day.isDisabled
+    );
     return firstCurrentMonthIndex >= 0 ? firstCurrentMonthIndex : 0;
   }
 
@@ -159,11 +186,20 @@ export class ZardCalendarGridComponent {
         break;
       case 'Home':
         event.preventDefault();
-        newIndex = this.findEnabledInRange(Math.floor(currentIndex / 7) * 7, Math.floor(currentIndex / 7) * 7 + 6, days);
+        newIndex = this.findEnabledInRange(
+          Math.floor(currentIndex / 7) * 7,
+          Math.floor(currentIndex / 7) * 7 + 6,
+          days
+        );
         break;
       case 'End':
         event.preventDefault();
-        newIndex = this.findEnabledInRange(Math.floor(currentIndex / 7) * 7 + 6, Math.floor(currentIndex / 7) * 7, days, true);
+        newIndex = this.findEnabledInRange(
+          Math.floor(currentIndex / 7) * 7 + 6,
+          Math.floor(currentIndex / 7) * 7,
+          days,
+          true
+        );
         break;
       case 'PageUp':
         event.preventDefault();
@@ -199,7 +235,11 @@ export class ZardCalendarGridComponent {
     }
   }
 
-  private navigate(currentIndex: number, step: number, days: CalendarDay[]): number | null {
+  private navigate(
+    currentIndex: number,
+    step: number,
+    days: CalendarDay[]
+  ): number | null {
     const targetIndex = currentIndex + step;
 
     // If within bounds, find enabled day
@@ -227,7 +267,12 @@ export class ZardCalendarGridComponent {
     return null;
   }
 
-  private findEnabledInRange(start: number, fallback: number, days: CalendarDay[], reverse = false): number {
+  private findEnabledInRange(
+    start: number,
+    fallback: number,
+    days: CalendarDay[],
+    reverse = false
+  ): number {
     const clampedStart = Math.max(0, Math.min(start, days.length - 1));
     const clampedFallback = Math.max(0, Math.min(fallback, days.length - 1));
 
@@ -257,7 +302,9 @@ export class ZardCalendarGridComponent {
   private setFocus(index: number): void {
     this.focusedDayIndex.set(index);
     setTimeout(() => {
-      const dayElement = this.gridContainer()?.nativeElement.querySelector(`#${getDayId(index)}`) as HTMLElement;
+      const dayElement = this.gridContainer()?.nativeElement.querySelector(
+        `#${getDayId(index)}`
+      ) as HTMLElement;
       dayElement?.focus();
     }, 0);
   }

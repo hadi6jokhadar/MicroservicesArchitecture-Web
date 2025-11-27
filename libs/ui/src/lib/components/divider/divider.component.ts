@@ -1,9 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 
 import type { ClassValue } from 'clsx';
 
 import { dividerVariants, type ZardDividerVariants } from './divider.variants';
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 
 @Component({
   selector: 'z-divider',
@@ -19,7 +25,8 @@ import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
   },
 })
 export class ZardDividerComponent {
-  readonly zOrientation = input<ZardDividerVariants['zOrientation']>('horizontal');
+  readonly zOrientation =
+    input<ZardDividerVariants['zOrientation']>('horizontal');
   readonly zSpacing = input<ZardDividerVariants['zSpacing']>('default');
   readonly class = input<ClassValue>('');
 
@@ -29,7 +36,7 @@ export class ZardDividerComponent {
         zOrientation: this.zOrientation(),
         zSpacing: this.zSpacing(),
       }),
-      this.class(),
-    ),
+      this.class()
+    )
   );
 }

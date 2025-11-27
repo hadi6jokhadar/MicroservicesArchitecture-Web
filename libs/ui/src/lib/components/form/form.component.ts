@@ -1,9 +1,21 @@
 import type { ClassValue } from 'clsx';
 
-import { ChangeDetectionStrategy, Component, computed, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 
-import { mergeClasses, transform } from 'libs\ui\src\lib\utils/merge-classes';
-import { formFieldVariants, formControlVariants, formLabelVariants, formMessageVariants, type ZardFormMessageVariants } from './form.variants';
+import { mergeClasses, transform } from '../../utils';
+import {
+  formFieldVariants,
+  formControlVariants,
+  formLabelVariants,
+  formMessageVariants,
+  type ZardFormMessageVariants,
+} from './form.variants';
 
 @Component({
   selector: 'z-form-field, [z-form-field]',
@@ -19,7 +31,9 @@ import { formFieldVariants, formControlVariants, formLabelVariants, formMessageV
 export class ZardFormFieldComponent {
   readonly class = input<ClassValue>('');
 
-  protected readonly classes = computed(() => mergeClasses(formFieldVariants(), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(formFieldVariants(), this.class())
+  );
 }
 
 @Component({
@@ -34,13 +48,13 @@ export class ZardFormFieldComponent {
       <ng-content></ng-content>
     </div>
     @if (errorMessage() || helpText()) {
-      <div class="mt-1.5 min-h-[1.25rem]">
-        @if (errorMessage()) {
-          <p class="text-sm text-red-500">{{ errorMessage() }}</p>
-        } @else if (helpText()) {
-          <p class="text-sm text-muted-foreground">{{ helpText() }}</p>
-        }
-      </div>
+    <div class="mt-1.5 min-h-[1.25rem]">
+      @if (errorMessage()) {
+      <p class="text-sm text-red-500">{{ errorMessage() }}</p>
+      } @else if (helpText()) {
+      <p class="text-sm text-muted-foreground">{{ helpText() }}</p>
+      }
+    </div>
     }
   `,
   host: {
@@ -52,7 +66,9 @@ export class ZardFormControlComponent {
   readonly errorMessage = input<string>('');
   readonly helpText = input<string>('');
 
-  protected readonly classes = computed(() => mergeClasses(formControlVariants(), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(formControlVariants(), this.class())
+  );
 }
 
 @Component({
@@ -70,7 +86,12 @@ export class ZardFormLabelComponent {
   readonly class = input<ClassValue>('');
   readonly zRequired = input(false, { transform });
 
-  protected readonly classes = computed(() => mergeClasses(formLabelVariants({ zRequired: this.zRequired() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(
+      formLabelVariants({ zRequired: this.zRequired() }),
+      this.class()
+    )
+  );
 }
 
 @Component({
@@ -88,5 +109,7 @@ export class ZardFormMessageComponent {
   readonly class = input<ClassValue>('');
   readonly zType = input<ZardFormMessageVariants['zType']>('default');
 
-  protected readonly classes = computed(() => mergeClasses(formMessageVariants({ zType: this.zType() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(formMessageVariants({ zType: this.zType() }), this.class())
+  );
 }

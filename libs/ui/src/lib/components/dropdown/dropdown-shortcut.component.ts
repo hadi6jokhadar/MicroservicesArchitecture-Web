@@ -2,7 +2,7 @@ import type { ClassValue } from 'clsx';
 
 import { Component, computed, input, ViewEncapsulation } from '@angular/core';
 
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import { dropdownShortcutVariants } from './dropdown.variants';
 
 @Component({
@@ -18,5 +18,7 @@ import { dropdownShortcutVariants } from './dropdown.variants';
 export class ZardDropdownMenuShortcutComponent {
   readonly class = input<ClassValue>('');
 
-  protected readonly classes = computed(() => mergeClasses(dropdownShortcutVariants(), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(dropdownShortcutVariants(), this.class())
+  );
 }

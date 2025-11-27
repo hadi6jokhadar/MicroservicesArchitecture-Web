@@ -1,9 +1,18 @@
-import { ChangeDetectionStrategy, Component, computed, forwardRef, input, output, signal, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  forwardRef,
+  input,
+  output,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import type { ClassValue } from 'clsx';
 
 import { switchVariants, type ZardSwitchVariants } from './switch.variants';
-import { mergeClasses, generateId } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses, generateId } from '../../utils';
 
 type OnTouchedType = () => any;
 type OnChangeType = (value: any) => void;
@@ -14,7 +23,15 @@ type OnChangeType = (value: any) => void;
   exportAs: 'zSwitch',
   template: `
     <span class="flex items-center space-x-2" (mousedown)="onSwitchChange()">
-      <button [id]="zId() || uniqueId()" type="button" role="switch" [attr.data-state]="status()" [attr.aria-checked]="checked()" [disabled]="disabled()" [class]="classes()">
+      <button
+        [id]="zId() || uniqueId()"
+        type="button"
+        role="switch"
+        [attr.data-state]="status()"
+        [attr.aria-checked]="checked()"
+        [disabled]="disabled()"
+        [class]="classes()"
+      >
         <span
           [attr.data-size]="zSize()"
           [attr.data-state]="status()"
@@ -22,7 +39,10 @@ type OnChangeType = (value: any) => void;
         ></span>
       </button>
 
-      <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" [for]="zId() || uniqueId()">
+      <label
+        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        [for]="zId() || uniqueId()"
+      >
         <ng-content></ng-content>
       </label>
     </span>
@@ -50,7 +70,12 @@ export class ZardSwitchComponent implements ControlValueAccessor {
   /* eslint-disable-next-line @typescript-eslint/no-empty-function */
   private onTouched: OnTouchedType = () => {};
 
-  protected readonly classes = computed(() => mergeClasses(switchVariants({ zType: this.zType(), zSize: this.zSize() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(
+      switchVariants({ zType: this.zType(), zSize: this.zSize() }),
+      this.class()
+    )
+  );
 
   protected readonly uniqueId = signal<string>(generateId('switch'));
   protected checked = signal<boolean>(true);
@@ -72,7 +97,7 @@ export class ZardSwitchComponent implements ControlValueAccessor {
   onSwitchChange(): void {
     if (this.disabled()) return;
 
-    this.checked.update(checked => !checked);
+    this.checked.update((checked) => !checked);
     this.onTouched();
     this.onChange(this.checked());
     this.checkChange.emit(this.checked());

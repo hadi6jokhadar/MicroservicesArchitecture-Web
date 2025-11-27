@@ -18,7 +18,7 @@ import type { ClassValue } from 'clsx';
 import { commandVariants, type ZardCommandVariants } from './command.variants';
 import { ZardCommandOptionComponent } from './command-option.component';
 import { ZardCommandInputComponent } from './command-input.component';
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import type { ZardIcon } from 'libs\ui\src\lib\components/icon/icons';
 
 export interface ZardCommandOption {

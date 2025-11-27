@@ -2,9 +2,18 @@ import type { ClassValue } from 'clsx';
 
 import type { BooleanInput } from '@angular/cdk/coercion';
 import { CdkMenuItem } from '@angular/cdk/menu';
-import { booleanAttribute, computed, Directive, effect, inject, input, signal, untracked } from '@angular/core';
+import {
+  booleanAttribute,
+  computed,
+  Directive,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+} from '@angular/core';
 
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import { menuItemVariants, type ZardMenuItemVariants } from './menu.variants';
 
 @Directive({
@@ -32,7 +41,9 @@ import { menuItemVariants, type ZardMenuItemVariants } from './menu.variants';
 export class ZardMenuItemDirective {
   private readonly cdkMenuItem = inject(CdkMenuItem, { host: true });
 
-  readonly zDisabled = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+  readonly zDisabled = input<boolean, BooleanInput>(false, {
+    transform: booleanAttribute,
+  });
   readonly zInset = input<ZardMenuItemVariants['inset']>(false);
   readonly class = input<ClassValue>('');
 
@@ -40,7 +51,9 @@ export class ZardMenuItemDirective {
 
   protected readonly disabledState = computed(() => this.zDisabled());
 
-  protected readonly isOpenState = computed(() => this.cdkMenuItem.isMenuOpen());
+  protected readonly isOpenState = computed(() =>
+    this.cdkMenuItem.isMenuOpen()
+  );
 
   protected readonly highlightedState = computed(() => this.isFocused());
 
@@ -49,8 +62,8 @@ export class ZardMenuItemDirective {
       menuItemVariants({
         inset: this.zInset(),
       }),
-      this.class(),
-    ),
+      this.class()
+    )
   );
 
   constructor() {

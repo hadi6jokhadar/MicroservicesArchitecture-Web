@@ -1,9 +1,21 @@
-import { type AfterContentInit, ChangeDetectionStrategy, Component, computed, contentChildren, inject, input, ViewEncapsulation } from '@angular/core';
+import {
+  type AfterContentInit,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  contentChildren,
+  inject,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import { ZardCommandOptionComponent } from './command-option.component';
 import { ZardCommandComponent } from './command.component';
-import { commandGroupHeadingVariants, commandGroupVariants } from './command.variants';
+import {
+  commandGroupHeadingVariants,
+  commandGroupVariants,
+} from './command.variants';
 
 import type { ClassValue } from 'clsx';
 
@@ -15,30 +27,38 @@ import type { ClassValue } from 'clsx';
   encapsulation: ViewEncapsulation.None,
   template: `
     @if (shouldShow()) {
-      <div [class]="classes()" role="group">
-        @if (zLabel()) {
-          <div [class]="headingClasses()" role="presentation">
-            {{ zLabel() }}
-          </div>
-        }
-        <div role="group">
-          <ng-content></ng-content>
-        </div>
+    <div [class]="classes()" role="group">
+      @if (zLabel()) {
+      <div [class]="headingClasses()" role="presentation">
+        {{ zLabel() }}
       </div>
+      }
+      <div role="group">
+        <ng-content></ng-content>
+      </div>
+    </div>
     }
   `,
 })
 export class ZardCommandOptionGroupComponent implements AfterContentInit {
-  private readonly commandComponent = inject(ZardCommandComponent, { optional: true });
+  private readonly commandComponent = inject(ZardCommandComponent, {
+    optional: true,
+  });
 
-  readonly optionComponents = contentChildren(ZardCommandOptionComponent, { descendants: true });
+  readonly optionComponents = contentChildren(ZardCommandOptionComponent, {
+    descendants: true,
+  });
 
   readonly zLabel = input.required<string>();
   readonly class = input<ClassValue>('');
 
-  protected readonly classes = computed(() => mergeClasses(commandGroupVariants({}), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(commandGroupVariants({}), this.class())
+  );
 
-  protected readonly headingClasses = computed(() => mergeClasses(commandGroupHeadingVariants({})));
+  protected readonly headingClasses = computed(() =>
+    mergeClasses(commandGroupHeadingVariants({}))
+  );
 
   protected readonly shouldShow = computed(() => {
     if (!this.commandComponent || !this.optionComponents) return true;
@@ -50,7 +70,9 @@ export class ZardCommandOptionGroupComponent implements AfterContentInit {
     if (searchTerm === '') return true;
 
     // Check if any option in this group is in the filtered list
-    return this.optionComponents().some(option => filteredOptions.includes(option));
+    return this.optionComponents().some((option) =>
+      filteredOptions.includes(option)
+    );
   });
 
   ngAfterContentInit() {

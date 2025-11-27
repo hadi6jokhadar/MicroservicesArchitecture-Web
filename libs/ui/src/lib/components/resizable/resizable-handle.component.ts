@@ -1,10 +1,20 @@
 import type { ClassValue } from 'clsx';
 
-import { ChangeDetectionStrategy, Component, computed, inject, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 
-import { mergeClasses, transform } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses, transform } from '../../utils';
 import { ZardResizableComponent } from './resizable.component';
-import { resizableHandleIndicatorVariants, resizableHandleVariants } from './resizable.variants';
+import {
+  resizableHandleIndicatorVariants,
+  resizableHandleVariants,
+} from './resizable.variants';
 
 @Component({
   selector: 'z-resizable-handle, [z-resizable-handle]',
@@ -14,7 +24,7 @@ import { resizableHandleIndicatorVariants, resizableHandleVariants } from './res
   encapsulation: ViewEncapsulation.None,
   template: `
     @if (zWithHandle()) {
-      <div [class]="handleClasses()"></div>
+    <div [class]="handleClasses()"></div>
     }
   `,
   host: {
@@ -22,7 +32,8 @@ import { resizableHandleIndicatorVariants, resizableHandleVariants } from './res
     '[attr.data-layout]': 'layout()',
     '[attr.tabindex]': 'zDisabled() ? null : 0',
     '[attr.role]': '"separator"',
-    '[attr.aria-orientation]': 'layout() === "vertical" ? "horizontal" : "vertical"',
+    '[attr.aria-orientation]':
+      'layout() === "vertical" ? "horizontal" : "vertical"',
     '[attr.aria-disabled]': 'zDisabled()',
     '(mousedown)': 'handleMouseDown($event)',
     '(touchstart)': 'handleTouchStart($event)',
@@ -30,14 +41,18 @@ import { resizableHandleIndicatorVariants, resizableHandleVariants } from './res
   },
 })
 export class ZardResizableHandleComponent {
-  private readonly resizable = inject(ZardResizableComponent, { optional: true });
+  private readonly resizable = inject(ZardResizableComponent, {
+    optional: true,
+  });
 
   readonly zWithHandle = input(false, { transform });
   readonly zDisabled = input(false, { transform });
   readonly zHandleIndex = input<number>(0);
   readonly class = input<ClassValue>('');
 
-  protected readonly layout = computed(() => this.resizable?.zLayout() ?? 'horizontal');
+  protected readonly layout = computed(
+    () => this.resizable?.zLayout() ?? 'horizontal'
+  );
 
   protected readonly classes = computed(() =>
     mergeClasses(
@@ -45,11 +60,13 @@ export class ZardResizableHandleComponent {
         zLayout: this.layout(),
         zDisabled: this.zDisabled(),
       }),
-      this.class(),
-    ),
+      this.class()
+    )
   );
 
-  protected readonly handleClasses = computed(() => resizableHandleIndicatorVariants({ zLayout: this.layout() }));
+  protected readonly handleClasses = computed(() =>
+    resizableHandleIndicatorVariants({ zLayout: this.layout() })
+  );
 
   handleMouseDown(event: MouseEvent): void {
     if (this.zDisabled() || !this.resizable) return;
@@ -95,8 +112,13 @@ export class ZardResizableHandleComponent {
       case 'Enter':
       case ' ':
         event.preventDefault();
-        if (panels[handleIndex]?.zCollapsible() || panels[handleIndex + 1]?.zCollapsible()) {
-          const collapsibleIndex = panels[handleIndex]?.zCollapsible() ? handleIndex : handleIndex + 1;
+        if (
+          panels[handleIndex]?.zCollapsible() ||
+          panels[handleIndex + 1]?.zCollapsible()
+        ) {
+          const collapsibleIndex = panels[handleIndex]?.zCollapsible()
+            ? handleIndex
+            : handleIndex + 1;
           this.resizable.collapsePanel(collapsibleIndex);
         }
         return;
@@ -127,7 +149,7 @@ export class ZardResizableHandleComponent {
       this.resizable.convertToPercentage(leftPanel.zMin(), containerSize),
       this.resizable.convertToPercentage(leftPanel.zMax(), containerSize),
       this.resizable.convertToPercentage(rightPanel.zMin(), containerSize),
-      this.resizable.convertToPercentage(rightPanel.zMax(), containerSize),
+      this.resizable.convertToPercentage(rightPanel.zMax(), containerSize)
     );
 
     let newLeftSize = sizes[handleIndex] + delta;
@@ -169,7 +191,7 @@ export class ZardResizableHandleComponent {
       this.resizable.convertToPercentage(leftPanel.zMin(), containerSize),
       this.resizable.convertToPercentage(leftPanel.zMax(), containerSize),
       this.resizable.convertToPercentage(rightPanel.zMin(), containerSize),
-      this.resizable.convertToPercentage(rightPanel.zMax(), containerSize),
+      this.resizable.convertToPercentage(rightPanel.zMax(), containerSize)
     );
 
     const totalSize = sizes[handleIndex] + sizes[handleIndex + 1];
@@ -190,7 +212,12 @@ export class ZardResizableHandleComponent {
     });
   }
 
-  private normalizeMinMax(leftMin: number, leftMax: number, rightMin: number, rightMax: number): { leftMin: number; leftMax: number; rightMin: number; rightMax: number } {
+  private normalizeMinMax(
+    leftMin: number,
+    leftMax: number,
+    rightMin: number,
+    rightMax: number
+  ): { leftMin: number; leftMax: number; rightMin: number; rightMax: number } {
     if (leftMax < leftMin) {
       const temp = leftMax;
       leftMax = leftMin;

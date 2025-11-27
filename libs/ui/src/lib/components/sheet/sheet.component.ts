@@ -19,7 +19,7 @@ import {
 
 import type { ZardSheetRef } from './sheet-ref';
 import { sheetVariants, type ZardSheetVariants } from './sheet.variants';
-import { mergeClasses, noopFun } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses, noopFun } from '../../utils';
 import { ZardButtonComponent } from '../button/button.component';
 import { ZardIconComponent } from '../icon/icon.component';
 import type { ZardIcon } from 'libs\ui\src\lib\components/icon/icons';

@@ -1,5 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, model, viewChild, ViewEncapsulation } from '@angular/core';
-import { outputFromObservable, outputToObservable } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  linkedSignal,
+  model,
+  viewChild,
+  ViewEncapsulation,
+} from '@angular/core';
+import {
+  outputFromObservable,
+  outputToObservable,
+} from '@angular/core/rxjs-interop';
 
 import type { ClassValue } from 'clsx';
 import { filter } from 'rxjs';
@@ -7,11 +19,19 @@ import { filter } from 'rxjs';
 import { ZardCalendarGridComponent } from './calendar-grid.component';
 import { ZardCalendarNavigationComponent } from './calendar-navigation.component';
 import type { CalendarMode, CalendarValue } from './calendar.types';
-import { generateCalendarDays, getSelectedDatesArray, isSameDay } from './calendar.utils';
+import {
+  generateCalendarDays,
+  getSelectedDatesArray,
+  isSameDay,
+} from './calendar.utils';
 import { calendarVariants } from './calendar.variants';
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 
-export type { CalendarDay, CalendarMode, CalendarValue } from './calendar.types';
+export type {
+  CalendarDay,
+  CalendarMode,
+  CalendarValue,
+} from './calendar.types';
 
 @Component({
   selector: 'z-calendar, [z-calendar]',
@@ -69,7 +89,9 @@ export class ZardCalendarComponent {
   readonly disabled = input<boolean>(false);
 
   // Public outputs
-  readonly dateChange = outputFromObservable(outputToObservable(this.value).pipe(filter(v => v !== null)));
+  readonly dateChange = outputFromObservable(
+    outputToObservable(this.value).pipe(filter((v) => v !== null))
+  );
 
   // Internal state
   private readonly currentDate = computed(() => {
@@ -87,15 +109,27 @@ export class ZardCalendarComponent {
     return new Date();
   });
 
-  protected readonly currentMonthValue = linkedSignal(() => this.currentDate().getMonth().toString());
-  protected readonly currentYearValue = linkedSignal(() => this.currentDate().getFullYear().toString());
+  protected readonly currentMonthValue = linkedSignal(() =>
+    this.currentDate().getMonth().toString()
+  );
+  protected readonly currentYearValue = linkedSignal(() =>
+    this.currentDate().getFullYear().toString()
+  );
 
-  protected readonly classes = computed(() => mergeClasses(calendarVariants(), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(calendarVariants(), this.class())
+  );
 
   protected readonly calendarDays = computed(() => {
     const currentDate = this.currentDate();
-    const navigationDate = new Date(Number.parseInt(this.currentYearValue()), Number.parseInt(this.currentMonthValue()), currentDate.getDate());
-    const selectedDate = Number.isNaN(navigationDate.getTime()) ? currentDate : navigationDate;
+    const navigationDate = new Date(
+      Number.parseInt(this.currentYearValue()),
+      Number.parseInt(this.currentMonthValue()),
+      currentDate.getDate()
+    );
+    const selectedDate = Number.isNaN(navigationDate.getTime())
+      ? currentDate
+      : navigationDate;
 
     return generateCalendarDays({
       year: selectedDate.getFullYear(),
@@ -110,7 +144,10 @@ export class ZardCalendarComponent {
 
   protected onMonthChange(monthIndex: string | string[]): void {
     if (Array.isArray(monthIndex)) {
-      console.warn('Calendar received array for month selection, expected single value. Ignoring:', monthIndex);
+      console.warn(
+        'Calendar received array for month selection, expected single value. Ignoring:',
+        monthIndex
+      );
       return;
     }
 
@@ -121,20 +158,32 @@ export class ZardCalendarComponent {
 
     const parsedMonth = Number.parseInt(monthIndex, 10);
     if (Number.isNaN(parsedMonth) || parsedMonth < 0 || parsedMonth > 11) {
-      console.warn('Invalid month value:', monthIndex, 'parsed as:', parsedMonth);
+      console.warn(
+        'Invalid month value:',
+        monthIndex,
+        'parsed as:',
+        parsedMonth
+      );
       return;
     }
 
     const currentDate = this.currentDate();
     const selectedYear = Number.parseInt(this.currentYearValue());
-    const newDate = new Date(Number.isNaN(selectedYear) ? currentDate.getFullYear() : selectedYear, parsedMonth, 1);
+    const newDate = new Date(
+      Number.isNaN(selectedYear) ? currentDate.getFullYear() : selectedYear,
+      parsedMonth,
+      1
+    );
     this.currentMonthValue.set(newDate.getMonth().toString());
     this.gridRef().setFocusedDayIndex(-1);
   }
 
   protected onYearChange(year: string | string[]): void {
     if (Array.isArray(year)) {
-      console.warn('Calendar received array for year selection, expected single value. Ignoring:', year);
+      console.warn(
+        'Calendar received array for year selection, expected single value. Ignoring:',
+        year
+      );
       return;
     }
 
@@ -151,7 +200,11 @@ export class ZardCalendarComponent {
 
     const currentDate = this.currentDate();
     const selectedMonth = Number.parseInt(this.currentMonthValue());
-    const newDate = new Date(parsedYear, Number.isNaN(selectedMonth) ? currentDate.getMonth() : selectedMonth, 1);
+    const newDate = new Date(
+      parsedYear,
+      Number.isNaN(selectedMonth) ? currentDate.getMonth() : selectedMonth,
+      1
+    );
     this.currentYearValue.set(newDate.getFullYear().toString());
     this.gridRef().setFocusedDayIndex(-1);
   }
@@ -159,7 +212,11 @@ export class ZardCalendarComponent {
   protected previousMonth(): void {
     const currentDate = this.currentDate();
     const currentMonth = Number.parseInt(this.currentMonthValue());
-    const previous = new Date(currentDate.getFullYear(), (Number.isNaN(currentMonth) ? currentDate.getMonth() : currentMonth) - 1, 1);
+    const previous = new Date(
+      currentDate.getFullYear(),
+      (Number.isNaN(currentMonth) ? currentDate.getMonth() : currentMonth) - 1,
+      1
+    );
     this.currentMonthValue.set(previous.getMonth().toString());
     this.gridRef().setFocusedDayIndex(-1);
   }
@@ -167,26 +224,46 @@ export class ZardCalendarComponent {
   protected nextMonth(): void {
     const currentDate = this.currentDate();
     const currentMonth = Number.parseInt(this.currentMonthValue());
-    const next = new Date(currentDate.getFullYear(), (Number.isNaN(currentMonth) ? currentDate.getMonth() : currentMonth) + 1, 1);
+    const next = new Date(
+      currentDate.getFullYear(),
+      (Number.isNaN(currentMonth) ? currentDate.getMonth() : currentMonth) + 1,
+      1
+    );
     this.currentMonthValue.set(next.getMonth().toString());
     this.gridRef().setFocusedDayIndex(-1);
   }
 
   protected navigateYear(direction: number): void {
     const current = this.currentDate();
-    const newDate = new Date(current.getFullYear() + direction, current.getMonth(), 1);
+    const newDate = new Date(
+      current.getFullYear() + direction,
+      current.getMonth(),
+      1
+    );
     this.currentYearValue.set(newDate.getFullYear().toString());
     setTimeout(() => this.gridRef().resetFocus(), 0);
   }
 
-  protected onGridPreviousMonth(event: { position: string; dayOfWeek: number }): void {
+  protected onGridPreviousMonth(event: {
+    position: string;
+    dayOfWeek: number;
+  }): void {
     this.previousMonth();
-    setTimeout(() => this.resetFocusAfterNavigation(event.position, event.dayOfWeek), 0);
+    setTimeout(
+      () => this.resetFocusAfterNavigation(event.position, event.dayOfWeek),
+      0
+    );
   }
 
-  protected onGridNextMonth(event: { position: string; dayOfWeek: number }): void {
+  protected onGridNextMonth(event: {
+    position: string;
+    dayOfWeek: number;
+  }): void {
     this.nextMonth();
-    setTimeout(() => this.resetFocusAfterNavigation(event.position, event.dayOfWeek), 0);
+    setTimeout(
+      () => this.resetFocusAfterNavigation(event.position, event.dayOfWeek),
+      0
+    );
   }
 
   protected onDateSelect(event: { date: Date; index: number }): void {
@@ -202,8 +279,10 @@ export class ZardCalendarComponent {
     if (mode === 'single') {
       this.value.set(date);
     } else if (mode === 'multiple') {
-      const selectedDates = Array.isArray(currentValue) ? [...currentValue] : [];
-      const existingIndex = selectedDates.findIndex(d => isSameDay(d, date));
+      const selectedDates = Array.isArray(currentValue)
+        ? [...currentValue]
+        : [];
+      const existingIndex = selectedDates.findIndex((d) => isSameDay(d, date));
 
       if (existingIndex >= 0) {
         // Remove date if already selected
@@ -215,7 +294,9 @@ export class ZardCalendarComponent {
 
       this.value.set(selectedDates.length > 0 ? selectedDates : null);
     } else if (mode === 'range') {
-      const selectedDates = Array.isArray(currentValue) ? [...currentValue] : [];
+      const selectedDates = Array.isArray(currentValue)
+        ? [...currentValue]
+        : [];
 
       if (selectedDates.length === 0) {
         // First date selected - set as range start
@@ -240,14 +321,17 @@ export class ZardCalendarComponent {
     }
   }
 
-  private resetFocusAfterNavigation(position = 'default', dayOfWeek = -1): void {
+  private resetFocusAfterNavigation(
+    position = 'default',
+    dayOfWeek = -1
+  ): void {
     const days = this.calendarDays();
     let targetIndex = -1;
 
     switch (position) {
       case 'first':
         // Focus first enabled day
-        targetIndex = days.findIndex(day => !day.isDisabled);
+        targetIndex = days.findIndex((day) => !day.isDisabled);
         break;
       case 'last':
         // Focus last enabled day
@@ -268,17 +352,33 @@ export class ZardCalendarComponent {
         // Focus same day of week in last week
         if (dayOfWeek >= 0) {
           const lastWeekStart = Math.floor((days.length - 1) / 7) * 7;
-          const targetIdx = Math.min(lastWeekStart + dayOfWeek, days.length - 1);
-          targetIndex = this.findEnabledInRange(targetIdx, days.length - 1, days);
+          const targetIdx = Math.min(
+            lastWeekStart + dayOfWeek,
+            days.length - 1
+          );
+          targetIndex = this.findEnabledInRange(
+            targetIdx,
+            days.length - 1,
+            days
+          );
         }
         break;
       default: {
         // Default priority: selected > today > first enabled
-        const selectedIndex = days.findIndex(day => day.isSelected);
-        const todayIndex = days.findIndex(day => day.isToday && day.isCurrentMonth);
-        const firstEnabledIndex = days.findIndex(day => day.isCurrentMonth && !day.isDisabled);
+        const selectedIndex = days.findIndex((day) => day.isSelected);
+        const todayIndex = days.findIndex(
+          (day) => day.isToday && day.isCurrentMonth
+        );
+        const firstEnabledIndex = days.findIndex(
+          (day) => day.isCurrentMonth && !day.isDisabled
+        );
 
-        targetIndex = selectedIndex >= 0 ? selectedIndex : todayIndex >= 0 ? todayIndex : Math.max(firstEnabledIndex, 0);
+        targetIndex =
+          selectedIndex >= 0
+            ? selectedIndex
+            : todayIndex >= 0
+            ? todayIndex
+            : Math.max(firstEnabledIndex, 0);
         break;
       }
     }
@@ -288,7 +388,11 @@ export class ZardCalendarComponent {
     }
   }
 
-  private findEnabledInRange(start: number, fallback: number, days: { isDisabled: boolean }[]): number {
+  private findEnabledInRange(
+    start: number,
+    fallback: number,
+    days: { isDisabled: boolean }[]
+  ): number {
     const clampedStart = Math.max(0, Math.min(start, days.length - 1));
     const clampedFallback = Math.max(0, Math.min(fallback, days.length - 1));
 

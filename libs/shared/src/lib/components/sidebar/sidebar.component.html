@@ -1,0 +1,73 @@
+<aside class="sidebar">
+  <!-- Header with App Title -->
+  <div class="sidebar-header">
+    <h1 id="app-title" class="sidebar-title">{{ appTitle() }}</h1>
+  </div>
+
+  <z-divider [zSpacing]="'sm'" />
+
+  <!-- User Profile Section -->
+  <div class="user-profile-card">
+    <div class="user-profile">
+      <z-avatar
+        id="user-avatar"
+        [zSrc]="currentUser().imageUrl"
+        [zFallback]="currentUser().name.charAt(0).toUpperCase()"
+        [zSize]="48"
+        [zShape]="'circle'"
+      />
+      <div class="user-info">
+        <p id="user-name" class="user-name">{{ currentUser().name }}</p>
+        <p id="user-username" class="user-username">
+          @{{ currentUser().username }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <z-divider [zSpacing]="'sm'" />
+
+  <!-- Navigation Menu -->
+  <nav class="sidebar-nav">
+    @for (group of getGroupedPages() | keyvalue; track group.key) { @if
+    (group.key !== 'default') {
+    <div
+      class="nav-group-label"
+      [id]="'group-' + group.key.toLowerCase().replace(' ', '-')"
+    >
+      {{ group.key }}
+    </div>
+    } @for (page of group.value; track page.label) {
+    <a
+      z-button
+      zType="ghost"
+      zFull
+      [id]="'nav-' + page.label.toLowerCase().replace(' ', '-')"
+      [routerLink]="page.route"
+      routerLinkActive="active"
+      class="nav-item"
+      (click)="onPageClick(page)"
+    >
+      <i z-icon [zType]="page.icon" class="nav-icon"></i>
+      <span class="nav-label">{{ page.label }}</span>
+    </a>
+    } @if (!$last) {
+    <z-divider [zSpacing]="'none'" class="group-divider" />
+    } }
+  </nav>
+
+  <!-- Footer Actions -->
+  <div class="sidebar-footer">
+    <z-divider [zSpacing]="'sm'" />
+    <z-button
+      id="dark-mode-toggle"
+      zVariant="outline"
+      zSize="sm"
+      class="dark-mode-btn"
+      (click)="onToggleDarkMode()"
+    >
+      <i z-icon zType="moon" class="dark-mode-icon"></i>
+      <span>Dark Mode</span>
+    </z-button>
+  </div>
+</aside>

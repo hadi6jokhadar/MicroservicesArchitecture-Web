@@ -1,7 +1,12 @@
 import { KeyValuePipe } from '@angular/common';
 import { Component, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { ZardButtonComponent, ZardIconComponent } from '@ihsan/ui';
+import {
+  ZardAvatarComponent,
+  ZardButtonComponent,
+  ZardDividerComponent,
+  ZardIconComponent,
+} from '@ihsan/ui';
 import { ISidebarPage, ISidebarUser } from './sidebar.model';
 
 @Component({
@@ -11,6 +16,8 @@ import { ISidebarPage, ISidebarUser } from './sidebar.model';
     RouterLinkActive,
     KeyValuePipe,
     ZardButtonComponent,
+    ZardAvatarComponent,
+    ZardDividerComponent,
     ZardIconComponent,
   ],
   templateUrl: './sidebar.component.html',

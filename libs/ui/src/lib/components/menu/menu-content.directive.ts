@@ -3,7 +3,7 @@ import type { ClassValue } from 'clsx';
 import { CdkMenu } from '@angular/cdk/menu';
 import { computed, Directive, input } from '@angular/core';
 
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import { menuContentVariants } from './menu.variants';
 
 @Directive({
@@ -17,5 +17,7 @@ import { menuContentVariants } from './menu.variants';
 export class ZardMenuContentDirective {
   readonly class = input<ClassValue>('');
 
-  protected readonly classes = computed(() => mergeClasses(menuContentVariants(), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(menuContentVariants(), this.class())
+  );
 }

@@ -1,8 +1,16 @@
 import type { ClassValue } from 'clsx';
 
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 
-import { mergeClasses, transform } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses, transform } from '../../utils';
 import { resizablePanelVariants } from './resizable.variants';
 
 @Component({
@@ -34,5 +42,10 @@ export class ZardResizablePanelComponent {
     return width === 0 || height === 0;
   });
 
-  protected readonly classes = computed(() => mergeClasses(resizablePanelVariants({ zCollapsed: this.isCollapsed() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(
+      resizablePanelVariants({ zCollapsed: this.isCollapsed() }),
+      this.class()
+    )
+  );
 }

@@ -26,7 +26,7 @@ import { comboboxVariants, type ZardComboboxVariants } from './combobox.variants
 import { ZardButtonComponent } from '../button/button.component';
 import { ZardEmptyComponent } from '../empty/empty.component';
 import { ZardIconComponent } from '../icon/icon.component';
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import type { ZardIcon } from 'libs\ui\src\lib\components/icon/icons';
 
 export interface ZardComboboxOption {

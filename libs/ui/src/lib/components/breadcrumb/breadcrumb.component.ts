@@ -1,8 +1,18 @@
-import { ChangeDetectionStrategy, Component, computed, contentChildren, effect, input, signal, TemplateRef, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  contentChildren,
+  effect,
+  input,
+  signal,
+  TemplateRef,
+  ViewEncapsulation,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import type { ClassValue } from 'clsx';
 
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import { ZardStringTemplateOutletDirective } from '../core/directives/string-template-outlet/string-template-outlet.directive';
 import { ZardIconComponent } from '../icon/icon.component';
 import {
@@ -23,7 +33,17 @@ import {
   hostDirectives: [
     {
       directive: RouterLink,
-      inputs: ['routerLink', 'queryParams', 'fragment', 'queryParamsHandling', 'state', 'relativeTo', 'preserveFragment', 'skipLocationChange', 'replaceUrl'],
+      inputs: [
+        'routerLink',
+        'queryParams',
+        'fragment',
+        'queryParamsHandling',
+        'state',
+        'relativeTo',
+        'preserveFragment',
+        'skipLocationChange',
+        'replaceUrl',
+      ],
     },
   ],
   template: `
@@ -32,15 +52,20 @@ import {
     </li>
 
     @if (!isLast()) {
-      <li aria-hidden="true" role="presentation" [class]="separatorClasses()" (click)="$event.stopPropagation()">
-        @if (isTemplate(separator())) {
-          <ng-container *zStringTemplateOutlet="separator()"></ng-container>
-        } @else if (separator()) {
-          {{ separator() }}
-        } @else {
-          <z-icon zType="chevron-right"></z-icon>
-        }
-      </li>
+    <li
+      aria-hidden="true"
+      role="presentation"
+      [class]="separatorClasses()"
+      (click)="$event.stopPropagation()"
+    >
+      @if (isTemplate(separator())) {
+      <ng-container *zStringTemplateOutlet="separator()"></ng-container>
+      } @else if (separator()) {
+      {{ separator() }}
+      } @else {
+      <z-icon zType="chevron-right"></z-icon>
+      }
+    </li>
     }
   `,
   host: {
@@ -53,8 +78,12 @@ export class ZardBreadcrumbItemComponent {
   protected separator = signal<string | TemplateRef<void> | null>(null);
   protected isLast = signal<boolean>(false);
 
-  protected readonly classes = computed(() => mergeClasses(breadcrumbItemVariants(), this.class()));
-  protected readonly separatorClasses = computed(() => 'text-muted-foreground [&_svg]:size-3.5');
+  protected readonly classes = computed(() =>
+    mergeClasses(breadcrumbItemVariants(), this.class())
+  );
+  protected readonly separatorClasses = computed(
+    () => 'text-muted-foreground [&_svg]:size-3.5'
+  );
 
   setSeparator(separator: string | TemplateRef<void> | null): void {
     this.separator.set(separator);
@@ -64,7 +93,9 @@ export class ZardBreadcrumbItemComponent {
     this.isLast.set(isLast);
   }
 
-  protected isTemplate(value: string | TemplateRef<void> | null | undefined): value is TemplateRef<void> {
+  protected isTemplate(
+    value: string | TemplateRef<void> | null | undefined
+  ): value is TemplateRef<void> {
     return value instanceof TemplateRef;
   }
 }
@@ -92,8 +123,12 @@ export class ZardBreadcrumbComponent {
 
   protected readonly items = contentChildren(ZardBreadcrumbItemComponent);
 
-  protected readonly navClasses = computed(() => mergeClasses(breadcrumbVariants({ zSize: this.zSize() }), this.class()));
-  protected readonly listClasses = computed(() => breadcrumbListVariants({ zAlign: this.zAlign(), zWrap: this.zWrap() }));
+  protected readonly navClasses = computed(() =>
+    mergeClasses(breadcrumbVariants({ zSize: this.zSize() }), this.class())
+  );
+  protected readonly listClasses = computed(() =>
+    breadcrumbListVariants({ zAlign: this.zAlign(), zWrap: this.zWrap() })
+  );
 
   constructor() {
     effect(() => {
@@ -126,5 +161,10 @@ export class ZardBreadcrumbEllipsisComponent {
   readonly zColor = input<ZardBreadcrumbEllipsisVariants['zColor']>('muted');
 
   readonly class = input<ClassValue>('');
-  protected readonly classes = computed(() => mergeClasses(breadcrumbEllipsisVariants({ zColor: this.zColor() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(
+      breadcrumbEllipsisVariants({ zColor: this.zColor() }),
+      this.class()
+    )
+  );
 }

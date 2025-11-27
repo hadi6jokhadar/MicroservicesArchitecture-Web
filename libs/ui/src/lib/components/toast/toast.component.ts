@@ -1,8 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 import { NgxSonnerToaster } from 'ngx-sonner';
 import type { ClassValue } from 'clsx';
 
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import { toastVariants, type ZardToastVariants } from './toast.variants';
 
 @Component({
@@ -31,7 +37,14 @@ export class ZardToastComponent {
   readonly class = input<ClassValue>('');
   readonly variant = input<ZardToastVariants['variant']>('default');
   readonly theme = input<'light' | 'dark' | 'system'>('system');
-  readonly position = input<'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'>('bottom-right');
+  readonly position = input<
+    | 'top-left'
+    | 'top-center'
+    | 'top-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'bottom-right'
+  >('bottom-right');
   readonly richColors = input<boolean>(false);
   readonly expand = input<boolean>(false);
   readonly duration = input<number>(4000);
@@ -40,5 +53,11 @@ export class ZardToastComponent {
   readonly toastOptions = input<Record<string, unknown>>({});
   readonly dir = input<'ltr' | 'rtl' | 'auto'>('auto');
 
-  protected readonly classes = computed(() => mergeClasses('toaster group', toastVariants({ variant: this.variant() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(
+      'toaster group',
+      toastVariants({ variant: this.variant() }),
+      this.class()
+    )
+  );
 }

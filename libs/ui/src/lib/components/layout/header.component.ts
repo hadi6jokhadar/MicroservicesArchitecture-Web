@@ -1,9 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 
 import type { ClassValue } from 'clsx';
 
 import { headerVariants } from './layout.variants';
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 
 @Component({
   selector: 'z-header',
@@ -21,5 +27,7 @@ export class HeaderComponent {
   readonly class = input<ClassValue>('');
   readonly zHeight = input<number>(64);
 
-  protected readonly classes = computed(() => mergeClasses(headerVariants(), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(headerVariants(), this.class())
+  );
 }

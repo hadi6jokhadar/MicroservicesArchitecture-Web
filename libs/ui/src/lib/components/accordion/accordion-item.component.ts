@@ -1,10 +1,23 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject, input, signal, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  computed,
+  inject,
+  input,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 
 import type { ClassValue } from 'clsx';
 
 import type { ZardAccordionComponent } from './accordion.component';
-import { accordionContentVariants, accordionItemVariants, accordionTriggerVariants } from './accordion.variants';
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import {
+  accordionContentVariants,
+  accordionItemVariants,
+  accordionTriggerVariants,
+} from './accordion.variants';
+import { mergeClasses } from '../../utils';
 import { ZardIconComponent } from '../icon/icon.component';
 
 @Component({
@@ -34,7 +47,13 @@ import { ZardIconComponent } from '../icon/icon.component';
       />
     </button>
 
-    <div [class]="contentClasses()" [id]="'content-' + zValue()" [attr.data-state]="isOpen() ? 'open' : 'closed'" role="region" [attr.aria-labelledby]="'accordion-' + zValue()">
+    <div
+      [class]="contentClasses()"
+      [id]="'content-' + zValue()"
+      [attr.data-state]="isOpen() ? 'open' : 'closed'"
+      role="region"
+      [attr.aria-labelledby]="'accordion-' + zValue()"
+    >
       <div class="overflow-hidden">
         <div class="pt-0 pb-4">
           <ng-content></ng-content>
@@ -60,9 +79,15 @@ export class ZardAccordionItemComponent {
 
   isOpen = computed(() => this.isOpenSignal());
 
-  protected readonly itemClasses = computed(() => mergeClasses(accordionItemVariants(), this.class()));
-  protected readonly triggerClasses = computed(() => mergeClasses(accordionTriggerVariants()));
-  protected readonly contentClasses = computed(() => mergeClasses(accordionContentVariants({ isOpen: this.isOpen() })));
+  protected readonly itemClasses = computed(() =>
+    mergeClasses(accordionItemVariants(), this.class())
+  );
+  protected readonly triggerClasses = computed(() =>
+    mergeClasses(accordionTriggerVariants())
+  );
+  protected readonly contentClasses = computed(() =>
+    mergeClasses(accordionContentVariants({ isOpen: this.isOpen() }))
+  );
 
   setOpen(open: boolean): void {
     this.isOpenSignal.set(open);

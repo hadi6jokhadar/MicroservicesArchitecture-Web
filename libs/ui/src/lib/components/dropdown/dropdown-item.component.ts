@@ -1,10 +1,20 @@
 import type { ClassValue } from 'clsx';
 
-import { Component, computed, HostListener, inject, input, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  computed,
+  HostListener,
+  inject,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 
-import { mergeClasses, transform } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses, transform } from '../../utils';
 import { ZardDropdownService } from './dropdown.service';
-import { dropdownItemVariants, type ZardDropdownItemVariants } from './dropdown.variants';
+import {
+  dropdownItemVariants,
+  type ZardDropdownItemVariants,
+} from './dropdown.variants';
 
 @Component({
   selector: 'z-dropdown-menu-item, [z-dropdown-menu-item]',
@@ -50,7 +60,7 @@ export class ZardDropdownMenuItemComponent {
         variant: this.variant(),
         inset: this.inset(),
       }),
-      this.class(),
-    ),
+      this.class()
+    )
   );
 }

@@ -1,19 +1,21 @@
+import type { ZardIcon } from '@ihsan/ui';
+
 export interface ISidebarPage {
   label: string;
-  icon: string;
+  icon: ZardIcon;
   group?: string;
   route?: string;
 }
 
 export class SidebarPageClass implements ISidebarPage {
   label: string;
-  icon: string;
+  icon: ZardIcon;
   group?: string;
   route?: string;
 
   constructor(data: Partial<ISidebarPage> = {}) {
     this.label = data.label || '';
-    this.icon = data.icon || '';
+    this.icon = data.icon || 'circle';
     this.group = data.group;
     this.route = data.route;
   }

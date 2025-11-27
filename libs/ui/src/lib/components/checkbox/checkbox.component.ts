@@ -1,9 +1,23 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, forwardRef, inject, input, output, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  computed,
+  forwardRef,
+  inject,
+  input,
+  output,
+  ViewEncapsulation,
+} from '@angular/core';
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import type { ClassValue } from 'clsx';
 
-import { checkboxLabelVariants, checkboxVariants, type ZardCheckboxVariants } from './checkbox.variants';
-import { mergeClasses, transform } from 'libs\ui\src\lib\utils/merge-classes';
+import {
+  checkboxLabelVariants,
+  checkboxVariants,
+  type ZardCheckboxVariants,
+} from './checkbox.variants';
+import { mergeClasses, transform } from '../../utils';
 import { ZardIconComponent } from '../icon/icon.component';
 
 type OnTouchedType = () => any;
@@ -23,7 +37,15 @@ type OnChangeType = (value: any) => void;
       (keyup)="onKeyboardEvent($event)"
     >
       <main class="flex relative">
-        <input #input type="checkbox" [class]="classes()" [checked]="checked" [disabled]="disabled()" (blur)="onCheckboxBlur()" name="checkbox" />
+        <input
+          #input
+          type="checkbox"
+          [class]="classes()"
+          [checked]="checked"
+          [disabled]="disabled()"
+          (blur)="onCheckboxBlur()"
+          name="checkbox"
+        />
         <z-icon
           zType="check"
           [class]="
@@ -61,8 +83,19 @@ export class ZardCheckboxComponent implements ControlValueAccessor {
   /* eslint-disable-next-line @typescript-eslint/no-empty-function */
   private onTouched: OnTouchedType = () => {};
 
-  protected readonly classes = computed(() => mergeClasses(checkboxVariants({ zType: this.zType(), zSize: this.zSize(), zShape: this.zShape() }), this.class()));
-  protected readonly labelClasses = computed(() => mergeClasses(checkboxLabelVariants({ zSize: this.zSize() })));
+  protected readonly classes = computed(() =>
+    mergeClasses(
+      checkboxVariants({
+        zType: this.zType(),
+        zSize: this.zSize(),
+        zShape: this.zShape(),
+      }),
+      this.class()
+    )
+  );
+  protected readonly labelClasses = computed(() =>
+    mergeClasses(checkboxLabelVariants({ zSize: this.zSize() }))
+  );
   checked = false;
 
   writeValue(val: boolean): void {

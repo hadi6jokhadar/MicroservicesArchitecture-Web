@@ -1,6 +1,11 @@
 import { merge, Subject, takeUntil } from 'rxjs';
 
-import { type ConnectedPosition, Overlay, OverlayPositionBuilder, type OverlayRef } from '@angular/cdk/overlay';
+import {
+  type ConnectedPosition,
+  Overlay,
+  OverlayPositionBuilder,
+  type OverlayRef,
+} from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { isPlatformBrowser } from '@angular/common';
 import {
@@ -22,7 +27,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import { popoverVariants } from './popover.variants';
 
 export type ZardPopoverTrigger = 'click' | 'hover' | null;
@@ -131,12 +136,19 @@ export class ZardPopoverDirective implements OnInit, OnDestroy {
       this.createOverlay();
     }
 
-    const templatePortal = new TemplatePortal(this.zContent(), this.viewContainerRef);
+    const templatePortal = new TemplatePortal(
+      this.zContent(),
+      this.viewContainerRef
+    );
     this.overlayRef?.attach(templatePortal);
     this.isVisible.set(true);
     this.zVisibleChange.emit(true);
 
-    if (this.zOverlayClickable() && this.zTrigger() === 'click' && isPlatformBrowser(this.platformId)) {
+    if (
+      this.zOverlayClickable() &&
+      this.zTrigger() === 'click' &&
+      isPlatformBrowser(this.platformId)
+    ) {
       this.setupOutsideClickListener();
     }
   }
@@ -339,7 +351,7 @@ export class ZardPopoverDirective implements OnInit, OnDestroy {
     this.overlayRef
       .outsidePointerEvents()
       .pipe(takeUntil(merge(this.hidePopover$, this.destroy$)))
-      .subscribe(event => {
+      .subscribe((event) => {
         const clickTarget = event.target as HTMLElement;
 
         if (this.nativeElement.contains(clickTarget)) {
@@ -364,5 +376,7 @@ export class ZardPopoverDirective implements OnInit, OnDestroy {
 export class ZardPopoverComponent {
   readonly class = input<string>('');
 
-  protected readonly classes = computed(() => mergeClasses(popoverVariants(), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(popoverVariants(), this.class())
+  );
 }

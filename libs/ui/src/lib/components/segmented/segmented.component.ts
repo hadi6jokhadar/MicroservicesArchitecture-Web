@@ -1,8 +1,24 @@
-import { ChangeDetectionStrategy, Component, computed, contentChildren, effect, forwardRef, input, type OnInit, output, signal, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  contentChildren,
+  effect,
+  forwardRef,
+  input,
+  type OnInit,
+  output,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
-import { segmentedItemVariants, segmentedVariants, type ZardSegmentedVariants } from './segmented.variants';
+import { mergeClasses } from '../../utils';
+import {
+  segmentedItemVariants,
+  segmentedVariants,
+  type ZardSegmentedVariants,
+} from './segmented.variants';
 
 import type { ClassValue } from 'clsx';
 
@@ -31,37 +47,34 @@ export class ZardSegmentedItemComponent {
   encapsulation: ViewEncapsulation.None,
   template: `
     <div [class]="classes()" role="tablist" [attr.aria-label]="zAriaLabel()">
-      @if (zOptions().length > 0) {
-        @for (option of zOptions(); track option.value) {
-          <button
-            type="button"
-            role="tab"
-            [class]="getItemClasses(option.value)"
-            [disabled]="option.disabled || zDisabled()"
-            [attr.aria-selected]="isSelected(option.value)"
-            [attr.aria-controls]="option.value + '-panel'"
-            [attr.id]="option.value + '-tab'"
-            (click)="selectOption(option.value)"
-          >
-            {{ option.label }}
-          </button>
-        }
-      } @else {
-        @for (item of items(); track item.value()) {
-          <button
-            type="button"
-            role="tab"
-            [class]="getItemClasses(item.value())"
-            [disabled]="item.disabled() || zDisabled()"
-            [attr.aria-selected]="isSelected(item.value())"
-            [attr.aria-controls]="item.value() + '-panel'"
-            [attr.id]="item.value() + '-tab'"
-            (click)="selectOption(item.value())"
-          >
-            {{ item.label() }}
-          </button>
-        }
-      }
+      @if (zOptions().length > 0) { @for (option of zOptions(); track
+      option.value) {
+      <button
+        type="button"
+        role="tab"
+        [class]="getItemClasses(option.value)"
+        [disabled]="option.disabled || zDisabled()"
+        [attr.aria-selected]="isSelected(option.value)"
+        [attr.aria-controls]="option.value + '-panel'"
+        [attr.id]="option.value + '-tab'"
+        (click)="selectOption(option.value)"
+      >
+        {{ option.label }}
+      </button>
+      } } @else { @for (item of items(); track item.value()) {
+      <button
+        type="button"
+        role="tab"
+        [class]="getItemClasses(item.value())"
+        [disabled]="item.disabled() || zDisabled()"
+        [attr.aria-selected]="isSelected(item.value())"
+        [attr.aria-controls]="item.value() + '-panel'"
+        [attr.id]="item.value() + '-tab'"
+        (click)="selectOption(item.value())"
+      >
+        {{ item.label() }}
+      </button>
+      } }
     </div>
   `,
   host: {
@@ -108,7 +121,9 @@ export class ZardSegmentedComponent implements ControlValueAccessor, OnInit {
     }
   }
 
-  protected readonly classes = computed(() => mergeClasses(segmentedVariants({ zSize: this.zSize() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(segmentedVariants({ zSize: this.zSize() }), this.class())
+  );
 
   protected readonly wrapperClasses = computed(() => 'inline-block');
 
@@ -126,8 +141,8 @@ export class ZardSegmentedComponent implements ControlValueAccessor, OnInit {
   protected selectOption(value: string) {
     if (this.zDisabled()) return;
 
-    const option = this.zOptions().find(opt => opt.value === value);
-    const item = this.items().find(item => item.value() === value);
+    const option = this.zOptions().find((opt) => opt.value === value);
+    const item = this.items().find((item) => item.value() === value);
 
     if (option?.disabled || item?.disabled()) return;
 

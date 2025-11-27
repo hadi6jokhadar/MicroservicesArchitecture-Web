@@ -1,6 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import { ZardCommandComponent } from './command.component';
 import { commandEmptyVariants } from './command.variants';
 
@@ -14,18 +21,22 @@ import type { ClassValue } from 'clsx';
   encapsulation: ViewEncapsulation.None,
   template: `
     @if (shouldShow()) {
-      <div [class]="classes()">
-        <ng-content>No results found.</ng-content>
-      </div>
+    <div [class]="classes()">
+      <ng-content>No results found.</ng-content>
+    </div>
     }
   `,
 })
 export class ZardCommandEmptyComponent {
-  private readonly commandComponent = inject(ZardCommandComponent, { optional: true });
+  private readonly commandComponent = inject(ZardCommandComponent, {
+    optional: true,
+  });
 
   readonly class = input<ClassValue>('');
 
-  protected readonly classes = computed(() => mergeClasses(commandEmptyVariants({}), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(commandEmptyVariants({}), this.class())
+  );
 
   protected readonly shouldShow = computed(() => {
     // Check traditional command component

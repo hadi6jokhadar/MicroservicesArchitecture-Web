@@ -1,6 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import { ZardCommandComponent } from './command.component';
 import { commandSeparatorVariants } from './command.variants';
 
@@ -13,16 +20,20 @@ import type { ClassValue } from 'clsx';
   encapsulation: ViewEncapsulation.None,
   template: `
     @if (shouldShow()) {
-      <div [class]="classes()" role="separator"></div>
+    <div [class]="classes()" role="separator"></div>
     }
   `,
 })
 export class ZardCommandDividerComponent {
-  private readonly commandComponent = inject(ZardCommandComponent, { optional: true });
+  private readonly commandComponent = inject(ZardCommandComponent, {
+    optional: true,
+  });
 
   readonly class = input<ClassValue>('');
 
-  protected readonly classes = computed(() => mergeClasses(commandSeparatorVariants({}), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(commandSeparatorVariants({}), this.class())
+  );
 
   protected readonly shouldShow = computed(() => {
     if (!this.commandComponent) return true;

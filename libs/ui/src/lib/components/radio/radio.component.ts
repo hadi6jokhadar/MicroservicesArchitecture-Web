@@ -1,9 +1,19 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, forwardRef, inject, input, output, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  computed,
+  forwardRef,
+  inject,
+  input,
+  output,
+  ViewEncapsulation,
+} from '@angular/core';
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import type { ClassValue } from 'clsx';
 
 import { radioLabelVariants, radioVariants } from './radio.variants';
-import { generateId, mergeClasses, transform } from 'libs\ui\src\lib\utils/merge-classes';
+import { generateId, mergeClasses, transform } from '../../utils';
 
 type OnTouchedType = () => unknown;
 type OnChangeType = (value: unknown) => void;
@@ -14,9 +24,25 @@ type OnChangeType = (value: unknown) => void;
   imports: [],
   exportAs: 'zRadio',
   template: `
-    <span class="flex items-center gap-2 relative" [class]="disabled() ? 'cursor-not-allowed' : 'cursor-pointer'" (mousedown)="onRadioChange()">
-      <input #input type="radio" [value]="value()" [class]="classes()" [checked]="checked" [disabled]="disabled()" (blur)="onRadioBlur()" [name]="name()" [id]="zId()" />
-      <span class="absolute size-2 rounded-full bg-primary opacity-0 peer-checked:opacity-100 pointer-events-none left-[4px]"></span>
+    <span
+      class="flex items-center gap-2 relative"
+      [class]="disabled() ? 'cursor-not-allowed' : 'cursor-pointer'"
+      (mousedown)="onRadioChange()"
+    >
+      <input
+        #input
+        type="radio"
+        [value]="value()"
+        [class]="classes()"
+        [checked]="checked"
+        [disabled]="disabled()"
+        (blur)="onRadioBlur()"
+        [name]="name()"
+        [id]="zId()"
+      />
+      <span
+        class="absolute size-2 rounded-full bg-primary opacity-0 peer-checked:opacity-100 pointer-events-none left-[4px]"
+      ></span>
       <label [class]="labelClasses()" [for]="zId()">
         <ng-content></ng-content>
       </label>
@@ -46,8 +72,12 @@ export class ZardRadioComponent implements ControlValueAccessor {
   /* eslint-disable-next-line @typescript-eslint/no-empty-function */
   private onTouched: OnTouchedType = () => {};
 
-  protected readonly classes = computed(() => mergeClasses(radioVariants(), this.class()));
-  protected readonly labelClasses = computed(() => mergeClasses(radioLabelVariants()));
+  protected readonly classes = computed(() =>
+    mergeClasses(radioVariants(), this.class())
+  );
+  protected readonly labelClasses = computed(() =>
+    mergeClasses(radioLabelVariants())
+  );
 
   checked = false;
 

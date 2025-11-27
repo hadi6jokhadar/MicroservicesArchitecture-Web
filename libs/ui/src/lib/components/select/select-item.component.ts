@@ -1,7 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, linkedSignal, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  input,
+  linkedSignal,
+  signal,
+} from '@angular/core';
 
 import { selectItemVariants } from './select.variants';
-import { mergeClasses, transform } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses, transform } from '../../utils';
 import { ZardIconComponent } from '../icon/icon.component';
 
 // Interface to avoid circular dependency
@@ -26,9 +35,9 @@ interface SelectHost {
   },
   template: `
     @if (isSelected()) {
-      <span class="absolute right-2 flex size-3.5 items-center justify-center">
-        <z-icon zType="check" />
-      </span>
+    <span class="absolute right-2 flex size-3.5 items-center justify-center">
+      <z-icon zType="check" />
+    </span>
     }
     <span class="truncate">
       <ng-content></ng-content>
@@ -47,8 +56,12 @@ export class ZardSelectItemComponent {
     return (element?.textContent ?? element?.innerText)?.trim() ?? '';
   });
 
-  protected readonly classes = computed(() => mergeClasses(selectItemVariants(), this.class()));
-  protected readonly isSelected = computed(() => this.select()?.selectedValue().includes(this.zValue()));
+  protected readonly classes = computed(() =>
+    mergeClasses(selectItemVariants(), this.class())
+  );
+  protected readonly isSelected = computed(() =>
+    this.select()?.selectedValue().includes(this.zValue())
+  );
 
   setSelectHost(selectHost: SelectHost) {
     this.select.set(selectHost);

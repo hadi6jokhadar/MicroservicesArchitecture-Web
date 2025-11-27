@@ -14,8 +14,12 @@ export default [
         'error',
         {
           enforceBuildableLibDependency: false,
-          allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
+          allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$', '@ihsan/ui'],
           depConstraints: [
+            {
+              sourceTag: 'type:shared',
+              onlyDependOnLibsWithTags: ['type:ui', 'type:core', '*'],
+            },
             {
               sourceTag: '*',
               onlyDependOnLibsWithTags: ['*'],

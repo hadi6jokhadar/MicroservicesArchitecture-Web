@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input
 import type { ClassValue } from 'clsx';
 
 import { commandItemVariants, commandShortcutVariants, type ZardCommandItemVariants } from './command.variants';
-import { mergeClasses, transform } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses, transform } from '../../utils';
 import { ZardIconComponent } from '../icon/icon.component';
 import { ZardCommandComponent } from './command.component';
 import type { ZardIcon } from 'libs\ui\src\lib\components/icon/icons';

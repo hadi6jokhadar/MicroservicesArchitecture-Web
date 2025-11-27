@@ -1,7 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 import type { ClassValue } from 'clsx';
 
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import { skeletonVariants } from './skeleton.variants';
 
 @Component({
@@ -17,5 +23,7 @@ import { skeletonVariants } from './skeleton.variants';
 export class ZardSkeletonComponent {
   readonly class = input<ClassValue>('');
 
-  protected readonly classes = computed(() => mergeClasses(skeletonVariants(), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(skeletonVariants(), this.class())
+  );
 }

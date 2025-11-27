@@ -1,10 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, contentChildren, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  contentChildren,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 
 import type { ClassValue } from 'clsx';
 
 import { layoutVariants, type LayoutVariants } from './layout.variants';
 import { SidebarComponent } from './sidebar.component';
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 
 @Component({
   selector: 'z-layout',
@@ -22,7 +29,9 @@ export class LayoutComponent {
   readonly zDirection = input<LayoutVariants['zDirection']>('auto');
 
   // Query for direct sidebar children to auto-detect layout direction
-  private readonly sidebars = contentChildren(SidebarComponent, { descendants: false });
+  private readonly sidebars = contentChildren(SidebarComponent, {
+    descendants: false,
+  });
 
   private readonly detectedDirection = computed(() => {
     if (this.zDirection() !== 'auto') {
@@ -39,7 +48,7 @@ export class LayoutComponent {
       layoutVariants({
         zDirection: this.detectedDirection() as LayoutVariants['zDirection'],
       }),
-      this.class(),
-    ),
+      this.class()
+    )
   );
 }

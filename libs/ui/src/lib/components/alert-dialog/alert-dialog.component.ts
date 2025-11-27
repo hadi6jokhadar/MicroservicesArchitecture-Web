@@ -1,6 +1,12 @@
 import { A11yModule } from '@angular/cdk/a11y';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { BasePortalOutlet, CdkPortalOutlet, type ComponentPortal, PortalModule, type TemplatePortal } from '@angular/cdk/portal';
+import {
+  BasePortalOutlet,
+  CdkPortalOutlet,
+  type ComponentPortal,
+  PortalModule,
+  type TemplatePortal,
+} from '@angular/cdk/portal';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -24,7 +30,7 @@ import type { ClassValue } from 'clsx';
 import type { ZardAlertDialogRef } from './alert-dialog-ref';
 import { ZardAlertDialogService } from './alert-dialog.service';
 import { alertDialogVariants } from './alert-dialog.variants';
-import { generateId, mergeClasses, noopFun } from 'libs\ui\src\lib\utils/merge-classes';
+import { generateId, mergeClasses, noopFun } from '../../utils';
 import { ZardButtonComponent } from '../button/button.component';
 
 export type OnClickCallback<T> = (instance: T) => false | void | object;
@@ -75,9 +81,7 @@ export class ZardAlertDialogOptions<T> {
         transform-origin: center center;
         opacity: 1;
         transform: scale(1);
-        transition:
-          opacity 150ms ease-out,
-          transform 150ms ease-out;
+        transition: opacity 150ms ease-out, transform 150ms ease-out;
       }
 
       @starting-style {
@@ -90,9 +94,7 @@ export class ZardAlertDialogOptions<T> {
       z-alert-dialog.alert-dialog-leave {
         opacity: 0;
         transform: scale(0.9);
-        transition:
-          opacity 150ms ease-in,
-          transform 150ms ease-in;
+        transition: opacity 150ms ease-in, transform 150ms ease-in;
       }
     `,
   ],
@@ -101,11 +103,17 @@ export class ZardAlertDialogComponent<T> extends BasePortalOutlet {
   private readonly host = inject(ElementRef<HTMLElement>);
   protected readonly config = inject(ZardAlertDialogOptions<T>);
 
-  protected readonly classes = computed(() => mergeClasses(alertDialogVariants(), this.config.zCustomClasses));
+  protected readonly classes = computed(() =>
+    mergeClasses(alertDialogVariants(), this.config.zCustomClasses)
+  );
 
   private readonly alertDialogId = generateId('alert-dialog');
-  protected readonly titleId = computed(() => (this.config.zTitle ? `${this.alertDialogId}-title` : null));
-  protected readonly descriptionId = computed(() => (this.config.zDescription ? `${this.alertDialogId}-description` : null));
+  protected readonly titleId = computed(() =>
+    this.config.zTitle ? `${this.alertDialogId}-title` : null
+  );
+  protected readonly descriptionId = computed(() =>
+    this.config.zDescription ? `${this.alertDialogId}-description` : null
+  );
 
   public alertDialogRef?: ZardAlertDialogRef<T>;
 
@@ -126,14 +134,18 @@ export class ZardAlertDialogComponent<T> extends BasePortalOutlet {
 
   attachComponentPortal<T>(portal: ComponentPortal<T>): ComponentRef<T> {
     if (this.portalOutlet()?.hasAttached()) {
-      throw new Error('Attempting to attach alert dialog content after content is already attached');
+      throw new Error(
+        'Attempting to attach alert dialog content after content is already attached'
+      );
     }
     return this.portalOutlet()?.attachComponentPortal(portal);
   }
 
   attachTemplatePortal<C>(portal: TemplatePortal<C>): EmbeddedViewRef<C> {
     if (this.portalOutlet()?.hasAttached()) {
-      throw new Error('Attempting to attach alert dialog content after content is already attached');
+      throw new Error(
+        'Attempting to attach alert dialog content after content is already attached'
+      );
     }
 
     return this.portalOutlet()?.attachTemplatePortal(portal);
@@ -149,7 +161,13 @@ export class ZardAlertDialogComponent<T> extends BasePortalOutlet {
 }
 
 @NgModule({
-  imports: [ZardButtonComponent, ZardAlertDialogComponent, OverlayModule, PortalModule, A11yModule],
+  imports: [
+    ZardButtonComponent,
+    ZardAlertDialogComponent,
+    OverlayModule,
+    PortalModule,
+    A11yModule,
+  ],
   providers: [ZardAlertDialogService],
 })
 export class ZardAlertDialogModule {}

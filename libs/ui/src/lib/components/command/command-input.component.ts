@@ -15,14 +15,18 @@ import {
   viewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  type ControlValueAccessor,
+  FormsModule,
+  NG_VALUE_ACCESSOR,
+} from '@angular/forms';
 import { Subject, switchMap, timer } from 'rxjs';
 import type { ClassValue } from 'clsx';
 
 import { ZardIconComponent } from '../icon/icon.component';
 import { ZardCommandComponent } from './command.component';
 import { commandInputVariants } from './command.variants';
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -62,10 +66,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     },
   ],
 })
-export class ZardCommandInputComponent implements ControlValueAccessor, OnInit, OnDestroy {
-  private readonly commandComponent = inject(ZardCommandComponent, { optional: true });
+export class ZardCommandInputComponent
+  implements ControlValueAccessor, OnInit, OnDestroy
+{
+  private readonly commandComponent = inject(ZardCommandComponent, {
+    optional: true,
+  });
   private readonly destroyRef = inject(DestroyRef);
-  readonly searchInput = viewChild.required<ElementRef<HTMLInputElement>>('searchInput');
+  readonly searchInput =
+    viewChild.required<ElementRef<HTMLInputElement>>('searchInput');
 
   readonly placeholder = input<string>('Type a command or search...');
   readonly class = input<ClassValue>('');
@@ -75,7 +84,9 @@ export class ZardCommandInputComponent implements ControlValueAccessor, OnInit, 
   readonly searchTerm = signal('');
   private readonly searchSubject = new Subject<string>();
 
-  protected readonly classes = computed(() => mergeClasses(commandInputVariants({}), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(commandInputVariants({}), this.class())
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onChange = (_: string) => {
@@ -90,8 +101,8 @@ export class ZardCommandInputComponent implements ControlValueAccessor, OnInit, 
     this.searchSubject
       .pipe(
         // If empty, emit immediately, otherwise debounce
-        switchMap(value => (value ? timer(150) : timer(0))),
-        takeUntilDestroyed(this.destroyRef),
+        switchMap((value) => (value ? timer(150) : timer(0))),
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(() => {
         // Get the current value from the signal to ensure we have the latest

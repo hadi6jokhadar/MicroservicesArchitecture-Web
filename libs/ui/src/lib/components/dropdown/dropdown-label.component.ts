@@ -2,7 +2,7 @@ import type { ClassValue } from 'clsx';
 
 import { Component, computed, input, ViewEncapsulation } from '@angular/core';
 
-import { mergeClasses, transform } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses, transform } from '../../utils';
 import { dropdownLabelVariants } from './dropdown.variants';
 
 @Component({
@@ -25,7 +25,7 @@ export class ZardDropdownMenuLabelComponent {
       dropdownLabelVariants({
         inset: this.inset(),
       }),
-      this.class(),
-    ),
+      this.class()
+    )
   );
 }

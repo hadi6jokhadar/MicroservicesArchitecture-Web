@@ -1,4 +1,9 @@
-import { Overlay, OverlayModule, OverlayPositionBuilder, type OverlayRef } from '@angular/cdk/overlay';
+import {
+  Overlay,
+  OverlayModule,
+  OverlayPositionBuilder,
+  type OverlayRef,
+} from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
   ChangeDetectionStrategy,
@@ -18,7 +23,7 @@ import {
   ViewContainerRef,
   ViewEncapsulation,
 } from '@angular/core';
-import { mergeClasses, transform } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses, transform } from '../../utils';
 import { dropdownContentVariants } from './dropdown.variants';
 
 import type { ClassValue } from 'clsx';
@@ -36,13 +41,25 @@ import { isPlatformBrowser } from '@angular/common';
   },
   template: `
     <!-- Dropdown Trigger -->
-    <div class="trigger-container" (click)="toggle()" (keydown.enter)="toggle()" (keydown.space)="toggle()" tabindex="0">
+    <div
+      class="trigger-container"
+      (click)="toggle()"
+      (keydown.enter)="toggle()"
+      (keydown.space)="toggle()"
+      tabindex="0"
+    >
       <ng-content select="[dropdown-trigger]"></ng-content>
     </div>
 
     <!-- Template for overlay content -->
     <ng-template #dropdownTemplate>
-      <div [class]="contentClasses()" role="menu" [attr.data-state]="'open'" (keydown)="onDropdownKeydown($event)" tabindex="-1">
+      <div
+        [class]="contentClasses()"
+        role="menu"
+        [attr.data-state]="'open'"
+        (keydown)="onDropdownKeydown($event)"
+        tabindex="-1"
+      >
         <ng-content></ng-content>
       </div>
     </ng-template>
@@ -55,7 +72,8 @@ export class ZardDropdownMenuComponent implements OnInit, OnDestroy {
   private viewContainerRef = inject(ViewContainerRef);
   private platformId = inject(PLATFORM_ID);
 
-  readonly dropdownTemplate = viewChild.required<TemplateRef<unknown>>('dropdownTemplate');
+  readonly dropdownTemplate =
+    viewChild.required<TemplateRef<unknown>>('dropdownTemplate');
 
   private overlayRef?: OverlayRef;
   private portal?: TemplatePortal;
@@ -68,7 +86,9 @@ export class ZardDropdownMenuComponent implements OnInit, OnDestroy {
   readonly isOpen = signal(false);
   readonly focusedIndex = signal<number>(-1);
 
-  protected readonly contentClasses = computed(() => mergeClasses(dropdownContentVariants(), this.class()));
+  protected readonly contentClasses = computed(() =>
+    mergeClasses(dropdownContentVariants(), this.class())
+  );
 
   ngOnInit() {
     setTimeout(() => {
@@ -138,7 +158,10 @@ export class ZardDropdownMenuComponent implements OnInit, OnDestroy {
 
     if (!this.overlayRef) return;
 
-    this.portal = new TemplatePortal(this.dropdownTemplate(), this.viewContainerRef);
+    this.portal = new TemplatePortal(
+      this.dropdownTemplate(),
+      this.viewContainerRef
+    );
     this.overlayRef.attach(this.portal);
     this.isOpen.set(true);
     this.openChange.emit(true);
@@ -206,7 +229,11 @@ export class ZardDropdownMenuComponent implements OnInit, OnDestroy {
   private getDropdownItems(): HTMLElement[] {
     if (!this.overlayRef?.hasAttached()) return [];
     const dropdownElement = this.overlayRef.overlayElement;
-    return Array.from(dropdownElement.querySelectorAll<HTMLElement>('z-dropdown-menu-item, [z-dropdown-menu-item]')).filter(item => item.dataset['disabled'] === undefined);
+    return Array.from(
+      dropdownElement.querySelectorAll<HTMLElement>(
+        'z-dropdown-menu-item, [z-dropdown-menu-item]'
+      )
+    ).filter((item) => item.dataset['disabled'] === undefined);
   }
 
   private navigateItems(direction: number, items: HTMLElement[]) {
@@ -261,7 +288,9 @@ export class ZardDropdownMenuComponent implements OnInit, OnDestroy {
 
   private focusDropdown() {
     if (this.overlayRef?.hasAttached()) {
-      const dropdownElement = this.overlayRef.overlayElement.querySelector('[role="menu"]') as HTMLElement;
+      const dropdownElement = this.overlayRef.overlayElement.querySelector(
+        '[role="menu"]'
+      ) as HTMLElement;
       if (dropdownElement) {
         dropdownElement.focus();
       }
@@ -269,7 +298,8 @@ export class ZardDropdownMenuComponent implements OnInit, OnDestroy {
   }
 
   private focusTrigger() {
-    const trigger = this.elementRef.nativeElement.querySelector('.trigger-container');
+    const trigger =
+      this.elementRef.nativeElement.querySelector('.trigger-container');
     if (trigger) {
       trigger.focus();
     }

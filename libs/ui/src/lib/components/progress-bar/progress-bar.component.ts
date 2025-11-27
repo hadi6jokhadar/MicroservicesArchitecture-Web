@@ -1,9 +1,20 @@
 import type { ClassValue } from 'clsx';
 
-import { ChangeDetectionStrategy, Component, computed, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
-import { containerProgressBarVariants, progressBarVariants, type ZardContainerProgressBarVariants, type ZardProgressBarVariants } from './progress-bar.variants';
+import { mergeClasses } from '../../utils';
+import {
+  containerProgressBarVariants,
+  progressBarVariants,
+  type ZardContainerProgressBarVariants,
+  type ZardProgressBarVariants,
+} from './progress-bar.variants';
 
 @Component({
   selector: 'z-progress-bar',
@@ -28,13 +39,17 @@ import { containerProgressBarVariants, progressBarVariants, type ZardContainerPr
   `,
   template: `
     @if (zIndeterminate()) {
-      <div [class]="classes()">
-        <div [class]="barClasses()"></div>
-      </div>
+    <div [class]="classes()">
+      <div [class]="barClasses()"></div>
+    </div>
     } @else {
-      <div [class]="classes()">
-        <div [style.width.%]="correctedProgress()" [class]="barClasses()" id="bar"></div>
-      </div>
+    <div [class]="classes()">
+      <div
+        [style.width.%]="correctedProgress()"
+        [class]="barClasses()"
+        id="bar"
+      ></div>
+    </div>
     }
   `,
   host: {
@@ -45,7 +60,8 @@ export class ZardProgressBarComponent {
   readonly zType = input<ZardProgressBarVariants['zType']>('default');
   readonly zSize = input<ZardContainerProgressBarVariants['zSize']>('default');
   readonly zShape = input<ZardProgressBarVariants['zShape']>('default');
-  readonly zIndeterminate = input<ZardProgressBarVariants['zIndeterminate']>(undefined);
+  readonly zIndeterminate =
+    input<ZardProgressBarVariants['zIndeterminate']>(undefined);
   readonly class = input<ClassValue>('');
   readonly barClass = input<ClassValue>('');
   readonly progress = input(0);
@@ -57,10 +73,25 @@ export class ZardProgressBarComponent {
   });
 
   protected readonly classes = computed(() =>
-    mergeClasses(containerProgressBarVariants({ zIndeterminate: this.zIndeterminate(), zType: this.zType(), zSize: this.zSize(), zShape: this.zShape() }), this.class()),
+    mergeClasses(
+      containerProgressBarVariants({
+        zIndeterminate: this.zIndeterminate(),
+        zType: this.zType(),
+        zSize: this.zSize(),
+        zShape: this.zShape(),
+      }),
+      this.class()
+    )
   );
 
   protected readonly barClasses = computed(() =>
-    mergeClasses(progressBarVariants({ zIndeterminate: this.zIndeterminate(), zType: this.zType(), zShape: this.zShape() }), this.barClass()),
+    mergeClasses(
+      progressBarVariants({
+        zIndeterminate: this.zIndeterminate(),
+        zType: this.zType(),
+        zShape: this.zShape(),
+      }),
+      this.barClass()
+    )
   );
 }

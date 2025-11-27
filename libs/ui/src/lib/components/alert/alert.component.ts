@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, input, TemplateRef, ViewE
 import type { ClassValue } from 'clsx';
 
 import { alertDescriptionVariants, alertIconVariants, alertTitleVariants, alertVariants, type ZardAlertVariants } from './alert.variants';
-import { mergeClasses } from 'libs\ui\src\lib\utils/merge-classes';
+import { mergeClasses } from '../../utils';
 import { ZardStringTemplateOutletDirective } from '../core/directives/string-template-outlet/string-template-outlet.directive';
 import { ZardIconComponent } from '../icon/icon.component';
 import type { ZardIcon } from 'libs\ui\src\lib\components/icon/icons';
