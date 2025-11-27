@@ -1,3 +1,12 @@
-.pages-container {
-  padding: 20px;
+:host {
+  display: block;
+  block-size: 100vh;
+  overflow: hidden;
+
+  .pages-container {
+    display: flex;
+    block-size: 100%;
+    inline-size: 100%;
+    overflow: hidden;
+  }
 }

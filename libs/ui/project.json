@@ -1,18 +1,18 @@
 {
-  "name": "shared",
+  "name": "ui",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/shared/src",
-  "prefix": "shared-",
+  "sourceRoot": "libs/ui/src",
+  "prefix": "ui",
   "projectType": "library",
-  "tags": ["type:shared"],
+  "tags": ["type:ui"],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/shared",
-        "main": "libs/shared/src/index.ts",
-        "tsConfig": "libs/shared/tsconfig.lib.json",
+        "outputPath": "dist/libs/ui",
+        "main": "libs/ui/src/index.ts",
+        "tsConfig": "libs/ui/tsconfig.lib.json",
         "assets": []
       }
     },

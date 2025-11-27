@@ -10,7 +10,9 @@
     "paths": {
       "@ihsan/core": ["libs/core/src/index.ts"],
       "@ihsan/shared": ["libs/shared/src/index.ts"],
-      "@ihsan/shared/*": ["libs/shared/src/*"]
+      "@ihsan/shared/*": ["libs/shared/src/*"],
+      "@ihsan/ui": ["libs/ui/src/index.ts"],
+      "@ihsan/ui/*": ["libs/ui/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]
