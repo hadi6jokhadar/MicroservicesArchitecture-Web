@@ -1,13 +1,17 @@
 {
+  "$schema": "https://zardui.com/schema.json",
   "style": "css",
+  "appConfigFile": "\\apps\\admin\\src\\app\\app.config.ts",
   "packageManager": "npm",
   "tailwind": {
-    "css": "apps\\admin\\src\\styles.scss",
-    "baseColor": "neutral",
-    "cssVariables": true
+    "css": "\\apps\\admin\\src\\styles.css",
+    "baseColor": "neutral"
   },
+  "baseUrl": "src/app",
   "aliases": {
-    "components": "libs\\ui\\src\\lib\\components",
-    "utils": "libs\\ui\\src\\lib\\utils"
+    "components": "\\libs\\ui\\src\\lib\\components",
+    "utils": "\\libs\\ui\\src\\lib\\utils",
+    "core": "\\libs\\ui\\src\\lib/core",
+    "services": "\\libs\\ui\\src\\lib/services"
   }
 }

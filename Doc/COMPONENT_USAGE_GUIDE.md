@@ -1,980 +1,1292 @@
 # Zardui Component Usage Guide
 
-## 🎯 Purpose
+**Last Updated:** January 18, 2026  
+**Zardui Package:** `@zardui/angular` | **Local Wrapper:** `@ihsan/ui`
 
-This guide helps AI assistants and developers select the correct Zardui component for specific UI tasks. **ALWAYS consult this guide before creating custom UI components.**
+## 📋 Table of Contents
 
-## 🚨 Golden Rule: Zardui First
-
-**Before creating ANY custom UI component, check if Zardui provides it.** All components listed below are already installed and ready to use via `@ngzard/ui`.
-
----
-
-## 📑 Component Reference
-
-### Accordion
-
-**When to use:**
-
-- Displaying collapsible sections of content (FAQ, settings panels, expandable lists)
-- Organizing related information that users can show/hide
-- Saving vertical space while keeping content accessible
-
-**Common use cases:**
-
-- FAQ sections
-- Settings panels with multiple categories
-- Product details with expandable specifications
-- Help documentation with collapsible topics
-
-**Import from:** `@ngzard/ui/accordion`
+1. [Overview](#overview)
+2. [Installation](#installation)
+3. [Available Components](#available-components)
+4. [Usage Examples](#usage-examples)
+5. [Component Catalog](#component-catalog)
+6. [Best Practices](#best-practices)
 
 ---
 
-### Alert
+## Overview
 
-**When to use:**
+This project uses **Zardui** as its primary UI component library. **ALL UI components MUST use Zardui** - creating custom UI components that duplicate Zardui functionality is **FORBIDDEN**.
 
-- Displaying inline notifications or messages
-- Showing status updates (success, warning, error, info)
-- Presenting important information that doesn't require user action
+### Why Zardui?
 
-**Common use cases:**
+- ✅ **Comprehensive**: 40+ production-ready components
+- ✅ **Consistent**: Unified design system
+- ✅ **Accessible**: WCAG 2.1 compliant
+- ✅ **Modern**: Built for Angular signals and standalone components
+- ✅ **Customizable**: Variant-based styling system
 
-- Form submission success/error messages
-- Warning banners (maintenance notice, beta features)
-- Information callouts in documentation
-- Status indicators (account verification pending)
+### Live Demos
 
-**NOT for:** Modal dialogs requiring user action (use Alert Dialog instead)
+All components have live, interactive demos available at:
 
-**Import from:** `@ngzard/ui/alert`
-
----
-
-### Alert Dialog
-
-**When to use:**
-
-- Requiring user confirmation before destructive actions
-- Displaying critical warnings that demand attention
-- Showing blocking messages that require acknowledgment
-
-**Common use cases:**
-
-- Delete confirmations ("Are you sure you want to delete this item?")
-- Logout confirmations
-- Unsaved changes warnings
-- Critical error notifications requiring acknowledgment
-
-**NOT for:** Non-blocking notifications (use Toast instead) or informational dialogs (use Dialog)
-
-**Import from:** `@ngzard/ui/alert-dialog`
+- **Test Page:** `apps/admin/src/app/pages/test-components/`
+- **Run:** `nx run admin:serve --configuration=development`
+- **URL:** http://localhost:4200/test-components
 
 ---
 
-### Avatar
+## Installation
 
-**When to use:**
+### Adding New Components
 
-- Displaying user profile pictures
-- Showing user initials when no image available
-- Representing users in lists, comments, or chat interfaces
+Use the batch script to install Zardui components:
 
-**Common use cases:**
+```bash
+# From workspace root
+install-zardui-components.bat
+```
 
-- User profile headers
-- Comment sections (user avatars next to comments)
-- Team member lists
-- Chat message senders
-- Navigation bar user menu
+This installs all components to `libs/ui/src/lib/zard/components/`.
 
-**Import from:** `@ngzard/ui/avatar`
+### Importing Components
 
----
+```typescript
+// ✅ CORRECT - Import from local wrapper
+import {
+  ZardButtonComponent,
+  ZardInputComponent,
+  ZardDialogService,
+} from '@ihsan/ui';
 
-### Badge
-
-**When to use:**
-
-- Showing counts or status indicators
-- Highlighting new, updated, or unread items
-- Displaying small pieces of metadata (tags, labels)
-
-**Common use cases:**
-
-- Notification counters (3 unread messages)
-- Status labels (Active, Pending, Approved)
-- Version tags (v2.0, Beta)
-- Category tags on blog posts
-- Shopping cart item count
-
-**Import from:** `@ngzard/ui/badge`
+// ❌ WRONG - Don't import directly from package
+import { ZardButtonComponent } from '@zardui/angular';
+```
 
 ---
 
-### Breadcrumb
+## Available Components
 
-**When to use:**
+### Complete Component List
 
-- Showing the user's current location in a hierarchical structure
-- Providing navigation back to parent pages
-- Displaying multi-level navigation paths
+All 40+ components are installed and ready to use:
 
-**Common use cases:**
-
-- Multi-level page navigation (Home > Products > Electronics > Laptops)
-- File/folder navigation
-- E-commerce category paths
-- Documentation section navigation
-
-**Import from:** `@ngzard/ui/breadcrumb`
+| Category         | Components                                                                                                                                     |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Layout**       | Accordion, Card, Divider, Layout, Resizable, Sheet, Tabs                                                                                       |
+| **Navigation**   | Breadcrumb, Menu, Pagination, Segmented                                                                                                        |
+| **Forms**        | Button, Button Group, Calendar, Checkbox, Combobox, Date Picker, Form, Input, Input Group, Radio, Select, Slider, Switch, Toggle, Toggle Group |
+| **Data Display** | Avatar, Badge, Empty, Icon, Kbd, Progress Bar, Skeleton, Table                                                                                 |
+| **Feedback**     | Alert, Alert Dialog, Dialog, Loader, Popover, Toast, Tooltip                                                                                   |
+| **Advanced**     | Carousel, Command, Dropdown                                                                                                                    |
 
 ---
 
-### Button
+## Usage Examples
 
-**When to use:**
+### Basic Button
 
-- Triggering actions (submit, save, delete, etc.)
-- Navigation to other pages
-- Opening dialogs or menus
+```typescript
+// Component
+import { Component } from '@angular/core';
+import { ZardButtonComponent } from '@ihsan/ui';
 
-**Common use cases:**
+@Component({
+  selector: 'app-example',
+  standalone: true,
+  imports: [ZardButtonComponent],
+  template: `
+    <button z-button zType="primary" zSize="md" (click)="handleClick()">
+      Click Me
+    </button>
+  `,
+})
+export class ExampleComponent {
+  handleClick() {
+    console.log('Button clicked!');
+  }
+}
+```
 
-- Form submissions
-- Primary/secondary actions in dialogs
-- Call-to-action buttons
-- Icon buttons for toolbars
-- Link-styled buttons
+### Form with Input
 
-**Variants:** Primary, secondary, outline, ghost, destructive, link
+```typescript
+// Component
+import { Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ZardInputComponent, ZardButtonComponent } from '@ihsan/ui';
 
-**NOT for:** Navigation links in text (use anchor tags)
+interface ILoginForm {
+  email: FormControl<string>;
+  password: FormControl<string>;
+}
 
-**Import from:** `@ngzard/ui/button`
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [ReactiveFormsModule, ZardInputComponent, ZardButtonComponent],
+  template: `
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <input z-input formControlName="email" placeholder="Email" type="email" />
 
----
+      <input
+        z-input
+        formControlName="password"
+        placeholder="Password"
+        type="password"
+      />
 
-### Button Group
+      <button z-button zType="primary" type="submit">Login</button>
+    </form>
+  `,
+})
+export class LoginComponent {
+  private _fb = inject(FormBuilder);
 
-**When to use:**
+  loginForm = this._fb.group<ILoginForm>({
+    email: this._fb.control('', {
+      validators: [Validators.required, Validators.email],
+      nonNullable: true,
+    }),
+    password: this._fb.control('', {
+      validators: [Validators.required],
+      nonNullable: true,
+    }),
+  });
 
-- Grouping related buttons together
-- Creating segmented controls
-- Toolbar actions that belong together
+  onSubmit() {
+    if (this.loginForm.valid) {
+      console.log(this.loginForm.value);
+    }
+  }
+}
+```
 
-**Common use cases:**
+### Dialog (Programmatic)
 
-- Text formatting toolbars (Bold, Italic, Underline)
-- View switchers (Grid view, List view)
-- Pagination controls (Previous, 1, 2, 3, Next)
-- Action groups (Edit, Delete, Share)
+```typescript
+// Component
+import { Component, inject } from '@angular/core';
+import { ZardDialogService, ZardButtonComponent } from '@ihsan/ui';
 
-**Import from:** `@ngzard/ui/button-group`
+@Component({
+  selector: 'app-example',
+  standalone: true,
+  imports: [ZardButtonComponent],
+  template: ` <button z-button (click)="openDialog()">Open Dialog</button> `,
+})
+export class ExampleComponent {
+  private _dialogService = inject(ZardDialogService);
 
----
+  openDialog() {
+    const dialogRef = this._dialogService.open(MyDialogComponent, {
+      data: { title: 'Hello World' },
+      width: '500px',
+    });
 
-### Calendar
+    dialogRef.closed.subscribe((result) => {
+      console.log('Dialog closed with:', result);
+    });
+  }
+}
+```
 
-**When to use:**
+### Toast Notifications
 
-- Selecting dates or date ranges
-- Displaying events on specific dates
-- Building custom date pickers
+```typescript
+import { Component, inject } from '@angular/core';
+import { ZardToastService } from '@ihsan/ui';
 
-**Common use cases:**
+@Component({
+  selector: 'app-example',
+  standalone: true,
+  template: `<button (click)="showToast()">Show Toast</button>`,
+})
+export class ExampleComponent {
+  private _toast = inject(ZardToastService);
 
-- Booking systems (select check-in/check-out dates)
-- Event calendars
-- Date range selectors for reports
-- Scheduling interfaces
-
-**NOT for:** Simple date input (use Date Picker instead)
-
-**Import from:** `@ngzard/ui/calendar`
-
----
-
-### Card
-
-**When to use:**
-
-- Grouping related content in a container
-- Displaying summary information with actions
-- Creating grid layouts of items (products, users, articles)
-
-**Common use cases:**
-
-- Product cards in e-commerce
-- User profile cards
-- Dashboard widgets
-- Blog post previews
-- Pricing plan cards
-
-**Import from:** `@ngzard/ui/card`
-
----
-
-### Carousel
-
-**When to use:**
-
-- Displaying multiple items in a scrollable slideshow
-- Showing image galleries
-- Presenting testimonials or featured content
-
-**Common use cases:**
-
-- Hero section image sliders
-- Product image galleries
-- Testimonial rotators
-- Featured content showcases
-- Tutorial step walkthroughs
-
-**Import from:** `@ngzard/ui/carousel`
-
----
-
-### Checkbox
-
-**When to use:**
-
-- Toggling individual options on/off
-- Selecting multiple items from a list
-- Accepting terms and conditions
-
-**Common use cases:**
-
-- Multi-select lists (select multiple users, items)
-- Filter options (show only active items)
-- Settings toggles (enable notifications)
-- Agreement checkboxes (I accept terms and conditions)
-
-**NOT for:** Mutually exclusive options (use Radio instead)
-
-**Import from:** `@ngzard/ui/checkbox`
-
----
-
-### Combobox
-
-**When to use:**
-
-- Combining dropdown selection with text input
-- Filtering large lists while typing
-- Autocomplete functionality
-
-**Common use cases:**
-
-- Country/city selectors with search
-- Tag input with suggestions
-- Autocomplete search fields
-- Searchable dropdown menus
-
-**Import from:** `@ngzard/ui/combobox`
+  showToast() {
+    this._toast.success('Operation completed successfully!');
+  }
+}
+```
 
 ---
 
-### Command
+## Component Catalog
 
-**When to use:**
+### 🔘 Accordion
 
-- Creating command palettes (keyboard-driven interfaces)
-- Building searchable action menus
-- Implementing quick-access commands
+**Purpose:** Collapsible content sections
 
-**Common use cases:**
+**Variants:**
 
-- Application command palette (Ctrl+K)
-- Search with actions (search users, then select action)
-- Keyboard-driven navigation menus
+- Basic (single item open)
+- Multiple (multiple items open)
+- Non-collapsible (at least one always open)
 
-**Import from:** `@ngzard/ui/command`
+**Usage:**
 
----
+```html
+<z-accordion>
+  <z-accordion-item value="item-1">
+    <z-accordion-trigger>Section 1</z-accordion-trigger>
+    <z-accordion-content>Content for section 1</z-accordion-content>
+  </z-accordion-item>
+</z-accordion>
+```
 
-### Date Picker
-
-**When to use:**
-
-- Selecting a single date from a calendar
-- Date input fields in forms
-
-**Common use cases:**
-
-- Birthdate selection
-- Appointment booking
-- Event date selection
-- Deadline pickers in task management
-
-**NOT for:** Date range selection (use Calendar with range mode)
-
-**Import from:** `@ngzard/ui/date-picker`
+**Demo:** `ZardDemoAccordionBasicComponent`
 
 ---
 
-### Dialog
+### 🚨 Alert
 
-**When to use:**
+**Purpose:** Display important messages
 
-- Displaying content in a modal overlay
-- Forms that require user input
-- Detailed views that don't need a separate page
+**Variants:** `info`, `success`, `warning`, `error`
 
-**Common use cases:**
+**Usage:**
 
-- Edit user dialogs
-- Create new item forms
-- Image lightboxes
-- Video players
-- Multi-step wizards
+```html
+<z-alert zType="success">
+  <z-alert-title>Success!</z-alert-title>
+  <z-alert-description>Your changes have been saved.</z-alert-description>
+</z-alert>
+```
 
-**NOT for:** Critical confirmations (use Alert Dialog)
-
-**Import from:** `@ngzard/ui/dialog`
+**Demo:** `ZardDemoAlertBasicComponent`
 
 ---
 
-### Divider
+### ⚠️ Alert Dialog
 
-**When to use:**
+**Purpose:** Modal confirmation dialogs
 
-- Separating content sections
-- Creating visual breaks between groups
-- Organizing menu items
+**Usage:**
 
-**Common use cases:**
+```typescript
+import { ZardAlertDialogService } from '@ihsan/ui';
 
-- Separating form sections
-- Dividing menu groups
-- Visual breaks in card content
-- Footer section separators
+private _alertDialog = inject(ZardAlertDialogService);
 
-**Import from:** `@ngzard/ui/divider`
+confirmDelete() {
+  this._alertDialog.open({
+    title: 'Are you sure?',
+    description: 'This action cannot be undone.',
+    confirmText: 'Delete',
+    cancelText: 'Cancel'
+  }).closed.subscribe(confirmed => {
+    if (confirmed) {
+      // Delete logic
+    }
+  });
+}
+```
 
----
-
-### Dropdown
-
-**When to use:**
-
-- Creating context menus
-- User account menus
-- Action menus (more options, kebab menus)
-
-**Common use cases:**
-
-- User profile dropdown (Settings, Logout)
-- Row action menus in tables (Edit, Delete, Share)
-- More options menus
-- Context menus on right-click
-
-**NOT for:** Form select inputs (use Select instead)
-
-**Import from:** `@ngzard/ui/dropdown`
+**Demo:** `ZardDemoAlertDialogDefaultComponent`
 
 ---
 
-### Empty
+### 👤 Avatar
 
-**When to use:**
+**Purpose:** User profile images
 
-- Displaying empty states
-- Showing "no data" messages with call-to-action
-- Placeholder content when lists are empty
+**Variants:**
 
-**Common use cases:**
-
-- Empty inbox ("No messages yet")
-- Empty search results
-- Empty shopping cart
-- No items in list views
-
-**Import from:** `@ngzard/ui/empty`
-
----
-
-### Form
-
-**When to use:**
-
-- Building reactive forms with validation
-- Creating form layouts with labels and error messages
-- Integrating with Angular FormControl/FormGroup
-
-**Common use cases:**
-
-- User registration forms
-- Login forms
-- Settings pages
-- Data entry forms
-- Multi-field input forms
-
-**Import from:** `@ngzard/ui/form`
-
----
-
-### Icon
-
-**When to use:**
-
-- Displaying SVG icons
-- Adding visual indicators to buttons, menus, etc.
-- Icon-only buttons or navigation
-
-**Common use cases:**
-
-- Button icons (Save icon on save button)
-- Navigation menu icons
+- Sizes: `xs`, `sm`, `md`, `lg`, `xl`
+- Shapes: `circle`, `square`
 - Status indicators
-- Social media icons
 
-**Import from:** `@ngzard/ui/icon`
+**Usage:**
 
----
+```html
+<z-avatar
+  [src]="user.avatarUrl"
+  [alt]="user.name"
+  zSize="md"
+  zStatus="online"
+/>
 
-### Input
+<z-avatar-group [max]="3">
+  <z-avatar *ngFor="let user of users" [src]="user.avatarUrl" />
+</z-avatar-group>
+```
 
-**When to use:**
-
-- Single-line text input
-- Email, password, number inputs
-- Form fields requiring user text entry
-
-**Common use cases:**
-
-- Email address input
-- Password fields
-- Name/username fields
-- Search boxes
-- Number inputs
-
-**NOT for:** Multi-line text (use textarea) or file uploads (use file input)
-
-**Import from:** `@ngzard/ui/input`
+**Demo:** `ZardDemoAvatarBasicComponent`, `ZardDemoAvatarStatusComponent`
 
 ---
 
-### Input Group
+### 🏷️ Badge
 
-**When to use:**
+**Purpose:** Status indicators, counts, labels
 
-- Adding prefixes/suffixes to inputs (icons, text)
-- Combining input with buttons
-- Creating composite input components
+**Variants:** `default`, `primary`, `success`, `warning`, `error`, `outline`
 
-**Common use cases:**
+**Usage:**
 
-- Currency inputs ($ prefix)
-- Search input with search button
-- URL inputs (https:// prefix)
-- Phone number inputs (country code prefix)
+```html
+<z-badge zType="success">Active</z-badge>
+<z-badge zType="error" [count]="unreadCount" />
+```
 
-**Import from:** `@ngzard/ui/input-group`
+**Demo:** `ZardDemoBadgeDefaultComponent`
 
 ---
 
-### Kbd
+### 🍞 Breadcrumb
 
-**When to use:**
+**Purpose:** Navigation hierarchy
 
-- Displaying keyboard shortcuts
-- Showing key combinations in documentation
+**Usage:**
 
-**Common use cases:**
+```html
+<z-breadcrumb>
+  <z-breadcrumb-item>
+    <a routerLink="/home">Home</a>
+  </z-breadcrumb-item>
+  <z-breadcrumb-item>
+    <a routerLink="/users">Users</a>
+  </z-breadcrumb-item>
+  <z-breadcrumb-item>Profile</z-breadcrumb-item>
+</z-breadcrumb>
+```
 
-- Shortcut hints (Press Ctrl+S to save)
-- Keyboard command documentation
-- Help tooltips with shortcuts
-
-**Import from:** `@ngzard/ui/kbd`
-
----
-
-### Layout
-
-**When to use:**
-
-- Creating application shells (header, sidebar, content, footer)
-- Building responsive page layouts
-- Organizing page structure
-
-**Common use cases:**
-
-- Admin dashboard layouts
-- Application shell with navigation
-- Multi-column layouts
-- Responsive page structures
-
-**Import from:** `@ngzard/ui/layout`
+**Demo:** `ZardDemoBreadcrumbDefaultComponent`, `ZardDemoBreadcrumbSeparatorComponent`
 
 ---
 
-### Loader
+### 🔘 Button
 
-**When to use:**
+**Purpose:** Primary user actions
 
-- Indicating loading states
-- Showing async operation progress
-- Skeleton loaders for content placeholders
+**Variants:**
 
-**Common use cases:**
+- **Types:** `primary`, `secondary`, `outline`, `ghost`, `link`, `destructive`
+- **Sizes:** `xs`, `sm`, `md`, `lg`, `xl`
+- **Shapes:** `default`, `circle`, `square`
 
-- Page loading indicators
-- Button loading states (submitting form)
-- Lazy-loaded content placeholders
-- Data fetching indicators
+**Usage:**
 
-**Import from:** `@ngzard/ui/loader`
+```html
+<button z-button zType="primary" zSize="md" (click)="save()">
+  Save Changes
+</button>
 
----
+<button z-button zType="outline" [zLoading]="isLoading" [disabled]="isLoading">
+  <z-icon name="save" />
+  Save
+</button>
+```
 
-### Menu
-
-**When to use:**
-
-- Creating navigation menus
-- Building sidebar menus
-- Multi-level menu structures
-
-**Common use cases:**
-
-- Application navigation sidebar
-- Nested menu items
-- Settings menu with submenus
-- Mobile navigation menus
-
-**NOT for:** Dropdown action menus (use Dropdown instead)
-
-**Import from:** `@ngzard/ui/menu`
+**Demo:** `ZardDemoButtonDefaultComponent`, `ZardDemoButtonLoadingComponent`
 
 ---
 
-### Pagination
+### 🔘 Button Group
 
-**When to use:**
+**Purpose:** Related button collections
 
-- Navigating through paginated data
-- Splitting large datasets into pages
-- Table navigation
+**Usage:**
 
-**Common use cases:**
+```html
+<z-button-group>
+  <button z-button>Left</button>
+  <button z-button>Middle</button>
+  <button z-button>Right</button>
+</z-button-group>
+```
 
-- Table pagination (showing 1-10 of 100)
-- Search results pagination
-- Product listing pages
-- Blog post archives
-
-**Import from:** `@ngzard/ui/pagination`
-
----
-
-### Popover
-
-**When to use:**
-
-- Displaying additional information on hover/click
-- Creating floating panels with rich content
-- Contextual help or tooltips with interactive content
-
-**Common use cases:**
-
-- User profile previews on hover
-- Color picker panels
-- Rich tooltips with links/buttons
-- Contextual help panels
-
-**NOT for:** Simple text tooltips (use Tooltip instead)
-
-**Import from:** `@ngzard/ui/popover`
+**Demo:** `ZardDemoButtonGroupDefaultComponent`, `ZardDemoButtonGroupOrientationComponent`
 
 ---
 
-### Progress Bar
+### 📅 Calendar
 
-**When to use:**
+**Purpose:** Date selection
 
-- Showing progress of long-running operations
-- Displaying completion percentage
-- Multi-step process indicators
+**Modes:** Single, Range, Multiple
 
-**Common use cases:**
+**Usage:**
 
-- File upload progress
-- Form completion progress
-- Multi-step wizard progress
-- Loading progress (determinate)
+```html
+<z-calendar
+  [(ngModel)]="selectedDate"
+  [minDate]="minDate"
+  [maxDate]="maxDate"
+/>
+```
 
-**Import from:** `@ngzard/ui/progress-bar`
-
----
-
-### Radio
-
-**When to use:**
-
-- Selecting one option from multiple choices
-- Mutually exclusive options
-
-**Common use cases:**
-
-- Gender selection (Male, Female, Other)
-- Payment method selection
-- Shipping method selection
-- Single-choice question answers
-
-**NOT for:** Multiple selections (use Checkbox instead)
-
-**Import from:** `@ngzard/ui/radio`
+**Demo:** `ZardDemoCalendarDefaultComponent`, `ZardDemoCalendarRangeComponent`
 
 ---
 
-### Resizable
+### 🃏 Card
 
-**When to use:**
+**Purpose:** Content container
 
-- Creating panels that users can resize
-- Split view layouts
-- Adjustable sidebar widths
+**Usage:**
 
-**Common use cases:**
+```html
+<z-card>
+  <z-card-header>
+    <z-card-title>Card Title</z-card-title>
+    <z-card-description>Card description</z-card-description>
+  </z-card-header>
+  <z-card-content> Main content here </z-card-content>
+  <z-card-footer>
+    <button z-button>Action</button>
+  </z-card-footer>
+</z-card>
+```
 
-- Code editor split views
-- Resizable sidebar panels
-- Multi-pane layouts (file tree + editor + preview)
-
-**Import from:** `@ngzard/ui/resizable`
-
----
-
-### Segmented
-
-**When to use:**
-
-- Creating segmented controls (toggle between views)
-- Mutually exclusive button groups
-- View switchers
-
-**Common use cases:**
-
-- Map/Satellite view toggle
-- Grid/List view switcher
-- Time period selectors (Day, Week, Month)
-- Chart type selectors
-
-**Import from:** `@ngzard/ui/segmented`
+**Demo:** `ZardDemoCardDefaultComponent`
 
 ---
 
-### Select
+### 🎠 Carousel
 
-**When to use:**
+**Purpose:** Image/content slider
 
-- Dropdown selection from a list of options
-- Form select inputs
-- Single or multi-select from predefined options
+**Features:** Auto-play, navigation arrows, dot controls, plugins
 
-**Common use cases:**
+**Usage:**
 
-- Country/state selection
-- Category selection
-- Role assignment dropdowns
-- Language selection
+```html
+<z-carousel>
+  <z-carousel-content>
+    <z-carousel-item *ngFor="let item of items">
+      <img [src]="item.image" />
+    </z-carousel-item>
+  </z-carousel-content>
+</z-carousel>
+```
 
-**NOT for:** Action menus (use Dropdown instead)
-
-**Import from:** `@ngzard/ui/select`
-
----
-
-### Sheet
-
-**When to use:**
-
-- Sliding panels from screen edges
-- Mobile-friendly dialogs
-- Side panels with content
-
-**Common use cases:**
-
-- Mobile navigation drawers
-- Filters panel (slide from left)
-- Shopping cart drawer (slide from right)
-- Notification panels
-
-**NOT for:** Centered modals (use Dialog instead)
-
-**Import from:** `@ngzard/ui/sheet`
+**Demo:** `ZardDemoCarouselDefaultComponent`, `ZardDemoCarouselPluginsComponent`
 
 ---
 
-### Skeleton
+### ☑️ Checkbox
 
-**When to use:**
+**Purpose:** Boolean selection
 
-- Loading placeholders that match content layout
-- Improving perceived performance during loading
-- Content placeholders before data loads
+**Variants:** Default, Destructive, Disabled, Sizes, Shapes
 
-**Common use cases:**
+**Usage:**
 
-- Loading user profile placeholders
-- Table row loading states
-- Card content loading
-- List item placeholders
+```html
+<z-checkbox formControlName="acceptTerms" zSize="md">
+  I accept the terms
+</z-checkbox>
+```
 
-**Import from:** `@ngzard/ui/skeleton`
-
----
-
-### Slider
-
-**When to use:**
-
-- Selecting numeric values from a range
-- Volume controls
-- Price range filters
-
-**Common use cases:**
-
-- Price range selectors (min-max)
-- Volume/brightness controls
-- Rating inputs
-- Percentage selectors
-
-**Import from:** `@ngzard/ui/slider`
+**Demo:** `ZardDemoCheckboxDefaultComponent`, `ZardDemoCheckboxSizeComponent`
 
 ---
 
-### Switch
+### 🔍 Combobox
 
-**When to use:**
+**Purpose:** Searchable select dropdown
 
-- On/off toggles (binary states)
-- Enabling/disabling features
-- Settings toggles
+**Features:** Autocomplete, grouping, custom rendering
 
-**Common use cases:**
+**Usage:**
 
-- Dark mode toggle
-- Enable notifications toggle
-- Feature flags (enable/disable)
-- Privacy settings (public/private)
+```html
+<z-combobox
+  [options]="countries"
+  formControlName="country"
+  placeholder="Select country..."
+  searchable
+/>
+```
 
-**NOT for:** Multiple checkboxes (use Checkbox instead)
-
-**Import from:** `@ngzard/ui/switch`
-
----
-
-### Table
-
-**When to use:**
-
-- Displaying tabular data
-- Data grids with sorting/filtering
-- Lists with multiple columns
-
-**Common use cases:**
-
-- User management tables
-- Product listings
-- Invoice tables
-- Report data grids
-- Transaction history
-
-**Import from:** `@ngzard/ui/table`
+**Demo:** `ZardDemoComboboxDefaultComponent`, `ZardDemoComboboxGroupedComponent`
 
 ---
 
-### Tabs
+### ⌨️ Command
 
-**When to use:**
+**Purpose:** Command palette (like VS Code Ctrl+Shift+P)
 
-- Organizing content into multiple sections
-- Switching between related views
-- Multi-panel interfaces
+**Usage:**
 
-**Common use cases:**
+```html
+<z-command>
+  <z-command-input placeholder="Type a command..." />
+  <z-command-list>
+    <z-command-item (select)="doAction1()">Action 1</z-command-item>
+    <z-command-item (select)="doAction2()">Action 2</z-command-item>
+  </z-command-list>
+</z-command>
+```
 
-- Settings pages (Profile, Security, Notifications)
-- Product details (Overview, Specs, Reviews)
-- Dashboard sections
-- Form wizards with named steps
-
-**Import from:** `@ngzard/ui/tabs`
-
----
-
-### Toast
-
-**When to use:**
-
-- Temporary, non-blocking notifications
-- Success/error messages after actions
-- Auto-dismissing alerts
-
-**Common use cases:**
-
-- "Saved successfully" notifications
-- Copy to clipboard confirmations
-- Background task completions
-- Error notifications (non-critical)
-
-**NOT for:** Critical errors requiring action (use Alert Dialog)
-
-**Import from:** `@ngzard/ui/toast`
+**Demo:** `ZardDemoCommandDefaultComponent`
 
 ---
 
-### Toggle
+### 📆 Date Picker
 
-**When to use:**
+**Purpose:** Date input with calendar popup
 
-- Binary state buttons (pressed/unpressed)
-- Toolbar toggle buttons (bold, italic)
-- Single toggle button states
+**Usage:**
 
-**Common use cases:**
+```html
+<z-date-picker
+  formControlName="birthDate"
+  placeholder="Select date..."
+  zSize="md"
+/>
+```
 
-- Text formatting toggles (bold, italic, underline)
-- Favorite/unfavorite buttons
-- Bookmark toggles
-- Play/pause buttons
-
-**Import from:** `@ngzard/ui/toggle`
-
----
-
-### Toggle Group
-
-**When to use:**
-
-- Multiple toggle buttons where one or more can be active
-- Toolbar with multiple toggle options
-- Filter toggles (multiple active states)
-
-**Common use cases:**
-
-- Text alignment (left, center, right, justify)
-- Font style toggles (bold, italic, underline)
-- View filters (active, archived, deleted)
-
-**Import from:** `@ngzard/ui/toggle-group`
+**Demo:** `ZardDemoDatePickerDefaultComponent`, `ZardDemoDatePickerSizesComponent`
 
 ---
 
-### Tooltip
+### 📱 Dialog
 
-**When to use:**
+**Purpose:** Modal overlays
 
-- Displaying short, simple hints on hover
-- Explaining icon-only buttons
-- Showing additional context for UI elements
+**Usage (Service):**
 
-**Common use cases:**
+```typescript
+import { ZardDialogService } from '@ihsan/ui';
 
-- Icon button explanations
-- Abbreviated text full versions
-- Input field hints
-- Help text on hover
+private _dialog = inject(ZardDialogService);
 
-**NOT for:** Rich content with links/buttons (use Popover instead)
+openDialog() {
+  const ref = this._dialog.open(MyDialogComponent, {
+    width: '600px',
+    data: { userId: 123 }
+  });
 
-**Import from:** `@ngzard/ui/tooltip`
+  ref.closed.subscribe(result => {
+    console.log('Result:', result);
+  });
+}
+```
 
----
-
-## 🔍 Decision Tree
-
-**Need to...**
-
-- **Collect user input?**
-
-  - Text → Input
-  - Date → Date Picker
-  - Select from list → Select
-  - Multiple options → Checkbox
-  - Single choice → Radio
-  - On/off toggle → Switch
-  - Numeric range → Slider
-
-- **Display information?**
-
-  - Tabular data → Table
-  - Cards/grid → Card
-  - Empty state → Empty
-  - Loading → Loader/Skeleton
-  - Status/count → Badge
-  - User picture → Avatar
-
-- **Organize content?**
-
-  - Collapsible sections → Accordion
-  - Multiple views → Tabs
-  - Split layout → Resizable
-  - Sections → Divider
-
-- **Navigate?**
-
-  - Page navigation → Breadcrumb
-  - Sidebar menu → Menu
-  - Paginated data → Pagination
-
-- **Show notifications?**
-
-  - Temporary → Toast
-  - Inline message → Alert
-  - Critical warning → Alert Dialog
-
-- **Create overlays?**
-
-  - General modal → Dialog
-  - Confirmation → Alert Dialog
-  - Side panel → Sheet
-  - Context menu → Dropdown
-  - Hover info → Tooltip/Popover
-
-- **Trigger actions?**
-  - Single action → Button
-  - Multiple actions → Dropdown
-  - Grouped actions → Button Group
-  - Toggle state → Toggle/Toggle Group
+**Demo:** Test component has `openDialog()` method
 
 ---
 
-## ⚠️ Anti-Patterns
+### ➖ Divider
 
-**NEVER create custom components for:**
+**Purpose:** Visual separation
 
-- ❌ Custom buttons (use Button with variants)
-- ❌ Custom inputs (use Input/Input Group)
-- ❌ Custom dialogs (use Dialog/Alert Dialog/Sheet)
-- ❌ Custom dropdowns (use Dropdown/Select)
-- ❌ Custom menus (use Menu/Dropdown)
-- ❌ Custom cards (use Card)
-- ❌ Custom badges (use Badge)
-- ❌ Custom alerts (use Alert/Toast)
-- ❌ Custom loading spinners (use Loader)
-- ❌ Custom tooltips (use Tooltip/Popover)
+**Usage:**
 
-**When to create custom components:**
+```html
+<z-divider /> <z-divider orientation="vertical" />
+```
 
-- ✅ Business-specific layouts (user-profile-card, dashboard-widget)
-- ✅ Composite components combining multiple Zardui components
-- ✅ Domain-specific visualizations (charts, graphs)
-- ✅ Complex business logic components (multi-step forms with custom validation)
+**Demo:** `ZardDemoDividerDefaultComponent`, `ZardDemoDividerVerticalComponent`
 
 ---
 
-## 📚 Additional Resources
+### 📭 Empty
 
-- **Zardui Documentation**: [https://zardui.vercel.app](https://zardui.vercel.app)
-- **Installation**: Run `install-zardui-components.bat` for new components
-- **Local Wrapper**: Import from `@ngzard/ui` (configured in workspace)
-- **Package Import**: Import from `@zardui/angular` (direct package access)
+**Purpose:** Empty state display
+
+**Usage:**
+
+```html
+<z-empty description="No data available" [image]="customImageUrl">
+  <button z-button>Add Item</button>
+</z-empty>
+```
+
+**Demo:** `ZardDemoEmptyDefaultComponent`, `ZardDemoEmptyCustomImageComponent`
 
 ---
 
-**Last Updated:** January 18, 2026
+### 📝 Form
+
+**Purpose:** Form field wrapper with validation
+
+**Usage:**
+
+```html
+<z-form-field>
+  <z-form-label>Email</z-form-label>
+  <input z-input formControlName="email" />
+  <z-form-error *ngIf="form.get('email')?.hasError('required')">
+    Email is required
+  </z-form-error>
+  <z-form-hint>We'll never share your email</z-form-hint>
+</z-form-field>
+```
+
+**Demo:** `ZardDemoFormDefaultComponent`, `ZardDemoFormValidationComponent`
+
+---
+
+### 🎨 Icon
+
+**Purpose:** SVG icon display
+
+**Library:** Lucide Icons (1000+ icons)
+
+**Usage:**
+
+```html
+<z-icon name="user" zSize="md" zColor="primary" />
+<z-icon name="settings" [zStrokeWidth]="2" />
+```
+
+**Reference:** See [ZARD_ICON_REFERENCE.md](./ZARD_ICON_REFERENCE.md)
+
+**Demo:** `ZardDemoIconDefaultComponent`, `ZardDemoIconSearchableComponent`
+
+---
+
+### 📥 Input
+
+**Purpose:** Text input fields
+
+**Types:** Text, Email, Password, Number, TextArea
+
+**Variants:** Sizes, Status (error, warning), Borderless
+
+**Usage:**
+
+```html
+<input
+  z-input
+  formControlName="username"
+  placeholder="Enter username"
+  zSize="md"
+  [zStatus]="form.get('username')?.invalid ? 'error' : undefined"
+/>
+
+<textarea z-input formControlName="description" rows="4" />
+```
+
+**Demo:** `ZardDemoInputDefaultComponent`, `ZardDemoInputTextAreaComponent`
+
+---
+
+### 📦 Input Group
+
+**Purpose:** Input with prefix/suffix addons
+
+**Usage:**
+
+```html
+<z-input-group>
+  <z-input-group-addon>@</z-input-group-addon>
+  <input z-input formControlName="username" />
+</z-input-group>
+
+<z-input-group>
+  <input z-input formControlName="amount" type="number" />
+  <z-input-group-addon>USD</z-input-group-addon>
+</z-input-group>
+```
+
+**Demo:** `ZardDemoInputGroupDefaultComponent`, `ZardDemoInputGroupTextComponent`
+
+---
+
+### ⌨️ Kbd
+
+**Purpose:** Keyboard shortcut display
+
+**Usage:**
+
+```html
+<z-kbd>Ctrl</z-kbd> + <z-kbd>S</z-kbd>
+
+<z-kbd-group>
+  <z-kbd>⌘</z-kbd>
+  <z-kbd>K</z-kbd>
+</z-kbd-group>
+```
+
+**Demo:** `ZardDemoKbdDefaultComponent`, `ZardDemoKbdGroupComponent`
+
+---
+
+### 🔄 Loader
+
+**Purpose:** Loading indicators
+
+**Usage:**
+
+```html
+<z-loader zSize="md" /> <z-loader zType="spinner" />
+```
+
+**Demo:** `ZardDemoLoaderDefaultComponent`, `ZardDemoLoaderBasicComponent`
+
+---
+
+### 🍔 Menu
+
+**Purpose:** Dropdown menus
+
+**Usage:**
+
+```html
+<z-menu>
+  <button z-button [zMenuTrigger]="menu">Options</button>
+  <z-menu-content #menu>
+    <z-menu-item (select)="edit()">Edit</z-menu-item>
+    <z-menu-item (select)="delete()">Delete</z-menu-item>
+    <z-menu-separator />
+    <z-menu-item (select)="archive()">Archive</z-menu-item>
+  </z-menu-content>
+</z-menu>
+```
+
+**Demo:** `ZardDemoMenuDefaultComponent`
+
+---
+
+### 📄 Pagination
+
+**Purpose:** Page navigation
+
+**Usage:**
+
+```html
+<z-pagination
+  [total]="totalItems"
+  [pageSize]="pageSize"
+  [(page)]="currentPage"
+  (pageChange)="loadPage($event)"
+/>
+```
+
+**Demo:** `ZardDemoPaginationDefaultComponent`, `ZardDemoPaginationCustomComponent`
+
+---
+
+### 💬 Popover
+
+**Purpose:** Floating content panel
+
+**Triggers:** Click, Hover
+
+**Usage:**
+
+```html
+<button z-button [zPopoverTrigger]="popover">Show Info</button>
+
+<z-popover #popover>
+  <z-popover-content>
+    <h3>Information</h3>
+    <p>Additional details here</p>
+  </z-popover-content>
+</z-popover>
+```
+
+**Demo:** `ZardDemoPopoverDefaultComponent`, `ZardDemoPopoverHoverComponent`
+
+---
+
+### 📊 Progress Bar
+
+**Purpose:** Visual progress indicator
+
+**Types:** Determinate, Indeterminate
+
+**Usage:**
+
+```html
+<z-progress-bar [value]="uploadProgress" [max]="100" />
+<z-progress-bar [indeterminate]="true" />
+```
+
+**Demo:** `ZardDemoProgressBarBasicComponent`, `ZardDemoProgressBarIndeterminateComponent`
+
+---
+
+### 🔘 Radio
+
+**Purpose:** Single selection from group
+
+**Usage:**
+
+```html
+<z-radio-group formControlName="plan">
+  <z-radio value="free">Free Plan</z-radio>
+  <z-radio value="pro">Pro Plan</z-radio>
+  <z-radio value="enterprise">Enterprise</z-radio>
+</z-radio-group>
+```
+
+**Demo:** `ZardDemoRadioDefaultComponent`, `ZardDemoRadioDisabledComponent`
+
+---
+
+### ↔️ Resizable
+
+**Purpose:** Resizable panels
+
+**Usage:**
+
+```html
+<z-resizable>
+  <z-resizable-panel [size]="30">Sidebar</z-resizable-panel>
+  <z-resizable-handle />
+  <z-resizable-panel [size]="70">Main Content</z-resizable-panel>
+</z-resizable>
+```
+
+**Demo:** `ZardDemoResizableDefaultComponent`, `ZardDemoResizableVerticalComponent`
+
+---
+
+### 🎚️ Segmented
+
+**Purpose:** Segmented control (iOS-style)
+
+**Usage:**
+
+```html
+<z-segmented [options]="['Day', 'Week', 'Month']" formControlName="viewMode" />
+```
+
+**Demo:** `ZardDemoSegmentedDefaultComponent`, `ZardDemoSegmentedSizesComponent`
+
+---
+
+### 📋 Select
+
+**Purpose:** Dropdown selection
+
+**Types:** Single, Multi-select
+
+**Usage:**
+
+```html
+<z-select formControlName="country" placeholder="Select country">
+  <z-select-option value="us">United States</z-select-option>
+  <z-select-option value="uk">United Kingdom</z-select-option>
+  <z-select-option value="ca">Canada</z-select-option>
+</z-select>
+
+<z-multi-select
+  [options]="skills"
+  formControlName="selectedSkills"
+  placeholder="Select skills..."
+/>
+```
+
+**Demo:** `ZardDemoSelectBasicComponent`, `ZardDemoMultiSelectBasicComponent`
+
+---
+
+### 📄 Sheet
+
+**Purpose:** Side panel / drawer
+
+**Sides:** Left, Right, Top, Bottom
+
+**Usage (Service):**
+
+```typescript
+import { ZardSheetService } from '@ihsan/ui';
+
+private _sheet = inject(ZardSheetService);
+
+openSheet() {
+  const ref = this._sheet.open(MySheetComponent, {
+    side: 'right',
+    width: '400px',
+    data: { userId: 123 }
+  });
+
+  ref.closed.subscribe(result => {
+    console.log('Sheet closed:', result);
+  });
+}
+```
+
+**Demo:** Test component has `openSheetBasic()` method
+
+---
+
+### 💀 Skeleton
+
+**Purpose:** Loading placeholders
+
+**Usage:**
+
+```html
+<z-skeleton zType="text" />
+<z-skeleton zType="circle" [width]="40" [height]="40" />
+<z-skeleton zType="rectangle" [width]="200" [height]="100" />
+```
+
+**Demo:** `ZardDemoSkeletonDefaultComponent`, `ZardDemoSkeletonCardComponent`
+
+---
+
+### 🎚️ Slider
+
+**Purpose:** Range input
+
+**Usage:**
+
+```html
+<z-slider [min]="0" [max]="100" [step]="5" formControlName="volume" />
+
+<z-slider orientation="vertical" [min]="0" [max]="100" />
+```
+
+**Demo:** `ZardDemoSliderDefaultComponent`, `ZardDemoSliderVerticalComponent`
+
+---
+
+### 🔀 Switch
+
+**Purpose:** Toggle on/off
+
+**Usage:**
+
+```html
+<z-switch formControlName="notifications" zSize="md">
+  Enable notifications
+</z-switch>
+```
+
+**Demo:** `ZardDemoSwitchDefaultComponent`, `ZardDemoSwitchSizeComponent`
+
+---
+
+### 📊 Table
+
+**Purpose:** Data tables
+
+**Features:** Sorting, pagination, row selection
+
+**Usage:**
+
+```html
+<z-table [data]="users">
+  <z-table-header>
+    <z-table-row>
+      <z-table-head>Name</z-table-head>
+      <z-table-head>Email</z-table-head>
+      <z-table-head>Role</z-table-head>
+    </z-table-row>
+  </z-table-header>
+  <z-table-body>
+    <z-table-row *ngFor="let user of users">
+      <z-table-cell>{{ user.name }}</z-table-cell>
+      <z-table-cell>{{ user.email }}</z-table-cell>
+      <z-table-cell>{{ user.role }}</z-table-cell>
+    </z-table-row>
+  </z-table-body>
+</z-table>
+```
+
+**Demo:** `ZardDemoTablePaymentsComponent`
+
+---
+
+### 📑 Tabs
+
+**Purpose:** Tabbed navigation
+
+**Usage:**
+
+```html
+<z-tabs [(activeTab)]="activeTab">
+  <z-tab-list>
+    <z-tab value="profile">Profile</z-tab>
+    <z-tab value="settings">Settings</z-tab>
+    <z-tab value="notifications">Notifications</z-tab>
+  </z-tab-list>
+
+  <z-tab-panel value="profile">Profile content</z-tab-panel>
+  <z-tab-panel value="settings">Settings content</z-tab-panel>
+  <z-tab-panel value="notifications">Notifications content</z-tab-panel>
+</z-tabs>
+```
+
+**Demo:** `ZardDemoTabsDefaultComponent`, `ZardDemoTabsPositionComponent`
+
+---
+
+### 🍞 Toast
+
+**Purpose:** Temporary notifications
+
+**Types:** Success, Error, Warning, Info, Loading
+
+**Usage (Service):**
+
+```typescript
+import { ZardToastService } from '@ihsan/ui';
+
+private _toast = inject(ZardToastService);
+
+showNotification() {
+  this._toast.success('Changes saved successfully!');
+  this._toast.error('Failed to save changes');
+  this._toast.info('New update available');
+  this._toast.warning('This action cannot be undone');
+
+  // Custom toast
+  this._toast.custom({
+    title: 'Custom Toast',
+    description: 'With custom content',
+    duration: 5000
+  });
+}
+```
+
+**Demo:** `ZardDemoToastComponent`, `ZardDemoToastSuccessComponent`
+
+---
+
+### 🔘 Toggle
+
+**Purpose:** Toggle button
+
+**Usage:**
+
+```html
+<z-toggle formControlName="bold" aria-label="Toggle bold">
+  <z-icon name="bold" />
+</z-toggle>
+```
+
+**Demo:** `ZardDemoToggleDefaultComponent`, `ZardDemoToggleWithTextComponent`
+
+---
+
+### 💡 Tooltip
+
+**Purpose:** Contextual hints
+
+**Triggers:** Hover, Click
+
+**Usage:**
+
+```html
+<button z-button [zTooltip]="'Click to save changes'" zTooltipPosition="top">
+  Save
+</button>
+
+<span [zTooltip]="tooltipContent" zTooltipTrigger="click">
+  Click for info
+</span>
+```
+
+**Demo:** `ZardDemoTooltipHoverComponent`, `ZardDemoTooltipClickComponent`
+
+---
+
+## Best Practices
+
+### ✅ DO
+
+1. **Always Use Zardui First**
+
+   ```typescript
+   // ✅ CORRECT - Use Zardui button
+   <button z-button zType="primary">Save</button>
+
+   // ❌ WRONG - Don't create custom button
+   <app-custom-button type="primary">Save</app-custom-button>
+   ```
+
+2. **Leverage Variants**
+
+   ```typescript
+   // ✅ CORRECT - Use built-in variants
+   <button z-button zType="outline" zSize="sm" zShape="circle">
+     <z-icon name="edit" />
+   </button>
+   ```
+
+3. **Use Services for Programmatic Components**
+
+   ```typescript
+   // ✅ CORRECT - Inject service
+   private _dialog = inject(ZardDialogService);
+   private _toast = inject(ZardToastService);
+   private _sheet = inject(ZardSheetService);
+   ```
+
+4. **Colocate Component Files**
+
+   ```
+   user-profile/
+   ├── user-profile.component.ts
+   ├── user-profile.component.html
+   ├── user-profile.component.scss
+   ├── user-profile.service.ts      # If needed
+   ├── user-profile.model.ts        # If needed
+   ```
+
+5. **Use Reactive Forms**
+
+   ```typescript
+   // ✅ CORRECT - Typed FormGroup
+   interface IUserForm {
+     name: FormControl<string>;
+     email: FormControl<string>;
+   }
+
+   userForm = this._fb.group<IUserForm>({
+     name: this._fb.control('', {
+       validators: [Validators.required],
+       nonNullable: true,
+     }),
+     email: this._fb.control('', {
+       validators: [Validators.required, Validators.email],
+       nonNullable: true,
+     }),
+   });
+   ```
+
+### ❌ DON'T
+
+1. **Don't Create Duplicate UI Components**
+
+   ```typescript
+   // ❌ WRONG - Zardui already has Button
+   @Component({
+     selector: 'app-custom-button',
+     template: `<button class="custom-btn">...</button>`,
+   })
+   export class CustomButtonComponent {}
+   ```
+
+2. **Don't Use Template-Driven Forms**
+
+   ```html
+   <!-- ❌ WRONG - No ngModel -->
+   <input [(ngModel)]="username" />
+
+   <!-- ✅ CORRECT - Use reactive forms -->
+   <input z-input formControlName="username" />
+   ```
+
+3. **Don't Use @Input/@Output Decorators**
+
+   ```typescript
+   // ❌ WRONG - Don't use decorators
+   @Input() userId: string;
+   @Output() userClicked = new EventEmitter<User>();
+
+   // ✅ CORRECT - Use signals
+   userId = input.required<string>();
+   userClicked = output<User>();
+   ```
+
+4. **Don't Hardcode Colors**
+
+   ```scss
+   // ❌ WRONG - Hardcoded color
+   .element {
+     background-color: #3b82f6;
+   }
+
+   // ✅ CORRECT - CSS variable
+   .element {
+     background-color: var(--color-primary);
+   }
+   ```
+
+5. **Don't Create Wrapper Divs Unnecessarily**
+
+   ```scss
+   // ❌ WRONG - Extra wrapper
+   <div class="wrapper">
+     <button>Click</button>
+   </div>
+   
+   // Component CSS
+   .wrapper {
+     display: flex;
+   }
+
+   // ✅ CORRECT - Style :host
+   <button>Click</button>
+   
+   // Component CSS
+   :host {
+     display: flex;
+   }
+   ```
+
+---
+
+## Quick Reference
+
+### Import Path
+
+```typescript
+import {
+  ZardButtonComponent,
+  ZardInputComponent,
+  ZardDialogService,
+  ZardToastService,
+} from '@ihsan/ui';
+```
+
+### Common Services
+
+```typescript
+private _dialog = inject(ZardDialogService);
+private _sheet = inject(ZardSheetService);
+private _toast = inject(ZardToastService);
+private _alertDialog = inject(ZardAlertDialogService);
+```
+
+### Test Page Location
+
+```
+apps/admin/src/app/pages/test-components/
+```
+
+### Documentation Links
+
+- [Angular Design Pattern](./ANGULAR_DESIGN_PATTERN.md)
+- [Page Container Pattern](./PAGE_CONTAINER_DESIGN_PATTERN.md)
+- [Icon Reference](./ZARD_ICON_REFERENCE.md)
+- [Identity Module Guide](./IDENTITY_MODULE_GUIDE.md)
+
+---
+
+## Troubleshooting
+
+### Component Not Found
+
+**Problem:** Import error for Zardui component
+
+**Solution:**
+
+1. Verify component is installed: `install-zardui-components.bat`
+2. Check import path: Should be `@ihsan/ui`, not `@zardui/angular`
+3. Verify component is exported in `libs/ui/src/lib/zard/components/index.ts`
+
+### Styling Not Applied
+
+**Problem:** Component doesn't look right
+
+**Solution:**
+
+1. Ensure Tailwind CSS is configured
+2. Check that global styles are imported in `styles.scss`
+3. Verify CSS variables are defined in theme
+
+### Form Not Working
+
+**Problem:** Form controls not updating
+
+**Solution:**
+
+1. Use `ReactiveFormsModule`, not `FormsModule`
+2. Ensure `formControlName` matches form structure
+3. Use typed `FormGroup` interface
+
+---
+
+**For more examples, see:** `apps/admin/src/app/pages/test-components/`

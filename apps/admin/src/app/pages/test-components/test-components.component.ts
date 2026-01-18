@@ -1,269 +1,605 @@
-import { Component, signal, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
+
+// Accordion Demos
 import {
-  ZardAccordionComponent,
-  ZardAccordionItemComponent,
-  ZardAlertComponent,
-  ZardAlertDialogService,
-  ZardAvatarComponent,
-  ZardBadgeComponent,
   ZardButtonComponent,
-  ZardButtonGroupComponent,
-  ZardCalendarComponent,
-  ZardCardComponent,
-  ZardCarouselComponent,
-  ZardCarouselContentComponent,
-  ZardCarouselItemComponent,
-  ZardCheckboxComponent,
-  ZardDatePickerComponent,
+  ZardDemoAccordionBasicComponent,
+  ZardDemoAccordionMultipleComponent,
+  ZardDemoAccordionMultipleLastNotCollapsibleComponent,
+  ZardDemoDialogBasicInputComponent,
+  ZardDemoSheetBasicInputComponent,
+  ZardDemoSheetSideInputComponent,
   ZardDialogService,
-  ZardDividerComponent,
-  ZardDropdownMenuComponent,
-  ZardDropdownMenuItemComponent,
-  ZardDropdownMenuLabelComponent,
-  ZardDropdownMenuContentComponent,
-  ZardDropdownDirective,
-  ZardEmptyComponent,
   ZardIconComponent,
-  ZardInputDirective,
-  ZardInputGroupComponent,
-  ZardKbdComponent,
-  ZardLoaderComponent,
-  ZardPaginationComponent,
-  ZardPopoverComponent,
-  ZardProgressBarComponent,
-  ZardRadioComponent,
-  ZardResizableComponent,
-  ZardResizablePanelComponent,
-  ZardResizableHandleComponent,
-  ZardSelectComponent,
-  ZardSelectItemComponent,
   ZardSheetService,
-  ZardSkeletonComponent,
-  ZardSliderComponent,
-  ZardSwitchComponent,
-  ZardTabComponent,
-  ZardTabGroupComponent,
-  ZardToastComponent,
-  ZardToggleComponent,
-  ZardTooltipDirective,
-  ZardBreadcrumbImports,
 } from '@ihsan/ui';
 
-interface ITestForm {
-  name: FormControl<string | null>;
-  email: FormControl<string | null>;
-  agree: FormControl<boolean | null>;
-}
+// Alert Demos
+import { ZardDemoAlertBasicComponent } from '@ihsan/ui';
+
+// Alert Dialog Demos
+import { ZardDemoAlertDialogDefaultComponent } from '@ihsan/ui';
+
+// Avatar Demos
+import {
+  ZardDemoAvatarBasicComponent,
+  ZardDemoAvatarStatusComponent,
+} from '@ihsan/ui';
+
+// Badge Demos
+import { ZardDemoBadgeDefaultComponent } from '@ihsan/ui';
+
+// Breadcrumb Demos
+import {
+  ZardDemoBreadcrumbDefaultComponent,
+  ZardDemoBreadcrumbEllipsisComponent,
+  ZardDemoBreadcrumbSeparatorComponent,
+} from '@ihsan/ui';
+
+// Button Demos
+import {
+  ZardDemoButtonDefaultComponent,
+  ZardDemoButtonFullComponent,
+  ZardDemoButtonLinkComponent,
+  ZardDemoButtonLoadingComponent,
+  ZardDemoButtonShapeComponent,
+  ZardDemoButtonSizeComponent,
+  ZardDemoButtonTypeComponent,
+} from '@ihsan/ui';
+
+// Button Group Demos
+import {
+  ZardDemoButtonGroupDefaultComponent,
+  ZardDemoButtonGroupDividerComponent,
+  ZardDemoButtonGroupInputComponent,
+  ZardDemoButtonGroupNestedComponent,
+  ZardDemoButtonGroupOrientationComponent,
+  ZardDemoButtonGroupSelectComponent,
+  ZardDemoButtonGroupSizeComponent,
+} from '@ihsan/ui';
+
+// Calendar Demos
+import {
+  ZardDemoCalendarDefaultComponent,
+  ZardDemoCalendarExpandYearSelectionRangeComponent,
+  ZardDemoCalendarMultipleComponent,
+  ZardDemoCalendarRangeComponent,
+  ZardDemoCalendarWithConstraintsComponent,
+} from '@ihsan/ui';
+
+// Card Demos
+import { ZardDemoCardDefaultComponent } from '@ihsan/ui';
+
+// Carousel Demos
+import {
+  ZardDemoCarouselApiComponent,
+  ZardDemoCarouselDefaultComponent,
+  ZardDemoCarouselDotControlsComponent,
+  ZardDemoCarouselOrientationComponent,
+  ZardDemoCarouselPluginsComponent,
+  ZardDemoCarouselSizeComponent,
+  ZardDemoCarouselSpacingComponent,
+} from '@ihsan/ui';
+
+// Checkbox Demos
+import {
+  ZardDemoCheckboxDefaultComponent,
+  ZardDemoCheckboxDestructiveComponent,
+  ZardDemoCheckboxDisabledComponent,
+  ZardDemoCheckboxShapeComponent,
+  ZardDemoCheckboxSizeComponent,
+} from '@ihsan/ui';
+
+// Combobox Demos
+import {
+  ZardDemoComboboxDefaultComponent,
+  ZardDemoComboboxDisabledComponent,
+  ZardDemoComboboxFormComponent,
+  ZardDemoComboboxGroupedComponent,
+} from '@ihsan/ui';
+
+// Command Demos
+import { ZardDemoCommandDefaultComponent } from '@ihsan/ui';
+
+// Date Picker Demos
+import {
+  ZardDemoDatePickerDefaultComponent,
+  ZardDemoDatePickerSizesComponent,
+} from '@ihsan/ui';
+
+// Divider Demos
+import {
+  ZardDemoDividerDefaultComponent,
+  ZardDemoDividerVerticalComponent,
+} from '@ihsan/ui';
+
+// Empty Demos
+import {
+  ZardDemoEmptyAdvancedComponent,
+  ZardDemoEmptyCustomImageComponent,
+  ZardDemoEmptyDefaultComponent,
+} from '@ihsan/ui';
+
+// Form Demos
+import {
+  ZardDemoFormComplexComponent,
+  ZardDemoFormDefaultComponent,
+  ZardDemoFormReactiveComponent,
+  ZardDemoFormSignalComponent,
+  ZardDemoFormValidationComponent,
+} from '@ihsan/ui';
+
+// Icon Demos
+import {
+  ZardDemoIconColorsComponent,
+  ZardDemoIconDefaultComponent,
+  ZardDemoIconSearchableComponent,
+  ZardDemoIconSizesComponent,
+  ZardDemoIconStrokeWidthComponent,
+} from '@ihsan/ui';
+
+// Input Demos
+import {
+  ZardDemoInputBorderlessComponent,
+  ZardDemoInputDefaultComponent,
+  ZardDemoInputSizeComponent,
+  ZardDemoInputStatusComponent,
+  ZardDemoInputTextAreaComponent,
+} from '@ihsan/ui';
+
+// Input Group Demos
+import {
+  ZardDemoInputGroupBorderlessComponent,
+  ZardDemoInputGroupDefaultComponent,
+  ZardDemoInputGroupLoadingComponent,
+  ZardDemoInputGroupSizeComponent,
+  ZardDemoInputGroupTextComponent,
+} from '@ihsan/ui';
+
+// Kbd Demos
+import {
+  ZardDemoKbdDefaultComponent,
+  ZardDemoKbdGroupComponent,
+  ZardDemoKbdTooltipComponent,
+} from '@ihsan/ui';
+
+// Loader Demos
+import {
+  ZardDemoLoaderBasicComponent,
+  ZardDemoLoaderDefaultComponent,
+  ZardDemoLoaderSizeComponent,
+} from '@ihsan/ui';
+
+// Menu Demos
+import { ZardDemoMenuDefaultComponent } from '@ihsan/ui';
+
+// Pagination Demos
+import {
+  ZardDemoPaginationCustomComponent,
+  ZardDemoPaginationDefaultComponent,
+} from '@ihsan/ui';
+
+// Popover Demos
+import {
+  ZardDemoPopoverDefaultComponent,
+  ZardDemoPopoverHoverComponent,
+  ZardDemoPopoverInteractiveComponent,
+  ZardDemoPopoverPlacementComponent,
+} from '@ihsan/ui';
+
+// Progress Bar Demos
+import {
+  ZardDemoProgressBarBasicComponent,
+  ZardDemoProgressBarIndeterminateComponent,
+  ZardDemoProgressBarShapeComponent,
+  ZardDemoProgressBarSizeComponent,
+} from '@ihsan/ui';
+
+// Radio Demos
+import {
+  ZardDemoRadioDefaultComponent,
+  ZardDemoRadioDisabledComponent,
+} from '@ihsan/ui';
+
+// Resizable Demos
+import {
+  ZardDemoResizableDefaultComponent,
+  ZardDemoResizableVerticalComponent,
+  ZardDemoResizableWithMinMaxComponent,
+} from '@ihsan/ui';
+
+// Segmented Demos
+import {
+  ZardDemoSegmentedDefaultComponent,
+  ZardDemoSegmentedDisabledComponent,
+  ZardDemoSegmentedSizesComponent,
+} from '@ihsan/ui';
+
+// Select Demos
+import {
+  ZardDemoMultiSelectBasicComponent,
+  ZardDemoSelectBasicComponent,
+} from '@ihsan/ui';
+
+// Sheet Demos
+
+// Skeleton Demos
+import {
+  ZardDemoSkeletonCardComponent,
+  ZardDemoSkeletonDefaultComponent,
+} from '@ihsan/ui';
+
+// Slider Demos
+import {
+  ZardDemoSliderDefaultComponent,
+  ZardDemoSliderDisabledComponent,
+  ZardDemoSliderMinMaxComponent,
+  ZardDemoSliderVerticalComponent,
+} from '@ihsan/ui';
+
+// Switch Demos
+import {
+  ZardDemoSwitchBasicComponent,
+  ZardDemoSwitchDefaultComponent,
+  ZardDemoSwitchDestructiveComponent,
+  ZardDemoSwitchDisabledComponent,
+  ZardDemoSwitchSizeComponent,
+} from '@ihsan/ui';
+
+// Table Demos
+import {
+  ZardDemoTablePaymentsComponent,
+  ZardDemoTableSimpleComponent,
+} from '@ihsan/ui';
+
+// Tabs Demos
+import {
+  ZardDemoTabsAlignComponent,
+  ZardDemoTabsArrowComponent,
+  ZardDemoTabsDefaultComponent,
+  ZardDemoTabsPositionComponent,
+} from '@ihsan/ui';
+
+// Toast Demos
+import {
+  ZardDemoToastAdvancedComponent,
+  ZardDemoToastDefaultComponent,
+  ZardDemoToastDestructiveComponent,
+  ZardDemoToastLoadingComponent,
+  ZardDemoToastPositionComponent,
+  ZardDemoToastSuccessComponent,
+} from '@ihsan/ui';
+
+// Toggle Demos
+import {
+  ZardDemoToggleDefaultComponent,
+  ZardDemoToggleDisabledComponent,
+  ZardDemoToggleLargeComponent,
+  ZardDemoToggleOutlineComponent,
+  ZardDemoToggleSmallComponent,
+  ZardDemoToggleWithDefaultComponent,
+  ZardDemoToggleWithFormsComponent,
+  ZardDemoToggleWithTextComponent,
+} from '@ihsan/ui';
+
+// Tooltip Demos
+import {
+  ZardDemoTooltipClickComponent,
+  ZardDemoTooltipEventsComponent,
+  ZardDemoTooltipHoverComponent,
+  ZardDemoTooltipPositionComponent,
+} from '@ihsan/ui';
 
 @Component({
   selector: 'app-test-components',
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    ZardAccordionComponent,
-    ZardAccordionItemComponent,
-    ZardAlertComponent,
-    ZardAvatarComponent,
-    ZardBadgeComponent,
+    // Accordion
+    ZardDemoAccordionBasicComponent,
+    ZardDemoAccordionMultipleComponent,
+    ZardDemoAccordionMultipleLastNotCollapsibleComponent,
+    // Alert
+    ZardDemoAlertBasicComponent,
+    // Alert Dialog
+    ZardDemoAlertDialogDefaultComponent,
+    // Avatar
+    ZardDemoAvatarBasicComponent,
+    ZardDemoAvatarStatusComponent,
+    // Badge
+    ZardDemoBadgeDefaultComponent,
+    // Breadcrumb
+    ZardDemoBreadcrumbDefaultComponent,
+    ZardDemoBreadcrumbSeparatorComponent,
+    ZardDemoBreadcrumbEllipsisComponent,
+    // Button
+    ZardDemoButtonDefaultComponent,
+    ZardDemoButtonFullComponent,
+    ZardDemoButtonLinkComponent,
+    ZardDemoButtonLoadingComponent,
+    ZardDemoButtonShapeComponent,
+    ZardDemoButtonSizeComponent,
+    ZardDemoButtonTypeComponent,
+    // Button Group
+    ZardDemoButtonGroupDefaultComponent,
+    ZardDemoButtonGroupDividerComponent,
+    ZardDemoButtonGroupInputComponent,
+    ZardDemoButtonGroupOrientationComponent,
+    ZardDemoButtonGroupSizeComponent,
+    ZardDemoButtonGroupSelectComponent,
+    ZardDemoButtonGroupNestedComponent,
+    // Calendar
+    ZardDemoCalendarDefaultComponent,
+    ZardDemoCalendarRangeComponent,
+    ZardDemoCalendarMultipleComponent,
+    ZardDemoCalendarExpandYearSelectionRangeComponent,
+    ZardDemoCalendarWithConstraintsComponent,
+    // Card
+    ZardDemoCardDefaultComponent,
+    // Carousel
+    ZardDemoCarouselDefaultComponent,
+    ZardDemoCarouselOrientationComponent,
+    ZardDemoCarouselDotControlsComponent,
+    ZardDemoCarouselApiComponent,
+    ZardDemoCarouselPluginsComponent,
+    ZardDemoCarouselSizeComponent,
+    ZardDemoCarouselSpacingComponent,
+    // Checkbox
+    ZardDemoCheckboxDefaultComponent,
+    ZardDemoCheckboxDestructiveComponent,
+    ZardDemoCheckboxDisabledComponent,
+    ZardDemoCheckboxShapeComponent,
+    ZardDemoCheckboxSizeComponent,
+    // Combobox
+    ZardDemoComboboxDefaultComponent,
+    ZardDemoComboboxDisabledComponent,
+    ZardDemoComboboxFormComponent,
+    ZardDemoComboboxGroupedComponent,
+    // Command
+    ZardDemoCommandDefaultComponent,
+    // Date Picker
+    ZardDemoDatePickerDefaultComponent,
+    ZardDemoDatePickerSizesComponent,
+    // Divider
+    ZardDemoDividerDefaultComponent,
+    ZardDemoDividerVerticalComponent,
+    // Empty
+    ZardDemoEmptyDefaultComponent,
+    ZardDemoEmptyCustomImageComponent,
+    ZardDemoEmptyAdvancedComponent,
+    // Form
+    ZardDemoFormDefaultComponent,
+    ZardDemoFormReactiveComponent,
+    ZardDemoFormSignalComponent,
+    ZardDemoFormValidationComponent,
+    ZardDemoFormComplexComponent,
+    // Icon
+    ZardDemoIconDefaultComponent,
+    ZardDemoIconColorsComponent,
+    ZardDemoIconSizesComponent,
+    ZardDemoIconStrokeWidthComponent,
+    ZardDemoIconSearchableComponent,
+    // Input
+    ZardDemoInputDefaultComponent,
+    ZardDemoInputSizeComponent,
+    ZardDemoInputStatusComponent,
+    ZardDemoInputTextAreaComponent,
+    ZardDemoInputBorderlessComponent,
+    // Input Group
+    ZardDemoInputGroupDefaultComponent,
+    ZardDemoInputGroupBorderlessComponent,
+    ZardDemoInputGroupLoadingComponent,
+    ZardDemoInputGroupSizeComponent,
+    ZardDemoInputGroupTextComponent,
+    // Kbd
+    ZardDemoKbdDefaultComponent,
+    ZardDemoKbdGroupComponent,
+    ZardDemoKbdTooltipComponent,
+    // Loader
+    ZardDemoLoaderDefaultComponent,
+    ZardDemoLoaderBasicComponent,
+    ZardDemoLoaderSizeComponent,
+    // Menu
+    ZardDemoMenuDefaultComponent,
+    // Pagination
+    ZardDemoPaginationDefaultComponent,
+    ZardDemoPaginationCustomComponent,
+    // Popover
+    ZardDemoPopoverDefaultComponent,
+    ZardDemoPopoverHoverComponent,
+    ZardDemoPopoverPlacementComponent,
+    ZardDemoPopoverInteractiveComponent,
+    // Progress Bar
+    ZardDemoProgressBarBasicComponent,
+    ZardDemoProgressBarIndeterminateComponent,
+    ZardDemoProgressBarShapeComponent,
+    ZardDemoProgressBarSizeComponent,
+    // Radio
+    ZardDemoRadioDefaultComponent,
+    ZardDemoRadioDisabledComponent,
+    // Resizable
+    ZardDemoResizableDefaultComponent,
+    ZardDemoResizableVerticalComponent,
+    ZardDemoResizableWithMinMaxComponent,
+    // Segmented
+    ZardDemoSegmentedDefaultComponent,
+    ZardDemoSegmentedDisabledComponent,
+    ZardDemoSegmentedSizesComponent,
+    // Select
+    ZardDemoSelectBasicComponent,
+    ZardDemoMultiSelectBasicComponent,
+    // Skeleton
+    ZardDemoSkeletonDefaultComponent,
+    ZardDemoSkeletonCardComponent,
+    // Slider
+    ZardDemoSliderDefaultComponent,
+    ZardDemoSliderDisabledComponent,
+    ZardDemoSliderVerticalComponent,
+    ZardDemoSliderMinMaxComponent,
+    // Switch
+    ZardDemoSwitchDefaultComponent,
+    ZardDemoSwitchBasicComponent,
+    ZardDemoSwitchDestructiveComponent,
+    ZardDemoSwitchDisabledComponent,
+    ZardDemoSwitchSizeComponent,
+    // Table
+    ZardDemoTableSimpleComponent,
+    ZardDemoTablePaymentsComponent,
+    // Tabs
+    ZardDemoTabsDefaultComponent,
+    ZardDemoTabsAlignComponent,
+    ZardDemoTabsArrowComponent,
+    ZardDemoTabsPositionComponent,
+    // Toast
+    ZardDemoToastDefaultComponent,
+    ZardDemoToastAdvancedComponent,
+    ZardDemoToastDestructiveComponent,
+    ZardDemoToastLoadingComponent,
+    ZardDemoToastPositionComponent,
+    ZardDemoToastSuccessComponent,
+    // Toggle
+    ZardDemoToggleDefaultComponent,
+    ZardDemoToggleDisabledComponent,
+    ZardDemoToggleLargeComponent,
+    ZardDemoToggleOutlineComponent,
+    ZardDemoToggleSmallComponent,
+    ZardDemoToggleWithDefaultComponent,
+    ZardDemoToggleWithFormsComponent,
+    ZardDemoToggleWithTextComponent,
+    // Tooltip
+    ZardDemoTooltipClickComponent,
+    ZardDemoTooltipEventsComponent,
+    ZardDemoTooltipHoverComponent,
+    ZardDemoTooltipPositionComponent,
     ZardButtonComponent,
-    ZardButtonGroupComponent,
-    ZardCalendarComponent,
-    ZardCardComponent,
-    ZardCarouselComponent,
-    ZardCarouselContentComponent,
-    ZardCarouselItemComponent,
-    ZardCheckboxComponent,
-    ZardDatePickerComponent,
-    ZardDividerComponent,
-    ZardDropdownMenuComponent,
-    ZardDropdownMenuItemComponent,
-    ZardDropdownMenuLabelComponent,
-    ZardDropdownMenuContentComponent,
-    ZardDropdownDirective,
-    ZardEmptyComponent,
     ZardIconComponent,
-    ZardInputDirective,
-    ZardInputGroupComponent,
-    ZardKbdComponent,
-    ZardLoaderComponent,
-    ZardPaginationComponent,
-    ZardPopoverComponent,
-    ZardProgressBarComponent,
-    ZardRadioComponent,
-    ZardResizableComponent,
-    ZardResizablePanelComponent,
-    ZardResizableHandleComponent,
-    ZardSelectComponent,
-    ZardSelectItemComponent,
-    ZardSkeletonComponent,
-    ZardSliderComponent,
-    ZardSwitchComponent,
-    ZardTabComponent,
-    ZardTabGroupComponent,
-    ZardToastComponent,
-    ZardToggleComponent,
-    ZardTooltipDirective,
-    ZardBreadcrumbImports,
   ],
   templateUrl: './test-components.component.html',
   styleUrls: ['./test-components.component.scss'],
 })
 export class TestComponentsComponent {
-  private _fb = inject(FormBuilder);
-  private _dialogService = inject(ZardDialogService);
-  private _alertDialogService = inject(ZardAlertDialogService);
-  private _sheetService = inject(ZardSheetService);
+  private dialogService = inject(ZardDialogService);
+  private sheetService = inject(ZardSheetService);
 
-  // Signals
-  currentPage = signal<number>(1);
-  switchValue = signal<boolean>(false);
-  checkboxValue = signal<boolean>(false);
-  toggleValue = signal<boolean>(false);
-  sliderValue = signal<number>(50);
-  selectedDate = signal<Date>(new Date());
-  progressValue = signal<number>(65);
-  selectedTab = signal<string>('tab1');
-  segmentedValue = signal<string>('option1');
-  toastVisible = signal<boolean>(false);
+  protected readonly placement = signal<
+    'right' | 'left' | 'top' | 'bottom' | null | undefined
+  >('right');
 
-  // Form
-  testForm: FormGroup<ITestForm>;
-
-  // Data
-  selectOptions = [
-    { value: '1', label: 'Option 1' },
-    { value: '2', label: 'Option 2' },
-    { value: '3', label: 'Option 3' },
-  ];
-
-  comboboxItems = [
-    { value: 'item1', label: 'Item 1' },
-    { value: 'item2', label: 'Item 2' },
-    { value: 'item3', label: 'Item 3' },
-  ];
-
-  tableData = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active' },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      status: 'Inactive',
-    },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', status: 'Active' },
-  ];
-
-  breadcrumbItems = [
-    { label: 'Home', url: '/' },
-    { label: 'Components', url: '/test-components' },
-    { label: 'Test Page' },
-  ];
-
-  radioOptions = [
-    { value: 'option1', label: 'Option 1' },
-    { value: 'option2', label: 'Option 2' },
-    { value: 'option3', label: 'Option 3' },
-  ];
-
-  segmentedOptions = [
-    { value: 'option1', label: 'Option 1' },
-    { value: 'option2', label: 'Option 2' },
-    { value: 'option3', label: 'Option 3' },
-  ];
-
-  toggleGroupOptions = [
-    { value: 'bold', icon: 'bold' },
-    { value: 'italic', icon: 'italic' },
-    { value: 'underline', icon: 'underline' },
-  ];
-
-  carouselItems = [
-    { id: 1, title: 'Slide 1', description: 'First slide content' },
-    { id: 2, title: 'Slide 2', description: 'Second slide content' },
-    { id: 3, title: 'Slide 3', description: 'Third slide content' },
-  ];
-
-  constructor() {
-    this.testForm = this._fb.group({
-      name: this._fb.control<string | null>('', Validators.required),
-      email: this._fb.control<string | null>('', [
-        Validators.required,
-        Validators.email,
-      ]),
-      agree: this._fb.control<boolean | null>(false, Validators.requiredTrue),
+  openDialog() {
+    this.dialogService.create({
+      zTitle: 'Edit Profile',
+      zDescription: `Make changes to your profile here. Click save when you're done.`,
+      zContent: ZardDemoDialogBasicInputComponent,
+      zData: {
+        name: 'Samuel Rizzon',
+        username: '@samuelrizzondev',
+        region: 'america',
+      },
+      zOkText: 'Save changes',
+      zOnOk: (instance) => {
+        console.log('Form submitted:', instance.form.value);
+      },
+      zWidth: '425px',
     });
   }
 
-  onOpenDialog(): void {
-    this._dialogService.create({
-      zTitle: 'Example Dialog',
-      zDescription: 'This is a test dialog from Zardui',
-      zContent: '',
+  openSheetBasic() {
+    this.sheetService.create({
+      zTitle: 'Edit profile',
+      zDescription: `Make changes to your profile here. Click save when you're done.`,
+      zContent: ZardDemoSheetBasicInputComponent,
+      zData: {
+        name: 'Matheus Ribeiro',
+        username: '@ribeiromatheus.dev',
+      },
+      zOkText: 'Save changes',
+      zOnOk: (instance) => {
+        console.log('Form submitted:', instance.form.value);
+      },
+    });
+  }
+  openWideSheet() {
+    this.sheetService.create({
+      zTitle: 'Wide Sheet',
+      zDescription: 'This sheet has a custom width of 500px',
+      zContent: `
+        <div class="p-4">
+          <p>This is a wide sheet with custom width.</p>
+          <p>Perfect for forms that need more horizontal space.</p>
+        </div>
+      `,
+      zSide: 'right',
+      zWidth: '500px',
+      zOkText: 'Got it',
     });
   }
 
-  onOpenAlertDialog(): void {
-    this._alertDialogService.create({
-      zTitle: 'Alert Dialog',
-      zDescription: 'This is an alert dialog example',
-      zContent: '',
+  openTallSheet() {
+    this.sheetService.create({
+      zTitle: 'Tall Sheet',
+      zDescription: 'This sheet has a custom height of 80vh',
+      zContent: `
+        <div class="p-4 space-y-4">
+          <p>This is a tall sheet with custom height (80% of viewport height).</p>
+          <p>Great for content that needs vertical space.</p>
+          <div class="h-96 bg-gray-100 rounded-md flex items-center justify-center">
+            <p class="text-gray-500">Large content area</p>
+          </div>
+        </div>
+      `,
+      zSide: 'left',
+      zHeight: '80vh',
+      zOkText: 'Close',
     });
   }
 
-  onOpenSheet(): void {
-    this._sheetService.create({
-      zTitle: 'Example Sheet',
-      zDescription: 'This is a test sheet from Zardui',
-      zContent: '',
+  openCustomSheet() {
+    this.sheetService.create({
+      zTitle: 'Custom Dimensions',
+      zDescription: 'Both width and height customized',
+      zContent: `
+        <div class="p-4">
+          <p>Width: 400px, Height: 60vh</p>
+          <p>Complete control over dimensions.</p>
+        </div>
+      `,
+      zSide: 'right',
+      zWidth: '400px',
+      zHeight: '60vh',
+      zOkText: 'Close',
     });
   }
 
-  onPageChange(page: number): void {
-    this.currentPage.set(page);
-    console.log('Page changed to:', page);
+  openTopSheet() {
+    this.sheetService.create({
+      zTitle: 'Top Sheet',
+      zDescription: 'Custom height for top position',
+      zContent: `
+        <div class="p-4">
+          <p>This top sheet has a custom height.</p>
+          <p>Height: 50vh</p>
+        </div>
+      `,
+      zSide: 'top',
+      zHeight: '50vh',
+      zOkText: 'Done',
+    });
   }
 
-  onSwitchChange(value: boolean): void {
-    this.switchValue.set(value);
-    console.log('Switch value:', value);
-  }
-
-  onCheckboxChange(value: boolean): void {
-    this.checkboxValue.set(value);
-    console.log('Checkbox value:', value);
-  }
-
-  onToggleChange(value: boolean): void {
-    this.toggleValue.set(value);
-    console.log('Toggle value:', value);
-  }
-
-  onSliderChange(value: number): void {
-    this.sliderValue.set(value);
-    console.log('Slider value:', value);
-  }
-
-  onDateChange(date: Date): void {
-    this.selectedDate.set(date);
-    console.log('Date selected:', date);
-  }
-
-  onSubmitForm(): void {
-    if (this.testForm.valid) {
-      console.log('Form submitted:', this.testForm.value);
-    }
-  }
-
-  showToast(): void {
-    this.toastVisible.set(true);
-    setTimeout(() => this.toastVisible.set(false), 3000);
+  openSheetSize() {
+    this.sheetService.create({
+      zTitle: 'Edit profile',
+      zDescription: `Make changes to your profile here. Click save when you're done.`,
+      zContent: ZardDemoSheetSideInputComponent,
+      zData: {
+        name: 'Matheus Ribeiro',
+        username: '@ribeiromatheus.dev',
+      },
+      zOkText: 'Save changes',
+      zOnOk: (instance) => {
+        console.log('Form submitted:', instance.form.value);
+      },
+      zSide: this.placement(),
+    });
   }
 }

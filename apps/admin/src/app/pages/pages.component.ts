@@ -1,7 +1,7 @@
 import { Component, signal, effect, inject, PLATFORM_ID } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
-import { ZardIcon } from '@ihsan/ui';
+import { ZardIcon } from '@ihsan/ui/lib/zard/components/icon';
 import {
   ISidebarPage,
   ISidebarUser,
