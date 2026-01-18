@@ -1,12 +1,27 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal, type TemplateRef, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  input,
+  output,
+  signal,
+  type TemplateRef,
+  ViewEncapsulation,
+} from '@angular/core';
 
 import type { ClassValue } from 'clsx';
 
-import { sidebarGroupLabelVariants, sidebarGroupVariants, sidebarTriggerVariants, sidebarVariants } from './layout.variants';
+import {
+  sidebarGroupLabelVariants,
+  sidebarGroupVariants,
+  sidebarTriggerVariants,
+  sidebarVariants,
+} from './layout.variants';
 import { mergeClasses, transform } from '../../utils';
 import { ZardStringTemplateOutletDirective } from '../core/directives/string-template-outlet/string-template-outlet.directive';
 import { ZardIconComponent } from '../icon/icon.component';
-import type { ZardIcon } from 'libs\ui\src\lib\components/icon/icons';
+import type { ZardIcon } from '../icon/icons';
 
 @Component({
   selector: 'z-sidebar',
@@ -16,28 +31,30 @@ import type { ZardIcon } from 'libs\ui\src\lib\components/icon/icons';
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   template: `
-    <aside [class]="classes()" [style.width.px]="currentWidth()" [attr.data-collapsed]="zCollapsed()">
+    <aside
+      [class]="classes()"
+      [style.width.px]="currentWidth()"
+      [attr.data-collapsed]="zCollapsed()"
+    >
       <div class="flex-1 overflow-auto">
         <ng-content></ng-content>
       </div>
 
       @if (zCollapsible() && !zTrigger()) {
-        <div
-          [class]="triggerClasses()"
-          (click)="toggleCollapsed()"
-          (keydown.enter)="toggleCollapsed(); $event.preventDefault()"
-          (keydown.space)="toggleCollapsed(); $event.preventDefault()"
-          tabindex="0"
-          role="button"
-          [attr.aria-label]="zCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
-          [attr.aria-expanded]="!zCollapsed()"
-        >
-          <z-icon [zType]="chevronIcon()" />
-        </div>
-      }
-
-      @if (zCollapsible() && zTrigger()) {
-        <ng-container *zStringTemplateOutlet="zTrigger()"></ng-container>
+      <div
+        [class]="triggerClasses()"
+        (click)="toggleCollapsed()"
+        (keydown.enter)="toggleCollapsed(); $event.preventDefault()"
+        (keydown.space)="toggleCollapsed(); $event.preventDefault()"
+        tabindex="0"
+        role="button"
+        [attr.aria-label]="zCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+        [attr.aria-expanded]="!zCollapsed()"
+      >
+        <z-icon [zType]="chevronIcon()" />
+      </div>
+      } @if (zCollapsible() && zTrigger()) {
+      <ng-container *zStringTemplateOutlet="zTrigger()"></ng-container>
       }
     </aside>
   `,
@@ -81,9 +98,13 @@ export class SidebarComponent {
     return collapsed ? 'chevron-right' : 'chevron-left';
   });
 
-  protected readonly classes = computed(() => mergeClasses(sidebarVariants(), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(sidebarVariants(), this.class())
+  );
 
-  protected readonly triggerClasses = computed(() => mergeClasses(sidebarTriggerVariants()));
+  protected readonly triggerClasses = computed(() =>
+    mergeClasses(sidebarTriggerVariants())
+  );
 
   toggleCollapsed(): void {
     const newState = !this.zCollapsed();
@@ -107,7 +128,9 @@ export class SidebarComponent {
 export class SidebarGroupComponent {
   readonly class = input<ClassValue>('');
 
-  protected readonly classes = computed(() => mergeClasses(sidebarGroupVariants(), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(sidebarGroupVariants(), this.class())
+  );
 }
 
 @Component({
@@ -125,5 +148,7 @@ export class SidebarGroupComponent {
 export class SidebarGroupLabelComponent {
   readonly class = input<ClassValue>('');
 
-  protected readonly classes = computed(() => mergeClasses(sidebarGroupLabelVariants(), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(sidebarGroupLabelVariants(), this.class())
+  );
 }

@@ -24,9 +24,19 @@ import {
 } from '@angular/core';
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { clamp, convertValueToPercentage, roundToStep } from 'libs\ui\src\lib\utils/number';
+import {
+  clamp,
+  convertValueToPercentage,
+  roundToStep,
+} from '../../utils/number';
 import { mergeClasses } from '../../utils';
-import { sliderOrientationVariants, sliderRangeVariants, sliderThumbVariants, sliderTrackVariants, sliderVariants } from './slider.variants';
+import {
+  sliderOrientationVariants,
+  sliderRangeVariants,
+  sliderThumbVariants,
+  sliderTrackVariants,
+  sliderVariants,
+} from './slider.variants';
 
 import type { ClassValue } from 'clsx';
 
@@ -40,12 +50,18 @@ type OnChangeType = (value: number) => void;
   encapsulation: ViewEncapsulation.None,
   imports: [],
   template: `
-    <span #track data-slot="slider-track" [attr.data-orientation]="orientation()" [class]="classes()">
+    <span
+      #track
+      data-slot="slider-track"
+      [attr.data-orientation]="orientation()"
+      [class]="classes()"
+    >
       <ng-content></ng-content>
     </span>
   `,
   host: {
-    '[class]': '"data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full"',
+    '[class]':
+      '"data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full"',
     '[attr.data-orientation]': 'orientation()',
   },
 })
@@ -53,9 +69,15 @@ export class ZSliderTrackComponent {
   readonly orientation = input<'horizontal' | 'vertical'>('horizontal');
   readonly class = input<ClassValue>('');
 
-  protected readonly classes = computed(() => mergeClasses(sliderTrackVariants({ zOrientation: this.orientation() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(
+      sliderTrackVariants({ zOrientation: this.orientation() }),
+      this.class()
+    )
+  );
 
-  private readonly trackEl = viewChild.required<ElementRef<HTMLElement>>('track');
+  private readonly trackEl =
+    viewChild.required<ElementRef<HTMLElement>>('track');
 
   get nativeElement(): HTMLElement {
     return this.trackEl().nativeElement;
@@ -74,7 +96,9 @@ export class ZSliderTrackComponent {
       [attr.data-orientation]="orientation()"
       [class]="classes()"
       [style.left]="orientation() === 'horizontal' ? '0' : null"
-      [style.right]="orientation() === 'horizontal' ? 100 - percent() + '%' : null"
+      [style.right]="
+        orientation() === 'horizontal' ? 100 - percent() + '%' : null
+      "
       [style.bottom]="orientation() === 'vertical' ? '0' : null"
       [style.top]="orientation() === 'vertical' ? 100 - percent() + '%' : null"
     ></span>
@@ -86,7 +110,12 @@ export class ZSliderRangeComponent {
   readonly orientation = input<'horizontal' | 'vertical'>('horizontal');
   readonly class = input<ClassValue>('');
 
-  protected readonly classes = computed(() => mergeClasses(sliderRangeVariants({ zOrientation: this.orientation() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(
+      sliderRangeVariants({ zOrientation: this.orientation() }),
+      this.class()
+    )
+  );
 }
 
 @Component({
@@ -110,8 +139,10 @@ export class ZSliderRangeComponent {
   `,
   host: {
     '[class]': 'orientationClasses()',
-    '[style.left]': 'orientation() === "horizontal" ? "calc(" + percent() + "% + " + offset() + "px)" : null',
-    '[style.bottom]': 'orientation() === "vertical" ? "calc(" + percent() + "% + " + offset() + "px)" : null',
+    '[style.left]':
+      'orientation() === "horizontal" ? "calc(" + percent() + "% + " + offset() + "px)" : null',
+    '[style.bottom]':
+      'orientation() === "vertical" ? "calc(" + percent() + "% + " + offset() + "px)" : null',
   },
 })
 export class ZSliderThumbComponent {
@@ -125,10 +156,17 @@ export class ZSliderThumbComponent {
   readonly orientation = input<'horizontal' | 'vertical'>('horizontal');
   readonly class = input<ClassValue>('');
 
-  protected readonly classes = computed(() => mergeClasses(sliderThumbVariants(), this.class()));
-  protected readonly orientationClasses = computed(() => mergeClasses(sliderOrientationVariants({ zOrientation: this.orientation() })));
+  protected readonly classes = computed(() =>
+    mergeClasses(sliderThumbVariants(), this.class())
+  );
+  protected readonly orientationClasses = computed(() =>
+    mergeClasses(
+      sliderOrientationVariants({ zOrientation: this.orientation() })
+    )
+  );
 
-  private readonly thumbEl = viewChild.required<ElementRef<HTMLElement>>('thumb');
+  private readonly thumbEl =
+    viewChild.required<ElementRef<HTMLElement>>('thumb');
 
   get nativeElement(): HTMLElement {
     return this.thumbEl().nativeElement;
@@ -141,7 +179,11 @@ export class ZSliderThumbComponent {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [ZSliderTrackComponent, ZSliderRangeComponent, ZSliderThumbComponent],
+  imports: [
+    ZSliderTrackComponent,
+    ZSliderRangeComponent,
+    ZSliderThumbComponent,
+  ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -156,7 +198,10 @@ export class ZSliderThumbComponent {
       class="flex data-[orientation=horizontal]:items-center data-[orientation=vertical]:justify-center data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full"
     >
       <z-slider-track [orientation]="zOrientation()">
-        <z-slider-range [orientation]="zOrientation()" [percent]="percentValue()"></z-slider-range>
+        <z-slider-range
+          [orientation]="zOrientation()"
+          [percent]="percentValue()"
+        ></z-slider-range>
       </z-slider-track>
 
       <z-slider-thumb
@@ -179,7 +224,9 @@ export class ZSliderThumbComponent {
     '[attr.data-disabled]': 'disabled() ? true : null',
   },
 })
-export class ZardSliderComponent implements ControlValueAccessor, AfterViewInit, OnChanges, OnDestroy {
+export class ZardSliderComponent
+  implements ControlValueAccessor, AfterViewInit, OnChanges, OnDestroy
+{
   readonly zMin = input(0, { transform: numberAttribute });
   readonly zMax = input(100, { transform: numberAttribute });
   readonly zDefault = input(0, { transform: numberAttribute });
@@ -199,7 +246,12 @@ export class ZardSliderComponent implements ControlValueAccessor, AfterViewInit,
   private cdr = inject(ChangeDetectorRef);
   private document = inject(DOCUMENT);
 
-  protected readonly classes = computed(() => mergeClasses(sliderVariants({ orientation: this.zOrientation() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(
+      sliderVariants({ orientation: this.zOrientation() }),
+      this.class()
+    )
+  );
   protected disabled = linkedSignal(() => this.zDisabled());
 
   readonly percentValue = signal(50);
@@ -229,8 +281,11 @@ export class ZardSliderComponent implements ControlValueAccessor, AfterViewInit,
   }
 
   ngAfterViewInit() {
-    const pointerDown$ = fromEvent<PointerEvent>(this.elementRef.nativeElement, 'pointerdown').pipe(
-      tap(event => {
+    const pointerDown$ = fromEvent<PointerEvent>(
+      this.elementRef.nativeElement,
+      'pointerdown'
+    ).pipe(
+      tap((event) => {
         if (this.disabled()) return;
 
         const target = event.target as HTMLElement;
@@ -238,7 +293,8 @@ export class ZardSliderComponent implements ControlValueAccessor, AfterViewInit,
         const isTrack = this.trackRef().nativeElement.contains(target);
 
         if (isTrack && !isThumb) {
-          const coord = this.zOrientation() === 'vertical' ? event.clientY : event.clientX;
+          const coord =
+            this.zOrientation() === 'vertical' ? event.clientY : event.clientX;
           const clickPercentage = this.calculatePercentage(coord);
           this.updateSliderFromPercentage(clickPercentage);
           this.onTouched();
@@ -246,7 +302,7 @@ export class ZardSliderComponent implements ControlValueAccessor, AfterViewInit,
             this.thumbRef().nativeElement.focus();
           });
         }
-      }),
+      })
     );
 
     const pointerMove$ = fromEvent<PointerEvent>(this.document, 'pointermove');
@@ -258,15 +314,18 @@ export class ZardSliderComponent implements ControlValueAccessor, AfterViewInit,
           pointerMove$.pipe(
             takeUntil(pointerUp$),
             takeUntil(this.destroy$),
-            map(event => {
-              const coord = this.zOrientation() === 'vertical' ? event.clientY : event.clientX;
+            map((event) => {
+              const coord =
+                this.zOrientation() === 'vertical'
+                  ? event.clientY
+                  : event.clientX;
               return this.calculatePercentage(coord);
-            }),
-          ),
+            })
+          )
         ),
-        takeUntil(this.destroy$),
+        takeUntil(this.destroy$)
       )
-      .subscribe(percentage => {
+      .subscribe((percentage) => {
         if (this.disabled()) return;
         this.updateSliderFromPercentage(percentage);
         this.onTouched();
@@ -312,7 +371,8 @@ export class ZardSliderComponent implements ControlValueAccessor, AfterViewInit,
     if (this.disabled()) return;
 
     const percent = this.percentValue();
-    const rawValue = this.zMin() + ((this.zMax() - this.zMin()) * percent) / 100;
+    const rawValue =
+      this.zMin() + ((this.zMax() - this.zMin()) * percent) / 100;
     const currentValue = roundToStep(rawValue, this.zMin(), this.zStep());
 
     let newValue = currentValue;
@@ -340,7 +400,9 @@ export class ZardSliderComponent implements ControlValueAccessor, AfterViewInit,
         return;
     }
 
-    this.percentValue.set(convertValueToPercentage(newValue, this.zMin(), this.zMax()));
+    this.percentValue.set(
+      convertValueToPercentage(newValue, this.zMin(), this.zMax())
+    );
     this.onSlide.emit(newValue);
     this.lastEmittedValue.set(newValue);
     this.onChange(newValue);
@@ -354,7 +416,9 @@ export class ZardSliderComponent implements ControlValueAccessor, AfterViewInit,
     const value = roundToStep(rawValue, this.zMin(), this.zStep());
 
     if (value !== this.lastEmittedValue()) {
-      this.percentValue.set(convertValueToPercentage(value, this.zMin(), this.zMax()));
+      this.percentValue.set(
+        convertValueToPercentage(value, this.zMin(), this.zMax())
+      );
       this.onSlide.emit(value);
       this.lastEmittedValue.set(value);
       this.onChange(value);

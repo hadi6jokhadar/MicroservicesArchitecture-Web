@@ -12,14 +12,18 @@ import {
   signal,
   ViewEncapsulation,
 } from '@angular/core';
-import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  type ControlValueAccessor,
+  FormsModule,
+  NG_VALUE_ACCESSOR,
+} from '@angular/forms';
 import type { ClassValue } from 'clsx';
 
 import { commandVariants, type ZardCommandVariants } from './command.variants';
 import { ZardCommandOptionComponent } from './command-option.component';
 import { ZardCommandInputComponent } from './command-input.component';
 import { mergeClasses } from '../../utils';
-import type { ZardIcon } from 'libs\ui\src\lib\components/icon/icons';
+import type { ZardIcon } from '../icon/icons';
 
 export interface ZardCommandOption {
   value: unknown;
@@ -54,8 +58,15 @@ export interface ZardCommandConfig {
   encapsulation: ViewEncapsulation.None,
   template: `
     <div [class]="classes()">
-      <div id="command-instructions" class="sr-only">Use arrow keys to navigate, Enter to select, Escape to clear selection.</div>
-      <div id="command-status" class="sr-only" aria-live="polite" aria-atomic="true">
+      <div id="command-instructions" class="sr-only">
+        Use arrow keys to navigate, Enter to select, Escape to clear selection.
+      </div>
+      <div
+        id="command-status"
+        class="sr-only"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         {{ statusMessage() }}
       </div>
       <ng-content></ng-content>
@@ -77,7 +88,9 @@ export interface ZardCommandConfig {
 })
 export class ZardCommandComponent implements ControlValueAccessor {
   readonly commandInput = contentChild(ZardCommandInputComponent);
-  readonly optionComponents = contentChildren(ZardCommandOptionComponent, { descendants: true });
+  readonly optionComponents = contentChildren(ZardCommandOptionComponent, {
+    descendants: true,
+  });
 
   readonly size = input<ZardCommandVariants['size']>('default');
   readonly class = input<ClassValue>('');
@@ -92,7 +105,9 @@ export class ZardCommandComponent implements ControlValueAccessor {
   // Signal to trigger updates when optionComponents change
   private readonly optionsUpdateTrigger = signal(0);
 
-  protected readonly classes = computed(() => mergeClasses(commandVariants({ size: this.size() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(commandVariants({ size: this.size() }), this.class())
+  );
 
   // Computed signal for filtered options - this will automatically update when searchTerm or options change
   readonly filteredOptions = computed(() => {
@@ -105,10 +120,12 @@ export class ZardCommandComponent implements ControlValueAccessor {
     const lowerSearchTerm = searchTerm.toLowerCase().trim();
     if (lowerSearchTerm === '') return this.optionComponents();
 
-    return this.optionComponents().filter(option => {
+    return this.optionComponents().filter((option) => {
       const label = option.zLabel().toLowerCase();
       const command = option.zCommand()?.toLowerCase() ?? '';
-      return label.includes(lowerSearchTerm) || command.includes(lowerSearchTerm);
+      return (
+        label.includes(lowerSearchTerm) || command.includes(lowerSearchTerm)
+      );
     });
   });
 
@@ -123,7 +140,9 @@ export class ZardCommandComponent implements ControlValueAccessor {
       return `No results found for "${searchTerm}"`;
     }
 
-    return `${filteredCount} result${filteredCount === 1 ? '' : 's'} found for "${searchTerm}"`;
+    return `${filteredCount} result${
+      filteredCount === 1 ? '' : 's'
+    } found for "${searchTerm}"`;
   });
 
   private onChange = (_value: unknown) => {
@@ -143,7 +162,7 @@ export class ZardCommandComponent implements ControlValueAccessor {
    * Trigger an update to the filteredOptions computed signal
    */
   private triggerOptionsUpdate(): void {
-    this.optionsUpdateTrigger.update(value => value + 1);
+    this.optionsUpdateTrigger.update((value) => value + 1);
   }
 
   onSearch(searchTerm: string) {
@@ -177,7 +196,8 @@ export class ZardCommandComponent implements ControlValueAccessor {
     switch (event.key) {
       case 'ArrowDown': {
         event.preventDefault();
-        const nextIndex = currentIndex < filteredOptions.length - 1 ? currentIndex + 1 : 0;
+        const nextIndex =
+          currentIndex < filteredOptions.length - 1 ? currentIndex + 1 : 0;
         this.selectedIndex.set(nextIndex);
         this.updateSelectedOption();
         break;
@@ -185,7 +205,8 @@ export class ZardCommandComponent implements ControlValueAccessor {
 
       case 'ArrowUp': {
         event.preventDefault();
-        const prevIndex = currentIndex > 0 ? currentIndex - 1 : filteredOptions.length - 1;
+        const prevIndex =
+          currentIndex > 0 ? currentIndex - 1 : filteredOptions.length - 1;
         this.selectedIndex.set(prevIndex);
         this.updateSelectedOption();
         break;

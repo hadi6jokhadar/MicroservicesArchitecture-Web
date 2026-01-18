@@ -1,12 +1,25 @@
-import { ChangeDetectionStrategy, Component, computed, input, TemplateRef, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  TemplateRef,
+  ViewEncapsulation,
+} from '@angular/core';
 
 import type { ClassValue } from 'clsx';
 
-import { alertDescriptionVariants, alertIconVariants, alertTitleVariants, alertVariants, type ZardAlertVariants } from './alert.variants';
+import {
+  alertDescriptionVariants,
+  alertIconVariants,
+  alertTitleVariants,
+  alertVariants,
+  type ZardAlertVariants,
+} from './alert.variants';
 import { mergeClasses } from '../../utils';
 import { ZardStringTemplateOutletDirective } from '../core/directives/string-template-outlet/string-template-outlet.directive';
 import { ZardIconComponent } from '../icon/icon.component';
-import type { ZardIcon } from 'libs\ui\src\lib\components/icon/icons';
+import type { ZardIcon } from '../icon/icons';
 
 @Component({
   selector: 'z-alert, [z-alert]',
@@ -17,24 +30,26 @@ import type { ZardIcon } from 'libs\ui\src\lib\components/icon/icons';
   encapsulation: ViewEncapsulation.None,
   template: `
     @if (zIcon() || iconName()) {
-      <span [class]="iconClasses()" data-slot="alert-icon">
-        <ng-container *zStringTemplateOutlet="zIcon()">
-          <z-icon [zType]="iconName()!" />
-        </ng-container>
-      </span>
+    <span [class]="iconClasses()" data-slot="alert-icon">
+      <ng-container *zStringTemplateOutlet="zIcon()">
+        <z-icon [zType]="iconName()!" />
+      </ng-container>
+    </span>
     }
 
     <div class="flex-1">
       @if (zTitle()) {
-        <div [class]="titleClasses()" data-slot="alert-title">
-          <ng-container *zStringTemplateOutlet="zTitle()">{{ zTitle() }}</ng-container>
-        </div>
-      }
-
-      @if (zDescription()) {
-        <div [class]="descriptionClasses()" data-slot="alert-description">
-          <ng-container *zStringTemplateOutlet="zDescription()">{{ zDescription() }}</ng-container>
-        </div>
+      <div [class]="titleClasses()" data-slot="alert-title">
+        <ng-container *zStringTemplateOutlet="zTitle()">{{
+          zTitle()
+        }}</ng-container>
+      </div>
+      } @if (zDescription()) {
+      <div [class]="descriptionClasses()" data-slot="alert-description">
+        <ng-container *zStringTemplateOutlet="zDescription()">{{
+          zDescription()
+        }}</ng-container>
+      </div>
       }
     </div>
   `,
@@ -51,13 +66,17 @@ export class ZardAlertComponent {
   readonly zIcon = input<ZardIcon | TemplateRef<void>>();
   readonly zType = input<ZardAlertVariants['zType']>('default');
 
-  protected readonly classes = computed(() => mergeClasses(alertVariants({ zType: this.zType() }), this.class()));
+  protected readonly classes = computed(() =>
+    mergeClasses(alertVariants({ zType: this.zType() }), this.class())
+  );
 
   protected readonly iconClasses = computed(() => alertIconVariants());
 
   protected readonly titleClasses = computed(() => alertTitleVariants());
 
-  protected readonly descriptionClasses = computed(() => alertDescriptionVariants({ zType: this.zType() }));
+  protected readonly descriptionClasses = computed(() =>
+    alertDescriptionVariants({ zType: this.zType() })
+  );
 
   protected readonly iconName = computed((): ZardIcon | null => {
     const customIcon = this.zIcon();

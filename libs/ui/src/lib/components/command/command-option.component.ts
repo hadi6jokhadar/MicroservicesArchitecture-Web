@@ -1,11 +1,24 @@
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, signal, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  input,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import type { ClassValue } from 'clsx';
 
-import { commandItemVariants, commandShortcutVariants, type ZardCommandItemVariants } from './command.variants';
+import {
+  commandItemVariants,
+  commandShortcutVariants,
+  type ZardCommandItemVariants,
+} from './command.variants';
 import { mergeClasses, transform } from '../../utils';
 import { ZardIconComponent } from '../icon/icon.component';
 import { ZardCommandComponent } from './command.component';
-import type { ZardIcon } from 'libs\ui\src\lib\components/icon/icons';
+import type { ZardIcon } from '../icon/icons';
 
 @Component({
   selector: 'z-command-option',
@@ -16,31 +29,37 @@ import type { ZardIcon } from 'libs\ui\src\lib\components/icon/icons';
   imports: [ZardIconComponent],
   template: `
     @if (shouldShow()) {
+    <div
+      [class]="classes()"
+      [attr.role]="'option'"
+      [attr.aria-selected]="isSelected()"
+      [attr.data-selected]="isSelected()"
+      [attr.data-disabled]="zDisabled()"
+      [attr.tabindex]="0"
+      (click)="onClick()"
+      (keydown)="onKeyDown($event)"
+      (mouseenter)="onMouseEnter()"
+    >
+      @if (zIcon()) {
       <div
-        [class]="classes()"
-        [attr.role]="'option'"
-        [attr.aria-selected]="isSelected()"
-        [attr.data-selected]="isSelected()"
-        [attr.data-disabled]="zDisabled()"
-        [attr.tabindex]="0"
-        (click)="onClick()"
-        (keydown)="onKeyDown($event)"
-        (mouseenter)="onMouseEnter()"
-      >
-        @if (zIcon()) {
-          <div z-icon [zType]="zIcon()!" class="mr-2 shrink-0 flex items-center justify-center"></div>
-        }
-        <span class="flex-1">{{ zLabel() }}</span>
-        @if (zShortcut()) {
-          <span [class]="shortcutClasses()">{{ zShortcut() }}</span>
-        }
-      </div>
+        z-icon
+        [zType]="zIcon()!"
+        class="mr-2 shrink-0 flex items-center justify-center"
+      ></div>
+      }
+      <span class="flex-1">{{ zLabel() }}</span>
+      @if (zShortcut()) {
+      <span [class]="shortcutClasses()">{{ zShortcut() }}</span>
+      }
+    </div>
     }
   `,
 })
 export class ZardCommandOptionComponent {
   private readonly elementRef = inject(ElementRef);
-  private readonly commandComponent = inject(ZardCommandComponent, { optional: true });
+  private readonly commandComponent = inject(ZardCommandComponent, {
+    optional: true,
+  });
 
   readonly zValue = input.required<unknown>();
   readonly zLabel = input.required<string>();
@@ -55,11 +74,15 @@ export class ZardCommandOptionComponent {
 
   protected readonly classes = computed(() => {
     const baseClasses = commandItemVariants({ variant: this.variant() });
-    const selectedClasses = this.isSelected() ? 'bg-accent text-accent-foreground' : '';
+    const selectedClasses = this.isSelected()
+      ? 'bg-accent text-accent-foreground'
+      : '';
     return mergeClasses(baseClasses, selectedClasses, this.class());
   });
 
-  protected readonly shortcutClasses = computed(() => mergeClasses(commandShortcutVariants({})));
+  protected readonly shortcutClasses = computed(() =>
+    mergeClasses(commandShortcutVariants({}))
+  );
 
   protected readonly shouldShow = computed(() => {
     if (!this.commandComponent) return true;

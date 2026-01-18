@@ -1,11 +1,23 @@
-import { ChangeDetectionStrategy, Component, computed, forwardRef, input, output, signal, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  forwardRef,
+  input,
+  output,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import type { ClassValue } from 'clsx';
 
-import { toggleGroupVariants, toggleGroupItemVariants } from './toggle-group.variants';
+import {
+  toggleGroupVariants,
+  toggleGroupItemVariants,
+} from './toggle-group.variants';
 import { ZardIconComponent } from '../icon/icon.component';
 import { mergeClasses } from '../../utils';
-import type { ZardIcon } from 'libs\ui\src\lib\components/icon/icons';
+import type { ZardIcon } from '../icon/icons';
 
 export interface ZardToggleGroupItem {
   value: string;
@@ -26,26 +38,29 @@ type OnChangeType = (value: string | string[]) => void;
   encapsulation: ViewEncapsulation.None,
   imports: [ZardIconComponent],
   template: `
-    <div [class]="classes()" role="group" [attr.data-orientation]="'horizontal'">
+    <div
+      [class]="classes()"
+      role="group"
+      [attr.data-orientation]="'horizontal'"
+    >
       @for (item of items(); track item.value; let i = $index) {
-        <button
-          type="button"
-          [attr.aria-pressed]="isItemPressed(item.value)"
-          [attr.data-state]="isItemPressed(item.value) ? 'on' : 'off'"
-          [attr.aria-label]="item.ariaLabel"
-          [class]="getItemClasses(i, items().length)"
-          [disabled]="disabled() || item.disabled"
-          (click)="toggleItem(item)"
-        >
-          @if (item.icon) {
-            <span z-icon [zType]="item.icon" class="w-4 h-4 shrink-0"></span>
-          }
-          @if (item.label) {
-            <span>{{ item.label }}</span>
-          } @else if (!item.icon) {
-            <span>{{ item.value }}</span>
-          }
-        </button>
+      <button
+        type="button"
+        [attr.aria-pressed]="isItemPressed(item.value)"
+        [attr.data-state]="isItemPressed(item.value) ? 'on' : 'off'"
+        [attr.aria-label]="item.ariaLabel"
+        [class]="getItemClasses(i, items().length)"
+        [disabled]="disabled() || item.disabled"
+        (click)="toggleItem(item)"
+      >
+        @if (item.icon) {
+        <span z-icon [zType]="item.icon" class="w-4 h-4 shrink-0"></span>
+        } @if (item.label) {
+        <span>{{ item.label }}</span>
+        } @else if (!item.icon) {
+        <span>{{ item.value }}</span>
+        }
+      </button>
       }
     </div>
   `,
@@ -77,8 +92,8 @@ export class ZardToggleGroupComponent implements ControlValueAccessor {
         zType: this.zType(),
         zSize: this.zSize(),
       }),
-      this.class(),
-    ),
+      this.class()
+    )
   );
 
   protected readonly currentValue = computed(() => {
@@ -150,7 +165,7 @@ export class ZardToggleGroupComponent implements ControlValueAccessor {
     } else {
       const currentArray = Array.isArray(currentValue) ? currentValue : [];
       if (currentArray.includes(item.value)) {
-        newValue = currentArray.filter(v => v !== item.value);
+        newValue = currentArray.filter((v) => v !== item.value);
       } else {
         newValue = [...currentArray, item.value];
       }

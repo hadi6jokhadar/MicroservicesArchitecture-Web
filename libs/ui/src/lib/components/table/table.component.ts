@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-selector */
 import type { ClassValue } from 'clsx';
 
 import {
