@@ -4,13 +4,13 @@ import { pagesRoutes } from './pages/pages.routes';
 
 export const appRoutes: Route[] = [
   {
-    path: 'pages',
+    path: '',
     component: PagesComponent,
     children: pagesRoutes,
   },
   {
     path: '',
-    redirectTo: 'pages',
+    redirectTo: '',
     pathMatch: 'full',
   },
 ];

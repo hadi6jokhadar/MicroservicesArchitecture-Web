@@ -87,6 +87,38 @@ export class AuthService {
       .pipe(tap((response) => this._handleAuthResponse(response)));
   }
 
+  registerWithCodeByPhone(
+    phoneNumber: string,
+    code: string,
+    firstName: string,
+    lastName: string
+  ): Observable<IAuthResponse> {
+    return this._http
+      .post<IAuthResponse>(`${this._baseUrl}/register-with-code-by-phone`, {
+        phoneNumber,
+        code,
+        firstName,
+        lastName,
+      })
+      .pipe(tap((response) => this._handleAuthResponse(response)));
+  }
+
+  registerWithCodeByEmail(
+    email: string,
+    code: string,
+    firstName: string,
+    lastName: string
+  ): Observable<IAuthResponse> {
+    return this._http
+      .post<IAuthResponse>(`${this._baseUrl}/register-with-code-by-email`, {
+        email,
+        code,
+        firstName,
+        lastName,
+      })
+      .pipe(tap((response) => this._handleAuthResponse(response)));
+  }
+
   private _handleAuthResponse(response: IAuthResponse) {
     localStorage.setItem('token', response.accessToken);
     localStorage.setItem('refreshToken', response.refreshToken);

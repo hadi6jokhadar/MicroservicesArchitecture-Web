@@ -1,6 +1,7 @@
 import { Component, signal, effect, inject, PLATFORM_ID } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
+import { ZardIcon } from '@ihsan/ui';
 import {
   ISidebarPage,
   ISidebarUser,
@@ -24,30 +25,46 @@ export class PagesComponent {
   sidebarPages = signal<ISidebarPage[]>([
     new SidebarPageClass({
       label: 'Dashboard',
-      icon: 'layout-dashboard',
+      icon: 'layout-dashboard' as ZardIcon,
       route: '/dashboard',
     }),
     new SidebarPageClass({
       label: 'Identity',
-      icon: 'users',
+      icon: 'shield' as ZardIcon,
       group: 'User Group',
-      route: '/identity',
+      children: [
+        new SidebarPageClass({
+          label: 'Users',
+          icon: 'users' as ZardIcon,
+          route: '/identity/users',
+        }),
+        new SidebarPageClass({
+          label: 'Roles',
+          icon: 'badge-check' as ZardIcon,
+          route: '/identity/roles',
+        }),
+        new SidebarPageClass({
+          label: 'Claims',
+          icon: 'shield' as ZardIcon,
+          route: '/identity/claims',
+        }),
+      ],
     }),
     new SidebarPageClass({
       label: 'Tenant',
-      icon: 'house',
+      icon: 'house' as ZardIcon,
       group: 'System Group',
       route: '/tenant',
     }),
     new SidebarPageClass({
       label: 'FileManager',
-      icon: 'folder',
+      icon: 'folder' as ZardIcon,
       group: 'System Group',
       route: '/file-manager',
     }),
     new SidebarPageClass({
       label: 'Notification',
-      icon: 'bell',
+      icon: 'bell' as ZardIcon,
       group: 'System Group',
       route: '/notification',
     }),

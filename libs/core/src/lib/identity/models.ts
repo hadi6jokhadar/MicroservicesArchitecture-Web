@@ -156,3 +156,189 @@ export interface IUpdateUserRequest {
   role: string;
   isActive: boolean;
 }
+
+// Role Management
+export interface IRole {
+  id: number;
+  name: string;
+  description?: string;
+  created: string;
+  isArchived: boolean;
+  createdBy?: string | null;
+  lastModified?: string;
+  lastModifiedBy?: string | null;
+}
+
+export class RoleClass implements IRole {
+  id: number;
+  name: string;
+  description?: string;
+  created: string;
+  isArchived: boolean;
+  createdBy?: string | null;
+  lastModified?: string;
+  lastModifiedBy?: string | null;
+
+  constructor(data: Partial<IRole> = {}) {
+    this.id = data.id || 0;
+    this.name = data.name || '';
+    this.description = data.description;
+    this.created = data.created || '';
+    this.isArchived = data.isArchived ?? false;
+    this.createdBy = data.createdBy;
+    this.lastModified = data.lastModified;
+    this.lastModifiedBy = data.lastModifiedBy;
+  }
+}
+
+export interface ICreateRoleRequest {
+  name: string;
+  description?: string;
+}
+
+export interface IUpdateRoleRequest {
+  name: string;
+  description?: string;
+}
+
+export interface IAssignClaimsToRoleRequest {
+  claimIds: number[];
+}
+
+export interface IAssignRolesToUserRequest {
+  roleIds: number[];
+}
+
+// Claim Management
+export interface IClaim {
+  id: number;
+  name: string;
+  claimType: string;
+  claimValue: string;
+  description?: string;
+  isSuperAdminOnly: boolean;
+  created: string;
+  isArchived: boolean;
+  createdBy?: string | null;
+  lastModified?: string;
+  lastModifiedBy?: string | null;
+}
+
+export class ClaimClass implements IClaim {
+  id: number;
+  name: string;
+  claimType: string;
+  claimValue: string;
+  description?: string;
+  isSuperAdminOnly: boolean;
+  created: string;
+  isArchived: boolean;
+  createdBy?: string | null;
+  lastModified?: string;
+  lastModifiedBy?: string | null;
+
+  constructor(data: Partial<IClaim> = {}) {
+    this.id = data.id || 0;
+    this.name = data.name || '';
+    this.claimType = data.claimType || '';
+    this.claimValue = data.claimValue || '';
+    this.description = data.description;
+    this.isSuperAdminOnly = data.isSuperAdminOnly ?? false;
+    this.created = data.created || '';
+    this.isArchived = data.isArchived ?? false;
+    this.createdBy = data.createdBy;
+    this.lastModified = data.lastModified;
+    this.lastModifiedBy = data.lastModifiedBy;
+  }
+}
+
+export interface ICreateClaimRequest {
+  name: string;
+  claimType: string;
+  claimValue: string;
+  description?: string;
+  isSuperAdminOnly?: boolean;
+}
+
+export interface IUpdateClaimRequest {
+  name: string;
+  claimType: string;
+  claimValue: string;
+  description?: string;
+  isSuperAdminOnly?: boolean;
+}
+
+// Device Token Management
+export interface IDeviceToken {
+  id: number;
+  userId: number;
+  token: string;
+  platform: string;
+  deviceId: string;
+  created: string;
+  isArchived: boolean;
+  createdBy?: string | null;
+  lastModified?: string;
+  lastModifiedBy?: string | null;
+}
+
+export class DeviceTokenClass implements IDeviceToken {
+  id: number;
+  userId: number;
+  token: string;
+  platform: string;
+  deviceId: string;
+  created: string;
+  isArchived: boolean;
+  createdBy?: string | null;
+  lastModified?: string;
+  lastModifiedBy?: string | null;
+
+  constructor(data: Partial<IDeviceToken> = {}) {
+    this.id = data.id || 0;
+    this.userId = data.userId || 0;
+    this.token = data.token || '';
+    this.platform = data.platform || '';
+    this.deviceId = data.deviceId || '';
+    this.created = data.created || '';
+    this.isArchived = data.isArchived ?? false;
+    this.createdBy = data.createdBy;
+    this.lastModified = data.lastModified;
+    this.lastModifiedBy = data.lastModifiedBy;
+  }
+}
+
+export interface IAddDeviceTokenRequest {
+  token: string;
+  platform: string;
+  deviceId: string;
+}
+
+export interface IUpdateDeviceTokenRequest {
+  token: string;
+  platform: string;
+  deviceId: string;
+}
+
+export interface IGetBatchDeviceTokensRequest {
+  userIds: number[];
+}
+
+export interface IDeleteBatchDeviceTokensRequest {
+  tokenIds: number[];
+}
+
+// Enhanced Authentication
+export interface IRegisterWithCodeByPhoneRequest {
+  phoneNumber: string;
+  code: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface IRegisterWithCodeByEmailRequest {
+  email: string;
+  code: string;
+  firstName: string;
+  lastName: string;
+}

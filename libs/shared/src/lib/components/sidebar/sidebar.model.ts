@@ -5,6 +5,7 @@ export interface ISidebarPage {
   icon: ZardIcon;
   group?: string;
   route?: string;
+  children?: ISidebarPage[];
 }
 
 export class SidebarPageClass implements ISidebarPage {
@@ -12,12 +13,14 @@ export class SidebarPageClass implements ISidebarPage {
   icon: ZardIcon;
   group?: string;
   route?: string;
+  children?: ISidebarPage[];
 
   constructor(data: Partial<ISidebarPage> = {}) {
     this.label = data.label || '';
     this.icon = data.icon || 'circle';
     this.group = data.group;
     this.route = data.route;
+    this.children = data.children;
   }
 }
 
