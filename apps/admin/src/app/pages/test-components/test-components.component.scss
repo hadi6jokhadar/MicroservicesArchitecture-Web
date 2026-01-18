@@ -1,0 +1,176 @@
+:host {
+  display: block;
+  padding-block: 2rem;
+  padding-inline: 1rem;
+}
+
+.test-components-container {
+  max-inline-size: 1200px;
+  margin-inline: auto;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-block-end: 0.5rem;
+  color: var(--foreground);
+}
+
+.page-description {
+  font-size: 1.125rem;
+  color: var(--muted-foreground);
+  margin-block-end: 3rem;
+}
+
+.component-section {
+  margin-block-end: 4rem;
+  padding-block-end: 2rem;
+  border-block-end: 1px solid var(--border);
+
+  &:last-child {
+    border-block-end: none;
+  }
+}
+
+.section-title {
+  font-size: 1.875rem;
+  font-weight: 600;
+  margin-block-end: 1.5rem;
+  color: var(--foreground);
+}
+
+.examples-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.form-example {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-inline-size: 400px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: var(--foreground);
+  }
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-inline-size: 400px;
+
+  span {
+    font-weight: 500;
+    color: var(--muted-foreground);
+  }
+}
+
+.skeleton-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-inline-size: 400px;
+}
+
+.icons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 1rem;
+
+  zard-icon {
+    font-size: 2rem;
+  }
+}
+
+.card-header {
+  padding-block-end: 1rem;
+  border-block-end: 1px solid var(--border);
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-block-end: 0.25rem;
+  }
+
+  p {
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+  }
+}
+
+.card-content {
+  padding-block: 1rem;
+}
+
+.card-footer {
+  padding-block-start: 1rem;
+  border-block-start: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.panel-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: 100%;
+  padding: 1rem;
+  background: var(--muted);
+  border-radius: var(--radius);
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  :host {
+    padding-inline: 0.75rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .examples-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .icons-grid {
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.75rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+
+  .component-section {
+    margin-block-end: 3rem;
+  }
+}

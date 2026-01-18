@@ -1,0 +1,544 @@
+<div class="test-components-container">
+  <h1 class="page-title">Zardui Components Test Page</h1>
+  <p class="page-description">
+    Comprehensive showcase of all available Zardui components
+  </p>
+
+  <!-- Alerts -->
+  <section class="component-section">
+    <h2 class="section-title">Alerts</h2>
+    <div class="grid w-full max-w-xl items-start gap-4">
+      <z-alert
+        zIcon="circle-check"
+        zTitle="Success! Your changes have been saved"
+        zDescription="This is an alert with icon, title and description."
+      />
+
+      <z-alert
+        [zIcon]="customIcon"
+        zTitle="This Alert has a title and an icon. No description."
+      />
+
+      <ng-template #customIcon>
+        <z-icon zType="popcorn" />
+      </ng-template>
+
+      <z-alert
+        zType="destructive"
+        zTitle="Unable to process your payment."
+        [zDescription]="customDescription"
+      />
+
+      <ng-template #customDescription>
+        <p>Please verify your billing information and try again.</p>
+        <ul class="list-disc pl-5">
+          <li>Check your card details</li>
+          <li>Ensure sufficient funds</li>
+          <li>Verify billing address</li>
+        </ul>
+      </ng-template>
+    </div>
+  </section>
+
+  <!-- Buttons -->
+  <section class="component-section">
+    <h2 class="section-title">Buttons</h2>
+    <div class="examples-grid">
+      <z-button id="btn-primary" zType="default">Primary Button</z-button>
+      <z-button id="btn-secondary" zType="secondary">Secondary Button</z-button>
+      <z-button id="btn-outline" zType="outline">Outline Button</z-button>
+      <z-button id="btn-ghost" zType="ghost">Ghost Button</z-button>
+      <z-button id="btn-destructive" zType="destructive"
+        >Destructive Button</z-button
+      >
+    </div>
+  </section>
+
+  <!-- Buttons -->
+  <section class="component-section">
+    <h2 class="section-title">Buttons</h2>
+    <z-breadcrumb zWrap="wrap" zAlign="start">
+      <z-breadcrumb-item [routerLink]="['/']">
+        <z-icon zType="house" />
+        Home
+      </z-breadcrumb-item>
+      <z-breadcrumb-item [routerLink]="['/docs/components']"
+        >Components</z-breadcrumb-item
+      >
+      <z-breadcrumb-item>Breadcrumb</z-breadcrumb-item>
+    </z-breadcrumb>
+  </section>
+
+  <!-- Button Group -->
+  <section class="component-section">
+    <h2 class="section-title">Button Group</h2>
+    <z-button-group id="button-group-example">
+      <z-button id="btn-group-1">First</z-button>
+      <z-button id="btn-group-2">Second</z-button>
+      <z-button id="btn-group-3">Third</z-button>
+    </z-button-group>
+  </section>
+
+  <!-- Badges -->
+  <section class="component-section">
+    <h2 class="section-title">Badges</h2>
+    <div class="flex flex-col items-center gap-2">
+      <div class="flex w-full flex-wrap gap-2">
+        <z-badge>Badge</z-badge>
+        <z-badge zType="secondary">Secondary</z-badge>
+        <z-badge zType="destructive">Destructive</z-badge>
+        <z-badge zType="outline">Outline</z-badge>
+      </div>
+      <div class="flex w-full flex-wrap gap-2">
+        <z-badge
+          zType="secondary"
+          class="bg-blue-500 text-white dark:bg-blue-600"
+        >
+          <z-icon zType="badge-check" />
+          Verified
+        </z-badge>
+        <z-badge zShape="pill" class="h-5 min-w-5 px-1 font-mono tabular-nums"
+          >8</z-badge
+        >
+        <z-badge
+          zShape="pill"
+          zType="destructive"
+          class="h-5 min-w-5 px-1 font-mono tabular-nums"
+          >99</z-badge
+        >
+        <z-badge
+          zShape="pill"
+          zType="outline"
+          class="h-5 min-w-5 px-1 font-mono tabular-nums"
+          >20+</z-badge
+        >
+      </div>
+    </div>
+  </section>
+
+  <!-- Avatar -->
+  <section class="component-section">
+    <h2 class="section-title">Avatars</h2>
+    <div class="examples-grid">
+      <z-avatar
+        id="avatar-small"
+        zSize="sm"
+        zSrc="https://i.pravatar.cc/150?img=1"
+      ></z-avatar>
+      <z-avatar
+        id="avatar-medium"
+        zSize="md"
+        zSrc="https://i.pravatar.cc/150?img=2"
+      ></z-avatar>
+      <z-avatar
+        id="avatar-large"
+        zSize="lg"
+        zSrc="https://i.pravatar.cc/150?img=3"
+      ></z-avatar>
+      <z-avatar id="avatar-fallback" zFallback="AB"></z-avatar>
+    </div>
+  </section>
+
+  <!-- Card -->
+  <section class="component-section">
+    <h2 class="section-title">Card</h2>
+    <z-card id="card-example">
+      <div class="card-header">
+        <h3>Card Title</h3>
+        <p>Card subtitle or description</p>
+      </div>
+      <div class="card-content">
+        <p>
+          This is the card content area. You can put any content here including
+          text, images, or other components.
+        </p>
+      </div>
+      <div class="card-footer">
+        <z-button id="card-btn-cancel" zType="outline">Cancel</z-button>
+        <z-button id="card-btn-save" zType="default">Save</z-button>
+      </div>
+    </z-card>
+  </section>
+
+  <!-- Accordion -->
+  <section class="component-section">
+    <h2 class="section-title">Accordion</h2>
+    <z-accordion zDefaultValue="item-2">
+      <z-accordion-item zValue="item-1" zTitle="A Study in Scarlet">
+        The first case of Sherlock Holmes and Dr. Watson. They investigate a
+        murder in London, which leads to a backstory involving Mormons in the
+        U.S. Introduces Holmes’s deductive method.
+      </z-accordion-item>
+
+      <z-accordion-item
+        zValue="item-2"
+        zTitle="The Sign of Four"
+        zDescription="Sir Arthur Conan Doyle"
+      >
+        The first case of Sherlock Holmes and Dr. Watson. They investigate a
+        murder in London, which leads to a backstory involving Mormons in the
+        U.S. Introduces Holmes’s deductive method.
+      </z-accordion-item>
+
+      <z-accordion-item zValue="item-3" zTitle="The Hound of the Baskervilles">
+        Holmes and Watson investigate the legend of a demonic hound haunting the
+        Baskerville family. Set in the eerie Dartmoor moorlands, the story
+        involves betrayal and greed.
+      </z-accordion-item>
+    </z-accordion>
+  </section>
+
+  <!--Divider -->
+  <section class="component-section">
+    <h2 class="section-title">Divider</h2>
+    <p>Horizontal Divider:</p>
+    <z-divider id="divider-horizontal"></z-divider>
+    <p>Vertical Divider:</p>
+    <div style="display: flex; align-items: center; gap: 1rem; height: 3rem">
+      <span>Left</span>
+      <z-divider id="divider-vertical" zOrientation="vertical"></z-divider>
+      <span>Right</span>
+    </div>
+  </section>
+
+  <!-- Form Inputs -->
+  <section class="component-section">
+    <h2 class="section-title">Form Inputs</h2>
+    <form
+      [formGroup]="testForm"
+      (ngSubmit)="onSubmitForm()"
+      class="form-example"
+    >
+      <div class="form-field">
+        <label for="input-name">Name</label>
+        <input
+          id="input-name"
+          zInput
+          formControlName="name"
+          placeholder="Enter your name"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="input-email">Email</label>
+        <input
+          id="input-email"
+          zInput
+          formControlName="email"
+          type="email"
+          placeholder="Enter your email"
+        />
+      </div>
+
+      <div class="form-field">
+        <z-checkbox id="checkbox-agree" formControlName="agree">
+          I agree to the terms and conditions
+        </z-checkbox>
+      </div>
+
+      <z-button id="form-submit-btn" type="submit"> Submit Form </z-button>
+    </form>
+  </section>
+
+  <!-- Input Group -->
+  <section class="component-section">
+    <z-input-group class="input-group-example" [zAddOnAfter]="areaAfter">
+      <textarea
+        class="h-30 resize-none"
+        z-input
+        placeholder="Ask, Search or Chat..."
+      ></textarea>
+    </z-input-group>
+  </section>
+
+  <!-- Switch -->
+  <section class="component-section">
+    <h2 class="section-title">Switch</h2>
+    <div class="examples-grid">
+      <z-switch id="switch-example"> Enable notifications </z-switch>
+    </div>
+  </section>
+
+  <!-- Toggle -->
+  <section class="component-section">
+    <h2 class="section-title">Toggle</h2>
+    <z-toggle id="toggle-example"> Toggle Me </z-toggle>
+  </section>
+
+  <!-- Radio -->
+  <section class="component-section">
+    <h2 class="section-title">Radio Buttons</h2>
+    <div class="radio-group">
+      @for (option of radioOptions; track option.value) {
+      <z-radio [attr.id]="'radio-' + option.value" zName="radio-example">
+        {{ option.label }}
+      </z-radio>
+      }
+    </div>
+  </section>
+
+  <!-- Select -->
+  <section class="component-section">
+    <h2 class="section-title">Select</h2>
+    <z-select id="select-example" zPlaceholder="Choose an option">
+      @for (option of selectOptions; track option.value) {
+      <z-select-item [zValue]="option.value">
+        {{ option.label }}
+      </z-select-item>
+      }
+    </z-select>
+  </section>
+
+  <!-- Slider -->
+  <section class="component-section">
+    <h2 class="section-title">Slider</h2>
+    <div class="slider-container">
+      <z-slider
+        id="slider-example"
+        [zValue]="sliderValue()"
+        [zMin]="0"
+        [zMax]="100"
+        [zStep]="1"
+      ></z-slider>
+      <span>Value: {{ sliderValue() }}</span>
+    </div>
+  </section>
+
+  <!-- Progress Bar -->
+  <section class="component-section">
+    <h2 class="section-title">Progress Bar</h2>
+    <z-progress-bar
+      id="progress-example"
+      [progress]="progressValue()"
+    ></z-progress-bar>
+    <p>Progress: {{ progressValue() }}%</p>
+  </section>
+
+  <!-- Date Picker -->
+  <section class="component-section">
+    <h2 class="section-title">Date Picker</h2>
+    <z-date-picker id="datepicker-example"></z-date-picker>
+  </section>
+
+  <!-- Calendar -->
+  <section class="component-section">
+    <h2 class="section-title">Calendar</h2>
+    <z-calendar id="calendar-example"></z-calendar>
+  </section>
+
+  <!-- Pagination -->
+  <section class="component-section">
+    <h2 class="section-title">Pagination</h2>
+    <z-pagination
+      id="pagination-example"
+      [zPageIndex]="currentPage()"
+      [zTotal]="10"
+    ></z-pagination>
+  </section>
+
+  <!-- Tabs -->
+  <section class="component-section">
+    <h2 class="section-title">Tabs</h2>
+    <z-tab-group id="tabs-example">
+      <z-tab id="tab-1" label="Tab 1">
+        <p>Content for Tab 1</p>
+      </z-tab>
+      <z-tab id="tab-2" label="Tab 2">
+        <p>Content for Tab 2</p>
+      </z-tab>
+      <z-tab id="tab-3" label="Tab 3">
+        <p>Content for Tab 3</p>
+      </z-tab>
+    </z-tab-group>
+  </section>
+
+  <!-- Dropdown -->
+  <section class="component-section">
+    <h2 class="section-title">Dropdown Menu</h2>
+    <z-dropdown-menu id="dropdown-example">
+      <z-button id="dropdown-trigger" z-dropdown>Open Menu</z-button>
+      <z-dropdown-menu-content id="dropdown-menu">
+        <z-dropdown-menu-label id="dropdown-label"
+          >Actions</z-dropdown-menu-label
+        >
+        <z-dropdown-menu-item id="dropdown-item-1">Edit</z-dropdown-menu-item>
+        <z-dropdown-menu-item id="dropdown-item-2">Delete</z-dropdown-menu-item>
+        <z-dropdown-menu-item id="dropdown-item-3">Share</z-dropdown-menu-item>
+      </z-dropdown-menu-content>
+    </z-dropdown-menu>
+  </section>
+
+  <!-- Popover -->
+  <section class="component-section">
+    <h2 class="section-title">Popover</h2>
+    <z-popover id="popover-example">
+      <z-button id="popover-trigger">Show Popover</z-button>
+      <div popover-content id="popover-content">
+        <h4>Popover Title</h4>
+        <p>This is the popover content. You can put any HTML here.</p>
+      </div>
+    </z-popover>
+  </section>
+
+  <!-- Tooltip -->
+  <section class="component-section">
+    <h2 class="section-title">Tooltip</h2>
+    <z-button id="tooltip-button" zTooltip="This is a helpful tooltip message">
+      Hover for Tooltip
+    </z-button>
+  </section>
+
+  <!-- Dialog Triggers -->
+  <section class="component-section">
+    <h2 class="section-title">Dialogs</h2>
+    <div class="examples-grid">
+      <z-button id="btn-open-dialog" (click)="onOpenDialog()">
+        Open Dialog
+      </z-button>
+      <z-button id="btn-open-alert-dialog" (click)="onOpenAlertDialog()">
+        Open Alert Dialog
+      </z-button>
+      <z-button id="btn-open-sheet" (click)="onOpenSheet()">
+        Open Sheet
+      </z-button>
+    </div>
+  </section>
+
+  <!-- Loader -->
+  <section class="component-section">
+    <h2 class="section-title">Loader</h2>
+    <div class="examples-grid">
+      <z-loader id="loader-small" zSize="sm"></z-loader>
+      <z-loader id="loader-medium" zSize="default"></z-loader>
+      <z-loader id="loader-large" zSize="lg"></z-loader>
+    </div>
+  </section>
+
+  <!-- Skeleton -->
+  <section class="component-section">
+    <h2 class="section-title">Skeleton</h2>
+    <div class="skeleton-demo">
+      <z-skeleton id="skeleton-1" zWidth="100%" zHeight="20px"></z-skeleton>
+      <z-skeleton id="skeleton-2" zWidth="80%" zHeight="20px"></z-skeleton>
+      <z-skeleton id="skeleton-3" zWidth="60%" zHeight="20px"></z-skeleton>
+    </div>
+  </section>
+
+  <!-- Empty State -->
+  <section class="component-section">
+    <h2 class="section-title">Empty State</h2>
+    <z-empty
+      id="empty-example"
+      zTitle="No data found"
+      zDescription="There are no items to display at the moment."
+    ></z-empty>
+  </section>
+
+  <!-- Kbd -->
+  <section class="component-section">
+    <h2 class="section-title">Keyboard Shortcuts</h2>
+    <p>
+      Press <z-kbd id="kbd-ctrl">Ctrl</z-kbd> + <z-kbd id="kbd-s">S</z-kbd> to
+      save
+    </p>
+  </section>
+
+  <!-- Icon -->
+  <section class="component-section">
+    <h2 class="section-title">Icons</h2>
+    <div class="icons-grid">
+      <z-icon id="icon-home" zType="house"></z-icon>
+      <z-icon id="icon-user" zType="users"></z-icon>
+      <z-icon id="icon-settings" zType="settings"></z-icon>
+      <z-icon id="icon-search" zType="search"></z-icon>
+      <z-icon id="icon-bell" zType="bell"></z-icon>
+      <z-icon id="icon-mail" zType="mail"></z-icon>
+    </div>
+  </section>
+
+  <!-- Carousel -->
+  <section class="component-section">
+    <h2 class="section-title">Carousel</h2>
+    <z-carousel id="carousel-example">
+      <z-carousel-content id="carousel-content">
+        @for (item of carouselItems; track item.id) {
+        <z-carousel-item [attr.id]="'carousel-item-' + item.id">
+          <z-card [attr.id]="'carousel-card-' + item.id">
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.description }}</p>
+          </z-card>
+        </z-carousel-item>
+        }
+      </z-carousel-content>
+    </z-carousel>
+  </section>
+
+  <!-- Toast -->
+  <section class="component-section">
+    <h2 class="section-title">Toast Notification</h2>
+    <z-button id="btn-show-toast" (click)="showToast()">Show Toast</z-button>
+    @if (toastVisible()) {
+    <z-toast id="toast-example">
+      <strong>Success!</strong> Your action was completed.
+    </z-toast>
+    }
+  </section>
+
+  <!-- Resizable -->
+  <section class="component-section">
+    <h2 class="section-title">Resizable Panels</h2>
+    <z-resizable id="resizable-example" style="height: 200px">
+      <z-resizable-panel id="resizable-panel-1" [zDefaultSize]="50">
+        <div class="panel-content">Panel 1</div>
+      </z-resizable-panel>
+      <z-resizable-handle id="resizable-handle"></z-resizable-handle>
+      <z-resizable-panel id="resizable-panel-2" [zDefaultSize]="50">
+        <div class="panel-content">Panel 2</div>
+      </z-resizable-panel>
+    </z-resizable>
+  </section>
+</div>
+
+<ng-template #areaAfter>
+  <div class="flex w-full items-center justify-between">
+    <div class="flex items-center gap-1">
+      <button
+        type="button"
+        z-button
+        zType="outline"
+        zShape="circle"
+        class="data-icon-only:size-6!"
+      >
+        <z-icon zType="plus" />
+      </button>
+      <button
+        type="button"
+        z-button
+        zType="ghost"
+        class="h-6"
+        z-dropdown
+        [zDropdownMenu]="menu"
+      >
+        Auto
+      </button>
+      <z-dropdown-menu-content #menu="zDropdownMenuContent" class="w-10">
+        <z-dropdown-menu-item>Auto</z-dropdown-menu-item>
+        <z-dropdown-menu-item>Agent</z-dropdown-menu-item>
+        <z-dropdown-menu-item>Manual</z-dropdown-menu-item>
+      </z-dropdown-menu-content>
+    </div>
+    <div class="flex h-auto items-center gap-0">
+      <span>52% used</span>
+      <z-divider zOrientation="vertical" class="h-4" />
+      <button
+        type="button"
+        z-button
+        zType="outline"
+        zShape="circle"
+        class="data-icon-only:size-6!"
+      >
+        <z-icon zType="arrow-up" />
+      </button>
+    </div>
+  </div>
+</ng-template>

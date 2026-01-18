@@ -43,19 +43,39 @@ export class SidebarComponent {
   constructor() {
     // Auto-expand parent pages when navigating to a child route
     effect(() => {
-      this.pages(); // Trigger effect when pages input changes
-      this._autoExpandParentPages();
+      // Reading pages() triggers the effect when the input changes
+      // We need to be defensive here since the input might not be set yet
+      try {
+        const currentPages = this.pages();
+        if (currentPages && currentPages.length > 0) {
+          this._autoExpandParentPages();
+        }
+      } catch {
+        // Ignore errors when pages input is not yet available
+      }
     });
 
     // Also listen to route changes
     this._router.events.subscribe(() => {
-      this._autoExpandParentPages();
+      try {
+        const currentPages = this.pages();
+        if (currentPages && currentPages.length > 0) {
+          this._autoExpandParentPages();
+        }
+      } catch {
+        // Ignore errors when pages input is not yet available
+      }
     });
   }
 
   private _autoExpandParentPages(): void {
     const currentUrl = this._router.url;
     const expandedSet = new Set<string>();
+    const currentPages = this.pages();
+
+    if (!currentPages || currentPages.length === 0) {
+      return;
+    }
 
     // Find all parent pages that have children matching the current route
     const findParentsForRoute = (pages: ISidebarPage[]): void => {
@@ -73,7 +93,7 @@ export class SidebarComponent {
       });
     };
 
-    findParentsForRoute(this.pages());
+    findParentsForRoute(currentPages);
     this.expandedPages.set(expandedSet);
   }
 
@@ -108,18 +128,27 @@ export class SidebarComponent {
 
   getGroupedPages(): Map<string, ISidebarPage[]> {
     const grouped = new Map<string, ISidebarPage[]>();
-    const pages = this.pages();
 
-    pages.forEach((page) => {
-      const group = page.group || 'default';
-      if (!grouped.has(group)) {
-        grouped.set(group, []);
+    try {
+      const pages = this.pages();
+
+      if (!pages || pages.length === 0) {
+        return grouped;
       }
-      const groupPages = grouped.get(group);
-      if (groupPages) {
-        groupPages.push(page);
-      }
-    });
+
+      pages.forEach((page) => {
+        const group = page.group || 'default';
+        if (!grouped.has(group)) {
+          grouped.set(group, []);
+        }
+        const groupPages = grouped.get(group);
+        if (groupPages) {
+          groupPages.push(page);
+        }
+      });
+    } catch {
+      // Return empty map if pages input is not yet available
+    }
 
     return grouped;
   }

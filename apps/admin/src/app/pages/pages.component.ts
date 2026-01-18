@@ -29,6 +29,11 @@ export class PagesComponent {
       route: '/dashboard',
     }),
     new SidebarPageClass({
+      label: 'Test Components',
+      icon: 'flask' as ZardIcon,
+      route: '/test-components',
+    }),
+    new SidebarPageClass({
       label: 'Identity',
       icon: 'shield' as ZardIcon,
       group: 'User Group',

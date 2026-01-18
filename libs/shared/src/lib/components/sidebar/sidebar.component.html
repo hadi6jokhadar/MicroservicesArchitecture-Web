@@ -27,7 +27,9 @@
       class="nav-item nav-parent"
       (click)="onPageClick(page)"
     >
+      @if (page.icon) {
       <i z-icon [zType]="page.icon" class="nav-icon"></i>
+      }
       <span class="nav-label">{{ page.label }}</span>
       <i
         z-icon
@@ -54,7 +56,9 @@
         class="nav-item nav-child"
         (click)="onPageClick(child)"
       >
+        @if (child.icon) {
         <i z-icon [zType]="child.icon" class="nav-icon"></i>
+        }
         <span class="nav-label">{{ child.label }}</span>
       </a>
       }
@@ -71,7 +75,9 @@
       class="nav-item"
       (click)="onPageClick(page)"
     >
+      @if (page.icon) {
       <i z-icon [zType]="page.icon" class="nav-icon"></i>
+      }
       <span class="nav-label">{{ page.label }}</span>
     </a>
     } } @if (!$last) {

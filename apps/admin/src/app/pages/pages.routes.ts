@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { TestComponentsComponent } from './test-components/test-components.component';
 import { identityRoutes } from '../features/identity/identity.routes';
 
 export const pagesRoutes: Routes = [
@@ -9,6 +10,10 @@ export const pagesRoutes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
+      },
+      {
+        path: 'test-components',
+        component: TestComponentsComponent,
       },
       {
         path: 'identity',
