@@ -1,11 +1,31 @@
+/**
+ * @fileoverview Styles for Zardui Component Testing Page
+ * 
+ * Structure:
+ * 1. Host & Container Layout
+ * 2. Typography & Headings
+ * 3. Component Sections
+ * 4. Demo Grid System
+ * 5. Responsive Design (Mobile-first)
+ */
+
+// =============================================================================
+// 1. Host & Container Layout
+// =============================================================================
+
 :host {
   display: block;
   padding: var(--spacing-6);
   background-color: var(--color-background);
 
+  // Main container with max-width constraint
   .test-components-container {
     max-width: 1400px;
     margin-inline: auto;
+
+    // =============================================================================
+    // 2. Typography & Headings
+    // =============================================================================
 
     .page-title {
       font-size: var(--font-size-3xl);
@@ -14,28 +34,44 @@
       color: var(--color-foreground);
     }
 
+    // =============================================================================
+    // 3. Component Sections
+    // =============================================================================
+
     .component-section {
       margin-block-end: var(--spacing-12);
       padding: var(--spacing-6);
       background-color: var(--color-card);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-sm);
 
+      // Section title (component name)
       .section-title {
         font-size: var(--font-size-2xl);
         font-weight: var(--font-weight-semibold);
         margin-block-end: var(--spacing-6);
         color: var(--color-foreground);
         padding-block-end: var(--spacing-3);
+        border-block-end: 1px solid var(--color-border);
       }
+
+      // =============================================================================
+      // 4. Demo Grid System
+      // =============================================================================
 
       .demo-grid {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: var(--spacing-4);
 
+        // Individual demo item container
         .demo-item {
           padding: var(--spacing-4);
           background-color: var(--color-background);
+          border-radius: var(--border-radius-md);
+          border: 1px solid var(--color-border);
 
+          // Demo variant title (e.g., "Basic", "With Icon", etc.)
           h3 {
             font-size: var(--font-size-sm);
             font-weight: var(--font-weight-medium);
@@ -44,16 +80,18 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
           }
-
-          // > :last-child {
-          //   display: flex;
-          //   margin: 10px 0;
-          // }
         }
       }
     }
   }
 
+  // =============================================================================
+  // 5. Responsive Design (Mobile-first)
+  // =============================================================================
+
+  // Mobile (default styles above apply)
+
+  // Tablet and smaller
   @media (max-width: 768px) {
     padding: var(--spacing-4);
 
