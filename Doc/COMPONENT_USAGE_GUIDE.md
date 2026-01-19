@@ -179,23 +179,31 @@ export class ExampleComponent {
   private _dialogService = inject(ZardDialogService);
 
   openDialog() {
-    const dialogRef = this._dialogService.open(MyDialogComponent, {
-      data: { title: 'Hello World' },
-      width: '500px',
+    const dialogRef = this._dialogService.create({
+      zTitle: 'Edit Profile',
+      zDescription: 'Make changes to your profile here',
+      zContent: MyDialogComponent,
+      zData: { userId: 123 },
+      zWidth: '500px',
+      zHideFooter: true, // Hide default footer if using custom footer
     });
 
     dialogRef.closed.subscribe((result) => {
-      console.log('Dialog closed with:', result);
+      if (result) {
+        console.log('Dialog closed with result:', result);
+      }
     });
   }
 }
 ```
 
+**Important:** Dialog service uses `create()` method (not `open()`). Subscribe to `closed` observable for results.
+
 ### Toast Notifications
 
 ```typescript
-import { Component, inject } from '@angular/core';
-import { ZardToastService } from '@ihsan/ui';
+import { Component } from '@angular/core';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-example',
@@ -203,13 +211,32 @@ import { ZardToastService } from '@ihsan/ui';
   template: `<button (click)="showToast()">Show Toast</button>`,
 })
 export class ExampleComponent {
-  private _toast = inject(ZardToastService);
-
   showToast() {
-    this._toast.success('Operation completed successfully!');
+    // Success toast
+    toast.success('Operation completed successfully!');
+
+    // Error toast
+    toast.error('Something went wrong!');
+
+    // Info toast
+    toast.info('New update available');
+
+    // Warning toast
+    toast.warning('This action cannot be undone');
+
+    // Default toast with description
+    toast('Event has been created', {
+      description: 'Sunday, December 03, 2023 at 9:00 AM',
+      action: {
+        label: 'Undo',
+        onClick: () => console.log('Undo'),
+      },
+    });
   }
 }
 ```
+
+**Important:** There is NO `ZardToastService`. Use the `toast` function from `ngx-sonner` directly.
 
 ---
 
@@ -1017,27 +1044,30 @@ openSheet() {
 
 **Types:** Success, Error, Warning, Info, Loading
 
-**Usage (Service):**
+**Usage:**
 
 ```typescript
-import { ZardToastService } from '@ihsan/ui';
+import { toast } from 'ngx-sonner';
 
-private _toast = inject(ZardToastService);
-
+// In your component
 showNotification() {
-  this._toast.success('Changes saved successfully!');
-  this._toast.error('Failed to save changes');
-  this._toast.info('New update available');
-  this._toast.warning('This action cannot be undone');
+  toast.success('Changes saved successfully!');
+  toast.error('Failed to save changes');
+  toast.info('New update available');
+  toast.warning('This action cannot be undone');
 
-  // Custom toast
-  this._toast.custom({
-    title: 'Custom Toast',
-    description: 'With custom content',
-    duration: 5000
+  // Custom toast with description and action
+  toast('Event has been created', {
+    description: 'Sunday, December 03, 2023 at 9:00 AM',
+    action: {
+      label: 'Undo',
+      onClick: () => console.log('Undo'),
+    },
   });
 }
 ```
+
+**Note:** Use `toast` function from `ngx-sonner`, not a service.
 
 **Demo:** `ZardDemoToastComponent`, `ZardDemoToastSuccessComponent`
 
@@ -1106,8 +1136,11 @@ showNotification() {
 
 3. **Use Services for Programmatic Components**
 
-   ```typescript
-   // ✅ CORRECT - Inject service
+   ```typescsheet = inject(ZardSheetService);
+
+   // ✅ CORRECT - Use toast function from ngx-sonner
+   import { toast } from 'ngx-sonner';
+   toast.success('Operation completed'
    private _dialog = inject(ZardDialogService);
    private _toast = inject(ZardToastService);
    private _sheet = inject(ZardSheetService);
@@ -1236,8 +1269,10 @@ import {
 ```typescript
 private _dialog = inject(ZardDialogService);
 private _sheet = inject(ZardSheetService);
-private _toast = inject(ZardToastService);
 private _alertDialog = inject(ZardAlertDialogService);
+
+// Toast uses function, not service
+import { toast } from 'ngx-sonner';
 ```
 
 ### Test Page Location

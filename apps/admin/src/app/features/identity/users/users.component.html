@@ -1,3 +1,205 @@
 <div class="users-page">
-  <h1>Users</h1>
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Users Management</h1>
+    <button
+      id="add-user-btn"
+      z-button
+      zType="default"
+      zSize="lg"
+      (click)="openAddUserDialog()"
+    >
+      <z-icon [zType]="'plus'" />
+      Add User
+    </button>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section" [formGroup]="filterForm">
+    <div class="filters-grid">
+      <!-- Search Input -->
+      <div class="filter-item">
+        <label for="search-input" class="filter-label">Search</label>
+        <input
+          id="search-input"
+          z-input
+          formControlName="searchTerm"
+          placeholder="Search by name or email..."
+          type="text"
+        />
+      </div>
+
+      <!-- Role Filter -->
+      <div class="filter-item">
+        <label for="role-filter" class="filter-label">Role</label>
+        <select
+          id="role-filter"
+          formControlName="roleName"
+          class="select-input"
+        >
+          @for (option of roleOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="filter-item">
+        <label for="status-filter" class="filter-label">Status</label>
+        <select
+          id="status-filter"
+          formControlName="status"
+          class="select-input"
+        >
+          @for (option of statusOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div class="table-section">
+    @if (loading()) {
+    <div class="loading-state">
+      <z-icon [zType]="'loader-circle'" class="animate-spin" />
+      <span>Loading users...</span>
+    </div>
+    } @else if (users().length === 0) {
+    <div class="empty-state">
+      <z-icon [zType]="'users'" />
+      <h3>No users found</h3>
+      <p>Try adjusting your filters or create a new user.</p>
+    </div>
+    } @else {
+    <div class="table-container">
+      <table z-table class="users-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th class="actions-column">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users(); track user.id) {
+          <tr>
+            <!-- User Column with Avatar -->
+            <td>
+              <div class="user-cell">
+                <z-avatar [zSrc]="getProfilePictureUrl(user)" zSize="md" />
+                <span class="user-name"
+                  >{{ user.firstName }} {{ user.lastName }}</span
+                >
+              </div>
+            </td>
+
+            <!-- Email -->
+            <td>{{ user.email }}</td>
+
+            <!-- Phone -->
+            <td>{{ user.phoneNumber || '-' }}</td>
+
+            <!-- Role Badge -->
+            <td>
+              <z-badge
+                [zType]="getRoleBadgeType(user.roles[0]?.name || 'User')"
+              >
+                {{ user.roles[0]?.name || 'User' }}
+              </z-badge>
+            </td>
+
+            <!-- Status Badge -->
+            <td>
+              <z-badge [zType]="getStatusBadgeType(user.status)">
+                {{ user.status ? 'Active' : 'Inactive' }}
+              </z-badge>
+            </td>
+
+            <!-- Created Date -->
+            <td>{{ user.created | date : 'short' }}</td>
+
+            <!-- Actions -->
+            <td class="actions-column">
+              <div class="action-buttons">
+                <button
+                  [id]="'edit-user-' + user.id"
+                  z-button
+                  zType="ghost"
+                  zSize="sm"
+                  (click)="openEditUserDialog(user)"
+                  title="Edit user"
+                >
+                  <z-icon [zType]="'file-text'" />
+                </button>
+
+                <button
+                  [id]="'toggle-status-' + user.id"
+                  z-button
+                  zType="ghost"
+                  zSize="sm"
+                  (click)="toggleUserStatus(user)"
+                  [title]="user.status ? 'Deactivate user' : 'Activate user'"
+                >
+                  <z-icon [zType]="user.status ? 'ban' : 'user-plus'" />
+                </button>
+
+                <button
+                  [id]="'delete-user-' + user.id"
+                  z-button
+                  zType="ghost"
+                  zSize="sm"
+                  class="danger-btn"
+                  (click)="openDeleteUserDialog(user)"
+                  title="Delete user"
+                >
+                  <z-icon [zType]="'trash'" />
+                </button>
+              </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-section">
+      <div class="pagination-info">
+        Showing {{ (pageNumber() - 1) * pageSize() + 1 }} to
+        {{ Math.min(pageNumber() * pageSize(), totalCount()) }} of
+        {{ totalCount() }} users
+      </div>
+
+      <div class="pagination-controls">
+        <button
+          z-button
+          zType="outline"
+          zSize="sm"
+          [disabled]="pageNumber() === 1"
+          (click)="onPageChange(pageNumber() - 1)"
+        >
+          Previous
+        </button>
+        <span class="page-indicator"
+          >{{ pageNumber() }} / {{ totalPages() }}</span
+        >
+        <button
+          z-button
+          zType="outline"
+          zSize="sm"
+          [disabled]="pageNumber() === totalPages()"
+          (click)="onPageChange(pageNumber() + 1)"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+    }
+  </div>
 </div>

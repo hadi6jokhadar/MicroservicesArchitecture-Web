@@ -1,0 +1,106 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 class="dialog-title">Edit User</h2>
+    <p class="dialog-subtitle">{{ user().email }}</p>
+  </div>
+
+  <div class="dialog-content">
+    @if (errorMessage()) {
+    <div class="error-message">{{ errorMessage() }}</div>
+    }
+
+    <form [formGroup]="editUserForm" (ngSubmit)="onSubmit()" class="user-form">
+      <!-- First Name -->
+      <div class="form-field">
+        <label for="edit-user-firstname" class="field-label">
+          First Name <span class="required">*</span>
+        </label>
+        <input
+          id="edit-user-firstname"
+          z-input
+          formControlName="firstName"
+          type="text"
+          placeholder="John"
+        />
+        @if ( editUserForm.controls.firstName.invalid &&
+        editUserForm.controls.firstName.touched ) {
+        <span class="error-text">First name is required</span>
+        }
+      </div>
+
+      <!-- Last Name -->
+      <div class="form-field">
+        <label for="edit-user-lastname" class="field-label">
+          Last Name <span class="required">*</span>
+        </label>
+        <input
+          id="edit-user-lastname"
+          z-input
+          formControlName="lastName"
+          type="text"
+          placeholder="Doe"
+        />
+        @if ( editUserForm.controls.lastName.invalid &&
+        editUserForm.controls.lastName.touched ) {
+        <span class="error-text">Last name is required</span>
+        }
+      </div>
+
+      <!-- Phone Number -->
+      <div class="form-field">
+        <label for="edit-user-phone" class="field-label">Phone Number</label>
+        <input
+          id="edit-user-phone"
+          z-input
+          formControlName="phoneNumber"
+          type="tel"
+          placeholder="+1234567890"
+        />
+      </div>
+
+      <!-- Role -->
+      <div class="form-field">
+        <label for="edit-user-role" class="field-label">
+          Role <span class="required">*</span>
+        </label>
+        <select id="edit-user-role" formControlName="role" class="select-input">
+          @for (option of roleOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Active Status -->
+      <div class="form-field switch-field">
+        <label for="edit-user-active" class="field-label">Active Status</label>
+        <input
+          id="edit-user-active"
+          z-switch
+          formControlName="isActive"
+          type="checkbox"
+        />
+      </div>
+    </form>
+  </div>
+
+  <div class="dialog-footer">
+    <button
+      id="edit-user-cancel-btn"
+      z-button
+      zType="outline"
+      (click)="onCancel()"
+      [disabled]="submitting()"
+    >
+      Cancel
+    </button>
+    <button
+      id="edit-user-submit-btn"
+      z-button
+      zType="default"
+      (click)="onSubmit()"
+      [disabled]="submitting() || editUserForm.invalid"
+    >
+      {{ submitting() ? 'Updating...' : 'Update User' }}
+    </button>
+  </div>
+</div>

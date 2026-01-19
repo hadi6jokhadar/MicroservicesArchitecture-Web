@@ -7,4 +7,3 @@ export * from '../../components/command/command-option-group.component';
 export * from '../../components/command/command-divider.component';
 export * from '../../components/command/command.imports';
 export * from '../../components/command/command.variants';
-export * from './demo';

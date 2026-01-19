@@ -5,4 +5,3 @@ export * from './dropdown-trigger.directive';
 export * from './dropdown.service';
 export * from './dropdown.imports';
 export * from './dropdown.variants';
-export * from './demo';

@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
 <div class="test-components-container">
   <h1 class="page-title">Zardui Component Demos</h1>
 
@@ -7,15 +8,90 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Basic</h3>
-        <z-demo-accordion-basic />
+        <z-accordion zDefaultValue="item-2">
+          <z-accordion-item zValue="item-1" zTitle="A Study in Scarlet">
+            The first case of Sherlock Holmes and Dr. Watson. They investigate a
+            murder in London, which leads to a backstory involving Mormons in
+            the U.S. Introduces Holmes’s deductive method.
+          </z-accordion-item>
+
+          <z-accordion-item
+            zValue="item-2"
+            zTitle="The Sign of Four"
+            zDescription="Sir Arthur Conan Doyle"
+          >
+            The first case of Sherlock Holmes and Dr. Watson. They investigate a
+            murder in London, which leads to a backstory involving Mormons in
+            the U.S. Introduces Holmes’s deductive method.
+          </z-accordion-item>
+
+          <z-accordion-item
+            zValue="item-3"
+            zTitle="The Hound of the Baskervilles"
+          >
+            Holmes and Watson investigate the legend of a demonic hound haunting
+            the Baskerville family. Set in the eerie Dartmoor moorlands, the
+            story involves betrayal and greed.
+          </z-accordion-item>
+        </z-accordion>
       </div>
       <div class="demo-item">
         <h3>Multiple</h3>
-        <z-demo-accordion-multiple />
+        <z-accordion zType="multiple">
+          <z-accordion-item zValue="item-1" zTitle="A Study in Scarlet">
+            The first case of Sherlock Holmes and Dr. Watson. They investigate a
+            murder in London, which leads to a backstory involving Mormons in
+            the U.S. Introduces Holmes’s deductive method.
+          </z-accordion-item>
+
+          <z-accordion-item
+            zValue="item-2"
+            zTitle="The Sign of Four"
+            zDescription="Sir Arthur Conan Doyle"
+          >
+            The first case of Sherlock Holmes and Dr. Watson. They investigate a
+            murder in London, which leads to a backstory involving Mormons in
+            the U.S. Introduces Holmes’s deductive method.
+          </z-accordion-item>
+
+          <z-accordion-item
+            zValue="item-3"
+            zTitle="The Hound of the Baskervilles"
+          >
+            Holmes and Watson investigate the legend of a demonic hound haunting
+            the Baskerville family. Set in the eerie Dartmoor moorlands, the
+            story involves betrayal and greed.
+          </z-accordion-item>
+        </z-accordion>
       </div>
       <div class="demo-item">
         <h3>Multiple Last Not Collapsible</h3>
-        <z-demo-accordion-multiple-last-not-collapsible />
+        <z-accordion
+          zType="multiple"
+          [zDefaultValue]="'defaults'"
+          [zCollapsible]="false"
+        >
+          <z-accordion-item zValue="item-1" zTitle="A Study in Scarlet">
+            The first case of Sherlock Holmes and Dr. Watson. They investigate a
+            murder in London, which leads to a backstory involving Mormons in
+            the U.S. Introduces Holmes’s deductive method.
+          </z-accordion-item>
+
+          <z-accordion-item zValue="item-2" zTitle="The Sign of Four">
+            The first case of Sherlock Holmes and Dr. Watson. They investigate a
+            murder in London, which leads to a backstory involving Mormons in
+            the U.S. Introduces Holmes’s deductive method.
+          </z-accordion-item>
+
+          <z-accordion-item
+            zValue="item-3"
+            zTitle="The Hound of the Baskervilles"
+          >
+            Holmes and Watson investigate the legend of a demonic hound haunting
+            the Baskerville family. Set in the eerie Dartmoor moorlands, the
+            story involves betrayal and greed.
+          </z-accordion-item>
+        </z-accordion>
       </div>
     </div>
   </section>
@@ -26,7 +102,37 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Basic</h3>
-        <z-demo-alert-basic />
+        <div class="grid w-full max-w-xl items-start gap-4">
+          <z-alert
+            zIcon="circle-check"
+            zTitle="Success! Your changes have been saved"
+            zDescription="This is an alert with icon, title and description."
+          />
+
+          <z-alert
+            [zIcon]="customIcon"
+            zTitle="This Alert has a title and an icon. No description."
+          />
+
+          <ng-template #customIcon>
+            <z-icon zType="popcorn" />
+          </ng-template>
+
+          <z-alert
+            zType="destructive"
+            zTitle="Unable to process your payment."
+            [zDescription]="customDescription"
+          />
+
+          <ng-template #customDescription>
+            <p>Please verify your billing information and try again.</p>
+            <ul class="list-disc pl-5">
+              <li>Check your card details</li>
+              <li>Ensure sufficient funds</li>
+              <li>Verify billing address</li>
+            </ul>
+          </ng-template>
+        </div>
       </div>
     </div>
   </section>
@@ -37,7 +143,9 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-alert-dialog-default />
+        <button z-button zType="outline" (click)="showAlertDialog()">
+          Show Dialog
+        </button>
       </div>
     </div>
   </section>
@@ -48,11 +156,54 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Basic</h3>
-        <z-demo-avatar-basic />
+        <z-avatar
+          zSrc="/images/avatar/imgs/avatar_image.jpg"
+          zFallback="ZA"
+          [zSize]="32"
+        />
+        <z-avatar zSrc="error-image.png" zFallback="ZA" zSize="sm" />
+
+        <z-avatar-group>
+          <z-avatar
+            zSrc="/images/avatar/imgs/avatar_image.jpg"
+            zFallback="JD"
+            zSize="sm"
+          />
+          <z-avatar
+            zSrc="https://github.com/srizzon.png"
+            zFallback="SA"
+            zSize="sm"
+          />
+          <z-avatar
+            zSrc="https://github.com/Luizgomess.png"
+            zFallback="LU"
+            zSize="sm"
+          />
+        </z-avatar-group>
       </div>
       <div class="demo-item">
         <h3>Status</h3>
-        <z-demo-avatar-status />
+        <z-avatar zSrc="/images/avatar/imgs/avatar_image.jpg" zAlt="Image" />
+        <z-avatar
+          zStatus="online"
+          zSrc="/images/avatar/imgs/avatar_image.jpg"
+          zAlt="Image"
+        />
+        <z-avatar
+          zStatus="offline"
+          zSrc="/images/avatar/imgs/avatar_image.jpg"
+          zAlt="Image"
+        />
+        <z-avatar
+          zStatus="doNotDisturb"
+          zSrc="/images/avatar/imgs/avatar_image.jpg"
+          zAlt="Image"
+        />
+        <z-avatar
+          zStatus="away"
+          zSrc="/images/avatar/imgs/avatar_image.jpg"
+          zAlt="Image"
+        />
       </div>
     </div>
   </section>
@@ -63,7 +214,40 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-badge-default />
+        <div class="flex flex-col items-center gap-2">
+          <div class="flex w-full flex-wrap gap-2">
+            <z-badge>Badge</z-badge>
+            <z-badge zType="secondary">Secondary</z-badge>
+            <z-badge zType="destructive">Destructive</z-badge>
+            <z-badge zType="outline">Outline</z-badge>
+          </div>
+          <div class="flex w-full flex-wrap gap-2">
+            <z-badge
+              zType="secondary"
+              class="bg-blue-500 text-white dark:bg-blue-600"
+            >
+              <z-icon zType="badge-check" />
+              Verified
+            </z-badge>
+            <z-badge
+              zShape="pill"
+              class="h-5 min-w-5 px-1 font-mono tabular-nums"
+              >8</z-badge
+            >
+            <z-badge
+              zShape="pill"
+              zType="destructive"
+              class="h-5 min-w-5 px-1 font-mono tabular-nums"
+              >99</z-badge
+            >
+            <z-badge
+              zShape="pill"
+              zType="outline"
+              class="h-5 min-w-5 px-1 font-mono tabular-nums"
+              >20+</z-badge
+            >
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -74,15 +258,46 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-breadcrumb-default />
+        <z-breadcrumb zWrap="wrap" zAlign="start">
+          <z-breadcrumb-item [routerLink]="['/']">
+            <z-icon zType="house" />
+            Home
+          </z-breadcrumb-item>
+          <z-breadcrumb-item [routerLink]="['/docs/components']"
+            >Components</z-breadcrumb-item
+          >
+          <z-breadcrumb-item>Breadcrumb</z-breadcrumb-item>
+        </z-breadcrumb>
       </div>
       <div class="demo-item">
         <h3>Separator</h3>
-        <z-demo-breadcrumb-separator />
+        <z-breadcrumb [zSeparator]="customSeparator">
+          <z-breadcrumb-item>Home</z-breadcrumb-item>
+          <z-breadcrumb-item>Components</z-breadcrumb-item>
+          <z-breadcrumb-item>Breadcrumb</z-breadcrumb-item>
+        </z-breadcrumb>
+
+        <ng-template #customSeparator>
+          <z-icon zType="arrow-right" />
+        </ng-template>
       </div>
       <div class="demo-item">
         <h3>Ellipsis</h3>
-        <z-demo-breadcrumb-ellipsis />
+        <z-breadcrumb>
+          <z-breadcrumb-item [routerLink]="['/']">Home</z-breadcrumb-item>
+          <z-breadcrumb-item>
+            <z-breadcrumb-ellipsis z-menu [zMenuTriggerFor]="ellipsisMenu" />
+
+            <ng-template #ellipsisMenu>
+              <div z-menu-content class="w-48">
+                <button type="button" z-menu-item>Getting Started</button>
+                <button type="button" z-menu-item>Installation</button>
+              </div>
+            </ng-template>
+          </z-breadcrumb-item>
+          <z-breadcrumb-item>Components</z-breadcrumb-item>
+          <z-breadcrumb-item>Breadcrumb</z-breadcrumb-item>
+        </z-breadcrumb>
       </div>
     </div>
   </section>
@@ -96,31 +311,60 @@
         <button z-button zType="outline">
           <i z-icon zType="arrow-up"></i>
         </button>
-        <z-demo-button-default />
+        <button z-button zType="outline">Button</button>
+        <button z-button zType="outline">
+          <i z-icon zType="arrow-up"></i>
+        </button>
+        <button z-button zType="outline">
+          Button
+          <i z-icon zType="popcorn"></i>
+        </button>
       </div>
       <div class="demo-item">
         <h3>Full</h3>
-        <z-demo-button-full />
+        <button z-button zFull>Default</button>
       </div>
       <div class="demo-item">
         <h3>Link</h3>
-        <z-demo-button-link />
+        <button z-button zType="link">Link</button>
       </div>
       <div class="demo-item">
         <h3>Loading</h3>
-        <z-demo-button-loading />
+        <button z-button zLoading>Default</button>
       </div>
       <div class="demo-item">
         <h3>Shape</h3>
-        <z-demo-button-shape />
+        <button z-button>Default</button>
+        <button z-button zShape="circle">Circle</button>
+        <button z-button zShape="square">Square</button>
       </div>
       <div class="demo-item">
         <h3>Size</h3>
-        <z-demo-button-size />
+        <div class="flex flex-col items-center">
+          <div class="mb-4 flex gap-2">
+            <button z-button zSize="sm">Small</button>
+            <button z-button zSize="sm"><z-icon zType="arrow-up" /></button>
+          </div>
+
+          <div class="mb-4 flex gap-2">
+            <button z-button>Default</button>
+            <button z-button><z-icon zType="arrow-up" /></button>
+          </div>
+
+          <div class="mb-4 flex gap-2">
+            <button z-button zSize="lg">Large</button>
+            <button z-button zSize="lg"><z-icon zType="arrow-up" /></button>
+          </div>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Type</h3>
-        <z-demo-button-type />
+        <button z-button zSize="sm">Default</button>
+        <button z-button zSize="sm" zType="outline">Outline</button>
+        <button z-button zSize="sm" zType="destructive">Destructive</button>
+        <button z-button zSize="sm" zType="secondary">Secondary</button>
+        <button z-button zSize="sm" zType="ghost">Ghost</button>
+        <button z-button zSize="sm" zType="link">Link</button>
       </div>
     </div>
   </section>
@@ -131,31 +375,169 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-button-group-default />
+        <z-button-group>
+          <z-button-group class="hidden sm:flex">
+            <button type="button" z-button zType="outline" aria-label="Go Back">
+              <i z-icon zType="arrow-left"></i>
+            </button>
+          </z-button-group>
+
+          <z-button-group>
+            <button type="button" z-button zType="outline">Archive</button>
+            <button type="button" z-button zType="outline">Report</button>
+          </z-button-group>
+
+          <z-button-group>
+            <button type="button" z-button zType="outline">Snooze</button>
+            <button
+              type="button"
+              z-button
+              zType="outline"
+              z-menu
+              [zMenuTriggerFor]="menu"
+            >
+              <i z-icon zType="ellipsis"></i>
+
+              <ng-template #menu>
+                <div z-menu-content class="w-48">
+                  <button type="button" z-menu-item>
+                    <i z-icon zType="check"></i>
+                    Mark as Read
+                  </button>
+                  <button type="button" z-menu-item>
+                    <i z-icon zType="archive"></i>
+                    Archive
+                  </button>
+
+                  <z-divider zSpacing="sm" />
+
+                  <button type="button" z-menu-item>
+                    <i z-icon zType="clock"></i>
+                    Snooze
+                  </button>
+                  <button type="button" z-menu-item>
+                    <i z-icon zType="calendar-plus"></i>
+                    Add to Calendar
+                  </button>
+                  <button type="button" z-menu-item>
+                    <i z-icon zType="list-filter-plus"></i>
+                    Add to List
+                  </button>
+                  <button
+                    type="button"
+                    z-menu-item
+                    z-menu
+                    [zMenuTriggerFor]="subMenu"
+                    zPlacement="rightTop"
+                    class="justify-between"
+                  >
+                    <div class="flex items-center">
+                      <i z-icon zType="tag" class="mr-1"></i>
+                      Label as
+                    </div>
+                    <i z-icon zType="chevron-right"></i>
+
+                    <ng-template #subMenu>
+                      <div z-menu-content class="w-48">
+                        <button type="button" z-menu-item>Personal</button>
+                        <button type="button" z-menu-item>Work</button>
+                        <button type="button" z-menu-item>Other</button>
+                      </div>
+                    </ng-template>
+                  </button>
+
+                  <z-divider zSpacing="sm" />
+
+                  <button type="button" z-menu-item class="text-red-500">
+                    <i z-icon zType="trash"></i>
+                    Trash
+                  </button>
+                </div>
+              </ng-template>
+            </button>
+          </z-button-group>
+        </z-button-group>
       </div>
       <div class="demo-item">
         <h3>Divider</h3>
-        <z-demo-button-group-divider />
+        <z-button-group>
+          <button z-button zSize="sm" zType="secondary">Copy</button>
+          <z-button-group-divider />
+          <button z-button zSize="sm" zType="secondary">Paste</button>
+        </z-button-group>
       </div>
       <div class="demo-item">
         <h3>Input</h3>
-        <z-demo-button-group-input />
+        <z-button-group>
+          <input z-input placeholder="Search..." />
+          <button z-button zType="outline">
+            <i z-icon zType="search"></i>
+          </button>
+        </z-button-group>
       </div>
       <div class="demo-item">
         <h3>Orientation</h3>
-        <z-demo-button-group-orientation />
+        <z-button-group zOrientation="vertical">
+          <button z-button zType="outline"><i z-icon zType="plus"></i></button>
+          <button z-button zType="outline"><i z-icon zType="minus"></i></button>
+        </z-button-group>
       </div>
       <div class="demo-item">
         <h3>Size</h3>
-        <z-demo-button-group-size />
+        <z-button-group>
+          <button z-button zType="outline" zSize="sm">Small</button>
+          <button z-button zType="outline" zSize="sm">Group</button>
+          <button z-button zType="outline" zSize="sm">
+            <i z-icon zType="plus"></i>
+          </button>
+        </z-button-group>
+
+        <z-button-group>
+          <button z-button zType="outline">Default</button>
+          <button z-button zType="outline">Group</button>
+          <button z-button zType="outline"><i z-icon zType="plus"></i></button>
+        </z-button-group>
+
+        <z-button-group>
+          <button z-button zType="outline" zSize="lg">Large</button>
+          <button z-button zType="outline" zSize="lg">Group</button>
+          <button z-button zType="outline" zSize="lg">
+            <i z-icon zType="plus"></i>
+          </button>
+        </z-button-group>
       </div>
       <div class="demo-item">
         <h3>Select</h3>
-        <z-demo-button-group-select />
+        <z-button-group>
+          <z-select [(zValue)]="currency" class="w-fit">
+            @for (cur of CURRENCIES; track cur.code) {
+            <z-select-item [zValue]="cur.code">{{ cur.symbol }}</z-select-item>
+            }
+          </z-select>
+          <input z-input placeholder="10.00" type="number" step="0.1" />
+        </z-button-group>
       </div>
       <div class="demo-item">
         <h3>Nested</h3>
-        <z-demo-button-group-nested />
+        <z-button-group>
+          <z-button-group>
+            <button z-button zSize="sm" zType="outline">1</button>
+            <button z-button zSize="sm" zType="outline">2</button>
+            <button z-button zSize="sm" zType="outline">3</button>
+            <button z-button zSize="sm" zType="outline">4</button>
+            <button z-button zSize="sm" zType="outline">5</button>
+            <button z-button zSize="sm" zType="outline">6</button>
+          </z-button-group>
+
+          <z-button-group>
+            <button z-button zSize="sm" zType="outline">
+              <i z-icon zType="arrow-left"></i>
+            </button>
+            <button z-button zSize="sm" zType="outline">
+              <i z-icon zType="arrow-right"></i>
+            </button>
+          </z-button-group>
+        </z-button-group>
       </div>
     </div>
   </section>
@@ -166,23 +548,86 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-calendar-default />
+        <z-calendar (dateChange)="onDatesChange($event)" />
       </div>
       <div class="demo-item">
         <h3>Range</h3>
-        <z-demo-calendar-range />
+        <div class="space-y-4">
+          <z-calendar
+            zMode="range"
+            [(value)]="dateRange"
+            (dateChange)="onDatesChange($event)"
+          />
+
+          <div class="bg-muted/50 mt-4 rounded-lg border p-4">
+            <div class="space-y-1 text-sm">
+              <div class="flex items-center gap-2">
+                <span class="text-muted-foreground min-w-12">From:</span>
+                <span class="font-medium">{{
+                  formatDate(dateRange(), 'start')
+                }}</span>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="text-muted-foreground min-w-12">To:</span>
+                <span class="font-medium">{{
+                  formatDate(dateRange(), 'end')
+                }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Multiple</h3>
-        <z-demo-calendar-multiple />
+        <div class="space-y-4">
+          <z-calendar
+            zMode="multiple"
+            [(value)]="selectedDates"
+            (dateChange)="onDatesChange($event)"
+          />
+
+          <div class="text-muted-foreground mt-2 text-sm">
+            <p class="font-medium">
+              Selected ({{ selectedDates()?.length ?? 0 }}) date(s).
+            </p>
+          </div>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Expand Year Selection</h3>
-        <z-demo-calendar-expand-year-selection-range />
+        <div class="space-y-8">
+          <div>
+            <h3 class="mb-3 text-sm font-medium">Date of Birth</h3>
+            <z-calendar
+              [minDate]="minDate"
+              [maxDate]="maxDate"
+              (dateChange)="onDatesChange($event)"
+            />
+          </div>
+        </div>
       </div>
       <div class="demo-item">
         <h3>With Constraints</h3>
-        <z-demo-calendar-with-constraints />
+        <div class="space-y-8">
+          <div>
+            <h3 class="mb-3 text-sm font-medium">With Min/Max Date</h3>
+            <z-calendar
+              [minDate]="minDate"
+              [maxDate]="maxDate"
+              (dateChange)="onDatesChange($event)"
+            />
+            <p class="text-muted-foreground mt-2 text-sm">
+              Available dates: {{ minDate.toLocaleDateString() }} -
+              {{ maxDate.toLocaleDateString() }}
+            </p>
+          </div>
+
+          <div>
+            <h3 class="mb-3 text-sm font-medium">Disabled</h3>
+            <z-calendar [disabled]="true" />
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -193,7 +638,56 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-card-default />
+        <z-card
+          class="w-full md:w-94"
+          zTitle="Login to your account"
+          zDescription="Enter your email below to login to your account"
+          zAction="Sign Up"
+          (zActionClick)="onCardActionClick()"
+        >
+          <div class="space-y-4">
+            <div class="space-y-2" zardId="email" #e="zardId">
+              <label
+                [for]="e.id()"
+                class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Email
+              </label>
+              <input
+                [id]="e.id()"
+                type="email"
+                placeholder="m@example.com"
+                class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                required
+              />
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center" zardId="password" #p="zardId">
+                <label
+                  [for]="p.id()"
+                  class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Password
+                </label>
+                <a
+                  href="#"
+                  class="ml-auto text-sm underline-offset-4 hover:underline"
+                  >Forgot your password?</a
+                >
+              </div>
+              <input
+                [id]="p.id()"
+                type="password"
+                class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                required
+              />
+            </div>
+          </div>
+          <div card-footer class="flex w-full flex-col gap-2">
+            <z-button zType="default">Login</z-button>
+            <z-button zType="outline">Login with Google</z-button>
+          </div>
+        </z-card>
       </div>
     </div>
   </section>
@@ -204,31 +698,246 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-carousel-default />
+        <div class="mx-auto w-3/4 max-w-md">
+          <z-carousel>
+            <z-carousel-content>
+              @for (slide of slides; track slide) {
+              <z-carousel-item>
+                <z-card>
+                  <div
+                    class="flex h-25 items-center justify-center text-4xl font-semibold md:h-50"
+                  >
+                    {{ slide }}
+                  </div>
+                </z-card>
+              </z-carousel-item>
+              }
+            </z-carousel-content>
+          </z-carousel>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Orientation</h3>
-        <z-demo-carousel-orientation />
+        <div class="mx-auto w-3/4 max-w-md">
+          <z-carousel zOrientation="vertical" class="w-full">
+            <z-carousel-content class="h-[200px] md:h-[300px]">
+              @for (slide of slides; track slide) {
+              <z-carousel-item>
+                <z-card class="w-full">
+                  <div
+                    class="flex h-[100px] items-center justify-center text-4xl font-semibold md:h-[200px]"
+                  >
+                    {{ slide }}
+                  </div>
+                </z-card>
+              </z-carousel-item>
+              }
+            </z-carousel-content>
+          </z-carousel>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Dot Controls</h3>
-        <z-demo-carousel-dot-controls />
+        <div class="mx-auto w-3/4 max-w-md">
+          <z-carousel zControls="dot">
+            <z-carousel-content>
+              @for (slide of slides; track slide) {
+              <z-carousel-item>
+                <z-card>
+                  <div
+                    class="flex h-25 items-center justify-center text-4xl font-semibold md:h-50"
+                  >
+                    {{ slide }}
+                  </div>
+                </z-card>
+              </z-carousel-item>
+              }
+            </z-carousel-content>
+          </z-carousel>
+        </div>
       </div>
       <div class="demo-item">
         <h3>API</h3>
-        <z-demo-carousel-api />
+        <div class="mx-auto w-3/4 max-w-md">
+          <z-carousel
+            [zOptions]="{ loop: false }"
+            (zSelected)="onSlideChange()"
+            (zInited)="onCarouselInit($event)"
+          >
+            <z-carousel-content>
+              @for (slide of slides; track slide) {
+              <z-carousel-item>
+                <z-card>
+                  <div
+                    class="flex h-40 items-center justify-center text-4xl font-semibold"
+                  >
+                    {{ slide }}
+                  </div>
+                </z-card>
+              </z-carousel-item>
+              }
+            </z-carousel-content>
+          </z-carousel>
+
+          <div class="mt-4 flex justify-center gap-2">
+            <button
+              type="button"
+              z-button
+              zType="outline"
+              (click)="goToPrevious()"
+              [disabled]="!canScrollPrev()"
+            >
+              Previous
+            </button>
+            <button
+              type="button"
+              z-button
+              zType="outline"
+              (click)="goToNext()"
+              [disabled]="!canScrollNext()"
+            >
+              Next
+            </button>
+            <button
+              type="button"
+              z-button
+              zType="outline"
+              (click)="goToSlide(2)"
+            >
+              Go to Slide 3
+            </button>
+          </div>
+
+          <div class="mt-4 space-y-2 text-center text-sm">
+            <p>
+              <strong>Current slide:</strong>
+              {{ currentSlide() }} / {{ totalSlides() }}
+            </p>
+            <p>
+              <strong>Scroll progress:</strong>
+              {{ Math.round(scrollProgress() * 100) }}%
+            </p>
+            <p>
+              <strong>Can scroll prev:</strong>
+              {{ canScrollPrev() ? 'Yes' : 'No' }}
+            </p>
+            <p>
+              <strong>Can scroll next:</strong>
+              {{ canScrollNext() ? 'Yes' : 'No' }}
+            </p>
+            <p>
+              <strong>Slides in view:</strong>
+              {{ slidesInView().join(', ') }}
+            </p>
+          </div>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Plugins</h3>
-        <z-demo-carousel-plugins />
+        <div class="mx-auto w-3/4 max-w-md">
+          <div class="mb-4 flex gap-2">
+            <button
+              type="button"
+              z-button
+              zType="outline"
+              (click)="toggleAutoplay()"
+            >
+              {{ isAutoplayActive() ? 'Pause' : 'Start' }} Autoplay
+            </button>
+            <button
+              type="button"
+              z-button
+              zType="outline"
+              (click)="toggleLoop()"
+            >
+              {{ carouselOptions.loop ? 'Disable' : 'Enable' }} Loop
+            </button>
+          </div>
+
+          <z-carousel
+            [zOptions]="carouselOptions"
+            [zPlugins]="plugins"
+            (zInited)="onCarouselInit($event)"
+            (zSelected)="onSlideChange()"
+          >
+            <z-carousel-content>
+              @for (slide of slides; track slide) {
+              <z-carousel-item>
+                <z-card>
+                  <div
+                    class="flex h-40 items-center justify-center text-4xl font-semibold"
+                  >
+                    {{ slide }}
+                  </div>
+                </z-card>
+              </z-carousel-item>
+              }
+            </z-carousel-content>
+          </z-carousel>
+
+          <div class="mt-4 text-center text-sm">
+            <p>Current slide: {{ currentSlide() }} / {{ totalSlides() }}</p>
+          </div>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Size</h3>
-        <z-demo-carousel-size />
+        <div class="mx-auto w-3/4 max-w-md">
+          <z-carousel>
+            <z-carousel-content>
+              @for (slide of slides; track slide) {
+              <z-carousel-item class="md:basis-1/2 lg:basis-1/3">
+                <z-card>
+                  <div
+                    class="flex h-25 items-center justify-center text-4xl font-semibold md:h-50"
+                  >
+                    {{ slide }}
+                  </div>
+                </z-card>
+              </z-carousel-item>
+              }
+            </z-carousel-content>
+          </z-carousel>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Spacing</h3>
-        <z-demo-carousel-spacing />
+        <div class="mx-auto w-3/4 max-w-4xl">
+          <div class="mb-4 flex justify-center gap-2">
+            <z-segmented
+              [zOptions]="options"
+              zDefaultValue="md"
+              (zChange)="onChange($event)"
+            />
+          </div>
+
+          <z-carousel [zOptions]="{ align: 'start' }">
+            <z-carousel-content [class]="contentSpacingClass()">
+              @for (slide of slides; track slide) {
+              <z-carousel-item [class]="itemSpacingClass()">
+                <z-card>
+                  <div
+                    class="flex h-40 items-center justify-center text-4xl font-semibold"
+                  >
+                    {{ slide }}
+                  </div>
+                </z-card>
+              </z-carousel-item>
+              }
+            </z-carousel-content>
+          </z-carousel>
+
+          <div class="mt-4 text-center text-sm">
+            <p>
+              <strong>Content class:</strong>
+              {{ contentSpacingClass() }}
+            </p>
+            <p>
+              <strong>Item class:</strong>
+              {{ itemSpacingClass() }}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -239,23 +948,30 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-checkbox-default />
+        <span z-checkbox></span>
+        <span z-checkbox [(ngModel)]="checked">Default Checked</span>
       </div>
       <div class="demo-item">
         <h3>Destructive</h3>
-        <z-demo-checkbox-destructive />
+        <span z-checkbox zType="destructive"></span>
+        <span z-checkbox zType="destructive" [(ngModel)]="checked"
+          >Destructive Checked</span
+        >
       </div>
       <div class="demo-item">
         <h3>Disabled</h3>
-        <z-demo-checkbox-disabled />
+        <span z-checkbox disabled>Disabled</span>
+        <span z-checkbox disabled [(ngModel)]="checked">Disabled</span>
       </div>
       <div class="demo-item">
         <h3>Shape</h3>
-        <z-demo-checkbox-shape />
+        <span z-checkbox zShape="circle" [(ngModel)]="checked">Cicle</span>
+        <span z-checkbox zShape="square" [(ngModel)]="checked">Square</span>
       </div>
       <div class="demo-item">
         <h3>Size</h3>
-        <z-demo-checkbox-size />
+        <span z-checkbox>Default</span>
+        <span z-checkbox zSize="lg" [(ngModel)]="checked">Large</span>
       </div>
     </div>
   </section>
@@ -266,19 +982,69 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-combobox-default />
+        <z-combobox
+          [options]="frameworks"
+          class="w-[200px]"
+          placeholder="Select framework..."
+          searchPlaceholder="Search framework..."
+          emptyText="No framework found."
+          (zComboSelected)="onComboboxSelect($event)"
+        />
       </div>
       <div class="demo-item">
         <h3>Disabled</h3>
-        <z-demo-combobox-disabled />
+        <div class="flex gap-4">
+          <z-combobox
+            [options]="frameworks"
+            placeholder="Disabled combobox"
+            [disabled]="true"
+          />
+
+          <z-combobox
+            [options]="frameworksWithDisabled"
+            placeholder="Select framework..."
+            searchPlaceholder="Search framework..."
+            emptyText="No framework found."
+          />
+        </div>
       </div>
       <div class="demo-item">
         <h3>Form</h3>
-        <z-demo-combobox-form />
+        <div class="flex flex-col gap-4">
+          <z-combobox
+            [options]="frameworks"
+            placeholder="Select framework..."
+            searchPlaceholder="Search framework..."
+            emptyText="No framework found."
+            [formControl]="frameworkControl"
+          />
+
+          <div class="flex gap-2">
+            <button z-button variant="outline" (click)="setValue()">
+              Set to Vue.js
+            </button>
+            <button z-button variant="outline" (click)="clearValue()">
+              Clear
+            </button>
+            <button z-button variant="outline" (click)="logValue()">
+              Log Value
+            </button>
+          </div>
+
+          <div class="text-muted-foreground text-sm">
+            Current value: {{ frameworkControl.value ?? 'None' }}
+          </div>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Grouped</h3>
-        <z-demo-combobox-grouped />
+        <z-combobox
+          [groups]="techGroups"
+          placeholder="Select technology..."
+          searchPlaceholder="Search technology..."
+          emptyText="No technology found."
+          (zComboSelected)="onSelect($event)"
+        />
       </div>
     </div>
   </section>
@@ -289,7 +1055,70 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-command-default />
+        <z-command
+          class="md:min-w-125"
+          (zCommandSelected)="handleCommand($event)"
+        >
+          <z-command-input placeholder="Search actions, files, and more..." />
+          <z-command-list>
+            <z-command-empty>No commands found.</z-command-empty>
+
+            <z-command-option-group zLabel="Quick Actions">
+              <z-command-option
+                zLabel="Create new project"
+                zValue="new-project"
+                zIcon="folder"
+                zShortcut="⌘N"
+              />
+              <z-command-option
+                zLabel="Open file"
+                zValue="open-file"
+                zIcon="folder-open"
+                zShortcut="⌘O"
+              />
+              <z-command-option
+                zLabel="Save all"
+                zValue="save-all"
+                zIcon="save"
+                zShortcut="⌘S"
+              />
+            </z-command-option-group>
+
+            <z-command-divider />
+
+            <z-command-option-group zLabel="Navigation">
+              <z-command-option
+                zLabel="Go to Dashboard"
+                zValue="dashboard"
+                zIcon="layout-dashboard"
+                zShortcut="⌘1"
+              />
+              <z-command-option
+                zLabel="Go to Projects"
+                zValue="projects"
+                zIcon="folder"
+                zShortcut="⌘2"
+              />
+            </z-command-option-group>
+
+            <z-command-divider />
+
+            <z-command-option-group zLabel="Tools">
+              <z-command-option
+                zLabel="Open terminal"
+                zValue="terminal"
+                zIcon="terminal"
+                zShortcut="⌘T"
+              />
+              <z-command-option
+                zLabel="Toggle theme"
+                zValue="theme"
+                zIcon="moon"
+                zShortcut="⌘D"
+              />
+            </z-command-option-group>
+          </z-command-list>
+        </z-command>
       </div>
     </div>
   </section>
@@ -300,11 +1129,45 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-date-picker-default />
+        <z-date-picker
+          [value]="selectedDate()"
+          placeholder="Pick a date"
+          (dateChange)="onDateChange($event)"
+        />
       </div>
       <div class="demo-item">
         <h3>Sizes</h3>
-        <z-demo-date-picker-sizes />
+        <div class="flex flex-col gap-4">
+          <div class="space-y-2">
+            <h4 class="text-sm font-medium">Small</h4>
+            <z-date-picker
+              zSize="sm"
+              [value]="selectedDateSm()"
+              placeholder="Pick a date"
+              (dateChange)="onDateChangeSm($event)"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <h4 class="text-sm font-medium">Default</h4>
+            <z-date-picker
+              zSize="default"
+              [value]="selectedDateDefault()"
+              placeholder="Pick a date"
+              (dateChange)="onDateChangeDefault($event)"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <h4 class="text-sm font-medium">Large</h4>
+            <z-date-picker
+              zSize="lg"
+              [value]="selectedDateLg()"
+              placeholder="Pick a date"
+              (dateChange)="onDateChangeLg($event)"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -328,11 +1191,19 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-divider-default />
+        <div class="flex flex-col">
+          <p>Before divider</p>
+          <z-divider />
+          <p>After divider</p>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Vertical</h3>
-        <z-demo-divider-vertical />
+        <div class="flex h-20">
+          <p>Left</p>
+          <z-divider zOrientation="vertical" />
+          <p>Right</p>
+        </div>
       </div>
     </div>
   </section>
@@ -343,15 +1214,92 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-empty-default />
+        <z-empty
+          zIcon="folder-code"
+          zTitle="No Projects Yet"
+          zDescription="You haven't created any projects yet. Get started by creating your first project."
+          [zActions]="[actionPrimary, actionSecondary]"
+        >
+          <ng-template #actionPrimary>
+            <button z-button>Create Project</button>
+          </ng-template>
+
+          <ng-template #actionSecondary>
+            <button z-button zType="outline">Import Project</button>
+          </ng-template>
+
+          <button
+            z-button
+            zType="link"
+            zSize="sm"
+            class="text-muted-foreground"
+          >
+            Learn More
+            <i z-icon zType="arrow-up-right"></i>
+          </button>
+        </z-empty>
       </div>
       <div class="demo-item">
         <h3>Custom Image</h3>
-        <z-demo-empty-custom-image />
+        <z-empty
+          zImage="images/avatar/imgs/avatar_image.jpg"
+          zTitle="User Offline"
+          zDescription="This user is currently offline. You can leave a message to notify them or try again later."
+          [zActions]="[actionPrimary]"
+          class="[&_img]:size-12 [&_img]:rounded-full [&_img]:grayscale"
+        />
+
+        <ng-template #actionPrimary>
+          <button z-button>Leave Message</button>
+        </ng-template>
       </div>
       <div class="demo-item">
         <h3>Advanced</h3>
-        <z-demo-empty-advanced-customization />
+        <z-empty
+          [zImage]="customImage"
+          [zTitle]="customTitle"
+          zDescription="Invite your team to collaborate on this project."
+          [zActions]="[actionInvite]"
+        />
+
+        <ng-template #customImage>
+          <z-avatar-group>
+            <z-avatar
+              zSrc="https://github.com/srizzon.png"
+              zSize="md"
+              class="grayscale"
+            />
+            <z-avatar
+              zSrc="https://github.com/Luizgomess.png"
+              zSize="md"
+              class="grayscale"
+            />
+            <z-avatar
+              zSrc="https://github.com/ribeiromatheuss.png"
+              zSize="md"
+              class="grayscale"
+            />
+            <z-avatar
+              zSrc="https://github.com/mikij.png"
+              zSize="md"
+              class="grayscale"
+            />
+          </z-avatar-group>
+        </ng-template>
+
+        <ng-template #customTitle>
+          <span>
+            No Team
+            <strong>members</strong>
+          </span>
+        </ng-template>
+
+        <ng-template #actionInvite>
+          <button z-button zSize="sm">
+            <i z-icon zType="plus"></i>
+            Invite Members
+          </button>
+        </ng-template>
       </div>
     </div>
   </section>
@@ -362,23 +1310,503 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-form-default />
+        <form class="max-w-sm space-y-6">
+          <z-form-field zardId="fullName" #f="zardId">
+            <label z-form-label zRequired [for]="f.id()">Full Name</label>
+            <z-form-control>
+              <input
+                z-input
+                type="text"
+                [id]="f.id()"
+                placeholder="Enter your full name"
+                [(ngModel)]="fullName"
+                name="fullName"
+              />
+            </z-form-control>
+            <z-form-message>This is your display name.</z-form-message>
+          </z-form-field>
+
+          <z-form-field zardId="email" #e="zardId">
+            <label z-form-label zRequired [for]="e.id()">Email</label>
+            <z-form-control>
+              <input
+                z-input
+                type="email"
+                [id]="e.id()"
+                placeholder="Enter your email"
+                [(ngModel)]="email"
+                name="email"
+              />
+            </z-form-control>
+            <z-form-message
+              >We'll never share your email with anyone else.</z-form-message
+            >
+          </z-form-field>
+
+          <z-form-field zardId="bio" #b="zardId">
+            <label z-form-label [for]="b.id()">Bio</label>
+            <z-form-control>
+              <textarea
+                z-input
+                [id]="b.id()"
+                placeholder="Tell us about yourself"
+                rows="3"
+                [(ngModel)]="bio"
+                name="bio"
+              ></textarea>
+            </z-form-control>
+            <z-form-message
+              >Optional: Brief description about yourself.</z-form-message
+            >
+          </z-form-field>
+
+          <button z-button zType="default" type="submit">Submit</button>
+        </form>
       </div>
       <div class="demo-item">
         <h3>Reactive</h3>
-        <z-demo-form-reactive />
+        <form
+          [formGroup]="profileForm"
+          (ngSubmit)="onSubmit()"
+          class="max-w-sm space-y-6"
+        >
+          <z-form-field>
+            <label for="username" z-form-label zRequired>Username</label>
+            <z-form-control>
+              <input
+                id="username"
+                z-input
+                type="text"
+                placeholder="Choose a username"
+                formControlName="username"
+              />
+            </z-form-control>
+            <z-form-message zType="default"
+              >Username must be 3-20 characters long.</z-form-message
+            >
+          </z-form-field>
+
+          <z-form-field>
+            <label for="email" z-form-label zRequired>Email</label>
+            <z-form-control>
+              <input
+                id="email"
+                z-input
+                type="email"
+                placeholder="Enter your email"
+                formControlName="email"
+              />
+            </z-form-control>
+            <z-form-message zType="default"
+              >We'll use this for account notifications.</z-form-message
+            >
+          </z-form-field>
+
+          <z-form-field>
+            <label for="password" z-form-label zRequired>Password</label>
+            <z-form-control>
+              <input
+                id="password"
+                z-input
+                type="password"
+                placeholder="Create a password"
+                formControlName="password"
+              />
+            </z-form-control>
+            <z-form-message zType="default"
+              >Password must be at least 6 characters.</z-form-message
+            >
+          </z-form-field>
+
+          <button
+            z-button
+            zType="default"
+            type="submit"
+            [zDisabled]="profileForm.invalid"
+          >
+            Create Account
+          </button>
+        </form>
       </div>
       <div class="demo-item">
         <h3>Signal Form</h3>
-        <z-demo-form-signal />
+        <form (submit)="onFormTreeSubmit($event)" class="max-w-sm space-y-6">
+          <z-form-field>
+            <label for="username" z-form-label zRequired>Username</label>
+            <z-form-control>
+              <input
+                id="username"
+                z-input
+                type="text"
+                placeholder="Choose a username"
+                [formField]="profileFormTree.username"
+              />
+            </z-form-control>
+            <z-form-message zType="default"
+              >Username must be 3-20 characters long.</z-form-message
+            >
+          </z-form-field>
+
+          <z-form-field>
+            <label for="email" z-form-label zRequired>Email</label>
+            <z-form-control>
+              <input
+                id="email"
+                z-input
+                type="email"
+                placeholder="Enter your email"
+                [formField]="profileFormTree.email"
+              />
+            </z-form-control>
+            <z-form-message zType="default"
+              >We'll use this for account notifications.</z-form-message
+            >
+          </z-form-field>
+
+          <z-form-field>
+            <label for="password" z-form-label zRequired>Password</label>
+            <z-form-control>
+              <input
+                id="password"
+                z-input
+                type="password"
+                placeholder="Create a password"
+                [formField]="profileFormTree.password"
+              />
+            </z-form-control>
+            <z-form-message zType="default"
+              >Password must be at least 6 characters.</z-form-message
+            >
+          </z-form-field>
+
+          <button
+            z-button
+            zType="default"
+            type="submit"
+            [zDisabled]="profileFormTree().invalid()"
+          >
+            Create Account
+          </button>
+        </form>
       </div>
       <div class="demo-item">
         <h3>Validation</h3>
-        <z-demo-form-validation />
+        <form
+          [formGroup]="validationForm"
+          (ngSubmit)="onSubmitValidation()"
+          class="max-w-sm space-y-6"
+        >
+          <z-form-field>
+            <label for="name" z-form-label zRequired>Name</label>
+            <z-form-control>
+              <input
+                z-input
+                type="text"
+                placeholder="Your full name"
+                formControlName="name"
+                [zStatus]="
+                  nameControl.invalid && nameControl.touched
+                    ? 'error'
+                    : undefined
+                "
+              />
+            </z-form-control>
+            @if (nameControl.hasError('required') && nameControl.touched) {
+            <z-form-message zType="error">Name is required.</z-form-message>
+            } @else if (nameControl.hasError('minlength') &&
+            nameControl.touched) {
+            <z-form-message zType="error"
+              >Name must be at least 2 characters long.</z-form-message
+            >
+            } @else {
+            <z-form-message>Enter your full name.</z-form-message>
+            }
+          </z-form-field>
+
+          <z-form-field>
+            <label for="email" z-form-label zRequired>Email</label>
+            <z-form-control>
+              <input
+                z-input
+                type="email"
+                placeholder="your.email@example.com"
+                formControlName="email"
+                [zStatus]="
+                  emailControl.invalid && emailControl.touched
+                    ? 'error'
+                    : undefined
+                "
+              />
+            </z-form-control>
+            @if (emailControl.hasError('required') && emailControl.touched) {
+            <z-form-message zType="error">Email is required.</z-form-message>
+            } @else if (emailControl.hasError('email') && emailControl.touched)
+            {
+            <z-form-message zType="error"
+              >Please enter a valid email address.</z-form-message
+            >
+            } @else {
+            <z-form-message>We'll never share your email.</z-form-message>
+            }
+          </z-form-field>
+
+          <z-form-field>
+            <label for="website" z-form-label>Website</label>
+            <z-form-control>
+              <input
+                z-input
+                type="url"
+                placeholder="https://example.com"
+                formControlName="website"
+                [zStatus]="
+                  websiteControl.invalid && websiteControl.touched
+                    ? 'error'
+                    : websiteControl.valid && websiteControl.touched
+                    ? 'success'
+                    : undefined
+                "
+              />
+            </z-form-control>
+            @if (websiteControl.hasError('pattern') && websiteControl.touched) {
+            <z-form-message zType="error"
+              >Please enter a valid URL starting with http:// or
+              https://</z-form-message
+            >
+            } @else if (websiteControl.valid && websiteControl.touched &&
+            websiteControl.value) {
+            <z-form-message zType="success">Valid website URL!</z-form-message>
+            } @else {
+            <z-form-message
+              >Optional: Your website or portfolio URL.</z-form-message
+            >
+            }
+          </z-form-field>
+
+          <div class="flex gap-2">
+            <button
+              z-button
+              zType="default"
+              type="submit"
+              [disabled]="validationForm.invalid"
+            >
+              Submit
+            </button>
+            <button
+              z-button
+              zType="outline"
+              type="button"
+              (click)="resetValidation()"
+            >
+              Reset
+            </button>
+          </div>
+
+          @if (submitted) {
+          <z-form-message zType="success" class="block"
+            >Form submitted successfully! ✓</z-form-message
+          >
+          }
+        </form>
       </div>
       <div class="demo-item">
         <h3>Complex</h3>
-        <z-demo-form-complex />
+        <form
+          [formGroup]="form"
+          (ngSubmit)="handleSubmit()"
+          class="max-w-lg space-y-6"
+        >
+          <!-- Name Fields Row -->
+          <div class="flex items-start gap-4">
+            <z-form-field>
+              <label z-form-label zRequired for="firstName">First Name</label>
+              <z-form-control
+                [errorMessage]="
+                  isFieldInvalid('firstName') ? 'First name is required' : ''
+                "
+              >
+                <input
+                  z-input
+                  id="firstName"
+                  type="text"
+                  placeholder="John"
+                  formControlName="firstName"
+                />
+              </z-form-control>
+            </z-form-field>
+
+            <z-form-field>
+              <label z-form-label zRequired for="lastName">Last Name</label>
+              <z-form-control
+                [errorMessage]="
+                  isFieldInvalid('lastName') ? 'Last name is required' : ''
+                "
+              >
+                <input
+                  z-input
+                  id="lastName"
+                  type="text"
+                  placeholder="Doe"
+                  formControlName="lastName"
+                />
+              </z-form-control>
+            </z-form-field>
+          </div>
+
+          <!-- Email Field -->
+          <z-form-field>
+            <label z-form-label zRequired for="email">Email</label>
+            <z-form-control
+              [errorMessage]="isFieldInvalid('email') ? getEmailError() : ''"
+            >
+              <input
+                z-input
+                id="email"
+                type="email"
+                placeholder="john.doe@example.com"
+                formControlName="email"
+              />
+            </z-form-control>
+          </z-form-field>
+
+          <!-- Phone Field -->
+          <z-form-field>
+            <label z-form-label for="phone">Phone Number</label>
+            <z-form-control helpText="Include country code if outside US">
+              <input
+                z-input
+                id="phone"
+                type="tel"
+                placeholder="+1 (555) 123-4567"
+                formControlName="phone"
+              />
+            </z-form-control>
+          </z-form-field>
+
+          <!-- Country Selector -->
+          <z-form-field>
+            <label z-form-label zRequired for="country">Country</label>
+            <z-form-control
+              [errorMessage]="
+                isFieldInvalid('country') ? 'Please select a country' : ''
+              "
+            >
+              <z-select
+                id="country"
+                formControlName="country"
+                placeholder="Select your country"
+              >
+                @for (country of countries; track country.value) {
+                <z-select-item [zValue]="country.value">{{
+                  country.label
+                }}</z-select-item>
+                }
+              </z-select>
+            </z-form-control>
+          </z-form-field>
+
+          <!-- Company Field -->
+          <z-form-field>
+            <label z-form-label for="company">Company</label>
+            <z-form-control helpText="Optional: Where do you work?">
+              <input
+                z-input
+                id="company"
+                type="text"
+                placeholder="Your company name"
+                formControlName="company"
+              />
+            </z-form-control>
+          </z-form-field>
+
+          <!-- Message Field -->
+          <z-form-field>
+            <label z-form-label for="message">Message</label>
+            <z-form-control
+              [errorMessage]="
+                isFieldInvalid('message')
+                  ? 'Message is too long (max 500 characters)'
+                  : ''
+              "
+              [helpText]="
+                !isFieldInvalid('message')
+                  ? messageLength() + '/500 characters'
+                  : ''
+              "
+            >
+              <textarea
+                z-input
+                id="message"
+                rows="4"
+                placeholder="Tell us about your project or inquiry..."
+                formControlName="message"
+              ></textarea>
+            </z-form-control>
+          </z-form-field>
+
+          <!-- Newsletter Checkbox -->
+          <z-form-field>
+            <z-form-control
+              helpText="Get updates about new features and releases"
+              class="flex flex-col"
+            >
+              <div class="flex items-center space-x-2">
+                <z-checkbox id="newsletter" formControlName="newsletter" />
+                <label z-form-label class="mb-0!" for="newsletter"
+                  >Subscribe to newsletter</label
+                >
+              </div>
+            </z-form-control>
+          </z-form-field>
+
+          <!-- Terms Checkbox -->
+          <z-form-field>
+            <z-form-control
+              [errorMessage]="
+                isFieldInvalid('terms')
+                  ? 'You must accept the terms and conditions'
+                  : ''
+              "
+              class="flex flex-col"
+            >
+              <div class="flex items-center space-x-2">
+                <z-checkbox id="terms" formControlName="terms" />
+                <label z-form-label class="mb-0!" zRequired for="terms"
+                  >I agree to the terms and conditions</label
+                >
+              </div>
+            </z-form-control>
+          </z-form-field>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-2 pt-4">
+            <button
+              z-button
+              zType="default"
+              type="submit"
+              [zDisabled]="isSubmitting()"
+            >
+              {{ isSubmitting() ? 'Submitting...' : 'Submit Form' }}
+            </button>
+            <button
+              z-button
+              zType="outline"
+              type="button"
+              (click)="resetForm()"
+            >
+              Reset
+            </button>
+          </div>
+
+          <!-- Success Message -->
+          @if (showSuccess()) {
+          <div class="rounded-md border border-green-200 bg-green-50 p-4">
+            <z-form-message zType="success"
+              >✓ Form submitted successfully! We'll get back to you
+              soon.</z-form-message
+            >
+          </div>
+          }
+        </form>
       </div>
     </div>
   </section>
@@ -389,23 +1817,143 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-icon-default />
+        <div class="flex items-center gap-4">
+          <z-icon zType="house" />
+          <z-icon zType="settings" />
+          <z-icon zType="user" />
+          <z-icon zType="search" />
+          <z-icon zType="bell" />
+          <z-icon zType="mail" />
+        </div>
       </div>
       <div class="demo-item">
         <h3>Colors</h3>
-        <z-demo-icon-colors />
+        <div class="flex items-center gap-4">
+          <z-icon zType="heart" class="text-destructive" />
+          <z-icon zType="circle-check" class="text-green-500" />
+          <z-icon zType="triangle-alert" class="text-warning" />
+          <z-icon zType="info" class="text-blue-500" />
+          <z-icon zType="star" class="text-yellow-500" />
+          <z-icon zType="zap" class="text-purple-500" />
+        </div>
       </div>
       <div class="demo-item">
         <h3>Sizes</h3>
-        <z-demo-icon-sizes />
+        <div class="flex items-center gap-6">
+          <div class="flex flex-col items-center gap-2">
+            <z-icon zType="house" zSize="sm" />
+            <span class="text-muted-foreground text-xs">Small</span>
+          </div>
+
+          <div class="flex flex-col items-center gap-2">
+            <z-icon zType="house" zSize="default" />
+            <span class="text-muted-foreground text-xs">Default</span>
+          </div>
+
+          <div class="flex flex-col items-center gap-2">
+            <z-icon zType="house" zSize="lg" />
+            <span class="text-muted-foreground text-xs">Large</span>
+          </div>
+
+          <div class="flex flex-col items-center gap-2">
+            <z-icon zType="house" zSize="xl" />
+            <span class="text-muted-foreground text-xs">Extra Large</span>
+          </div>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Stroke Width</h3>
-        <z-demo-icon-stroke-width />
+        <div class="flex items-center gap-6">
+          <div class="flex flex-col items-center gap-2">
+            <z-icon zType="house" [zStrokeWidth]="1" />
+            <span class="text-muted-foreground text-xs">Stroke 1</span>
+          </div>
+
+          <div class="flex flex-col items-center gap-2">
+            <z-icon zType="house" [zStrokeWidth]="2" />
+            <span class="text-muted-foreground text-xs">Stroke 2</span>
+          </div>
+
+          <div class="flex flex-col items-center gap-2">
+            <z-icon zType="house" [zStrokeWidth]="3" />
+            <span class="text-muted-foreground text-xs">Stroke 3</span>
+          </div>
+
+          <div class="flex flex-col items-center gap-2">
+            <z-icon zType="house" [zStrokeWidth]="4" />
+            <span class="text-muted-foreground text-xs">Stroke 4</span>
+          </div>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Searchable</h3>
-        <z-demo-icon-searchable />
+        <div class="flex w-full flex-col gap-4">
+          <div class="flex flex-col gap-2">
+            <div class="relative">
+              <input
+                z-input
+                type="text"
+                placeholder="Search icons..."
+                [value]="searchQuery()"
+                (input)="onSearchChange($event)"
+                class="w-full"
+              />
+              <z-icon
+                zType="search"
+                class="text-muted-foreground pointer-events-none absolute top-1/2 right-3 -translate-y-1/2"
+              />
+            </div>
+            <div class="text-muted-foreground text-xs leading-relaxed">
+              <strong>Note:</strong>
+              These are only the icons currently used in our documentation.
+              <br />
+              For the complete icon library, visit
+              <a
+                href="https://lucide.dev/icons"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-foreground underline transition-colors"
+              >
+                lucide.dev/icons.
+              </a>
+            </div>
+          </div>
+
+          <div class="text-muted-foreground text-sm">
+            {{ filteredIcons().length }} of {{ totalIcons }} icons
+          </div>
+
+          <div
+            class="grid max-h-150 grid-cols-2 gap-4 overflow-y-auto pr-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4"
+          >
+            @for (iconName of filteredIcons(); track iconName) {
+            <button
+              type="button"
+              z-button
+              zType="outline"
+              (click)="copyIconCode(iconName)"
+              class="group flex h-auto min-h-17.5 w-full flex-col items-center justify-center gap-2 px-3 py-2"
+              [title]="
+                'Click to copy: <z-icon zType=&quot;' + iconName + '&quot; />'
+              "
+            >
+              <z-icon
+                [zType]="iconName"
+                class="shrink-0 transition-transform group-hover:scale-110"
+              />
+              <span
+                class="group-hover:text-foreground w-full text-center text-xs leading-relaxed wrap-break-word hyphens-auto transition-colors"
+              >
+                {{ iconName }}
+              </span>
+            </button>
+            }
+          </div>
+
+          @if (filteredIcons().length === 0) {
+          <z-empty zDescription="No icons found for the given search." />
+          }
+        </div>
       </div>
     </div>
   </section>
@@ -416,23 +1964,39 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-input-default />
+        <form [formGroup]="form" class="flex flex-col gap-3">
+          <input z-input placeholder="Name" formControlName="name" />
+          <input z-input placeholder="Disabled" formControlName="novalue" />
+        </form>
       </div>
       <div class="demo-item">
         <h3>Size</h3>
-        <z-demo-input-size />
+        <input z-input zSize="sm" placeholder="small size" />
+        <input z-input zSize="default" placeholder="default size" />
+        <input z-input zSize="lg" placeholder="large size" />
       </div>
       <div class="demo-item">
         <h3>Status</h3>
-        <z-demo-input-status />
+        <input z-input zStatus="error" placeholder="Error" />
+        <input z-input zStatus="warning" placeholder="Warning" />
+        <input z-input zStatus="success" placeholder="Success" />
       </div>
       <div class="demo-item">
         <h3>Text Area</h3>
-        <z-demo-input-text-area />
+        <div class="flex w-75 flex-col gap-3">
+          <textarea z-input rows="8" cols="12" placeholder="Default"></textarea>
+          <textarea
+            zBorderless
+            z-input
+            rows="8"
+            cols="12"
+            placeholder="Borderless"
+          ></textarea>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Borderless</h3>
-        <z-demo-input-borderless />
+        <input z-input zBorderless placeholder="Borderless" />
       </div>
     </div>
   </section>
@@ -443,23 +2007,185 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-input-group-default />
+        <div class="flex w-95 flex-col space-y-4">
+          <z-input-group
+            [zAddonBefore]="search"
+            zAddonAfter="12 results"
+            class="mb-4"
+          >
+            <input z-input placeholder="Search..." />
+          </z-input-group>
+
+          <z-input-group
+            zAddonBefore="https://"
+            [zAddonAfter]="info"
+            class="mb-4"
+          >
+            <input z-input placeholder="example.com" />
+          </z-input-group>
+
+          <z-input-group class="mb-4" [zAddonAfter]="areaAfter">
+            <textarea
+              class="h-30 resize-none"
+              z-input
+              placeholder="Ask, Search or Chat..."
+            ></textarea>
+          </z-input-group>
+
+          <z-input-group [zAddonAfter]="check">
+            <input z-input placeholder="@zardui" />
+          </z-input-group>
+        </div>
+
+        <ng-template #search><z-icon zType="search" /></ng-template>
+
+        <ng-template #check>
+          <div class="bg-primary rounded-full p-0.5">
+            <z-icon
+              zType="check"
+              class="stroke-primary-foreground"
+              zSize="sm"
+            />
+          </div>
+        </ng-template>
+
+        <ng-template #info
+          ><z-icon zType="info" zTooltip="Element with tooltip"
+        /></ng-template>
+
+        <ng-template #areaAfter>
+          <div class="flex w-full items-center justify-between">
+            <div class="flex items-center gap-1">
+              <button
+                type="button"
+                z-button
+                zType="outline"
+                zShape="circle"
+                class="data-icon-only:size-6!"
+              >
+                <z-icon zType="plus" />
+              </button>
+              <button
+                type="button"
+                z-button
+                zType="ghost"
+                class="h-6"
+                z-dropdown
+                [zDropdownMenu]="menu"
+              >
+                Auto
+              </button>
+              <z-dropdown-menu-content
+                #menu="zDropdownMenuContent"
+                class="w-10"
+              >
+                <z-dropdown-menu-item>Auto</z-dropdown-menu-item>
+                <z-dropdown-menu-item>Agent</z-dropdown-menu-item>
+                <z-dropdown-menu-item>Manual</z-dropdown-menu-item>
+              </z-dropdown-menu-content>
+            </div>
+            <div class="flex h-auto items-center gap-0">
+              <span>52% used</span>
+              <z-divider zOrientation="vertical" class="h-4" />
+              <button
+                type="button"
+                z-button
+                zType="outline"
+                zShape="circle"
+                class="data-icon-only:size-6!"
+              >
+                <z-icon zType="arrow-up" />
+              </button>
+            </div>
+          </div>
+        </ng-template>
       </div>
       <div class="demo-item">
         <h3>Borderless</h3>
-        <z-demo-input-group-borderless />
+        <div class="flex flex-col space-y-4">
+          <z-input-group zAddonBefore="$" zAddonAfter="USD" class="border-0">
+            <input z-input placeholder="0.00" type="number" />
+          </z-input-group>
+
+          <z-input-group
+            zAddonBefore="https://"
+            zAddonAfter=".com"
+            class="border-0"
+          >
+            <input z-input placeholder="example" />
+          </z-input-group>
+
+          <z-input-group zAddonBefore="@" class="border-0">
+            <input z-input placeholder="username" />
+          </z-input-group>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Loading</h3>
-        <z-demo-input-group-loading />
+        <div class="flex flex-col space-y-4">
+          <z-input-group [zAddonBefore]="search" zLoading>
+            <input z-input type="text" placeholder="Search..." />
+          </z-input-group>
+        </div>
+
+        <ng-template #search><z-icon zType="search" /></ng-template>
       </div>
       <div class="demo-item">
         <h3>Size</h3>
-        <z-demo-input-group-size />
+        <div class="flex flex-col space-y-4">
+          <z-input-group
+            zSize="sm"
+            zAddonBefore="https://"
+            zAddonAfter=".com"
+            class="mb-4"
+          >
+            <input z-input placeholder="Small" [(value)]="smallValue" />
+          </z-input-group>
+
+          <z-input-group
+            zSize="default"
+            zAddonBefore="https://"
+            zAddonAfter=".com"
+            class="mb-4"
+          >
+            <input z-input placeholder="Default" [(value)]="defaultValue" />
+          </z-input-group>
+
+          <z-input-group zSize="lg" zAddonBefore="https://" zAddonAfter=".com">
+            <input z-input placeholder="Large" [(value)]="largeValue" />
+          </z-input-group>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Text</h3>
-        <z-demo-input-group-text />
+        <z-input-group zAddonBefore="$" zAddonAfter="USD" class="mb-4">
+          <input z-input placeholder="0.00" type="number" />
+        </z-input-group>
+
+        <z-input-group zAddonBefore="https://" zAddonAfter=".com" class="mb-4">
+          <input z-input placeholder="example.com" />
+        </z-input-group>
+
+        <z-input-group zAddonAfter="@company.com" class="mb-4">
+          <input z-input placeholder="Enter your username" />
+        </z-input-group>
+
+        <z-input-group [zAddonAfter]="actions" class="mb-4">
+          <textarea
+            z-input
+            class="resize-none"
+            placeholder="Enter your message"
+          ></textarea>
+        </z-input-group>
+
+        <ng-template #actions>
+          <div class="flex w-full items-center justify-between">
+            <span class="text-muted-foreground text-xs"
+              >120 characters left</span
+            >
+            <button type="submit" z-button zSize="sm">Submit</button>
+          </div>
+        </ng-template>
       </div>
     </div>
   </section>
@@ -470,15 +2196,42 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-kbd-default />
+        <div class="flex flex-col items-center justify-center gap-4">
+          <div class="flex items-center gap-2">
+            <z-kbd>Esc</z-kbd>
+            <z-kbd>⌘</z-kbd>
+            <z-kbd>Ctrl</z-kbd>
+          </div>
+
+          <button type="submit" z-button zType="outline">
+            Submit
+            <z-kbd class="ml-2">Enter</z-kbd>
+          </button>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Group</h3>
-        <z-demo-kbd-group />
+        <z-kbd-group>
+          Use
+          <z-kbd>Ctrl + K</z-kbd>
+          or
+          <z-kbd>Ctrl + O</z-kbd>
+          to open menu
+        </z-kbd-group>
       </div>
       <div class="demo-item">
         <h3>Tooltip</h3>
-        <z-demo-kbd-tooltip />
+        <button type="button" z-button [zTooltip]="shortcutTip">Save</button>
+
+        <ng-template #shortcutTip>
+          Press
+          <z-kbd-group>
+            <z-kbd class="bg-blue-400 text-white">Ctrl</z-kbd>
+            <span>+</span>
+            <z-kbd class="bg-blue-400 text-white">S</z-kbd>
+          </z-kbd-group>
+          to save
+        </ng-template>
       </div>
     </div>
   </section>
@@ -489,15 +2242,17 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-loader-default />
+        <z-loader />
       </div>
       <div class="demo-item">
         <h3>Basic</h3>
-        <z-demo-loader-basic />
+        <z-loader />
       </div>
       <div class="demo-item">
         <h3>Size</h3>
-        <z-demo-loader-size />
+        <z-loader zSize="sm" />
+        <z-loader zSize="default" />
+        <z-loader zSize="lg" />
       </div>
     </div>
   </section>
@@ -508,7 +2263,208 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-menu-default />
+        <nav class="flex items-center justify-between p-4">
+          <div class="flex items-center space-x-6">
+            <div class="flex items-center space-x-1">
+              <div class="relative">
+                <button
+                  type="button"
+                  z-button
+                  zType="ghost"
+                  z-menu
+                  zTrigger="hover"
+                  [zMenuTriggerFor]="productsMenu"
+                >
+                  Products
+                  <z-icon zType="chevron-down" class="ml-1" />
+                </button>
+
+                <ng-template #productsMenu>
+                  <div z-menu-content class="w-48">
+                    <button
+                      type="button"
+                      z-menu-item
+                      (click)="log('Analytics')"
+                    >
+                      Analytics
+                    </button>
+                    <button
+                      type="button"
+                      z-menu-item
+                      (click)="log('Dashboard')"
+                    >
+                      Dashboard
+                    </button>
+                    <button type="button" z-menu-item (click)="log('Reports')">
+                      Reports
+                    </button>
+                    <button
+                      type="button"
+                      z-menu-item
+                      zDisabled
+                      (click)="log('Insights')"
+                    >
+                      Insights
+                    </button>
+                  </div>
+                </ng-template>
+              </div>
+
+              <div class="relative">
+                <button
+                  type="button"
+                  z-button
+                  zType="ghost"
+                  z-menu
+                  zTrigger="hover"
+                  [zMenuTriggerFor]="solutionsMenu"
+                >
+                  Solutions
+                  <z-icon zType="chevron-down" class="ml-1" />
+                </button>
+
+                <ng-template #solutionsMenu>
+                  <div z-menu-content class="w-80 p-2">
+                    <div class="grid gap-1">
+                      <button
+                        type="button"
+                        z-menu-item
+                        (click)="log('For Startups')"
+                        class="flex h-auto flex-col items-start py-3"
+                      >
+                        <div class="text-sm font-medium">For Startups</div>
+                        <div class="text-muted-foreground mt-1 text-xs">
+                          Get started quickly with our startup-friendly tools
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        z-menu-item
+                        (click)="log('For Enterprise')"
+                        class="flex h-auto flex-col items-start py-3"
+                      >
+                        <div class="text-sm font-medium">For Enterprise</div>
+                        <div class="text-muted-foreground mt-1 text-xs">
+                          Scale your business with enterprise-grade features
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        z-menu-item
+                        (click)="log('For Agencies')"
+                        class="flex h-auto flex-col items-start py-3"
+                      >
+                        <div class="text-sm font-medium">For Agencies</div>
+                        <div class="text-muted-foreground mt-1 text-xs">
+                          Manage multiple clients with our agency tools
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </ng-template>
+              </div>
+
+              <div class="relative">
+                <button
+                  type="button"
+                  z-button
+                  zType="ghost"
+                  z-menu
+                  zTrigger="hover"
+                  [zMenuTriggerFor]="resourcesMenu"
+                >
+                  Resources
+                  <z-icon zType="chevron-down" />
+                </button>
+
+                <ng-template #resourcesMenu>
+                  <div z-menu-content class="w-56">
+                    <button type="button" z-menu-item (click)="log('Blog')">
+                      <z-icon zType="book-open" class="mr-2" />
+                      Blog
+                    </button>
+
+                    <button
+                      type="button"
+                      z-menu-item
+                      (click)="log('Documentation')"
+                    >
+                      <z-icon zType="file-text" class="mr-2" />
+                      Documentation
+                    </button>
+
+                    <button
+                      type="button"
+                      z-menu-item
+                      z-menu
+                      [zMenuTriggerFor]="helpSubmenu"
+                      zPlacement="rightTop"
+                      class="justify-between"
+                    >
+                      <div class="flex items-center">
+                        <z-icon zType="info" class="mr-2" />
+                        Help & Support
+                      </div>
+                      <z-icon zType="chevron-right" />
+                    </button>
+
+                    <z-divider zSpacing="sm" />
+
+                    <button
+                      type="button"
+                      z-menu-item
+                      (click)="log('Community')"
+                    >
+                      <z-icon zType="users" class="mr-2" />
+                      Community
+                    </button>
+                  </div>
+                </ng-template>
+
+                <ng-template #helpSubmenu>
+                  <div z-menu-content class="w-48">
+                    <button
+                      type="button"
+                      z-menu-item
+                      (click)="log('Getting Started')"
+                    >
+                      Getting Started
+                    </button>
+                    <button
+                      type="button"
+                      z-menu-item
+                      (click)="log('Tutorials')"
+                    >
+                      Tutorials
+                    </button>
+                    <button type="button" z-menu-item (click)="log('FAQ')">
+                      FAQ
+                    </button>
+
+                    <z-divider zSpacing="sm" />
+
+                    <button
+                      type="button"
+                      z-menu-item
+                      (click)="log('Contact Support')"
+                    >
+                      Contact Support
+                    </button>
+                    <button
+                      type="button"
+                      z-menu-item
+                      (click)="log('Live Chat')"
+                    >
+                      Live Chat
+                    </button>
+                  </div>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </nav>
       </div>
     </div>
   </section>
@@ -519,11 +2475,51 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-pagination-default />
+        <z-pagination [zTotal]="5" [(zPageIndex)]="currentPage" />
       </div>
       <div class="demo-item">
         <h3>Custom</h3>
-        <z-demo-pagination-custom />
+        <z-pagination
+          [zTotal]="totalPages"
+          [(zPageIndex)]="currentPage"
+          [zContent]="content"
+        />
+
+        <ng-template #content>
+          <ul z-pagination-content>
+            <li z-pagination-item>
+              <z-pagination-previous
+                (click)="goToPreviousCustom()"
+                [zDisabled]="currentPage() === 1"
+              />
+            </li>
+
+            @for (page of pages(); track page) {
+            <li z-pagination-item>
+              <button
+                type="button"
+                z-pagination-button
+                [zActive]="page === currentPage()"
+                (click)="goToPage(page)"
+              >
+                <span class="sr-only">To page</span>
+                {{ page }}
+              </button>
+            </li>
+            }
+
+            <li z-pagination-item>
+              <z-pagination-ellipsis />
+            </li>
+
+            <li z-pagination-item>
+              <z-pagination-next
+                (click)="goToNextCustom()"
+                [zDisabled]="currentPage() === totalPages"
+              />
+            </li>
+          </ul>
+        </ng-template>
       </div>
     </div>
   </section>
@@ -534,19 +2530,160 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-popover-default-demo />
+        <button
+          type="button"
+          z-button
+          zPopover
+          [zContent]="popoverContent"
+          zType="outline"
+        >
+          Open popover
+        </button>
+
+        <ng-template #popoverContent>
+          <z-popover>
+            <div class="space-y-2">
+              <h4 class="leading-none font-medium">Dimensions</h4>
+              <p class="text-muted-foreground text-sm">
+                Set the dimensions for the layer.
+              </p>
+            </div>
+          </z-popover>
+        </ng-template>
       </div>
       <div class="demo-item">
         <h3>Hover</h3>
-        <z-popover-hover-demo />
+        <button
+          z-button
+          zPopover
+          [zContent]="popoverContent"
+          zTrigger="hover"
+          zType="outline"
+        >
+          Hover me
+        </button>
+
+        <ng-template #popoverContent>
+          <z-popover>
+            <div class="space-y-2">
+              <h4 class="leading-none font-medium">Hover content</h4>
+              <p class="text-muted-foreground text-sm">
+                This popover appears when you hover over the button.
+              </p>
+            </div>
+          </z-popover>
+        </ng-template>
       </div>
       <div class="demo-item">
         <h3>Placement</h3>
-        <z-popover-placement-demo />
+        <div class="flex flex-col space-y-2">
+          <button
+            z-button
+            zPopover
+            [zContent]="popoverContent"
+            zPlacement="top"
+            zType="outline"
+          >
+            Top
+          </button>
+
+          <div class="flex space-x-2">
+            <button
+              z-button
+              zPopover
+              [zContent]="popoverContent"
+              zPlacement="left"
+              zType="outline"
+            >
+              Left
+            </button>
+            <button
+              z-button
+              zPopover
+              [zContent]="popoverContent"
+              zPlacement="right"
+              zType="outline"
+            >
+              Right
+            </button>
+          </div>
+
+          <button
+            z-button
+            zPopover
+            [zContent]="popoverContent"
+            zPlacement="bottom"
+            zType="outline"
+          >
+            Bottom
+          </button>
+        </div>
+
+        <ng-template #popoverContent>
+          <z-popover>
+            <div class="space-y-2">
+              <h4 class="leading-none font-medium">Popover content</h4>
+              <p class="text-muted-foreground text-sm">
+                This is the popover content.
+              </p>
+            </div>
+          </z-popover>
+        </ng-template>
       </div>
       <div class="demo-item">
         <h3>Interactive</h3>
-        <z-popover-interactive-demo />
+        <button
+          z-button
+          zPopover
+          [zContent]="interactiveContent"
+          zType="outline"
+          #popoverTrigger
+        >
+          Settings
+        </button>
+
+        <ng-template #interactiveContent>
+          <z-popover>
+            <div class="space-y-4">
+              <div class="space-y-2">
+                <h4 class="leading-none font-medium">Settings</h4>
+                <p class="text-muted-foreground text-sm">
+                  Manage your account settings.
+                </p>
+              </div>
+              <div class="space-y-2">
+                <label for="width" class="text-sm font-medium">Width</label>
+                <input
+                  id="width"
+                  z-input
+                  type="text"
+                  placeholder="100%"
+                  class="w-full"
+                  [(ngModel)]="width"
+                />
+              </div>
+              <div class="space-y-2">
+                <label for="height" class="text-sm font-medium">Height</label>
+                <input
+                  id="height"
+                  z-input
+                  type="text"
+                  placeholder="25px"
+                  class="w-full"
+                  [(ngModel)]="height"
+                />
+              </div>
+              <button
+                z-button
+                class="w-full"
+                zSize="sm"
+                (click)="saveChanges()"
+              >
+                Save changes
+              </button>
+            </div>
+          </z-popover>
+        </ng-template>
       </div>
     </div>
   </section>
@@ -557,19 +2694,27 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Basic</h3>
-        <z-demo-progress-bar-basic />
+        <z-progress-bar [progress]="50" />
       </div>
       <div class="demo-item">
         <h3>Indeterminate</h3>
-        <z-demo-progress-bar-indeterminate />
+        <z-progress-bar
+          [progress]="50"
+          zShape="square"
+          [zIndeterminate]="true"
+        />
       </div>
       <div class="demo-item">
         <h3>Shape</h3>
-        <z-demo-progress-bar-shape />
+        <z-progress-bar [progress]="50" zShape="default" zType="destructive" />
+        <z-progress-bar [progress]="50" zType="accent" />
+        <z-progress-bar [progress]="50" zShape="square" />
       </div>
       <div class="demo-item">
         <h3>Size</h3>
-        <z-demo-progress-bar-size />
+        <z-progress-bar [progress]="50" zSize="default" />
+        <z-progress-bar [progress]="50" zSize="sm" />
+        <z-progress-bar [progress]="50" zSize="lg" />
       </div>
     </div>
   </section>
@@ -580,11 +2725,26 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-radio-default />
+        <div class="flex flex-col gap-3">
+          <span z-radio name="option" [(ngModel)]="selected" value="default"
+            >Default</span
+          >
+          <span z-radio name="option" [(ngModel)]="selected" value="comfortable"
+            >Comfortable</span
+          >
+          <span z-radio name="option" [(ngModel)]="selected" value="compact"
+            >Compact</span
+          >
+        </div>
       </div>
       <div class="demo-item">
         <h3>Disabled</h3>
-        <z-demo-radio-disabled />
+        <span z-radio name="radio" [(ngModel)]="val" value="a" [disabled]="true"
+          >Disabled</span
+        >
+        <span z-radio name="radio" [(ngModel)]="val" value="b" [disabled]="true"
+          >Disabled</span
+        >
       </div>
     </div>
   </section>
@@ -595,15 +2755,56 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-resizable-default />
+        <z-resizable class="h-50 w-125 max-w-md rounded-lg border">
+          <z-resizable-panel>
+            <div class="flex h-full items-center justify-center p-6">
+              <span class="font-semibold">One</span>
+            </div>
+          </z-resizable-panel>
+          <z-resizable-handle />
+          <z-resizable-panel>
+            <div class="flex h-full items-center justify-center p-6">
+              <span class="font-semibold">Two</span>
+            </div>
+          </z-resizable-panel>
+        </z-resizable>
       </div>
       <div class="demo-item">
         <h3>Vertical</h3>
-        <z-demo-resizable-vertical />
+        <z-resizable
+          zLayout="vertical"
+          class="h-100 w-125 max-w-md rounded-lg border"
+        >
+          <z-resizable-panel [zDefaultSize]="25">
+            <div class="flex h-full items-center justify-center p-6">
+              <span class="font-semibold">One</span>
+            </div>
+          </z-resizable-panel>
+          <z-resizable-handle [zWithHandle]="true" />
+          <z-resizable-panel [zDefaultSize]="75">
+            <div class="flex h-full items-center justify-center p-6">
+              <span class="font-semibold">Two</span>
+            </div>
+          </z-resizable-panel>
+        </z-resizable>
       </div>
       <div class="demo-item">
         <h3>With Min/Max</h3>
-        <z-demo-resizable-with-min-max />
+        <div class="space-y-4">
+          <z-resizable class="w-125 max-w-md rounded-lg border">
+            <z-resizable-panel [zDefaultSize]="25" zMin="0" zMax="40%">
+              <div class="flex h-50 items-center justify-center p-6">
+                <span class="font-semibold">One</span>
+              </div>
+            </z-resizable-panel>
+            <z-resizable-handle zWithHandle />
+            <z-resizable-panel [zDefaultSize]="75" zMin="100px">
+              <div class="flex h-full items-center justify-center p-6">
+                <span class="font-semibold">Two</span>
+              </div>
+            </z-resizable-panel>
+          </z-resizable>
+        </div>
       </div>
     </div>
   </section>
@@ -614,15 +2815,63 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-segmented-default />
+        <z-segmented
+          [zOptions]="segmentedOptions2"
+          zDefaultValue="all"
+          (zChange)="onSelectionChange($event)"
+        />
       </div>
       <div class="demo-item">
         <h3>Disabled</h3>
-        <z-demo-segmented-disabled />
+        <div class="space-y-4">
+          <div>
+            <label class="mb-2 block text-sm font-medium"
+              >With disabled options</label
+            >
+            <z-segmented
+              [zOptions]="optionsWithDisabled"
+              zDefaultValue="enabled1"
+            />
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium"
+              >Entire component disabled</label
+            >
+            <z-segmented
+              [zOptions]="segmentedOptions2"
+              zDefaultValue="tab1"
+              [zDisabled]="true"
+            />
+          </div>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Sizes</h3>
-        <z-demo-segmented-sizes />
+        <div class="space-y-4">
+          <div>
+            <label class="mb-2 block text-sm font-medium">Small</label>
+            <z-segmented
+              zSize="sm"
+              [zOptions]="segmentedOptions2"
+              zDefaultValue="tab1"
+            />
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium">Default</label>
+            <z-segmented [zOptions]="segmentedOptions2" zDefaultValue="tab1" />
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-medium">Large</label>
+            <z-segmented
+              zSize="lg"
+              [zOptions]="segmentedOptions2"
+              zDefaultValue="tab1"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -633,11 +2882,54 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Basic</h3>
-        <z-demo-select-basic />
+        <div class="flex flex-col gap-4">
+          <span>
+            Selected value: @if (selectedValue) {
+            <z-badge>{{ selectedValue }}</z-badge>
+            }
+          </span>
+          <z-select
+            class="w-75"
+            zPlaceholder="Select a fruit"
+            [(zValue)]="selectedValue"
+          >
+            <z-select-item zValue="apple">Apple</z-select-item>
+            <z-select-item zValue="banana">Banana</z-select-item>
+            <z-select-item zValue="blueberry">Blueberry</z-select-item>
+            <z-select-item zValue="grapes">Grapes</z-select-item>
+            <z-select-item zValue="pineapple" zDisabled
+              >Pineapple</z-select-item
+            >
+          </z-select>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Multi Select</h3>
-        <z-demo-multi-select-basic />
+        <div class="flex h-100 w-75 flex-col gap-4">
+          Selected values:
+          <span class="flex flex-wrap gap-2">
+            @for (value of selectedValues(); track $index) {
+            <z-badge>{{ value }}</z-badge>
+            }
+          </span>
+
+          <z-select
+            zPlaceholder="Select multiple fruits"
+            [zMultiple]="true"
+            [zMaxLabelCount]="4"
+            [(zValue)]="selectedValues"
+          >
+            <z-select-item zValue="apple">Apple</z-select-item>
+            <z-select-item zValue="banana">Banana</z-select-item>
+            <z-select-item zValue="blueberry">Blueberry</z-select-item>
+            <z-select-item zValue="grapes">Grapes</z-select-item>
+            <z-select-item zValue="pineapple">Pineapple</z-select-item>
+            <z-select-item zValue="strawberry">Strawberry</z-select-item>
+            <z-select-item zValue="watermelon">Watermelon</z-select-item>
+            <z-select-item zValue="kiwi">Kiwi</z-select-item>
+            <z-select-item zValue="mango">Mango</z-select-item>
+          </z-select>
+        </div>
       </div>
     </div>
   </section>
@@ -682,11 +2974,23 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-skeleton-default />
+        <div class="flex items-center space-x-4">
+          <z-skeleton class="h-12 w-12 rounded-full" />
+          <div class="space-y-2">
+            <z-skeleton class="h-4 w-[250px]" />
+            <z-skeleton class="h-4 w-[200px]" />
+          </div>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Card</h3>
-        <z-demo-skeleton-card />
+        <div class="flex flex-col space-y-3">
+          <z-skeleton class="rounded-xll h-[125px] w-[250px]" />
+          <div class="space-y-2">
+            <z-skeleton class="h-4 w-[250px]" />
+            <z-skeleton class="h-4 w-[200px]" />
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -697,19 +3001,41 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-slider-default />
+        <div
+          class="preview flex min-h-[350px] w-full items-center justify-center p-10"
+        >
+          <z-slider class="w-[60%]" zDefault="50" />
+        </div>
       </div>
       <div class="demo-item">
         <h3>Disabled</h3>
-        <z-demo-slider-disabled />
+        <div
+          class="preview flex min-h-[350px] w-full items-center justify-center p-10"
+        >
+          <z-slider class="w-[60%]" zDefault="50" zDisabled="true" />
+        </div>
       </div>
       <div class="demo-item">
         <h3>Vertical</h3>
-        <z-demo-slider-vertical />
+        <div
+          class="preview flex h-[350px] w-full items-center justify-center p-10"
+        >
+          <z-slider
+            class="w-[60%]"
+            zDefault="100"
+            zMin="30"
+            zMax="120"
+            zOrientation="vertical"
+          />
+        </div>
       </div>
       <div class="demo-item">
         <h3>Min/Max</h3>
-        <z-demo-slider-min-max />
+        <div
+          class="preview flex min-h-[350px] w-full items-center justify-center p-10"
+        >
+          <z-slider class="w-[60%]" zStep="10" zMin="30" zMax="120" />
+        </div>
       </div>
     </div>
   </section>
@@ -720,23 +3046,27 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-switch />
+        <z-switch />
       </div>
       <div class="demo-item">
         <h3>Basic</h3>
-        <z-demo-switch-basic />
+        <z-switch />
+        <z-switch zType="destructive">Destructive</z-switch>
       </div>
       <div class="demo-item">
         <h3>Destructive</h3>
-        <z-demo-switch-destructive />
+        <z-switch zType="destructive" />
       </div>
       <div class="demo-item">
         <h3>Disabled</h3>
-        <z-demo-switch-disabled />
+        <z-switch [(ngModel)]="model" disabled>Disabled</z-switch>
+        <z-switch [formControl]="checkControl">Disabled in forms</z-switch>
       </div>
       <div class="demo-item">
         <h3>Size</h3>
-        <z-demo-switch-size />
+        <z-switch zSize="sm">Small</z-switch>
+        <z-switch>Default</z-switch>
+        <z-switch zSize="lg">Large</z-switch>
       </div>
     </div>
   </section>
@@ -747,11 +3077,87 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Simple</h3>
-        <z-demo-table-simple />
+        <table z-table>
+          <caption>
+            A list of your recent invoices.
+          </caption>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Age</th>
+              <th>Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (data of listOfData; track data.key) {
+            <tr>
+              <td class="font-medium">{{ data.name }}</td>
+              <td>{{ data.age }}</td>
+              <td>{{ data.address }}</td>
+            </tr>
+            }
+          </tbody>
+        </table>
       </div>
       <div class="demo-item">
         <h3>Payments</h3>
-        <z-demo-table-payments />
+        <div class="w-full">
+          <div class="overflow-hidden rounded-md border">
+            <table z-table>
+              <thead z-table-header>
+                <tr z-table-row>
+                  <th z-table-head>Status</th>
+                  <th z-table-head>Email</th>
+                  <th z-table-head class="text-right">Amount</th>
+                  <th z-table-head class="w-16">Actions</th>
+                </tr>
+              </thead>
+              <tbody z-table-body>
+                @for (payment of payments; track payment.id) {
+                <tr z-table-row>
+                  <td z-table-cell>
+                    <z-badge [zType]="getStatusVariant(payment.status)">
+                      {{ payment.status }}
+                    </z-badge>
+                  </td>
+                  <td z-table-cell>
+                    <div class="lowercase">{{ payment.email }}</div>
+                  </td>
+                  <td z-table-cell>
+                    <div class="text-right font-medium">
+                      {{ formatCurrency(payment.amount) }}
+                    </div>
+                  </td>
+                  <td z-table-cell>
+                    <div class="flex items-center gap-2">
+                      <z-button
+                        zType="ghost"
+                        (click)="copyPaymentId(payment.id)"
+                        title="Copy payment ID"
+                      >
+                        <div z-icon zType="copy"></div>
+                      </z-button>
+                      <z-button
+                        zType="ghost"
+                        (click)="viewDetails(payment)"
+                        title="View details"
+                      >
+                        <div z-icon zType="eye"></div>
+                      </z-button>
+                    </div>
+                  </td>
+                </tr>
+                } @empty {
+                <tr z-table-row>
+                  <td z-table-cell [attr.colspan]="4" class="h-24 text-center">
+                    No results.
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -762,19 +3168,202 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-tabs-default />
+        <div class="h-[300px] w-full">
+          <z-tab-group>
+            <z-tab label="First">
+              <p>Is the default tab component</p>
+            </z-tab>
+            <z-tab label="Second">
+              <p>Content of the second tab</p>
+            </z-tab>
+            <z-tab label="Third">
+              <p>Content of the third tab</p>
+            </z-tab>
+            <z-tab label="Fourth">
+              <p>Content of the fourth tab</p>
+            </z-tab>
+            <z-tab label="Fifth">
+              <p>Content of the fifth tab</p>
+            </z-tab>
+            <z-tab label="Sixth">
+              <p>Content of the sixth tab</p>
+            </z-tab>
+          </z-tab-group>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Align</h3>
-        <z-demo-tabs-align />
+        <div class="h-[300px] w-full">
+          <z-tab-group [zAlignTabs]="zAlignTabs">
+            <z-tab label="First">
+              <p class="w-full text-center">zAlignTabs: {{ zAlignTabs }}</p>
+              <div class="mt-4 flex items-center justify-center gap-2">
+                <button z-button zType="ghost" (click)="zAlignTabs = 'start'">
+                  Start
+                </button>
+                <button z-button zType="ghost" (click)="zAlignTabs = 'center'">
+                  Center
+                </button>
+                <button z-button zType="ghost" (click)="zAlignTabs = 'end'">
+                  End
+                </button>
+              </div>
+            </z-tab>
+            <z-tab label="Second">
+              <p>Content of the second tab</p>
+            </z-tab>
+            <z-tab label="Third">
+              <p>Content of the third tab</p>
+            </z-tab>
+          </z-tab-group>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Arrow</h3>
-        <z-demo-tabs-arrow />
+        <div class="h-[300px] w-full">
+          <div class="mb-4 text-sm">
+            <div class="mt-4 flex items-center justify-center gap-2">
+              <button
+                z-button
+                zType="ghost"
+                type="button"
+                [attr.aria-pressed]="showArrow"
+                (click)="showArrow = !showArrow"
+              >
+                {{ showArrow ? 'Hide' : 'Show' }} Arrows
+              </button>
+            </div>
+          </div>
+          <z-tab-group [zShowArrow]="showArrow">
+            <z-tab label="First">
+              <p>Is the default tab component</p>
+            </z-tab>
+            <z-tab label="Second">
+              <p>Content of the second tab</p>
+            </z-tab>
+            <z-tab label="Third">
+              <p>Content of the third tab</p>
+            </z-tab>
+            <z-tab label="Fourth">
+              <p>Content of the fourth tab</p>
+            </z-tab>
+            <z-tab label="Fifth">
+              <p>Content of the fifth tab</p>
+            </z-tab>
+            <z-tab label="Sixth">
+              <p>Content of the sixth tab</p>
+            </z-tab>
+            <z-tab label="Seventh">
+              <p>Content of the seventh tab</p>
+            </z-tab>
+            <z-tab label="Eighth">
+              <p>Content of the eighth tab</p>
+            </z-tab>
+            <z-tab label="Ninth">
+              <p>Content of the ninth tab</p>
+            </z-tab>
+            <z-tab label="Tenth">
+              <p>Content of the tenth tab</p>
+            </z-tab>
+          </z-tab-group>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Position</h3>
-        <z-demo-tabs-position />
+        <div class="flex h-[300px] w-full flex-col justify-between">
+          <z-tab-group
+            [zTabsPosition]="zTabsPosition"
+            [zActivePosition]="zActivePosition"
+            class="h-[180px]"
+          >
+            <z-tab label="First">
+              <p>Is the default tab component</p>
+            </z-tab>
+            <z-tab label="Second">
+              <p>Content of the second tab</p>
+            </z-tab>
+            <z-tab label="Third">
+              <p>Content of the third tab</p>
+            </z-tab>
+          </z-tab-group>
+          <div>
+            <z-divider class="my-0" />
+            <div class="flex flex-col gap-3 px-4 py-2 text-sm">
+              <div class="flex items-center justify-between">
+                <span>Tabs Position:</span>
+                <div class="flex gap-2">
+                  <span
+                    z-radio
+                    name="tab"
+                    [(ngModel)]="zTabsPosition"
+                    value="top"
+                    zSize="sm"
+                    >Top</span
+                  >
+                  <span
+                    z-radio
+                    name="tab"
+                    [(ngModel)]="zTabsPosition"
+                    value="bottom"
+                    zSize="sm"
+                    >Bottom</span
+                  >
+                  <span
+                    z-radio
+                    name="tab"
+                    [(ngModel)]="zTabsPosition"
+                    value="left"
+                    zSize="sm"
+                    >Left</span
+                  >
+                  <span
+                    z-radio
+                    name="tab"
+                    [(ngModel)]="zTabsPosition"
+                    value="right"
+                    zSize="sm"
+                    >Right</span
+                  >
+                </div>
+              </div>
+              <div class="flex items-center justify-center gap-2">
+                <span>Active Tab Indicator Position:</span>
+                <span
+                  z-radio
+                  name="active"
+                  [(ngModel)]="zActivePosition"
+                  value="top"
+                  zSize="sm"
+                  >Top</span
+                >
+                <span
+                  z-radio
+                  name="active"
+                  [(ngModel)]="zActivePosition"
+                  value="bottom"
+                  zSize="sm"
+                  >Bottom</span
+                >
+                <span
+                  z-radio
+                  name="active"
+                  [(ngModel)]="zActivePosition"
+                  value="left"
+                  zSize="sm"
+                  >Left</span
+                >
+                <span
+                  z-radio
+                  name="active"
+                  [(ngModel)]="zActivePosition"
+                  value="right"
+                  zSize="sm"
+                  >Right</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -785,27 +3374,67 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-toast />
+        <button z-button zType="outline" (click)="showToast()">
+          Show Toast
+        </button>
       </div>
       <div class="demo-item">
         <h3>Advanced</h3>
-        <z-demo-toast-advanced />
+        <div class="flex flex-wrap gap-2">
+          <button z-button zType="outline" (click)="showWithAction()">
+            With Action
+          </button>
+          <button z-button zType="outline" (click)="showCustomDuration()">
+            Custom Duration
+          </button>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Destructive</h3>
-        <z-demo-toast-destructive />
+
+        <button z-button zType="outline" (click)="showToast()">
+          Show Error Toast
+        </button>
       </div>
       <div class="demo-item">
         <h3>Loading</h3>
-        <z-demo-toast-loading />
+        <button z-button zType="outline" (click)="showToastLoader()">
+          Show Loading Toast
+        </button>
       </div>
       <div class="demo-item">
         <h3>Position</h3>
-        <z-demo-toast-position />
+        <div class="flex flex-wrap gap-2">
+          <z-button zType="outline" (click)="showToastPosition('top-left')"
+            >Top Left</z-button
+          >
+
+          <z-button zType="outline" (click)="showToastPosition('top-center')"
+            >Top Center</z-button
+          >
+
+          <z-button zType="outline" (click)="showToastPosition('top-right')"
+            >Top Right</z-button
+          >
+
+          <z-button zType="outline" (click)="showToastPosition('bottom-left')"
+            >Bottom Left</z-button
+          >
+
+          <z-button zType="outline" (click)="showToastPosition('bottom-center')"
+            >Bottom Center</z-button
+          >
+
+          <z-button zType="outline" (click)="showToastPosition('bottom-right')"
+            >Bottom Right</z-button
+          >
+        </div>
       </div>
       <div class="demo-item">
         <h3>Success</h3>
-        <z-demo-toast-success />
+        <button z-button zType="outline" (click)="showToast()">
+          Show Success Toast
+        </button>
       </div>
     </div>
   </section>
@@ -816,35 +3445,133 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Default</h3>
-        <z-demo-toggle-default />
+        <z-toggle aria-label="Default toggle">
+          <z-icon zType="bold" />
+        </z-toggle>
       </div>
       <div class="demo-item">
         <h3>Disabled</h3>
-        <z-demo-toggle-disabled />
+        <z-toggle aria-label="Toggle disabled" disabled>
+          <z-icon zType="bold" />
+        </z-toggle>
       </div>
       <div class="demo-item">
         <h3>Large</h3>
-        <z-demo-toggle-large />
+        <z-toggle aria-label="Toggle large" zSize="lg">
+          <z-icon zType="bold" />
+        </z-toggle>
       </div>
       <div class="demo-item">
         <h3>Outline</h3>
-        <z-demo-toggle-outline />
+        <z-toggle aria-label="Toggle outline" zType="outline">
+          <z-icon zType="bold" />
+        </z-toggle>
       </div>
       <div class="demo-item">
         <h3>Small</h3>
-        <z-demo-toggle-small />
+        <z-toggle aria-label="Toggle small" zSize="sm">
+          <z-icon zType="bold" />
+        </z-toggle>
       </div>
       <div class="demo-item">
         <h3>With Default</h3>
-        <z-demo-toggle-with-default />
+        <z-toggle aria-label="With default" [zDefault]="true">
+          <z-icon zType="bold" />
+        </z-toggle>
       </div>
       <div class="demo-item">
         <h3>With Forms</h3>
-        <z-demo-toggle-with-forms />
+        <z-toggle aria-label="Turn on the light" [(ngModel)]="lightOn">
+          @if (lightOn) {
+          <z-icon zType="lightbulb" />
+          } @else {
+          <z-icon zType="lightbulb-off" />
+          }
+        </z-toggle>
       </div>
       <div class="demo-item">
         <h3>With Text</h3>
-        <z-demo-toggle-with-text />
+        <z-toggle>
+          <z-icon zType="italic" />
+          Italic
+        </z-toggle>
+      </div>
+    </div>
+  </section>
+
+  <!-- Toggle Group -->
+  <section class="component-section" id="toggle">
+    <h2 class="section-title">Toggle Group</h2>
+    <div class="demo-grid">
+      <div class="demo-item">
+        <h3>Default</h3>
+        <z-toggle-group
+          zMode="multiple"
+          [items]="items"
+          [defaultValue]="['italic']"
+          (valueChange)="onToggleChange($event)"
+        />
+      </div>
+      <div class="demo-item">
+        <h3>outline</h3>
+        <z-toggle-group
+          zMode="multiple"
+          zType="outline"
+          [items]="items"
+          (valueChange)="onToggleChange($event)"
+        />
+      </div>
+      <div class="demo-item">
+        <h3>single</h3>
+        <z-toggle-group
+          zMode="single"
+          [items]="items"
+          defaultValue="center"
+          (valueChange)="onToggleChange($event)"
+        />
+      </div>
+      <div class="demo-item">
+        <h3>sizes</h3>
+        <z-toggle-group
+          zMode="multiple"
+          [items]="items"
+          [defaultValue]="['italic']"
+          (valueChange)="onToggleChange($event)"
+        />
+      </div>
+      <div class="demo-item">
+        <h3>sizes</h3>
+        <div class="space-y-4">
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Small</h3>
+            <z-toggle-group
+              zMode="multiple"
+              zSize="sm"
+              [items]="items"
+              (valueChange)="onToggleChange($event)"
+            />
+          </div>
+
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Default</h3>
+            <z-toggle-group
+              zMode="multiple"
+              zSize="md"
+              [items]="items"
+              (valueChange)="onToggleChange($event)"
+            />
+          </div>
+
+          <div>
+            <h3 class="mb-2 text-sm font-medium">Large</h3>
+            <z-toggle-group
+              zMode="multiple"
+              zSize="lg"
+              [items]="items"
+              (valueChange)="onToggleChange($event)"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -855,19 +3582,88 @@
     <div class="demo-grid">
       <div class="demo-item">
         <h3>Click</h3>
-        <z-demo-tooltip-click />
+        <button
+          type="button"
+          z-button
+          zType="outline"
+          zTooltip="Tooltip content"
+          zTrigger="click"
+        >
+          Click
+        </button>
       </div>
       <div class="demo-item">
         <h3>Events</h3>
-        <z-demo-tooltip-events />
+        <div class="flex w-25 flex-col gap-4">
+          <button
+            type="button"
+            z-button
+            zType="outline"
+            zTooltip="Tooltip content"
+            (zShow)="onShow()"
+            (zHide)="onHide()"
+          >
+            Events
+          </button>
+
+          <span class="text-sm">Event: {{ event }}</span>
+        </div>
       </div>
       <div class="demo-item">
         <h3>Hover</h3>
-        <z-demo-tooltip-hover />
+        <button
+          type="button"
+          z-button
+          zType="outline"
+          zTooltip="Tooltip content"
+        >
+          Hover
+        </button>
       </div>
       <div class="demo-item">
         <h3>Position</h3>
-        <z-demo-tooltip-position />
+        <div class="flex flex-col space-y-2">
+          <button
+            type="button"
+            z-button
+            zType="outline"
+            zTooltip="Tooltip content"
+            zPosition="top"
+          >
+            Top
+          </button>
+
+          <div class="flex space-x-2">
+            <button
+              type="button"
+              z-button
+              zType="outline"
+              zTooltip="Tooltip content"
+              zPosition="left"
+            >
+              Left
+            </button>
+            <button
+              type="button"
+              z-button
+              zType="outline"
+              zTooltip="Tooltip content"
+              zPosition="right"
+            >
+              Right
+            </button>
+          </div>
+
+          <button
+            type="button"
+            z-button
+            zType="outline"
+            zTooltip="Tooltip content"
+            zPosition="bottom"
+          >
+            Bottom
+          </button>
+        </div>
       </div>
     </div>
   </section>

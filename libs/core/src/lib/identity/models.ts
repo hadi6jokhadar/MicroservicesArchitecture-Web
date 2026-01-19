@@ -9,26 +9,20 @@ export enum Role {
 
 export interface IUser {
   id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  role: number; // Backend sends numeric role (1=User, 2=Admin, 3=SuperAdmin)
-  roleName: string; // Backend sends roleName as string
-  status: boolean; // Backend uses 'status'
-  isActive?: boolean; // Frontend computed property
-  emailConfirmed: boolean;
-  phoneNumberConfirmed?: boolean;
-  created: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  emailConfirmed?: boolean;
   lastLogin?: string | null;
+  status: boolean;
+  created: string;
+  lastModified?: string | null;
+  roles: IRole[];
   profilePictureId?: number | null;
   profilePicture?: IFileManagerResponse | null;
   verificationCode?: string | null;
   data?: string | null;
-  isArchived: boolean;
-  createdBy?: string | null;
-  lastModified?: string;
-  lastModifiedBy?: string | null;
 }
 
 export interface IPaginatedResponse<T> {
@@ -42,23 +36,16 @@ export interface IPaginatedResponse<T> {
 
 export class UserClass implements IUser {
   id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  role: number;
-  roleName: string;
-  status: boolean;
-  isActive: boolean;
-  emailConfirmed: boolean;
-  phoneNumberConfirmed?: boolean;
-  created: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  emailConfirmed?: boolean;
   lastLogin?: string | null;
-  isArchived: boolean;
-  createdBy?: string | null;
-  lastModified?: string;
-  lastModifiedBy?: string | null;
-
+  status: boolean;
+  created: string;
+  lastModified?: string | null;
+  roles: IRole[];
   profilePictureId?: number | null;
   profilePicture?: IFileManagerResponse | null;
   verificationCode?: string | null;
@@ -66,23 +53,16 @@ export class UserClass implements IUser {
 
   constructor(data: Partial<IUser> = {}) {
     this.id = data.id || 0;
-    this.email = data.email || '';
-    this.firstName = data.firstName || '';
-    this.lastName = data.lastName || '';
-    this.phoneNumber = data.phoneNumber || '';
-    this.role = data.role || 1;
-    this.roleName = data.roleName || 'User';
-    // Map backend 'status' to frontend 'isActive'
-    this.status = data.status ?? true;
-    this.isActive = data.status ?? true;
-    this.isArchived = data.isArchived ?? false;
+    this.email = data.email;
+    this.firstName = data.firstName;
+    this.lastName = data.lastName;
+    this.phoneNumber = data.phoneNumber;
     this.emailConfirmed = data.emailConfirmed ?? false;
-    this.phoneNumberConfirmed = data.phoneNumberConfirmed;
-    this.created = data.created || '';
     this.lastLogin = data.lastLogin;
-    this.createdBy = data.createdBy;
+    this.status = data.status ?? true;
+    this.created = data.created || '';
     this.lastModified = data.lastModified;
-    this.lastModifiedBy = data.lastModifiedBy;
+    this.roles = data.roles?.map((r) => new RoleClass(r)) || [];
     this.profilePictureId = data.profilePictureId;
     this.profilePicture = data.profilePicture;
     this.verificationCode = data.verificationCode;
@@ -136,25 +116,33 @@ export interface IForgotPasswordRequest {
 export interface IUpdateProfileRequest {
   firstName: string;
   lastName: string;
-  phoneNumber: string;
+  phoneNumber?: string | null;
+  profilePictureId?: number | null;
+  id?: number | null;
+  data?: string | null;
 }
 
 export interface ICreateUserRequest {
   email: string;
-  password?: string;
+  password: string;
   firstName: string;
   lastName: string;
-  phoneNumber?: string;
-  role: string;
-  isActive?: boolean;
+  roleIds: number[];
+  phoneNumber?: string | null;
+  profilePictureId?: number | null;
+  data?: string | null;
 }
 
 export interface IUpdateUserRequest {
+  id: number;
   firstName: string;
   lastName: string;
-  phoneNumber: string;
-  role: string;
-  isActive: boolean;
+  roleIds: number[];
+  phoneNumber?: string | null;
+  profilePictureId?: number | null;
+  emailConfirmed?: boolean | null;
+  status?: boolean | null;
+  data?: string | null;
 }
 
 // Role Management
@@ -162,32 +150,26 @@ export interface IRole {
   id: number;
   name: string;
   description?: string;
-  created: string;
-  isArchived: boolean;
-  createdBy?: string | null;
-  lastModified?: string;
-  lastModifiedBy?: string | null;
+  isSystemRole: boolean;
+  status: boolean;
+  claims?: IClaim[];
 }
 
 export class RoleClass implements IRole {
   id: number;
   name: string;
   description?: string;
-  created: string;
-  isArchived: boolean;
-  createdBy?: string | null;
-  lastModified?: string;
-  lastModifiedBy?: string | null;
+  isSystemRole: boolean;
+  status: boolean;
+  claims?: IClaim[];
 
   constructor(data: Partial<IRole> = {}) {
     this.id = data.id || 0;
     this.name = data.name || '';
     this.description = data.description;
-    this.created = data.created || '';
-    this.isArchived = data.isArchived ?? false;
-    this.createdBy = data.createdBy;
-    this.lastModified = data.lastModified;
-    this.lastModifiedBy = data.lastModifiedBy;
+    this.isSystemRole = data.isSystemRole ?? false;
+    this.status = data.status ?? true;
+    this.claims = data.claims?.map((c) => new ClaimClass(c));
   }
 }
 
@@ -213,42 +195,30 @@ export interface IAssignRolesToUserRequest {
 export interface IClaim {
   id: number;
   name: string;
+  description?: string;
   claimType: string;
   claimValue: string;
-  description?: string;
   isSuperAdminOnly: boolean;
-  created: string;
-  isArchived: boolean;
-  createdBy?: string | null;
-  lastModified?: string;
-  lastModifiedBy?: string | null;
+  status: boolean;
 }
 
 export class ClaimClass implements IClaim {
   id: number;
   name: string;
+  description?: string;
   claimType: string;
   claimValue: string;
-  description?: string;
   isSuperAdminOnly: boolean;
-  created: string;
-  isArchived: boolean;
-  createdBy?: string | null;
-  lastModified?: string;
-  lastModifiedBy?: string | null;
+  status: boolean;
 
   constructor(data: Partial<IClaim> = {}) {
     this.id = data.id || 0;
     this.name = data.name || '';
+    this.description = data.description;
     this.claimType = data.claimType || '';
     this.claimValue = data.claimValue || '';
-    this.description = data.description;
     this.isSuperAdminOnly = data.isSuperAdminOnly ?? false;
-    this.created = data.created || '';
-    this.isArchived = data.isArchived ?? false;
-    this.createdBy = data.createdBy;
-    this.lastModified = data.lastModified;
-    this.lastModifiedBy = data.lastModifiedBy;
+    this.status = data.status ?? true;
   }
 }
 
@@ -276,10 +246,6 @@ export interface IDeviceToken {
   platform: string;
   deviceId: string;
   created: string;
-  isArchived: boolean;
-  createdBy?: string | null;
-  lastModified?: string;
-  lastModifiedBy?: string | null;
 }
 
 export class DeviceTokenClass implements IDeviceToken {
@@ -289,10 +255,6 @@ export class DeviceTokenClass implements IDeviceToken {
   platform: string;
   deviceId: string;
   created: string;
-  isArchived: boolean;
-  createdBy?: string | null;
-  lastModified?: string;
-  lastModifiedBy?: string | null;
 
   constructor(data: Partial<IDeviceToken> = {}) {
     this.id = data.id || 0;
@@ -301,10 +263,6 @@ export class DeviceTokenClass implements IDeviceToken {
     this.platform = data.platform || '';
     this.deviceId = data.deviceId || '';
     this.created = data.created || '';
-    this.isArchived = data.isArchived ?? false;
-    this.createdBy = data.createdBy;
-    this.lastModified = data.lastModified;
-    this.lastModifiedBy = data.lastModifiedBy;
   }
 }
 

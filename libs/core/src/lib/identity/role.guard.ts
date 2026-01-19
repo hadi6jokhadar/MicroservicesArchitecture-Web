@@ -13,8 +13,14 @@ export const roleGuard: CanActivateFn = (route, state) => {
     return false;
   }
 
-  if (user && requiredRoles && requiredRoles.includes(user.roleName)) {
-    return true;
+  if (user && requiredRoles) {
+    const userRoles = user.roles?.map((r) => r.name) || [];
+    const hasRequiredRole = requiredRoles.some((role) =>
+      userRoles.includes(role)
+    );
+    if (hasRequiredRole) {
+      return true;
+    }
   }
 
   // Not authorized

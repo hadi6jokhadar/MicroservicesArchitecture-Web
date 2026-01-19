@@ -8,4 +8,3 @@ export * from '../../components/menu/menu.imports';
 export * from '../../components/menu/menu-positions';
 export * from '../../components/menu/menu-shortcut.component';
 export * from '../../components/menu/menu-label.component';
-export * from './demo';

@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ENVIRONMENT } from '../core/environment.token';
 import {
@@ -9,6 +9,14 @@ import {
   IPaginatedResponse,
 } from './models';
 
+export interface IUserFilterRequest {
+  pageNumber?: number;
+  pageSize?: number;
+  searchTerm?: string;
+  roleName?: string;
+  status?: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -17,8 +25,23 @@ export class IdentityAdminService {
   private _env = inject(ENVIRONMENT);
   private readonly _baseUrl = `${this._env.apiUrls.identity}/api/admin`;
 
-  getUsers(): Observable<IPaginatedResponse<IUser>> {
-    return this._http.get<IPaginatedResponse<IUser>>(`${this._baseUrl}/users`);
+  getUsers(
+    request?: IUserFilterRequest
+  ): Observable<IPaginatedResponse<IUser>> {
+    let params = new HttpParams();
+
+    if (request) {
+      Object.keys(request).forEach((key) => {
+        const value = (request as any)[key];
+        if (value !== undefined && value !== null) {
+          params = params.append(key, value.toString());
+        }
+      });
+    }
+
+    return this._http.get<IPaginatedResponse<IUser>>(`${this._baseUrl}/users`, {
+      params,
+    });
   }
 
   getUserById(id: number): Observable<IUser> {

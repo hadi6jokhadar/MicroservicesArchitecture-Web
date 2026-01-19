@@ -1,0 +1,141 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 class="dialog-title">Add New User</h2>
+  </div>
+
+  <div class="dialog-content">
+    @if (errorMessage) {
+    <div class="error-message">{{ errorMessage }}</div>
+    }
+
+    <form [formGroup]="addUserForm" (ngSubmit)="onSubmit()" class="user-form">
+      <!-- Email -->
+      <div class="form-field">
+        <label for="add-user-email" class="field-label">
+          Email <span class="required">*</span>
+        </label>
+        <input
+          id="add-user-email"
+          z-input
+          formControlName="email"
+          type="email"
+          placeholder="user@example.com"
+        />
+        @if ( addUserForm.controls.email.invalid &&
+        addUserForm.controls.email.touched ) {
+        <span class="error-text">Valid email is required</span>
+        }
+      </div>
+
+      <!-- First Name -->
+      <div class="form-field">
+        <label for="add-user-firstname" class="field-label">
+          First Name <span class="required">*</span>
+        </label>
+        <input
+          id="add-user-firstname"
+          z-input
+          formControlName="firstName"
+          type="text"
+          placeholder="John"
+        />
+        @if ( addUserForm.controls.firstName.invalid &&
+        addUserForm.controls.firstName.touched ) {
+        <span class="error-text">First name is required</span>
+        }
+      </div>
+
+      <!-- Last Name -->
+      <div class="form-field">
+        <label for="add-user-lastname" class="field-label">
+          Last Name <span class="required">*</span>
+        </label>
+        <input
+          id="add-user-lastname"
+          z-input
+          formControlName="lastName"
+          type="text"
+          placeholder="Doe"
+        />
+        @if ( addUserForm.controls.lastName.invalid &&
+        addUserForm.controls.lastName.touched ) {
+        <span class="error-text">Last name is required</span>
+        }
+      </div>
+
+      <!-- Phone Number -->
+      <div class="form-field">
+        <label for="add-user-phone" class="field-label">Phone Number</label>
+        <input
+          id="add-user-phone"
+          z-input
+          formControlName="phoneNumber"
+          type="tel"
+          placeholder="+1234567890"
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="form-field">
+        <label for="add-user-password" class="field-label">
+          Password <span class="required">*</span>
+        </label>
+        <input
+          id="add-user-password"
+          z-input
+          formControlName="password"
+          type="password"
+          placeholder="Minimum 6 characters"
+        />
+        @if ( addUserForm.controls.password.invalid &&
+        addUserForm.controls.password.touched ) {
+        <span class="error-text">Password must be at least 6 characters</span>
+        }
+      </div>
+
+      <!-- Role -->
+      <div class="form-field">
+        <label for="add-user-role" class="field-label">
+          Role <span class="required">*</span>
+        </label>
+        <select id="add-user-role" formControlName="role" class="select-input">
+          @for (option of roleOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Active Status -->
+      <div class="form-field switch-field">
+        <label for="add-user-active" class="field-label">Active Status</label>
+        <input
+          id="add-user-active"
+          z-switch
+          formControlName="isActive"
+          type="checkbox"
+        />
+      </div>
+    </form>
+  </div>
+
+  <div class="dialog-footer">
+    <button
+      id="add-user-cancel-btn"
+      z-button
+      zType="outline"
+      (click)="onCancel()"
+      [disabled]="submitting"
+    >
+      Cancel
+    </button>
+    <button
+      id="add-user-submit-btn"
+      z-button
+      zType="default"
+      (click)="onSubmit()"
+      [disabled]="submitting || addUserForm.invalid"
+    >
+      {{ submitting ? 'Creating...' : 'Create User' }}
+    </button>
+  </div>
+</div>
