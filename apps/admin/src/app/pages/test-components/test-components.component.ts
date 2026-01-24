@@ -419,6 +419,7 @@ export class TestComponentsComponent implements OnInit, AfterViewInit {
   protected readonly isSubmitting = signal(false);
 
   protected readonly countries = [
+    // { value: '__all__', label: 'All' },
     { value: 'us', label: 'United States' },
     { value: 'ca', label: 'Canada' },
     { value: 'uk', label: 'United Kingdom' },

@@ -28,6 +28,8 @@ export class IdentityAdminService {
   getUsers(
     request?: IUserFilterRequest
   ): Observable<IPaginatedResponse<IUser>> {
+    console.log('Fetching users with filter:', request);
+
     let params = new HttpParams();
 
     if (request) {
@@ -38,6 +40,7 @@ export class IdentityAdminService {
         }
       });
     }
+    console.log(params);
 
     return this._http.get<IPaginatedResponse<IUser>>(`${this._baseUrl}/users`, {
       params,

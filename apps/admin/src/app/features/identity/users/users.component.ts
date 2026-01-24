@@ -1,21 +1,30 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { toast } from 'ngx-sonner';
 import {
-  ZardTableComponent,
   ZardButtonComponent,
   ZardInputDirective,
+  ZardCardComponent,
   ZardBadgeComponent,
   ZardAvatarComponent,
+  ZardDropdownImports,
+  ZardDropdownMenuComponent,
+  ZardFormImports,
+  ZardPaginationImports,
   ZardIconComponent,
-  ZardDialogService,
+  ZardSelectComponent,
+  ZardSelectItemComponent,
+  ZardLoaderComponent,
+  ZardEmptyComponent,
+  ZardAlertDialogService,
+  ZardIdDirective,
 } from '@ihsan/ui';
-import { IdentityAdminService, IUserFilterRequest, IUser } from '@ihsan/core';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
-import { EditUserDialogComponent } from './edit-user-dialog/edit-user-dialog.component';
-import { DeleteUserDialogComponent } from './delete-user-dialog/delete-user-dialog.component';
+import { IdentityAdminService, IUserFilterRequest } from '@ihsan/core';
+import { IUser, IPaginatedResponse, IRole } from '@ihsan/core';
+import { RoleService } from '@ihsan/core';
+import { ENVIRONMENT } from '@ihsan/core';
 
 interface IUserFilterForm {
   searchTerm: FormControl<string>;
@@ -29,185 +38,230 @@ interface IUserFilterForm {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ZardTableComponent,
     ZardButtonComponent,
     ZardInputDirective,
+    ZardCardComponent,
     ZardBadgeComponent,
     ZardAvatarComponent,
+    ...ZardDropdownImports,
+    ZardDropdownMenuComponent,
+    ...ZardFormImports,
+    ...ZardPaginationImports,
     ZardIconComponent,
+    ZardSelectComponent,
+    ZardSelectItemComponent,
+    ZardLoaderComponent,
+    ZardEmptyComponent,
+    ZardIdDirective,
   ],
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
 })
 export class UsersComponent implements OnInit {
-  private _adminService = inject(IdentityAdminService);
-  private _fb = inject(FormBuilder);
-  private _dialogService = inject(ZardDialogService);
+  private readonly _adminService = inject(IdentityAdminService);
+  private readonly _roleService = inject(RoleService);
+  private readonly _alertDialogService = inject(ZardAlertDialogService);
+  protected readonly _env = inject(ENVIRONMENT);
 
-  // Make Math available in template
-  Math = Math;
+  // Signals
+  readonly users = signal<IUser[]>([]);
+  readonly roles = signal<IRole[]>([]);
+  readonly rolesLoaded = signal(false);
+  readonly isLoading = signal(false);
+  readonly currentPage = signal(1);
+  readonly totalPages = signal(1);
+  readonly totalCount = signal(0);
+  readonly pageSize = 10;
 
-  users = signal<IUser[]>([]);
-  loading = signal(false);
-  totalCount = signal(0);
-  pageNumber = signal(1);
-  pageSize = signal(10);
-  totalPages = signal(0);
-
-  filterForm = this._fb.group<IUserFilterForm>({
-    searchTerm: this._fb.control('', { nonNullable: true }),
-    roleName: this._fb.control('', { nonNullable: true }),
-    status: this._fb.control('', { nonNullable: true }),
+  // Filter Form
+  readonly filterForm = new FormGroup<IUserFilterForm>({
+    searchTerm: new FormControl<string>('', { nonNullable: true }),
+    roleName: new FormControl<string>('__all__', { nonNullable: true }),
+    status: new FormControl<string>('__all__', { nonNullable: true }),
   });
 
-  roleOptions: Array<{ value: string; label: string }> = [
-    { value: '', label: 'All Roles' },
-    { value: 'User', label: 'User' },
-    { value: 'Admin', label: 'Admin' },
-    { value: 'SuperAdmin', label: 'Super Admin' },
-  ];
+  constructor() {
+    // Watch for page changes and reload users
+    effect(() => {
+      const page = this.currentPage();
+      if (page > 1) {
+        this.loadUsers();
+      }
+    });
 
-  statusOptions: Array<{ value: string; label: string }> = [
-    { value: '', label: 'All Status' },
-    { value: 'true', label: 'Active' },
-    { value: 'false', label: 'Inactive' },
-  ];
-
-  ngOnInit(): void {
-    this.loadUsers();
-    this.setupFilterListeners();
-  }
-
-  private setupFilterListeners(): void {
-    this.filterForm.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged())
+    // Watch for filter changes (except searchTerm which uses manual search)
+    this.filterForm
+      .get('roleName')
+      ?.valueChanges.pipe(takeUntilDestroyed())
       .subscribe(() => {
-        this.pageNumber.set(1);
+        this.currentPage.set(1);
+        this.loadUsers();
+      });
+
+    this.filterForm
+      .get('status')
+      ?.valueChanges.pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.currentPage.set(1);
         this.loadUsers();
       });
   }
 
+  ngOnInit(): void {
+    this.loadRoles();
+    this.loadUsers();
+  }
+
+  loadRoles(): void {
+    this.rolesLoaded.set(false);
+    this._roleService.getAllRoles().subscribe({
+      next: (roles) => {
+        this.roles.set(roles.filter((r) => r.status));
+        this.rolesLoaded.set(true);
+      },
+      error: (error) => {
+        console.error('Error loading roles:', error);
+        toast.error('Failed to load roles');
+        this.rolesLoaded.set(true);
+      },
+    });
+  }
+
   loadUsers(): void {
-    this.loading.set(true);
+    this.isLoading.set(true);
+
+    const formValue = this.filterForm.getRawValue();
 
     const request: IUserFilterRequest = {
-      pageNumber: this.pageNumber(),
-      pageSize: this.pageSize(),
-      searchTerm: this.filterForm.value.searchTerm || undefined,
-      roleName: this.filterForm.value.roleName || undefined,
-      status:
-        this.filterForm.value.status === ''
+      pageNumber: this.currentPage(),
+      pageSize: this.pageSize,
+      searchTerm: formValue.searchTerm || undefined,
+      roleName:
+        formValue.roleName === '__all__' ||
+        formValue.roleName === null ||
+        formValue.roleName === undefined
           ? undefined
-          : this.filterForm.value.status === 'true',
+          : formValue.roleName,
+      status:
+        formValue.status === null ||
+        formValue.status === undefined ||
+        formValue.status === '__all__'
+          ? undefined
+          : formValue.status === 'true'
+          ? true
+          : false,
     };
 
     this._adminService.getUsers(request).subscribe({
-      next: (response) => {
+      next: (response: IPaginatedResponse<IUser>) => {
         this.users.set(response.items);
-        this.totalCount.set(response.totalCount);
         this.totalPages.set(response.totalPages);
-        this.loading.set(false);
+        this.totalCount.set(response.totalCount);
+        this.isLoading.set(false);
       },
       error: (error) => {
         console.error('Error loading users:', error);
         toast.error('Failed to load users');
-        this.loading.set(false);
+        this.isLoading.set(false);
       },
     });
   }
 
-  onPageChange(page: number): void {
-    this.pageNumber.set(page);
+  onSearch(): void {
+    this.currentPage.set(1);
     this.loadUsers();
   }
 
-  onPageSizeChange(size: number): void {
-    this.pageSize.set(size);
-    this.pageNumber.set(1);
+  onClearFilters(): void {
+    this.filterForm.reset({
+      searchTerm: '',
+      roleName: '__all__',
+      status: '__all__',
+    });
+    this.currentPage.set(1);
     this.loadUsers();
   }
 
-  openAddUserDialog(): void {
-    this._dialogService.create({
-      zTitle: 'Add New User',
-      zDescription: 'Create a new user account',
-      zContent: AddUserDialogComponent,
-      zData: {},
-      zHideFooter: true,
-      zWidth: '500px',
-      zOnOk: () => {
-        toast.success('User created successfully');
-        this.loadUsers();
-      },
-    });
+  onAddUser(): void {
+    // TODO: Open add user dialog
+    toast.info('Add User dialog will be implemented');
   }
 
-  openEditUserDialog(user: IUser): void {
-    this._dialogService.create({
-      zTitle: 'Edit User',
-      zDescription: 'Update user information',
-      zContent: EditUserDialogComponent,
-      zData: { user },
-      zHideFooter: true,
-      zWidth: '500px',
-      zOnOk: () => {
-        toast.success('User updated successfully');
-        this.loadUsers();
-      },
-    });
+  onEditUser(user: IUser): void {
+    // TODO: Open edit user dialog
+    toast.info(`Edit user: ${user.firstName} ${user.lastName}`);
   }
 
-  openDeleteUserDialog(user: IUser): void {
-    this._dialogService.create({
+  onToggleStatus(user: IUser): void {
+    this._alertDialogService.confirm({
+      zTitle: `${user.status ? 'Deactivate' : 'Activate'} User`,
+      zDescription: `Are you sure you want to ${
+        user.status ? 'deactivate' : 'activate'
+      } ${user.firstName} ${user.lastName}?`,
+      zOkText: user.status ? 'Deactivate' : 'Activate',
+      zCancelText: 'Cancel',
+      zOkDestructive: user.status,
+    });
+
+    // TODO: Implement actual status toggle after confirmation
+    // this._adminService.toggleUserStatus(user.id).subscribe({
+    //   next: () => {
+    //     toast.success('User status updated successfully');
+    //     this.loadUsers();
+    //   },
+    //   error: (error) => {
+    //     console.error('Error toggling user status:', error);
+    //     toast.error('Failed to update user status');
+    //   },
+    // });
+  }
+
+  onDeleteUser(user: IUser): void {
+    this._alertDialogService.confirm({
       zTitle: 'Delete User',
-      zDescription: 'Are you sure you want to delete this user?',
-      zContent: DeleteUserDialogComponent,
-      zData: { user },
-      zHideFooter: true,
-      zWidth: '400px',
-      zOnOk: () => {
-        toast.success('User deleted successfully');
-        this.loadUsers();
-      },
+      zDescription: `Are you sure you want to delete ${user.firstName} ${user.lastName}? This action cannot be undone.`,
+      zOkText: 'Delete',
+      zCancelText: 'Cancel',
+      zOkDestructive: true,
     });
+
+    // TODO: Implement actual delete after confirmation
+    // this._adminService.deleteUser(user.id).subscribe({
+    //   next: () => {
+    //     toast.success('User deleted successfully');
+    //     this.loadUsers();
+    //   },
+    //   error: (error) => {
+    //     console.error('Error deleting user:', error);
+    //     toast.error('Failed to delete user');
+    //   },
+    // });
   }
 
-  toggleUserStatus(user: IUser): void {
-    this._adminService.toggleUserStatus(user.id).subscribe({
-      next: () => {
-        toast.success(
-          `User ${user.status ? 'deactivated' : 'activated'} successfully`
-        );
-        this.loadUsers();
-      },
-      error: (error: unknown) => {
-        console.error('Error toggling user status:', error);
-        toast.error('Failed to toggle user status');
-      },
-    });
+  getProfilePictureUrl(user: IUser): string | undefined {
+    if (user.profilePicture?.path) {
+      return `${this._env.apiUrls.fileManager}${user.profilePicture.path}`;
+    }
+    return undefined;
+  }
+
+  getUserInitials(user: IUser): string {
+    const firstInitial = user.firstName?.charAt(0) || '';
+    const lastInitial = user.lastName?.charAt(0) || '';
+    return `${firstInitial}${lastInitial}`.toUpperCase();
   }
 
   getRoleBadgeType(
-    roleName: string
-  ): 'default' | 'destructive' | 'outline' | 'secondary' {
-    switch (roleName) {
-      case 'SuperAdmin':
-        return 'destructive';
-      case 'Admin':
-        return 'secondary';
-      default:
-        return 'default';
-    }
+    role: IRole
+  ): 'default' | 'secondary' | 'destructive' | 'outline' {
+    const roleName = role.name.toLowerCase();
+    if (roleName.includes('superadmin')) return 'default';
+    if (roleName.includes('admin')) return 'secondary';
+    if (roleName.includes('service')) return 'outline';
+    return 'secondary';
   }
 
   getStatusBadgeType(status: boolean): 'default' | 'destructive' {
     return status ? 'default' : 'destructive';
-  }
-
-  getProfilePictureUrl(user: IUser): string {
-    if (user.profilePicture?.url) {
-      return user.profilePicture.url;
-    }
-    return `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=random`;
   }
 }

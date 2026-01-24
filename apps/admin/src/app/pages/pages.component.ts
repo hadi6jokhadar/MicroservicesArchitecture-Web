@@ -30,7 +30,7 @@ export class PagesComponent {
     }),
     new SidebarPageClass({
       label: 'Test Components',
-      icon: 'flask' as ZardIcon,
+      icon: 'lightbulb' as ZardIcon,
       route: '/test-components',
     }),
     new SidebarPageClass({

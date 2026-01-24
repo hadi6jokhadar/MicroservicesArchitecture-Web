@@ -1695,6 +1695,7 @@
                 formControlName="country"
                 placeholder="Select your country"
               >
+                <z-select-item [zValue]="'__all__'">{{ 'All' }}</z-select-item>
                 @for (country of countries; track country.value) {
                 <z-select-item [zValue]="country.value">{{
                   country.label

@@ -1,205 +1,281 @@
-<div class="users-page">
-  <!-- Page Header -->
-  <div class="page-header">
-    <h1 class="page-title">Users Management</h1>
-    <button
-      id="add-user-btn"
-      z-button
-      zType="default"
-      zSize="lg"
-      (click)="openAddUserDialog()"
-    >
-      <z-icon [zType]="'plus'" />
-      Add User
-    </button>
-  </div>
-
-  <!-- Filters Section -->
-  <div class="filters-section" [formGroup]="filterForm">
-    <div class="filters-grid">
-      <!-- Search Input -->
-      <div class="filter-item">
-        <label for="search-input" class="filter-label">Search</label>
-        <input
-          id="search-input"
-          z-input
-          formControlName="searchTerm"
-          placeholder="Search by name or email..."
-          type="text"
-        />
+<div class="users-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>Users Management</h1>
+        <p>Manage user accounts, roles, and permissions</p>
       </div>
-
-      <!-- Role Filter -->
-      <div class="filter-item">
-        <label for="role-filter" class="filter-label">Role</label>
-        <select
-          id="role-filter"
-          formControlName="roleName"
-          class="select-input"
-        >
-          @for (option of roleOptions; track option.value) {
-          <option [value]="option.value">{{ option.label }}</option>
-          }
-        </select>
-      </div>
-
-      <!-- Status Filter -->
-      <div class="filter-item">
-        <label for="status-filter" class="filter-label">Status</label>
-        <select
-          id="status-filter"
-          formControlName="status"
-          class="select-input"
-        >
-          @for (option of statusOptions; track option.value) {
-          <option [value]="option.value">{{ option.label }}</option>
-          }
-        </select>
-      </div>
+      <button
+        z-button
+        zType="default"
+        zSize="lg"
+        (click)="onAddUser()"
+        id="add-user-btn"
+      >
+        <z-icon zType="user-plus" />
+        Add User
+      </button>
     </div>
   </div>
 
-  <!-- Table Section -->
-  <div class="table-section">
-    @if (loading()) {
-    <div class="loading-state">
-      <z-icon [zType]="'loader-circle'" class="animate-spin" />
-      <span>Loading users...</span>
+  <!-- Filter Form Card -->
+  <z-card zPadding="lg">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <!-- Search Input -->
+        <z-form-field
+          class="filter-field search-field"
+          zardId="searchTerm"
+          #s="zardId"
+        >
+          <label z-form-label [for]="s.id()">Search</label>
+          <z-form-control>
+            <div class="search-input-wrapper">
+              <z-icon zType="search" class="search-icon" />
+              <input
+                z-input
+                [id]="s.id()"
+                type="text"
+                formControlName="searchTerm"
+                placeholder="Search by name, email, or phone..."
+                (keyup.enter)="onSearch()"
+              />
+            </div>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Role Filter -->
+        <z-form-field class="filter-field" zardId="roleName" #f="zardId">
+          <label z-form-label [for]="f.id()">Role</label>
+          <z-form-control>
+            @if (rolesLoaded()) {
+            <z-select
+              [id]="f.id()"
+              zPlaceholder="All Roles"
+              formControlName="roleName"
+            >
+              <z-select-item zValue="__all__">All Roles</z-select-item>
+              @for (role of roles(); track role.id) {
+              <z-select-item [zValue]="role.name">
+                {{ role.name }}
+              </z-select-item>
+              }
+            </z-select>
+            } @else {
+            <z-loader zSize="sm" />
+            }
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Status Filter -->
+        <z-form-field class="filter-field" zardId="status" #st="zardId">
+          <label z-form-label [for]="st.id()">Status</label>
+          <z-form-control>
+            <z-select
+              [id]="st.id()"
+              zPlaceholder="All Status"
+              formControlName="status"
+            >
+              <z-select-item zValue="__all__">All Status</z-select-item>
+              <z-select-item zValue="true">Active</z-select-item>
+              <z-select-item zValue="false">Inactive</z-select-item>
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Action Buttons -->
+        <div class="filter-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            (click)="onClearFilters()"
+            type="button"
+            id="clear-filters-btn"
+          >
+            <z-icon zType="x" />
+            Clear
+          </button>
+          <button
+            z-button
+            zType="default"
+            zSize="default"
+            (click)="onSearch()"
+            type="button"
+            id="search-btn"
+          >
+            <z-icon zType="search" />
+            Search
+          </button>
+        </div>
+      </div>
+    </form>
+  </z-card>
+
+  <!-- Users Table Card -->
+  <z-card class="table-card">
+    @if (isLoading()) {
+    <div class="loading-container">
+      <z-loader zSize="lg" />
+      <p>Loading users...</p>
     </div>
     } @else if (users().length === 0) {
-    <div class="empty-state">
-      <z-icon [zType]="'users'" />
-      <h3>No users found</h3>
-      <p>Try adjusting your filters or create a new user.</p>
+    <div class="empty-container">
+      <z-empty
+        zIcon="users"
+        zTitle="No users found"
+        zDescription="No users match your search criteria. Try adjusting your filters."
+      />
     </div>
     } @else {
     <div class="table-container">
-      <table z-table class="users-table">
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Created</th>
-            <th class="actions-column">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (user of users(); track user.id) {
-          <tr>
-            <!-- User Column with Avatar -->
-            <td>
-              <div class="user-cell">
-                <z-avatar [zSrc]="getProfilePictureUrl(user)" zSize="md" />
-                <span class="user-name"
-                  >{{ user.firstName }} {{ user.lastName }}</span
-                >
-              </div>
-            </td>
-
-            <!-- Email -->
-            <td>{{ user.email }}</td>
-
-            <!-- Phone -->
-            <td>{{ user.phoneNumber || '-' }}</td>
-
-            <!-- Role Badge -->
-            <td>
-              <z-badge
-                [zType]="getRoleBadgeType(user.roles[0]?.name || 'User')"
-              >
-                {{ user.roles[0]?.name || 'User' }}
-              </z-badge>
-            </td>
-
-            <!-- Status Badge -->
-            <td>
-              <z-badge [zType]="getStatusBadgeType(user.status)">
-                {{ user.status ? 'Active' : 'Inactive' }}
-              </z-badge>
-            </td>
-
-            <!-- Created Date -->
-            <td>{{ user.created | date : 'short' }}</td>
-
-            <!-- Actions -->
-            <td class="actions-column">
-              <div class="action-buttons">
-                <button
-                  [id]="'edit-user-' + user.id"
-                  z-button
-                  zType="ghost"
-                  zSize="sm"
-                  (click)="openEditUserDialog(user)"
-                  title="Edit user"
-                >
-                  <z-icon [zType]="'file-text'" />
-                </button>
-
-                <button
-                  [id]="'toggle-status-' + user.id"
-                  z-button
-                  zType="ghost"
-                  zSize="sm"
-                  (click)="toggleUserStatus(user)"
-                  [title]="user.status ? 'Deactivate user' : 'Activate user'"
-                >
-                  <z-icon [zType]="user.status ? 'ban' : 'user-plus'" />
-                </button>
-
-                <button
-                  [id]="'delete-user-' + user.id"
-                  z-button
-                  zType="ghost"
-                  zSize="sm"
-                  class="danger-btn"
-                  (click)="openDeleteUserDialog(user)"
-                  title="Delete user"
-                >
-                  <z-icon [zType]="'trash'" />
-                </button>
-              </div>
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Pagination -->
-    <div class="pagination-section">
-      <div class="pagination-info">
-        Showing {{ (pageNumber() - 1) * pageSize() + 1 }} to
-        {{ Math.min(pageNumber() * pageSize(), totalCount()) }} of
-        {{ totalCount() }} users
+      <!-- Results Info -->
+      <div class="table-header">
+        <div class="results-info">
+          <z-icon zType="users" />
+          <span>Showing {{ users().length }} of {{ totalCount() }} users</span>
+        </div>
       </div>
 
-      <div class="pagination-controls">
-        <button
-          z-button
-          zType="outline"
-          zSize="sm"
-          [disabled]="pageNumber() === 1"
-          (click)="onPageChange(pageNumber() - 1)"
-        >
-          Previous
-        </button>
-        <span class="page-indicator"
-          >{{ pageNumber() }} / {{ totalPages() }}</span
-        >
-        <button
-          z-button
-          zType="outline"
-          zSize="sm"
-          [disabled]="pageNumber() === totalPages()"
-          (click)="onPageChange(pageNumber() + 1)"
-        >
-          Next
-        </button>
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th class="col-avatar">Avatar</th>
+              <th class="col-name">Name</th>
+              <th class="col-email">Email</th>
+              <th class="col-phone">Phone</th>
+              <th class="col-roles">Roles</th>
+              <th class="col-status">Status</th>
+              <th class="col-created">Created</th>
+              <th class="col-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users(); track user.id) {
+            <tr class="user-row">
+              <!-- Avatar -->
+              <td class="col-avatar">
+                <z-avatar
+                  zSize="md"
+                  zShape="circle"
+                  [zSrc]="getProfilePictureUrl(user)"
+                  [zFallback]="getUserInitials(user)"
+                  [zAlt]="user.firstName + ' ' + user.lastName"
+                />
+              </td>
+
+              <!-- Name -->
+              <td class="col-name">
+                <div class="name-cell">
+                  <span class="name-text"
+                    >{{ user.firstName }} {{ user.lastName }}</span
+                  >
+                  @if (user.emailConfirmed) {
+                  <z-icon
+                    zType="badge-check"
+                    class="verified-icon"
+                    title="Email verified"
+                  />
+                  }
+                </div>
+              </td>
+
+              <!-- Email -->
+              <td class="col-email">
+                <span class="email-text">{{ user.email || 'N/A' }}</span>
+              </td>
+
+              <!-- Phone -->
+              <td class="col-phone">
+                <span class="phone-text">{{ user.phoneNumber || 'N/A' }}</span>
+              </td>
+
+              <!-- Roles -->
+              <td class="col-roles">
+                <div class="roles-badges">
+                  @for (role of user.roles; track role.id) {
+                  <z-badge [zType]="getRoleBadgeType(role)" zShape="pill">
+                    {{ role.name }}
+                  </z-badge>
+                  } @empty {
+                  <span class="no-roles">No roles</span>
+                  }
+                </div>
+              </td>
+
+              <!-- Status -->
+              <td class="col-status">
+                <z-badge
+                  [zType]="getStatusBadgeType(user.status)"
+                  zShape="pill"
+                >
+                  {{ user.status ? 'Active' : 'Inactive' }}
+                </z-badge>
+              </td>
+
+              <!-- Created Date -->
+              <td class="col-created">
+                <span class="date-text">{{
+                  user.created | date : 'mediumDate'
+                }}</span>
+              </td>
+
+              <!-- Actions Dropdown -->
+              <td class="col-actions">
+                <z-dropdown-menu>
+                  <button
+                    z-button
+                    zType="ghost"
+                    zSize="sm"
+                    zDropdown
+                    [id]="'user-actions-' + user.id"
+                  >
+                    <z-icon zType="ellipsis" />
+                  </button>
+                  <z-dropdown-menu-content>
+                    <z-dropdown-menu-item
+                      (click)="onEditUser(user)"
+                      [id]="'edit-user-' + user.id"
+                    >
+                      <z-icon zType="file-text" />
+                      Edit User
+                    </z-dropdown-menu-item>
+
+                    <z-dropdown-menu-item
+                      (click)="onToggleStatus(user)"
+                      [id]="'toggle-status-' + user.id"
+                    >
+                      <z-icon [zType]="user.status ? 'ban' : 'check'" />
+                      {{ user.status ? 'Deactivate' : 'Activate' }}
+                    </z-dropdown-menu-item>
+
+                    <z-dropdown-menu-item
+                      (click)="onDeleteUser(user)"
+                      [id]="'delete-user-' + user.id"
+                      class="delete-action"
+                    >
+                      <z-icon zType="trash" />
+                      Delete User
+                    </z-dropdown-menu-item>
+                  </z-dropdown-menu-content>
+                </z-dropdown-menu>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
       </div>
+
+      <!-- Pagination -->
+      @if (totalPages() > 1) {
+      <div class="pagination-container">
+        <z-pagination [zTotal]="totalPages()" [(zPageIndex)]="currentPage" />
+      </div>
+      }
     </div>
     }
-  </div>
+  </z-card>
 </div>

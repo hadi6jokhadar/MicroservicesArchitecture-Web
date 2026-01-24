@@ -83,6 +83,12 @@
         "staticFilePath": "dist/apps/admin/browser",
         "spa": true
       }
+    },
+    "start-backend": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "..\\MicroservicesArchitecture\\src\\Services\\run-all-development-instances.bat"
+      }
     }
   }
 }
