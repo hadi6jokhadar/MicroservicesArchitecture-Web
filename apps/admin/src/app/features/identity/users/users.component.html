@@ -225,43 +225,42 @@
 
               <!-- Actions Dropdown -->
               <td class="col-actions">
-                <z-dropdown-menu>
-                  <button
-                    z-button
-                    zType="ghost"
-                    zSize="sm"
-                    zDropdown
-                    [id]="'user-actions-' + user.id"
+                <button
+                  z-button
+                  zType="outline"
+                  zSize="sm"
+                  z-dropdown
+                  [zDropdownMenu]="actionsMenu"
+                  [id]="'user-actions-' + user.id"
+                >
+                  <z-icon zType="ellipsis" />
+                </button>
+                <z-dropdown-menu-content #actionsMenu="zDropdownMenuContent">
+                  <z-dropdown-menu-item
+                    (click)="onEditUser(user)"
+                    [id]="'edit-user-' + user.id"
                   >
-                    <z-icon zType="ellipsis" />
-                  </button>
-                  <z-dropdown-menu-content>
-                    <z-dropdown-menu-item
-                      (click)="onEditUser(user)"
-                      [id]="'edit-user-' + user.id"
-                    >
-                      <z-icon zType="file-text" />
-                      Edit User
-                    </z-dropdown-menu-item>
+                    <z-icon zType="file-text" />
+                    Edit User
+                  </z-dropdown-menu-item>
 
-                    <z-dropdown-menu-item
-                      (click)="onToggleStatus(user)"
-                      [id]="'toggle-status-' + user.id"
-                    >
-                      <z-icon [zType]="user.status ? 'ban' : 'check'" />
-                      {{ user.status ? 'Deactivate' : 'Activate' }}
-                    </z-dropdown-menu-item>
+                  <z-dropdown-menu-item
+                    (click)="onToggleStatus(user)"
+                    [id]="'toggle-status-' + user.id"
+                  >
+                    <z-icon [zType]="user.status ? 'ban' : 'check'" />
+                    {{ user.status ? 'Deactivate' : 'Activate' }}
+                  </z-dropdown-menu-item>
 
-                    <z-dropdown-menu-item
-                      (click)="onDeleteUser(user)"
-                      [id]="'delete-user-' + user.id"
-                      class="delete-action"
-                    >
-                      <z-icon zType="trash" />
-                      Delete User
-                    </z-dropdown-menu-item>
-                  </z-dropdown-menu-content>
-                </z-dropdown-menu>
+                  <z-dropdown-menu-item
+                    (click)="onDeleteUser(user)"
+                    [id]="'delete-user-' + user.id"
+                    class="delete-action"
+                  >
+                    <z-icon zType="trash" />
+                    Delete User
+                  </z-dropdown-menu-item>
+                </z-dropdown-menu-content>
               </td>
             </tr>
             }

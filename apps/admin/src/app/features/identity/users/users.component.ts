@@ -2,29 +2,33 @@ import { CommonModule } from '@angular/common';
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { toast } from 'ngx-sonner';
 import {
-  ZardButtonComponent,
-  ZardInputDirective,
-  ZardCardComponent,
-  ZardBadgeComponent,
+  ENVIRONMENT,
+  IdentityAdminService,
+  IPaginatedResponse,
+  IRole,
+  IUser,
+  IUserFilterRequest,
+  RoleService,
+} from '@ihsan/core';
+import {
+  ZardAlertDialogService,
   ZardAvatarComponent,
+  ZardBadgeComponent,
+  ZardButtonComponent,
+  ZardCardComponent,
   ZardDropdownImports,
-  ZardDropdownMenuComponent,
+  ZardEmptyComponent,
   ZardFormImports,
-  ZardPaginationImports,
   ZardIconComponent,
+  ZardIdDirective,
+  ZardInputDirective,
+  ZardLoaderComponent,
+  ZardPaginationImports,
   ZardSelectComponent,
   ZardSelectItemComponent,
-  ZardLoaderComponent,
-  ZardEmptyComponent,
-  ZardAlertDialogService,
-  ZardIdDirective,
 } from '@ihsan/ui';
-import { IdentityAdminService, IUserFilterRequest } from '@ihsan/core';
-import { IUser, IPaginatedResponse, IRole } from '@ihsan/core';
-import { RoleService } from '@ihsan/core';
-import { ENVIRONMENT } from '@ihsan/core';
+import { toast } from 'ngx-sonner';
 
 interface IUserFilterForm {
   searchTerm: FormControl<string>;
@@ -44,7 +48,6 @@ interface IUserFilterForm {
     ZardBadgeComponent,
     ZardAvatarComponent,
     ...ZardDropdownImports,
-    ZardDropdownMenuComponent,
     ...ZardFormImports,
     ...ZardPaginationImports,
     ZardIconComponent,

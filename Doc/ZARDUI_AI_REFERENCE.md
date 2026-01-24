@@ -484,41 +484,124 @@ constructor() {
 
 ---
 
+### Dropdown Menu Component
+
+**Import:**
+
+```typescript
+import { ZardDropdownImports } from '@ihsan/ui';
+```
+
+**Components Included:**
+
+- `ZardDropdownDirective` - Directive for the trigger button
+- `ZardDropdownMenuContentComponent` - Menu content container
+- `ZardDropdownMenuItemComponent` - Individual menu items
+
 **CRITICAL NOTES:**
 
+- ✅ **Use `z-dropdown` directive** on the button (NOT a wrapper component)
+- ✅ **Bind menu with `[zDropdownMenu]="menuRef"`** property
+- ✅ **Add template reference `#menuRef="zDropdownMenuContent"`** to menu content
+- ❌ **NO `<z-dropdown-menu>` wrapper component** - This does NOT exist
 - ❌ **NO `ZardDropdownMenuDividerComponent`** - This component does NOT exist
-- ✅ Remove dividers or use spacing/grouping instead
 
 **Usage:**
 
-````html
-<button z-button zDropdown>Actions</button>
-<z-dropdown-menu-content>
-  <z-dropdown-menu-item (click)="edit()">
+```html
+<!-- ✅ CORRECT - Basic Dropdown -->
+<button z-button zType="outline" z-dropdown [zDropdownMenu]="actionsMenu">
+  <z-icon zType="ellipsis" />
+</button>
+<z-dropdown-menu-content #actionsMenu="zDropdownMenuContent">
+  <z-dropdown-menu-item (click)="onEdit()">
     <z-icon zType="file-text" />
     Edit
   </z-dropdown-menu-item>
 
-  <!-- NO divider component available --nent`
-- `ZardDropdownMenuDividerComponent`
-
-**Usage:**
-```html
-<button z-button zDropdown>Actions</button>
-<z-dropdown-menu-content>
-  <z-dropdown-menu-item (click)="edit()">
-    <z-icon zType="edit" />
-    Edit
-  </z-dropdown-menu-item>
-
-  <z-dropdown-menu-divider />
-
-  <z-dropdown-menu-item (click)="delete()" class="delete-action">
+  <z-dropdown-menu-item (click)="onDelete()" class="delete-action">
     <z-icon zType="trash" />
     Delete
   </z-dropdown-menu-item>
 </z-dropdown-menu-content>
-````
+
+<!-- ✅ CORRECT - Dynamic Menu in Table -->
+@for (user of users(); track user.id) {
+<td>
+  <button
+    z-button
+    zType="outline"
+    zSize="sm"
+    z-dropdown
+    [zDropdownMenu]="userMenu"
+    [id]="'user-actions-' + user.id"
+  >
+    <z-icon zType="ellipsis" />
+  </button>
+  <z-dropdown-menu-content #userMenu="zDropdownMenuContent">
+    <z-dropdown-menu-item (click)="onEdit(user)">
+      <z-icon zType="file-text" />
+      Edit User
+    </z-dropdown-menu-item>
+
+    <z-dropdown-menu-item (click)="onToggleStatus(user)">
+      <z-icon [zType]="user.status ? 'ban' : 'check'" />
+      {{ user.status ? 'Deactivate' : 'Activate' }}
+    </z-dropdown-menu-item>
+
+    <z-dropdown-menu-item (click)="onDelete(user)" class="delete-action">
+      <z-icon zType="trash" />
+      Delete User
+    </z-dropdown-menu-item>
+  </z-dropdown-menu-content>
+</td>
+}
+```
+
+**Common Mistakes:**
+
+```html
+<!-- ❌ WRONG - Using wrapper component -->
+<z-dropdown-menu>
+  <button z-button zDropdown>Actions</button>
+  <z-dropdown-menu-content>...</z-dropdown-menu-content>
+</z-dropdown-menu>
+
+<!-- ❌ WRONG - Missing template reference -->
+<button z-button z-dropdown>Actions</button>
+<z-dropdown-menu-content>...</z-dropdown-menu-content>
+
+<!-- ❌ WRONG - Missing [zDropdownMenu] binding -->
+<button z-button z-dropdown>Actions</button>
+<z-dropdown-menu-content #menu="zDropdownMenuContent"
+  >...</z-dropdown-menu-content
+>
+```
+
+**Styling Delete Actions:**
+
+```scss
+:host {
+  z-dropdown-menu-content {
+    .delete-action {
+      color: var(--color-destructive);
+
+      z-icon {
+        color: var(--color-destructive);
+      }
+
+      &:hover {
+        background: var(--color-destructive);
+        color: white;
+
+        z-icon {
+          color: white;
+        }
+      }
+    }
+  }
+}
+```
 
 ---
 
@@ -834,12 +917,17 @@ export class MySheetComponent {
           </z-badge>
         </td>
         <td>
-          <button z-button zType="ghost" zDropdown>
-            <z-icon zType="more-vertical" />
+          <button
+            z-button
+            zType="outline"
+            z-dropdown
+            [zDropdownMenu]="actionsMenu"
+          >
+            <z-icon zType="ellipsis" />
           </button>
-          <z-dropdown-menu-content>
+          <z-dropdown-menu-content #actionsMenu="zDropdownMenuContent">
             <z-dropdown-menu-item (click)="onEdit(user)">
-              <z-icon zType="edit" />
+              <z-icon zType="file-text" />
               Edit
             </z-dropdown-menu-item>
             <z-dropdown-menu-item (click)="onDelete(user)">
@@ -949,7 +1037,33 @@ constructor() {
 <z-pagination [(zPageIndex)]="page" [zTotal]="totalPages()" />
 ```
 
-### 11. Using Non-Existent Divider Component
+### 11. Wrong Dropdown Menu Structure
+
+```html
+<!-- ❌ WRONG - Using wrapper component -->
+<z-dropdown-menu>
+  <button z-button zDropdown>Actions</button>
+  <z-dropdown-menu-content>...</z-dropdown-menu-content>
+</z-dropdown-menu>
+
+<!-- ❌ WRONG - Missing template reference -->
+<button z-button z-dropdown>Actions</button>
+<z-dropdown-menu-content>...</z-dropdown-menu-content>
+
+<!-- ❌ WRONG - Missing [zDropdownMenu] binding -->
+<button z-button z-dropdown>Actions</button>
+<z-dropdown-menu-content #menu="zDropdownMenuContent"
+  >...</z-dropdown-menu-content
+>
+
+<!-- ✅ CORRECT - Button with directive, menu binding, and template reference -->
+<button z-button z-dropdown [zDropdownMenu]="menu">Actions</button>
+<z-dropdown-menu-content #menu="zDropdownMenuContent">
+  <z-dropdown-menu-item (click)="onEdit()">Edit</z-dropdown-menu-item>
+</z-dropdown-menu-content>
+```
+
+### 12. Using Non-Existent Divider Component
 
 ```html
 <!-- ❌ WRONG -->
@@ -959,27 +1073,29 @@ constructor() {
 <!-- No divider component - use spacing or grouping instead -->
 ```
 
-### 12. Card with Non-Existent Properties
+### 13. Card with Non-Existent Properties
 
 ```html
 <!-- ❌ WRONG -->
 <z-card zPadding="lg" zElevation="md">
-  <!-- ✅ CORRECT -->
-  <z-card></z-card
-></z-card>
+  <!-- content -->
+</z-card>
+
+<!-- ✅ CORRECT -->
+<z-card>
+  <!-- content -->
+</z-card>
 ```
 
-### 13. Loader with Non-Existent zType
+### 14. Loader with Non-Existent zType
 
-````html
+```html
 <!-- ❌ WRONG -->
 <z-loader zType="spinner" />
 
 <!-- ✅ CORRECT -->
 <z-loader zSize="lg" />
-```- ✅ CORRECT -->
-<button z-button zType="default">Save</button>
-````
+```
 
 ### 2. Wrong Button Size
 

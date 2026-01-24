@@ -125,8 +125,23 @@ export class ZardDropdownService {
           overlayY: 'bottom',
           offsetY: -4,
         },
+        {
+          originX: 'end',
+          originY: 'bottom',
+          overlayX: 'end',
+          overlayY: 'top',
+          offsetY: 4,
+        },
+        {
+          originX: 'end',
+          originY: 'top',
+          overlayX: 'end',
+          overlayY: 'bottom',
+          offsetY: -4,
+        },
       ])
-      .withPush(false);
+      .withPush(true)
+      .withViewportMargin(8);
 
     this.overlayRef = this.overlay.create({
       positionStrategy,
