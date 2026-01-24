@@ -35,6 +35,7 @@ export class SidebarComponent {
 
   pageClicked = output<ISidebarPage>();
   darkModeToggled = output<void>();
+  logoutClicked = output<void>();
 
   expandedPages = signal<Set<string>>(new Set());
 
@@ -124,6 +125,10 @@ export class SidebarComponent {
 
   onToggleDarkMode(): void {
     this.darkModeToggled.emit();
+  }
+
+  onLogout(): void {
+    this.logoutClicked.emit();
   }
 
   getGroupedPages(): Map<string, ISidebarPage[]> {

@@ -1,0 +1,117 @@
+<div class="login-container">
+  <div class="login-wrapper">
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <h1 class="title">Welcome Back</h1>
+      <p class="subtitle">Sign in to your account to continue</p>
+    </div>
+
+    <!-- Login Card -->
+    <z-card class="login-card">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Email Field -->
+        <z-form-field>
+          <label z-form-label for="email">Email</label>
+          <div class="input-icon-wrapper">
+            <z-icon zType="mail" class="input-icon" />
+            <input
+              z-input
+              zId="email"
+              type="email"
+              formControlName="email"
+              placeholder="you@example.com"
+              [class.error]="emailControl?.invalid && emailControl?.touched"
+            />
+          </div>
+          @if (emailControl?.hasError('required') && emailControl?.touched) {
+          <span z-form-error>Email is required</span>
+          } @if (emailControl?.hasError('email') && emailControl?.touched) {
+          <span z-form-error>Please enter a valid email address</span>
+          }
+        </z-form-field>
+
+        <!-- Password Field -->
+        <z-form-field>
+          <label z-form-label for="password">Password</label>
+          <div class="input-icon-wrapper password-wrapper">
+            <z-icon zType="shield" class="input-icon" />
+            <input
+              z-input
+              zId="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="Enter your password"
+              [class.error]="
+                passwordControl?.invalid && passwordControl?.touched
+              "
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="
+                showPassword() ? 'Hide password' : 'Show password'
+              "
+            >
+              <z-icon [zType]="showPassword() ? 'eye' : 'eye'" />
+            </button>
+          </div>
+          @if (passwordControl?.hasError('required') &&
+          passwordControl?.touched) {
+          <span z-form-error>Password is required</span>
+          } @if (passwordControl?.hasError('minlength') &&
+          passwordControl?.touched) {
+          <span z-form-error>Password must be at least 6 characters</span>
+          }
+        </z-form-field>
+
+        <!-- Error Message -->
+        @if (errorMessage()) {
+        <div class="error-banner">
+          <z-icon zType="circle-alert" />
+          <span>{{ errorMessage() }}</span>
+        </div>
+        }
+
+        <!-- Submit Button -->
+        <button
+          z-button
+          zType="default"
+          zSize="lg"
+          type="submit"
+          class="submit-button"
+          [zLoading]="isLoading()"
+          [zDisabled]="isLoading()"
+          id="login-submit-button"
+        >
+          @if (isLoading()) { Signing in... } @else { Sign In }
+        </button>
+
+        <!-- Additional Links -->
+        @if (showForgotPassword() || showCreateAccount()) {
+        <div class="links-section">
+          @if (showForgotPassword()) {
+          <a href="#" class="link">Forgot password?</a>
+          } @if (showForgotPassword() && showCreateAccount()) {
+          <span class="separator">•</span>
+          } @if (showCreateAccount()) {
+          <a href="#" class="link">Create account</a>
+          }
+        </div>
+        }
+      </form>
+    </z-card>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>© 2026 Microservices Architecture. All rights reserved.</p>
+    </div>
+  </div>
+
+  <!-- Decorative Background -->
+  <div class="background-decoration">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="circle circle-3"></div>
+  </div>
+</div>

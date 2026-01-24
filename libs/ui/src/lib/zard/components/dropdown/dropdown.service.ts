@@ -4,6 +4,7 @@ import {
   type OverlayRef,
 } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
+import { Directionality } from '@angular/cdk/bidi';
 import { isPlatformBrowser } from '@angular/common';
 import {
   type ElementRef,
@@ -27,6 +28,7 @@ import { noopFn } from '../../utils/merge-classes';
 export class ZardDropdownService {
   private readonly overlay = inject(Overlay);
   private readonly overlayPositionBuilder = inject(OverlayPositionBuilder);
+  private readonly dir = inject(Directionality);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly rendererFactory = inject(RendererFactory2);
 
@@ -147,6 +149,7 @@ export class ZardDropdownService {
       positionStrategy,
       hasBackdrop: false,
       scrollStrategy: this.overlay.scrollStrategies.reposition(),
+      direction: this.dir.value,
       minWidth: 200,
       maxHeight: 400,
     });

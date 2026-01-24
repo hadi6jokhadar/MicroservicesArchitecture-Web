@@ -1,7 +1,8 @@
 import { Component, signal, effect, inject, PLATFORM_ID } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { ZardIcon } from '@ihsan/ui/lib/zard/components/icon';
+import { AuthService } from '@ihsan/core';
 import {
   ISidebarPage,
   ISidebarUser,
@@ -18,6 +19,8 @@ import {
 })
 export class PagesComponent {
   private _platformId = inject(PLATFORM_ID);
+  private _authService = inject(AuthService);
+  private _router = inject(Router);
   private readonly DARK_MODE_KEY = 'theme-preference';
 
   isDarkMode = signal<boolean>(false);
@@ -124,5 +127,17 @@ export class PagesComponent {
 
   toggleDarkMode(): void {
     this.isDarkMode.update((current) => !current);
+  }
+
+  onLogout(): void {
+    this._authService.logout().subscribe({
+      next: () => {
+        this._router.navigate(['/login']);
+      },
+      error: () => {
+        // Even if API call fails, clear local auth and redirect
+        this._router.navigate(['/login']);
+      },
+    });
   }
 }

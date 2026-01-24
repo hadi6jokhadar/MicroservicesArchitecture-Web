@@ -163,7 +163,8 @@
     margin-block-start: auto;
     padding-block-start: 1rem;
 
-    .dark-mode-btn {
+    .dark-mode-btn,
+    .logout-btn {
       inline-size: 100%;
       display: flex;
       align-items: center;
@@ -171,9 +172,14 @@
       gap: 0.5rem;
       margin-block-start: 0.75rem;
 
-      .dark-mode-icon {
+      .dark-mode-icon,
+      .logout-icon {
         font-size: 1rem;
       }
+    }
+
+    .logout-btn {
+      margin-block-start: 0.5rem;
     }
   }
 

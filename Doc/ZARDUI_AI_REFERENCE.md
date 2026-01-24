@@ -622,35 +622,133 @@ import { ZardFormImports } from '@ihsan/ui';
 
 **Usage:**
 
-````html
+```html
 <z-form-field>
   <label z-form-label for="email">Email</label>
   <input z-input zId="email" formControlName="email" />
   <span z-form-description>We'll never share your email</span>
   <span z-form-error *ngIf="form.get('email')?.hasError('required')">
-    Email is required (REQUIRED) - `zSize: 'xs' | 'sm' | 'md' | 'lg' | 'xl' |
-    number` - `zStrokeWidth: number` **CRITICAL NOTES:** - ✅ **Use `zType`
-    property** (REQUIRED) - NOT `name` - ✅ **Available icons**: See list below
-    or [Lucide Icons](https://lucide.dev/icons/) **Available Icons in
-    ZARD_ICONS:** ```typescript 'house', 'settings', 'user', 'search', 'bell',
-    'mail', 'calendar', 'log-out', 'panel-left', 'bold', 'inbox', 'italic',
-    'underline', 'check', 'x', 'info', 'triangle-alert', 'circle',
-    'circle-alert', 'circle-check', 'circle-x', 'ban', 'chevron-down',
-    'chevron-up', 'chevron-left', 'chevron-right', 'chevrons-up-down',
-    'move-right', 'arrow-right', 'arrow-up', 'arrow-up-right', 'arrow-left',
-    'folder', 'folder-open', 'folder-plus', 'folder-code', 'file', 'file-text',
-    'layout-dashboard', 'loader-circle', 'save', 'copy', 'eye', 'ellipsis',
-    'terminal', 'clipboard', 'moon', 'sun', 'lightbulb', 'lightbulb-off',
-    'palette', 'sparkles', 'heart', 'star', 'zap', 'popcorn', 'shield',
-    'puzzle', 'layers', 'layers-2', 'square-library', 'code', 'code-xml',
-    'book-open', 'book-open-text', 'users', 'user-plus', 'monitor',
-    'smartphone', 'tablet', 'badge-check', 'plus', 'minus', 'archive', 'clock',
-    'calendar-plus', 'list-filter-plus', 'trash', 'tag', 'sun-moon',
-    'dark-mode', 'square', 'dollar-sign', 'credit-card', 'activity',
-    'circle-dollar-sign', 'circle-small'</span
-  ></z-form-field
->
-````
+    Email is required
+  </span>
+</z-form-field>
+```
+
+---
+
+### Icon Component
+
+**Import:**
+
+```typescript
+import { ZardIconComponent } from '@ihsan/ui';
+```
+
+**Properties (VERIFIED):**
+
+- `zType: string` (REQUIRED) - Icon name from Lucide Icons
+- `zSize: 'sm' | 'default' | 'lg' | 'xl'` (NO 'xs', 'md', or number values)
+- `zStrokeWidth: number` - Custom stroke width
+
+**CRITICAL NOTES:**
+
+- ✅ **Use `zType` property** (REQUIRED) - NOT `name`
+- ✅ **Only use predefined size variants** - NO custom number values like `[zSize]="48"`
+- ✅ **Available sizes**: `'sm'`, `'default'`, `'lg'`, `'xl'` ONLY
+- ✅ **Available icons**: See [Lucide Icons](https://lucide.dev/icons/)
+
+**Available Icons in ZARD_ICONS:**
+
+```typescript
+'house',
+  'settings',
+  'user',
+  'search',
+  'bell',
+  'mail',
+  'calendar',
+  'log-out',
+  'panel-left',
+  'bold',
+  'inbox',
+  'italic',
+  'underline',
+  'check',
+  'x',
+  'info',
+  'triangle-alert',
+  'circle',
+  'circle-alert',
+  'circle-check',
+  'circle-x',
+  'ban',
+  'chevron-down',
+  'chevron-up',
+  'chevron-left',
+  'chevron-right',
+  'chevrons-up-down',
+  'move-right',
+  'arrow-right',
+  'arrow-up',
+  'arrow-up-right',
+  'arrow-left',
+  'folder',
+  'folder-open',
+  'folder-plus',
+  'folder-code',
+  'file',
+  'file-text',
+  'layout-dashboard',
+  'loader-circle',
+  'save',
+  'copy',
+  'eye',
+  'ellipsis',
+  'terminal',
+  'clipboard',
+  'moon',
+  'sun',
+  'lightbulb',
+  'lightbulb-off',
+  'palette',
+  'sparkles',
+  'heart',
+  'star',
+  'zap',
+  'popcorn',
+  'shield',
+  'puzzle',
+  'layers',
+  'layers-2',
+  'square-library',
+  'code',
+  'code-xml',
+  'book-open',
+  'book-open-text',
+  'users',
+  'user-plus',
+  'monitor',
+  'smartphone',
+  'tablet',
+  'badge-check',
+  'plus',
+  'minus',
+  'archive',
+  'clock',
+  'calendar-plus',
+  'list-filter-plus',
+  'trash',
+  'tag',
+  'sun-moon',
+  'dark-mode',
+  'square',
+  'dollar-sign',
+  'credit-card',
+  'activity',
+  'circle-dollar-sign',
+  'circle-small';
+```
+
+`````
 
 **Common Icon Name Corrections:**
 
@@ -666,32 +764,18 @@ import { ZardFormImports } from '@ihsan/ui';
 <!-- Basic Icon (zType is REQUIRED) -->
 <z-icon zType="home" />
 
-<!-- Sized Icon -->
-<z-icon zType="settings" zSize="xl" />
+<!-- Small Icon -->
+<z-icon zType="settings" zSize="sm" />
 
-<!-- Custom Size -->
-<z-icon zType="user" [zSize]="32" />
+<!-- Large Icon -->
+<z-icon zType="settings" zSize="lg" />
+
+<!-- Extra Large Icon -->
+<z-icon zType="shield" zSize="xl" />
 
 <!-- Dynamic Icon -->
 <z-icon [zType]="isActive ? 'check' : 'ban'" />
 ```
-
-- `zStrokeWidth: number`
-
-**Usage:**
-
-```html
-<!-- Basic Icon -->
-<z-icon zType="home" />
-
-<!-- Sized Icon -->
-<z-icon zType="settings" zSize="xl" />
-
-<!-- Custom Size -->
-<z-icon zType="user" [zSize]="32" />
-```
-
-**Icons:** See [Lucide Icons](https://lucide.dev/icons/)
 
 ---
 
@@ -970,9 +1054,23 @@ export class MySheetComponent {
 
 <!-- ✅ CORRECT -->
 <z-icon zType="settings" />
-````
+`````
 
-### 7. Wrong Icon Names
+### 7. Icon with Number Size Instead of Predefined Variants
+
+```html
+<!-- ❌ WRONG - Using number value for size -->
+<z-icon zType="shield" [zSize]="48" />
+<z-icon zType="user" [zSize]="32" />
+
+<!-- ✅ CORRECT - Use predefined size variants only -->
+<z-icon zType="shield" zSize="xl" />
+<z-icon zType="user" zSize="lg" />
+```
+
+**Available Icon Sizes:** `'sm'`, `'default'`, `'lg'`, `'xl'` ONLY
+
+### 8. Wrong Icon Names
 
 ```html
 <!-- ❌ WRONG -->
@@ -986,7 +1084,7 @@ export class MySheetComponent {
 <z-icon zType="trash" />
 ```
 
-### 8. Select Item with `value` instead of `zValue`
+### 9. Select Item with `value` instead of `zValue`
 
 ```html
 <!-- ❌ WRONG -->
@@ -996,7 +1094,7 @@ export class MySheetComponent {
 <z-select-item zValue="option1">Option 1</z-select-item>
 ```
 
-### 9. Using `(zValueChange)` Event Handler (Race Condition)
+### 10. Using `(zValueChange)` Event Handler (Race Condition)
 
 ```html
 <!-- ❌ WRONG - Emits old value due to race condition -->
@@ -1027,7 +1125,7 @@ constructor() {
 }
 ```
 
-### 10. Pagination with `zCurrent` instead of `zPageIndex`
+### 11. Pagination with `zCurrent` instead of `zPageIndex`
 
 ```html
 <!-- ❌ WRONG -->
@@ -1037,7 +1135,7 @@ constructor() {
 <z-pagination [(zPageIndex)]="page" [zTotal]="totalPages()" />
 ```
 
-### 11. Wrong Dropdown Menu Structure
+### 12. Wrong Dropdown Menu Structure
 
 ```html
 <!-- ❌ WRONG - Using wrapper component -->
@@ -1063,7 +1161,7 @@ constructor() {
 </z-dropdown-menu-content>
 ```
 
-### 12. Using Non-Existent Divider Component
+### 13. Using Non-Existent Divider Component
 
 ```html
 <!-- ❌ WRONG -->
@@ -1073,7 +1171,7 @@ constructor() {
 <!-- No divider component - use spacing or grouping instead -->
 ```
 
-### 13. Card with Non-Existent Properties
+### 14. Card with Non-Existent Properties
 
 ```html
 <!-- ❌ WRONG -->
@@ -1087,7 +1185,7 @@ constructor() {
 </z-card>
 ```
 
-### 14. Loader with Non-Existent zType
+### 15. Loader with Non-Existent zType
 
 ```html
 <!-- ❌ WRONG -->
