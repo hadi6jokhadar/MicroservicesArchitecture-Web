@@ -61,11 +61,14 @@ export class LoginComponent {
   readonly showForgotPassword = input<boolean>(true);
   readonly showCreateAccount = input<boolean>(true);
   readonly redirectAfterLogin = input<string>('/dashboard');
+  readonly defaultLoginMode = input<LoginMode>('email-password');
+  readonly showModes = input<boolean>(false);
 
+  // Internal state signals
   readonly isLoading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly showPassword = signal(false);
-  readonly loginMode = signal<LoginMode>('email-password');
+  readonly loginMode = signal<LoginMode>(this.defaultLoginMode());
   readonly currentStep = signal<LoginStep>('credentials');
 
   readonly loginForm = new FormGroup<ILoginForm>({

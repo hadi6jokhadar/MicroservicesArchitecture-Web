@@ -9,7 +9,7 @@
     <!-- Login Card -->
     <z-card class="login-card">
       <!-- Login Mode Selector -->
-      @if (currentStep() === 'credentials') {
+      @if (currentStep() === 'credentials' && showModes()) {
       <div class="mode-selector">
         <z-segmented
           [zDefaultValue]="loginMode()"

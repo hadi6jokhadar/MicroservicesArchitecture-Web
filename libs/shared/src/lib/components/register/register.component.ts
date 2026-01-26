@@ -65,13 +65,16 @@ export class RegisterComponent {
   // Input signals for configuration
   readonly showLoginLink = input<boolean>(true);
   readonly redirectAfterRegister = input<string>('/dashboard');
+  readonly defaultRegisterMode = input<RegisterMode>('email-password');
+  readonly showModes = input<boolean>(false);
 
+  // Internal state signals
   readonly isLoading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
   readonly showPassword = signal(false);
   readonly showConfirmPassword = signal(false);
-  readonly registerMode = signal<RegisterMode>('email-password');
+  readonly registerMode = signal<RegisterMode>(this.defaultRegisterMode());
   readonly currentStep = signal<RegisterStep>('registration');
 
   readonly registerForm = new FormGroup<IRegisterForm>(

@@ -9,7 +9,7 @@
     <!-- Register Card -->
     <z-card class="register-card">
       <!-- Register Mode Selector -->
-      @if (currentStep() === 'registration') {
+      @if (currentStep() === 'registration' && showModes()) {
       <div class="mode-selector">
         <z-segmented
           [zDefaultValue]="registerMode()"
