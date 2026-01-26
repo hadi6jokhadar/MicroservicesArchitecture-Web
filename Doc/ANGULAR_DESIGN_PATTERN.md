@@ -384,6 +384,68 @@ export class UsersComponent {
 }
 ```
 
+## Error Handling
+
+### Global Error Interceptor (Default)
+
+By default, all HTTP errors are automatically caught by the error interceptor and displayed as toast notifications:
+
+```typescript
+export class UserService {
+  private readonly _http = inject(HttpClient);
+
+  createUser(user: ICreateUserRequest) {
+    // ✅ Interceptor automatically shows toast on error
+    return this._http.post<IUserDto>('/api/users', user);
+  }
+}
+```
+
+### Component-Level Error Handling
+
+For auth components, forms, or custom error UI, skip automatic toast and handle errors manually:
+
+```typescript
+import { HttpContext } from '@angular/common/http';
+import { SKIP_ERROR_TOAST, extractErrorMessage } from '@ihsan/shared';
+
+export class LoginComponent {
+  readonly errorMessage = signal<string | null>(null);
+
+  onSubmit(): void {
+    // Skip automatic toast
+    const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
+
+    this._authService.login(request, context).subscribe({
+      next: () => this._router.navigate(['/dashboard']),
+      error: (error) => {
+        // Extract formatted error message (includes validation errors)
+        this.errorMessage.set(extractErrorMessage(error));
+      },
+    });
+  }
+}
+```
+
+**Template:**
+
+```html
+@if (errorMessage()) {
+<z-alert
+  zType="destructive"
+  zIcon="circle-alert"
+  [zDescription]="errorMessage()"
+/>
+}
+```
+
+**Important:** Use `<z-alert>` component from Zardui - no custom CSS needed!
+
+**For complete error handling guide, see:**
+
+- [ERROR_HANDLER_USAGE_GUIDE.md](./ERROR_HANDLER_USAGE_GUIDE.md) - Complete documentation
+- [ERROR_HANDLER_QUICK_REFERENCE.md](./ERROR_HANDLER_QUICK_REFERENCE.md) - Quick reference
+
 ### Derived State (Computed)
 
 ```typescript
@@ -508,11 +570,12 @@ export class FeatureService {
 
 ## Documentation Resources
 
+- **Error Handling**: See [ERROR_HANDLER_USAGE_GUIDE.md](./ERROR_HANDLER_USAGE_GUIDE.md) - Complete error handling guide
 - **ZardUI Icons**: See [ZARD_ICON_REFERENCE.md](./ZARD_ICON_REFERENCE.md)
 - **Angular Instructions**: See [.github/instructions/Angular.instructions.md](.github/instructions/Angular.instructions.md)
 - **Component Usage**: See [COMPONENT_USAGE_GUIDE.md](./COMPONENT_USAGE_GUIDE.md)
 
 ---
 
-**Last Updated:** January 18, 2026  
-**Version:** 1.0
+**Last Updated:** January 25, 2026  
+**Version:** 1.1

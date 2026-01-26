@@ -1,7 +1,8 @@
 // Export components
 export * from './lib/components';
 
-// export * from './lib/interceptors/error.interceptor';
+// Export interceptors
+export * from './lib/interceptors/error.interceptor';
 
 // Shared component (can be removed if not needed)
 export * from './lib/shared/shared';

@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { ENVIRONMENT } from '../core/environment.token';
 import {
@@ -9,6 +9,7 @@ import {
   UserClass,
   IRefreshTokenRequest,
   IForgotPasswordRequest,
+  IVerificationCodeResponse,
 } from './models';
 
 @Injectable({
@@ -25,15 +26,21 @@ export class AuthService {
     this._loadUserFromStorage();
   }
 
-  login(request: ILoginRequest): Observable<IAuthResponse> {
+  login(
+    request: ILoginRequest,
+    context?: HttpContext
+  ): Observable<IAuthResponse> {
     return this._http
-      .post<IAuthResponse>(`${this._baseUrl}/login`, request)
+      .post<IAuthResponse>(`${this._baseUrl}/login`, request, { context })
       .pipe(tap((response) => this._handleAuthResponse(response)));
   }
 
-  register(request: IRegisterRequest): Observable<IAuthResponse> {
+  register(
+    request: IRegisterRequest,
+    context?: HttpContext
+  ): Observable<IAuthResponse> {
     return this._http
-      .post<IAuthResponse>(`${this._baseUrl}/register`, request)
+      .post<IAuthResponse>(`${this._baseUrl}/register`, request, { context })
       .pipe(tap((response) => this._handleAuthResponse(response)));
   }
 
@@ -43,8 +50,13 @@ export class AuthService {
       .pipe(tap((response) => this._handleAuthResponse(response)));
   }
 
-  forgotPassword(request: IForgotPasswordRequest): Observable<object> {
-    return this._http.post(`${this._baseUrl}/forgot-password`, request);
+  forgotPassword(
+    request: IForgotPasswordRequest,
+    context?: HttpContext
+  ): Observable<object> {
+    return this._http.post(`${this._baseUrl}/forgot-password`, request, {
+      context,
+    });
   }
 
   logout(): Observable<object> {
@@ -54,69 +66,80 @@ export class AuthService {
   }
 
   // Verification Code Methods
-  getVerificationCodeByPhone(phoneNumber: string): Observable<object> {
-    return this._http.post(`${this._baseUrl}/get-verification-code-by-phone`, {
-      phoneNumber,
-    });
+  getVerificationCodeByPhone(
+    phoneNumber: string
+  ): Observable<IVerificationCodeResponse> {
+    return this._http.post<IVerificationCodeResponse>(
+      `${this._baseUrl}/get-verification-code-by-phone`,
+      { phoneNumber }
+    );
   }
 
-  getVerificationCodeByEmail(email: string): Observable<object> {
-    return this._http.post(`${this._baseUrl}/get-verification-code-by-email`, {
-      email,
-    });
+  getVerificationCodeByEmail(
+    email: string
+  ): Observable<IVerificationCodeResponse> {
+    return this._http.post<IVerificationCodeResponse>(
+      `${this._baseUrl}/get-verification-code-by-email`,
+      { email }
+    );
   }
 
   loginWithCodeByPhone(
     phoneNumber: string,
-    code: string
+    verificationCode: string
   ): Observable<IAuthResponse> {
     return this._http
       .post<IAuthResponse>(`${this._baseUrl}/login-with-code-by-phone`, {
         phoneNumber,
-        code,
+        verificationCode,
       })
       .pipe(tap((response) => this._handleAuthResponse(response)));
   }
 
-  loginWithCodeByEmail(email: string, code: string): Observable<IAuthResponse> {
+  loginWithCodeByEmail(
+    email: string,
+    verificationCode: string
+  ): Observable<IAuthResponse> {
     return this._http
       .post<IAuthResponse>(`${this._baseUrl}/login-with-code-by-email`, {
         email,
-        code,
+        verificationCode,
       })
       .pipe(tap((response) => this._handleAuthResponse(response)));
   }
 
   registerWithCodeByPhone(
     phoneNumber: string,
-    code: string,
     firstName: string,
-    lastName: string
-  ): Observable<IAuthResponse> {
-    return this._http
-      .post<IAuthResponse>(`${this._baseUrl}/register-with-code-by-phone`, {
+    lastName: string,
+    data?: string
+  ): Observable<IVerificationCodeResponse> {
+    return this._http.post<IVerificationCodeResponse>(
+      `${this._baseUrl}/register-with-code-by-phone`,
+      {
         phoneNumber,
-        code,
         firstName,
         lastName,
-      })
-      .pipe(tap((response) => this._handleAuthResponse(response)));
+        data,
+      }
+    );
   }
 
   registerWithCodeByEmail(
     email: string,
-    code: string,
     firstName: string,
-    lastName: string
-  ): Observable<IAuthResponse> {
-    return this._http
-      .post<IAuthResponse>(`${this._baseUrl}/register-with-code-by-email`, {
+    lastName: string,
+    data?: string
+  ): Observable<IVerificationCodeResponse> {
+    return this._http.post<IVerificationCodeResponse>(
+      `${this._baseUrl}/register-with-code-by-email`,
+      {
         email,
-        code,
         firstName,
         lastName,
-      })
-      .pipe(tap((response) => this._handleAuthResponse(response)));
+        data,
+      }
+    );
   }
 
   private _handleAuthResponse(response: IAuthResponse) {

@@ -8,8 +8,34 @@
 
     <!-- Login Card -->
     <z-card class="login-card">
+      <!-- Login Mode Selector -->
+      @if (currentStep() === 'credentials') {
+      <div class="mode-selector">
+        <z-segmented
+          [zDefaultValue]="loginMode()"
+          (zChange)="onLoginModeChange($any($event))"
+        >
+          <z-segmented-item value="email-password" label="Email/Password">
+            <z-icon zType="mail" />
+            Email/Password
+          </z-segmented-item>
+          <z-segmented-item value="email-code" label="Email Code">
+            <z-icon zType="mail" />
+            Email Code
+          </z-segmented-item>
+          <z-segmented-item value="phone-code" label="Phone Code">
+            <z-icon zType="smartphone" />
+            Phone Code
+          </z-segmented-item>
+        </z-segmented>
+      </div>
+      }
+
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <!-- Email Field -->
+        <!-- Step 1: Credentials Input -->
+        @if (currentStep() === 'credentials') {
+        <!-- Email/Password Mode -->
+        @if (loginMode() === 'email-password') {
         <z-form-field>
           <label z-form-label for="email">Email</label>
           <div class="input-icon-wrapper">
@@ -30,7 +56,6 @@
           }
         </z-form-field>
 
-        <!-- Password Field -->
         <z-form-field>
           <label z-form-label for="password">Password</label>
           <div class="input-icon-wrapper password-wrapper">
@@ -64,13 +89,113 @@
           <span z-form-error>Password must be at least 6 characters</span>
           }
         </z-form-field>
+        }
+
+        <!-- Email Code Mode -->
+        @if (loginMode() === 'email-code') {
+        <z-form-field>
+          <label z-form-label for="email-code">Email</label>
+          <div class="input-icon-wrapper">
+            <z-icon zType="mail" class="input-icon" />
+            <input
+              z-input
+              zId="email-code"
+              type="email"
+              formControlName="email"
+              placeholder="you@example.com"
+              [class.error]="emailControl?.invalid && emailControl?.touched"
+            />
+          </div>
+          @if (emailControl?.hasError('required') && emailControl?.touched) {
+          <span z-form-error>Email is required</span>
+          } @if (emailControl?.hasError('email') && emailControl?.touched) {
+          <span z-form-error>Please enter a valid email address</span>
+          }
+          <span z-form-description
+            >We'll send a verification code to this email</span
+          >
+        </z-form-field>
+        }
+
+        <!-- Phone Code Mode -->
+        @if (loginMode() === 'phone-code') {
+        <z-form-field>
+          <label z-form-label for="phone">Phone Number</label>
+          <div class="input-icon-wrapper">
+            <z-icon zType="smartphone" class="input-icon" />
+            <input
+              z-input
+              zId="phone"
+              type="tel"
+              formControlName="phoneNumber"
+              placeholder="+1 (555) 123-4567"
+              [class.error]="
+                phoneNumberControl?.invalid && phoneNumberControl?.touched
+              "
+            />
+          </div>
+          @if (phoneNumberControl?.hasError('required') &&
+          phoneNumberControl?.touched) {
+          <span z-form-error>Phone number is required</span>
+          }
+          <span z-form-description
+            >We'll send a verification code to this phone</span
+          >
+        </z-form-field>
+        } }
+
+        <!-- Step 2: Verification Code Input -->
+        @if (currentStep() === 'verification-code') {
+        <z-form-field>
+          <label z-form-label for="verification-code">Verification Code</label>
+          <div class="input-icon-wrapper">
+            <z-icon zType="shield" class="input-icon" />
+            <input
+              z-input
+              zId="verification-code"
+              type="text"
+              formControlName="verificationCode"
+              placeholder="Enter 6-digit code"
+              maxlength="6"
+              [class.error]="
+                verificationCodeControl?.invalid &&
+                verificationCodeControl?.touched
+              "
+            />
+          </div>
+          @if (verificationCodeControl?.hasError('required') &&
+          verificationCodeControl?.touched) {
+          <span z-form-error>Verification code is required</span>
+          } @if (verificationCodeControl?.hasError('minlength') &&
+          verificationCodeControl?.touched) {
+          <span z-form-error>Code must be 6 digits</span>
+          }
+          <span z-form-description
+            >Enter the verification code sent to your
+            {{ loginMode() === 'email-code' ? 'email' : 'phone' }}</span
+          >
+        </z-form-field>
+
+        <button
+          type="button"
+          z-button
+          zType="ghost"
+          class="back-button"
+          (click)="onBackToCredentials()"
+          id="back-to-credentials-button"
+        >
+          <z-icon zType="arrow-left" />
+          Back
+        </button>
+        }
 
         <!-- Error Message -->
         @if (errorMessage()) {
-        <div class="error-banner">
-          <z-icon zType="circle-alert" />
-          <span>{{ errorMessage() }}</span>
-        </div>
+        <z-alert
+          zType="destructive"
+          zIcon="circle-alert"
+          [zDescription]="errorMessage()!"
+        />
         }
 
         <!-- Submit Button -->
@@ -84,18 +209,19 @@
           [zDisabled]="isLoading()"
           id="login-submit-button"
         >
-          @if (isLoading()) { Signing in... } @else { Sign In }
+          {{ submitButtonText }}
         </button>
 
         <!-- Additional Links -->
-        @if (showForgotPassword() || showCreateAccount()) {
+        @if (currentStep() === 'credentials' && (showForgotPassword() ||
+        showCreateAccount())) {
         <div class="links-section">
           @if (showForgotPassword()) {
-          <a href="#" class="link">Forgot password?</a>
+          <a routerLink="/forgot-password" class="link">Forgot password?</a>
           } @if (showForgotPassword() && showCreateAccount()) {
           <span class="separator">•</span>
           } @if (showCreateAccount()) {
-          <a href="#" class="link">Create account</a>
+          <a routerLink="/register" class="link">Create account</a>
           }
         </div>
         }

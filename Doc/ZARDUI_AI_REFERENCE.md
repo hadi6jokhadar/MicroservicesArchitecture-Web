@@ -931,6 +931,73 @@ export class MySheetComponent {
 
 ---
 
+### Segmented Component (VERIFIED)
+
+**Import:**
+
+```typescript
+import { ZardSegmentedComponent, ZardSegmentedItemComponent } from '@ihsan/ui';
+```
+
+**Properties (VERIFIED):**
+
+- `zDefaultValue: string` - Initial selected value
+- `zOptions: SegmentedOption[]` - Array of options (alternative to content projection)
+- `(zChange): string` - Value change event (NOT valueChange)
+
+**CRITICAL NOTES:**
+
+- ❌ **NO [value] binding** - Use `[zDefaultValue]` for initial value
+- ❌ **NO (valueChange) event** - Use `(zChange)` instead
+- ✅ **z-segmented-item requires BOTH `value` and `label` inputs**
+- ✅ Can use with `formControlName` (implements ControlValueAccessor)
+
+**Usage Pattern 1 - Content Projection (Recommended):**
+
+```html
+<z-segmented
+  [zDefaultValue]="selectedMode()"
+  (zChange)="onModeChange($event)"
+>
+  <z-segmented-item value="email" label="Email">
+    <z-icon zType="mail" />
+    Email
+  </z-segmented-item>
+  <z-segmented-item value="phone" label="Phone">
+    <z-icon zType="smartphone" />
+    Phone
+  </z-segmented-item>
+</z-segmented>
+```
+
+**Usage Pattern 2 - zOptions Array:**
+
+```typescript
+readonly modeOptions = signal<SegmentedOption[]>([
+  { value: 'email', label: 'Email' },
+  { value: 'phone', label: 'Phone' }
+]);
+```
+
+```html
+<z-segmented
+  [zOptions]="modeOptions()"
+  [zDefaultValue]="selectedMode()"
+  (zChange)="onModeChange($event)"
+/>
+```
+
+**Usage Pattern 3 - With Reactive Forms:**
+
+```html
+<z-segmented formControlName="mode">
+  <z-segmented-item value="email" label="Email">Email</z-segmented-item>
+  <z-segmented-item value="phone" label="Phone">Phone</z-segmented-item>
+</z-segmented>
+```
+
+---
+
 ## ✅ Correct Usage Examples
 
 ### User Table with Actions
@@ -1193,6 +1260,28 @@ constructor() {
 
 <!-- ✅ CORRECT -->
 <z-loader zSize="lg" />
+```
+
+### 16. Segmented Component with Wrong Bindings
+
+```html
+<!-- ❌ WRONG - [value] doesn't exist -->
+<z-segmented [value]="mode()" (valueChange)="onChange($event)">
+  <z-segmented-item value="email">Email</z-segmented-item>
+</z-segmented>
+
+<!-- ❌ WRONG - Missing required 'label' input -->
+<z-segmented [zDefaultValue]="mode()" (zChange)="onChange($event)">
+  <z-segmented-item value="email">Email</z-segmented-item>
+</z-segmented>
+
+<!-- ✅ CORRECT - Using zDefaultValue, zChange, and label input -->
+<z-segmented [zDefaultValue]="mode()" (zChange)="onChange($event)">
+  <z-segmented-item value="email" label="Email">
+    <z-icon zType="mail" />
+    Email
+  </z-segmented-item>
+</z-segmented>
 ```
 
 ### 2. Wrong Button Size

@@ -4,7 +4,7 @@
   position: relative;
   overflow: hidden;
 
-  .login-container {
+  .register-container {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -15,9 +15,9 @@
     z-index: 1;
   }
 
-  .login-wrapper {
+  .register-wrapper {
     inline-size: 100%;
-    max-inline-size: 420px;
+    max-inline-size: 520px;
     display: flex;
     flex-direction: column;
     gap: 2rem;
@@ -61,7 +61,7 @@
     }
   }
 
-  .login-card {
+  .register-card {
     padding-block: 2.5rem;
     padding-inline: 2rem;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
@@ -100,6 +100,16 @@
     }
   }
 
+  .name-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
   z-form-field {
     display: flex;
     flex-direction: column;
@@ -108,6 +118,12 @@
     label[z-form-label] {
       font-weight: 500;
       color: var(--color-foreground);
+
+      .optional {
+        font-weight: 400;
+        color: var(--color-muted-foreground);
+        font-size: 0.875rem;
+      }
     }
 
     .input-icon-wrapper {
@@ -177,6 +193,28 @@
     }
   }
 
+  .success-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-block: 0.875rem;
+    padding-inline: 1rem;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgb(34, 197, 94);
+    border-radius: 8px;
+    color: rgb(34, 197, 94);
+    font-size: 0.875rem;
+    animation: slideDown 0.3s ease;
+
+    z-icon {
+      flex-shrink: 0;
+    }
+
+    span {
+      flex: 1;
+    }
+  }
+
   .submit-button {
     inline-size: 100%;
     margin-block-start: 0.5rem;
@@ -196,8 +234,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     margin-block-start: 0.5rem;
+
+    .text {
+      color: var(--color-muted-foreground);
+      font-size: 0.875rem;
+    }
 
     .link {
       color: var(--color-primary);
@@ -217,24 +260,19 @@
         border-radius: 4px;
       }
     }
-
-    .separator {
-      color: var(--color-muted-foreground);
-      font-size: 0.875rem;
-    }
   }
 
   .footer {
     text-align: center;
+    margin-block-start: 1rem;
 
     p {
-      margin: 0;
-      font-size: 0.875rem;
       color: var(--color-muted-foreground);
+      font-size: 0.875rem;
+      margin: 0;
     }
   }
 
-  // Decorative Background
   .background-decoration {
     position: fixed;
     inset: 0;
@@ -249,34 +287,34 @@
       animation: float 20s ease-in-out infinite;
 
       &.circle-1 {
-        inline-size: 400px;
-        block-size: 400px;
+        inline-size: 500px;
+        block-size: 500px;
         background: linear-gradient(
           135deg,
           var(--color-primary) 0%,
           var(--color-accent) 100%
         );
-        inset-block-start: -200px;
-        inset-inline-start: -200px;
+        inset-block-start: -250px;
+        inset-inline-start: -250px;
         animation-delay: 0s;
       }
 
       &.circle-2 {
-        inline-size: 300px;
-        block-size: 300px;
+        inline-size: 400px;
+        block-size: 400px;
         background: linear-gradient(
           135deg,
           var(--color-accent) 0%,
           var(--color-primary) 100%
         );
-        inset-block-end: -150px;
-        inset-inline-end: -150px;
+        inset-block-end: -200px;
+        inset-inline-end: -200px;
         animation-delay: 5s;
       }
 
       &.circle-3 {
-        inline-size: 250px;
-        block-size: 250px;
+        inline-size: 300px;
+        block-size: 300px;
         background: linear-gradient(
           135deg,
           var(--color-primary) 0%,
@@ -290,7 +328,6 @@
     }
   }
 
-  // Animations
   @keyframes slideDown {
     from {
       opacity: 0;
@@ -315,54 +352,6 @@
     }
     75% {
       transform: translate(-50px, 50px) rotate(270deg);
-    }
-  }
-
-  // Responsive Design
-  @media (max-width: 768px) {
-    .login-wrapper {
-      max-inline-size: 100%;
-    }
-
-    .login-card {
-      padding-block: 2rem;
-      padding-inline: 1.5rem;
-    }
-
-    .logo-section {
-      .logo-icon {
-        inline-size: 64px;
-        block-size: 64px;
-
-        z-icon {
-          transform: scale(0.8);
-        }
-      }
-
-      .title {
-        font-size: 1.75rem;
-      }
-
-      .subtitle {
-        font-size: 0.9375rem;
-      }
-    }
-  }
-
-  @media (max-width: 480px) {
-    .login-container {
-      padding-inline: 0.75rem;
-    }
-
-    .login-card {
-      padding-block: 1.5rem;
-      padding-inline: 1.25rem;
-    }
-
-    .logo-section {
-      .title {
-        font-size: 1.5rem;
-      }
     }
   }
 }

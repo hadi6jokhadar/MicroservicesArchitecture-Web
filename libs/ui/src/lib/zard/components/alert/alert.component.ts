@@ -28,7 +28,11 @@ import type { ZardIcon } from '../icon/icons';
   standalone: true,
   template: `
     @if (zIcon() || iconName()) {
-    <span [class]="iconClasses()" data-slot="alert-icon">
+    <span
+      [class]="iconClasses()"
+      data-slot="alert-icon"
+      style="padding-top: 8px;"
+    >
       <ng-container *zStringTemplateOutlet="zIcon()">
         <z-icon [zType]="iconName()!" />
       </ng-container>
@@ -43,7 +47,11 @@ import type { ZardIcon } from '../icon/icons';
         }}</ng-container>
       </div>
       } @if (zDescription()) {
-      <div [class]="descriptionClasses()" data-slot="alert-description">
+      <div
+        [class]="descriptionClasses()"
+        data-slot="alert-description"
+        style="white-space: pre-line;"
+      >
         <ng-container *zStringTemplateOutlet="zDescription()">{{
           zDescription()
         }}</ng-container>

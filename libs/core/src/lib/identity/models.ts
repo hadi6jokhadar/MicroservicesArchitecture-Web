@@ -300,3 +300,28 @@ export interface IRegisterWithCodeByEmailRequest {
   firstName: string;
   lastName: string;
 }
+
+/**
+ * Verification Code Response
+ * In development mode: code is included in the response
+ * In production mode: code is null (sent via SMS/Email only)
+ */
+export interface IVerificationCodeResponse {
+  success: boolean;
+  code: string | null;
+  message?: string;
+}
+
+export class VerificationCodeResponseClass
+  implements IVerificationCodeResponse
+{
+  success: boolean;
+  code: string | null;
+  message?: string;
+
+  constructor(data: Partial<IVerificationCodeResponse> = {}) {
+    this.success = data.success ?? false;
+    this.code = data.code ?? null;
+    this.message = data.message;
+  }
+}

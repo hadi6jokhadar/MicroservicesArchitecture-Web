@@ -10,6 +10,7 @@
 ### 📄 [ZARDUI_AI_REFERENCE.md](./ZARDUI_AI_REFERENCE.md)
 
 **Complete AI-optimized guide with:**
+
 - ✅ All 43 components with complete examples
 - ✅ Import patterns and best practices
 - ✅ Form integration patterns
@@ -22,6 +23,7 @@
 - ✅ 100% accuracy for AI code generation
 
 **Use this file to:**
+
 - Generate code with AI assistants
 - Learn component APIs quickly
 - Find the right component for your needs
@@ -68,12 +70,12 @@ All components have live, interactive demos:
 
 **Comprehensive documentation available:**
 
-| File | Purpose | Best For |
-|------|---------|----------|
-| **[ZARDUI_AI_REFERENCE.md](./ZARDUI_AI_REFERENCE.md)** | **AI-optimized single-file reference** | **AI code generation, quick lookup, learning** |
-| [README.md](../apps/admin/src/app/pages/test-components/README.md) | Detailed usage guide (43 components) | Manual development, detailed examples |
-| [API_REFERENCE.md](../apps/admin/src/app/pages/test-components/API_REFERENCE.md) | Complete API & method reference | Technical reference, method signatures |
-| [COMPONENT_INDEX.md](../apps/admin/src/app/pages/test-components/COMPONENT_INDEX.md) | Quick navigation index | Finding components, URL navigation |
+| File                                                                                 | Purpose                                | Best For                                       |
+| ------------------------------------------------------------------------------------ | -------------------------------------- | ---------------------------------------------- |
+| **[ZARDUI_AI_REFERENCE.md](./ZARDUI_AI_REFERENCE.md)**                               | **AI-optimized single-file reference** | **AI code generation, quick lookup, learning** |
+| [README.md](../apps/admin/src/app/pages/test-components/README.md)                   | Detailed usage guide (43 components)   | Manual development, detailed examples          |
+| [API_REFERENCE.md](../apps/admin/src/app/pages/test-components/API_REFERENCE.md)     | Complete API & method reference        | Technical reference, method signatures         |
+| [COMPONENT_INDEX.md](../apps/admin/src/app/pages/test-components/COMPONENT_INDEX.md) | Quick navigation index                 | Finding components, URL navigation             |
 
 **Features:**
 
@@ -101,7 +103,11 @@ This installs all components to `libs/ui/src/lib/zard/components/`.
 
 ```typescript
 // ✅ CORRECT - Import from local wrapper
-import { ZardButtonComponent, ZardInputDirective, ZardDialogService } from '@ihsan/ui';
+import {
+  ZardButtonComponent,
+  ZardInputDirective,
+  ZardDialogService,
+} from '@ihsan/ui';
 
 // ❌ WRONG - Don't import directly from package
 import { ZardButtonComponent } from '@zardui/angular';
@@ -115,7 +121,7 @@ import { ZardButtonComponent } from '@zardui/angular';
 
 | Category         | Components                                                                                                                                     |
 | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Layout**       | Accordion, Card, Divider, Resizable, Sheet, Tabs                                                                                       |
+| **Layout**       | Accordion, Card, Divider, Resizable, Sheet, Tabs                                                                                               |
 | **Navigation**   | Breadcrumb, Menu, Pagination, Segmented                                                                                                        |
 | **Forms**        | Button, Button Group, Calendar, Checkbox, Combobox, Date Picker, Form, Input, Input Group, Radio, Select, Slider, Switch, Toggle, Toggle Group |
 | **Data Display** | Avatar, Badge, Empty, Icon, Kbd, Progress Bar, Skeleton, Table                                                                                 |
@@ -152,48 +158,108 @@ export class ExampleComponent {
 }
 ```
 
-### Form with Input
+### Form with Input (Updated Pattern)
 
 ```typescript
-import { Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ZardInputDirective, ZardButtonComponent, ZardFormImports } from '@ihsan/ui';
+import { Component, inject, signal } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import {
+  ZardInputDirective,
+  ZardButtonComponent,
+  ZardFormImports,
+} from '@ihsan/ui';
+
+interface ILoginForm {
+  email: FormControl<string>;
+  password: FormControl<string>;
+}
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, ZardInputDirective, ZardButtonComponent, ZardFormImports],
+  imports: [
+    ReactiveFormsModule,
+    ZardInputDirective,
+    ZardButtonComponent,
+    ZardFormImports,
+  ],
   template: `
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <z-form-field>
         <label z-form-label for="email">Email</label>
         <input z-input zId="email" formControlName="email" type="email" />
-        <span z-form-error *ngIf="loginForm.get('email')?.hasError('required')">
-          Email is required
-        </span>
+        @if (emailControl?.hasError('required') && emailControl?.touched) {
+        <span z-form-error>Email is required</span>
+        } @if (emailControl?.hasError('email') && emailControl?.touched) {
+        <span z-form-error>Please enter a valid email address</span>
+        }
       </z-form-field>
 
       <z-form-field>
         <label z-form-label for="password">Password</label>
-        <input z-input zId="password" formControlName="password" type="password" />
+        <input
+          z-input
+          zId="password"
+          formControlName="password"
+          type="password"
+        />
+        @if (passwordControl?.hasError('required') && passwordControl?.touched)
+        {
+        <span z-form-error>Password is required</span>
+        }
       </z-form-field>
 
-      <button z-button zType="primary" type="submit">Login</button>
+      <button
+        z-button
+        zType="default"
+        type="submit"
+        [zLoading]="isLoading()"
+        [zDisabled]="isLoading()"
+      >
+        Login
+      </button>
     </form>
   `,
 })
 export class LoginComponent {
-  private _fb = inject(FormBuilder);
+  readonly isLoading = signal(false);
 
-  loginForm = this._fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
+  readonly loginForm = new FormGroup<ILoginForm>({
+    email: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+    }),
+    password: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(6)],
+    }),
   });
 
+  get emailControl() {
+    return this.loginForm.get('email');
+  }
+
+  get passwordControl() {
+    return this.loginForm.get('password');
+  }
+
   onSubmit() {
-    if (this.loginForm.valid) {
-      console.log(this.loginForm.value);
+    if (this.loginForm.invalid) {
+      Object.values(this.loginForm.controls).forEach((control) =>
+        control.markAsTouched()
+      );
+      return;
     }
+
+    this.isLoading.set(true);
+    const formValue = this.loginForm.getRawValue();
+    console.log('Login:', formValue);
+    // Call auth service here
   }
 }
 ```
@@ -275,16 +341,19 @@ export class ExampleComponent {
 **Need input?** → `ZardInputDirective`
 
 **Need dropdown?**
+
 - Searchable → `ZardComboboxComponent`
 - Simple → `ZardSelectComponent`
 - Actions → `ZardDropdownImports`
 
 **Need modal?**
+
 - Full modal → `ZardDialogService`
 - Side panel → `ZardSheetService`
 - Confirmation → `ZardAlertDialogService`
 
 **Need notification?**
+
 - Toast → `toast` from ngx-sonner
 - Persistent → `ZardAlertComponent`
 

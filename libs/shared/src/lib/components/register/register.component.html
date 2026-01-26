@@ -1,0 +1,317 @@
+<div class="register-container">
+  <div class="register-wrapper">
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <h1 class="title">Create Your Account</h1>
+      <p class="subtitle">Join us today and get started</p>
+    </div>
+
+    <!-- Register Card -->
+    <z-card class="register-card">
+      <!-- Register Mode Selector -->
+      @if (currentStep() === 'registration') {
+      <div class="mode-selector">
+        <z-segmented
+          [zDefaultValue]="registerMode()"
+          (zChange)="onRegisterModeChange($any($event))"
+        >
+          <z-segmented-item value="email-password" label="Email/Password">
+            <z-icon zType="mail" />
+            Email/Password
+          </z-segmented-item>
+          <z-segmented-item value="email-code" label="Email Code">
+            <z-icon zType="mail" />
+            Email Code
+          </z-segmented-item>
+          <z-segmented-item value="phone-code" label="Phone Code">
+            <z-icon zType="smartphone" />
+            Phone Code
+          </z-segmented-item>
+        </z-segmented>
+      </div>
+      }
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <!-- Step 1: Registration Fields -->
+        @if (currentStep() === 'registration') {
+        <!-- Name Fields Row -->
+        <div class="name-row">
+          <z-form-field>
+            <label z-form-label for="firstName">First Name</label>
+            <div class="input-icon-wrapper">
+              <z-icon zType="user" class="input-icon" />
+              <input
+                z-input
+                zId="firstName"
+                type="text"
+                formControlName="firstName"
+                placeholder="John"
+                [class.error]="
+                  firstNameControl?.invalid && firstNameControl?.touched
+                "
+              />
+            </div>
+            @if (firstNameControl?.hasError('required') &&
+            firstNameControl?.touched) {
+            <span z-form-error>First name is required</span>
+            } @if (firstNameControl?.hasError('minlength') &&
+            firstNameControl?.touched) {
+            <span z-form-error>First name must be at least 2 characters</span>
+            }
+          </z-form-field>
+
+          <z-form-field>
+            <label z-form-label for="lastName">Last Name</label>
+            <div class="input-icon-wrapper">
+              <z-icon zType="user" class="input-icon" />
+              <input
+                z-input
+                zId="lastName"
+                type="text"
+                formControlName="lastName"
+                placeholder="Doe"
+                [class.error]="
+                  lastNameControl?.invalid && lastNameControl?.touched
+                "
+              />
+            </div>
+            @if (lastNameControl?.hasError('required') &&
+            lastNameControl?.touched) {
+            <span z-form-error>Last name is required</span>
+            } @if (lastNameControl?.hasError('minlength') &&
+            lastNameControl?.touched) {
+            <span z-form-error>Last name must be at least 2 characters</span>
+            }
+          </z-form-field>
+        </div>
+
+        <!-- Email Field (for email-password and email-code modes) -->
+        @if (showEmailField) {
+        <z-form-field>
+          <label z-form-label for="email">Email</label>
+          <div class="input-icon-wrapper">
+            <z-icon zType="mail" class="input-icon" />
+            <input
+              z-input
+              zId="email"
+              type="email"
+              formControlName="email"
+              placeholder="you@example.com"
+              [class.error]="emailControl?.invalid && emailControl?.touched"
+            />
+          </div>
+          @if (emailControl?.hasError('required') && emailControl?.touched) {
+          <span z-form-error>Email is required</span>
+          } @if (emailControl?.hasError('email') && emailControl?.touched) {
+          <span z-form-error>Please enter a valid email address</span>
+          } @if (registerMode() === 'email-code') {
+          <span z-form-description
+            >We'll send a verification code to this email</span
+          >
+          }
+        </z-form-field>
+        }
+
+        <!-- Phone Number Field (for phone-code and email-password modes) -->
+        @if (showPhoneField) {
+        <z-form-field>
+          <label z-form-label for="phoneNumber"
+            >Phone Number @if (registerMode() === 'email-password') {
+            <span class="optional">(Optional)</span>
+            }</label
+          >
+          <div class="input-icon-wrapper">
+            <z-icon zType="smartphone" class="input-icon" />
+            <input
+              z-input
+              zId="phoneNumber"
+              type="tel"
+              formControlName="phoneNumber"
+              placeholder="+1 (555) 123-4567"
+              [class.error]="
+                phoneNumberControl?.invalid && phoneNumberControl?.touched
+              "
+            />
+          </div>
+          @if (phoneNumberControl?.hasError('required') &&
+          phoneNumberControl?.touched) {
+          <span z-form-error>Phone number is required</span>
+          } @if (registerMode() === 'phone-code') {
+          <span z-form-description
+            >We'll send a verification code to this phone</span
+          >
+          }
+        </z-form-field>
+        }
+
+        <!-- Password Fields (only for email-password mode) -->
+        @if (showPasswordFields) {
+        <z-form-field>
+          <label z-form-label for="password">Password</label>
+          <div class="input-icon-wrapper password-wrapper">
+            <z-icon zType="shield" class="input-icon" />
+            <input
+              z-input
+              zId="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="Create a strong password"
+              [class.error]="
+                passwordControl?.invalid && passwordControl?.touched
+              "
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="
+                showPassword() ? 'Hide password' : 'Show password'
+              "
+            >
+              <z-icon [zType]="showPassword() ? 'eye' : 'eye'" />
+            </button>
+          </div>
+          @if (passwordControl?.hasError('required') &&
+          passwordControl?.touched) {
+          <span z-form-error>Password is required</span>
+          } @if (passwordControl?.hasError('minlength') &&
+          passwordControl?.touched) {
+          <span z-form-error>Password must be at least 6 characters</span>
+          }
+        </z-form-field>
+
+        <z-form-field>
+          <label z-form-label for="confirmPassword">Confirm Password</label>
+          <div class="input-icon-wrapper password-wrapper">
+            <z-icon zType="shield" class="input-icon" />
+            <input
+              z-input
+              zId="confirmPassword"
+              [type]="showConfirmPassword() ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              placeholder="Re-enter your password"
+              [class.error]="
+                (confirmPasswordControl?.invalid || hasPasswordMismatch) &&
+                confirmPasswordControl?.touched
+              "
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="toggleConfirmPasswordVisibility()"
+              [attr.aria-label]="
+                showConfirmPassword() ? 'Hide password' : 'Show password'
+              "
+            >
+              <z-icon [zType]="showConfirmPassword() ? 'eye' : 'eye'" />
+            </button>
+          </div>
+          @if (confirmPasswordControl?.hasError('required') &&
+          confirmPasswordControl?.touched) {
+          <span z-form-error>Please confirm your password</span>
+          } @if (hasPasswordMismatch) {
+          <span z-form-error>Passwords do not match</span>
+          }
+        </z-form-field>
+        } }
+
+        <!-- Step 2: Verification Code Input -->
+        @if (currentStep() === 'verification-code') {
+        <z-form-field>
+          <label z-form-label for="verification-code">Verification Code</label>
+          <div class="input-icon-wrapper">
+            <z-icon zType="shield" class="input-icon" />
+            <input
+              z-input
+              zId="verification-code"
+              type="text"
+              formControlName="verificationCode"
+              placeholder="Enter 6-digit code"
+              maxlength="6"
+              [class.error]="
+                verificationCodeControl?.invalid &&
+                verificationCodeControl?.touched
+              "
+            />
+          </div>
+          @if (verificationCodeControl?.hasError('required') &&
+          verificationCodeControl?.touched) {
+          <span z-form-error>Verification code is required</span>
+          } @if (verificationCodeControl?.hasError('minlength') &&
+          verificationCodeControl?.touched) {
+          <span z-form-error>Code must be 6 digits</span>
+          }
+          <span z-form-description
+            >Enter the verification code sent to your
+            {{ registerMode() === 'email-code' ? 'email' : 'phone' }}</span
+          >
+        </z-form-field>
+
+        <button
+          type="button"
+          z-button
+          zType="ghost"
+          class="back-button"
+          (click)="onBackToRegistration()"
+          id="back-to-registration-button"
+        >
+          <z-icon zType="arrow-left" />
+          Back
+        </button>
+        }
+
+        <!-- Success Message -->
+        @if (successMessage()) {
+        <z-alert
+          zType="default"
+          zIcon="circle-check"
+          [zDescription]="successMessage()!"
+        />
+        }
+
+        <!-- Error Message -->
+        @if (errorMessage()) {
+        <z-alert
+          zType="destructive"
+          zIcon="circle-alert"
+          [zDescription]="errorMessage()!"
+        />
+        }
+
+        <!-- Submit Button -->
+        <button
+          z-button
+          zType="default"
+          zSize="lg"
+          type="submit"
+          class="submit-button"
+          [zLoading]="isLoading()"
+          [zDisabled]="isLoading()"
+          id="register-submit-button"
+        >
+          {{ submitButtonText }}
+        </button>
+
+        <!-- Additional Links -->
+        @if (currentStep() === 'registration' && showLoginLink()) {
+        <div class="links-section">
+          <span class="link-text">Already have an account?</span>
+          <a routerLink="/login" class="link">Sign in</a>
+        </div>
+        }
+      </form>
+    </z-card>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>© 2026 Microservices Architecture. All rights reserved.</p>
+    </div>
+  </div>
+
+  <!-- Decorative Background -->
+  <div class="background-decoration">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="circle circle-3"></div>
+  </div>
+</div>

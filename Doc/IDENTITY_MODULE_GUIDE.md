@@ -2,7 +2,7 @@
 
 **Location:** `libs/core/src/lib/identity/`
 
-**Last Updated:** January 18, 2026
+**Last Updated:** January 26, 2026
 
 ---
 
@@ -148,11 +148,11 @@ forgotPassword(request: IForgotPasswordRequest): Observable<object>
 ##### Verification Code Flow
 
 ```typescript
-// Request verification code via SMS
-getVerificationCodeByPhone(phoneNumber: string): Observable<object>
+// Request verification code via SMS (returns code in development mode)
+getVerificationCodeByPhone(phoneNumber: string): Observable<IVerificationCodeResponse>
 
-// Request verification code via Email
-getVerificationCodeByEmail(email: string): Observable<object>
+// Request verification code via Email (returns code in development mode)
+getVerificationCodeByEmail(email: string): Observable<IVerificationCodeResponse>
 
 // Login with verification code (SMS)
 loginWithCodeByPhone(phoneNumber: string, code: string): Observable<IAuthResponse>
@@ -160,21 +160,31 @@ loginWithCodeByPhone(phoneNumber: string, code: string): Observable<IAuthRespons
 // Login with verification code (Email)
 loginWithCodeByEmail(email: string, code: string): Observable<IAuthResponse>
 
-// Register with verification code (SMS)
+// Register with verification code (SMS) - generates and returns code in dev mode
 registerWithCodeByPhone(
   phoneNumber: string,
-  code: string,
   firstName: string,
-  lastName: string
-): Observable<IAuthResponse>
+  lastName: string,
+  data?: string
+): Observable<IVerificationCodeResponse>
 
-// Register with verification code (Email)
+// Register with verification code (Email) - generates and returns code in dev mode
 registerWithCodeByEmail(
   email: string,
-  code: string,
   firstName: string,
-  lastName: string
-): Observable<IAuthResponse>
+  lastName: string,
+  data?: string
+): Observable<IVerificationCodeResponse>
+```
+
+**IVerificationCodeResponse:**
+
+```typescript
+interface IVerificationCodeResponse {
+  success: boolean;
+  code: string | null; // Only present in development mode
+  message?: string;
+}
 ```
 
 ##### Token Management
@@ -209,15 +219,54 @@ export class LoginComponent {
   }
 
   async onPhoneLogin(phoneNumber: string) {
-    // Step 1: Request verification code
+    // Step 1: Request verification code (returns code in development mode)
     this._authService.getVerificationCodeByPhone(phoneNumber).subscribe({
-      next: () => console.log('Code sent to phone'),
+      next: (response) => {
+        console.log('Code sent to phone');
+        // In development mode, you can access the code:
+        if (response.code) {
+          console.log('Dev mode - Code:', response.code);
+          // Optionally show code to user in development with toast
+          // toast.success('Verification Code', { description: response.code });
+        } else {
+          console.log('Code sent (production mode)');
+        }
+      },
     });
 
     // Step 2: User enters code, then login
-    const code = '123456'; // From user input
+    const code = '123456'; // 6-digit code from user input (or response.code in dev mode)
     this._authService.loginWithCodeByPhone(phoneNumber, code).subscribe({
       next: (response) => console.log('Logged in via SMS'),
+    });
+  }
+
+  async onPhoneRegistration(
+    phoneNumber: string,
+    firstName: string,
+    lastName: string
+  ) {
+    // Step 1: Register user and get verification code (returns code in dev mode)
+    this._authService
+      .registerWithCodeByPhone(phoneNumber, firstName, lastName)
+      .subscribe({
+        next: (response) => {
+          console.log('Registration successful, code sent');
+          // In development mode, code is in response.code
+          if (response.code) {
+            console.log('Dev mode - Code:', response.code);
+            // Optionally show code to user in development with toast
+            // toast.success('Verification Code', { description: response.code });
+          } else {
+            console.log('Code sent (production mode)');
+          }
+        },
+      });
+
+    // Step 2: User enters code, then login
+    const code = '123456'; // 6-digit code from user input
+    this._authService.loginWithCodeByPhone(phoneNumber, code).subscribe({
+      next: (response) => console.log('Logged in after registration'),
     });
   }
 }
