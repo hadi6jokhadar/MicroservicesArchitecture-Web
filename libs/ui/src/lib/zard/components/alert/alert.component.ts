@@ -97,6 +97,10 @@ export class ZardAlertComponent {
       return 'circle-alert';
     }
 
+    if (this.zType() === 'success') {
+      return 'circle-check';
+    }
+
     return null;
   });
 }

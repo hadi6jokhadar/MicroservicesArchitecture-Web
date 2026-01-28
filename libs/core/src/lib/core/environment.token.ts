@@ -7,6 +7,7 @@ export interface Environment {
     tenant: string;
     notification: string;
     fileManager: string;
+    translation: string;
   };
 }
 

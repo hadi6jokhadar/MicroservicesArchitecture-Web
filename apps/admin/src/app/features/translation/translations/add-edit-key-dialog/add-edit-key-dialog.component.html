@@ -1,0 +1,98 @@
+<div class="dialog-container">
+  <h2 class="dialog-title">
+    {{ isEditMode() ? 'Edit Translation Key' : 'Add Translation Key' }}
+  </h2>
+
+  <form [formGroup]="keyForm" (ngSubmit)="onSubmit()" class="dialog-form">
+    <!-- Key Input -->
+    <z-form-field zardId="key" #k="zardId">
+      <label z-form-label [for]="k.id()">Key *</label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="k.id()"
+          type="text"
+          formControlName="key"
+          placeholder="e.g., app.welcome.title"
+          [disabled]="isEditMode()"
+        />
+      </z-form-control>
+      @if (keyForm.get('key')?.hasError('required') &&
+      keyForm.get('key')?.touched) {
+      <span z-form-error>Key is required</span>
+      } @else if (keyForm.get('key')?.hasError('maxlength')) {
+      <span z-form-error>Key must not exceed 200 characters</span>
+      }
+    </z-form-field>
+
+    <!-- Category Input -->
+    <z-form-field zardId="category" #c="zardId">
+      <label z-form-label [for]="c.id()">Category *</label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="c.id()"
+          type="text"
+          formControlName="category"
+          placeholder="e.g., General, Validation, Errors"
+          [disabled]="isEditMode()"
+        />
+      </z-form-control>
+      @if (keyForm.get('category')?.hasError('required') &&
+      keyForm.get('category')?.touched) {
+      <span z-form-error>Category is required</span>
+      } @else if (keyForm.get('category')?.hasError('maxlength')) {
+      <span z-form-error>Category must not exceed 100 characters</span>
+      }
+    </z-form-field>
+
+    <!-- Description Input -->
+    <z-form-field zardId="description" #d="zardId">
+      <label z-form-label [for]="d.id()">Description</label>
+      <z-form-control>
+        <textarea
+          z-input
+          [id]="d.id()"
+          formControlName="description"
+          placeholder="Optional description of this translation key..."
+          rows="3"
+        ></textarea>
+      </z-form-control>
+      @if (keyForm.get('description')?.hasError('maxlength')) {
+      <span z-form-error>Description must not exceed 500 characters</span>
+      }
+    </z-form-field>
+
+    <!-- Error Display -->
+    @if (errorMessage()) {
+    <z-alert
+      zType="destructive"
+      zIcon="circle-alert"
+      [zDescription]="errorMessage()!"
+    />
+    }
+
+    <!-- Form Actions -->
+    <div class="dialog-actions">
+      <button
+        z-button
+        zType="outline"
+        type="button"
+        (click)="onCancel()"
+        id="cancel-btn"
+      >
+        Cancel
+      </button>
+      <button
+        z-button
+        zType="default"
+        type="submit"
+        [zLoading]="isLoading()"
+        [zDisabled]="keyForm.invalid"
+        id="submit-btn"
+      >
+        {{ isEditMode() ? 'Update Key' : 'Create Key' }}
+      </button>
+    </div>
+  </form>
+</div>

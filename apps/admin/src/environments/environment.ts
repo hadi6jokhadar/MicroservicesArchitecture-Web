@@ -7,5 +7,6 @@ export const environment: Environment = {
     tenant: 'http://localhost:5002',
     notification: 'http://localhost:5003',
     fileManager: 'http://localhost:5005',
+    translation: 'http://localhost:5006',
   },
 };

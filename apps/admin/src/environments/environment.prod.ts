@@ -7,5 +7,6 @@ export const environment: Environment = {
     tenant: 'https://api.yourdomain.com/tenant',
     notification: 'https://api.yourdomain.com/notification',
     fileManager: 'https://api.yourdomain.com/filemanager',
+    translation: 'https://api.yourdomain.com/translation',
   },
 };

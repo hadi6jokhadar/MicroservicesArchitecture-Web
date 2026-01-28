@@ -1,0 +1,244 @@
+<div class="translations-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>Translations Management</h1>
+        <p>Manage translation keys and values for multi-language support</p>
+      </div>
+      <button
+        z-button
+        zType="default"
+        zSize="lg"
+        (click)="onAddKey()"
+        id="add-translation-key-btn"
+      >
+        <z-icon zType="plus" />
+        Add Translation Key
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Form Card -->
+  <z-card>
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <!-- Search Input -->
+        <z-form-field
+          class="filter-field search-field"
+          zardId="searchTerm"
+          #s="zardId"
+        >
+          <label z-form-label [for]="s.id()">Search</label>
+          <z-form-control>
+            <div class="search-input-wrapper">
+              <z-icon zType="search" class="search-icon" />
+              <input
+                z-input
+                [id]="s.id()"
+                type="text"
+                formControlName="searchTerm"
+                placeholder="Search by key name or description..."
+                (keyup.enter)="onSearch()"
+              />
+            </div>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Category Filter -->
+        <z-form-field class="filter-field" zardId="category" #c="zardId">
+          <label z-form-label [for]="c.id()">Category</label>
+          <z-form-control>
+            <input
+              z-input
+              [id]="c.id()"
+              type="text"
+              formControlName="category"
+              placeholder="Filter by category..."
+            />
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Action Buttons -->
+        <div class="filter-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            (click)="onClearFilters()"
+            type="button"
+            id="clear-filters-btn"
+          >
+            <z-icon zType="x" />
+            Clear
+          </button>
+          <button
+            z-button
+            zType="default"
+            zSize="default"
+            (click)="onSearch()"
+            type="button"
+            id="search-btn"
+          >
+            <z-icon zType="search" />
+            Search
+          </button>
+        </div>
+      </div>
+    </form>
+  </z-card>
+
+  <!-- Translation Keys Table Card -->
+  <z-card class="table-card">
+    @if (isLoading()) {
+    <div class="loading-container">
+      <z-loader zSize="lg" />
+      <p>Loading translation keys...</p>
+    </div>
+    } @else if (translationKeys().length === 0) {
+    <div class="empty-container">
+      <z-empty
+        zIcon="book-open-text"
+        zTitle="No translation keys found"
+        zDescription="No translation keys match your search criteria. Try adjusting your filters or add a new translation key."
+      />
+    </div>
+    } @else {
+    <div class="table-container">
+      <!-- Results Info -->
+      <div class="table-header">
+        <div class="results-info">
+          <z-icon zType="book-open-text" />
+          <span
+            >Showing {{ translationKeys().length }} of
+            {{ totalCount() }} translation keys</span
+          >
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table class="translations-table">
+          <thead>
+            <tr>
+              <th class="col-key">Key</th>
+              <th class="col-category">Category</th>
+              <th class="col-description">Description</th>
+              <th class="col-languages">Languages</th>
+              <th class="col-values">Values</th>
+              <th class="col-created">Created</th>
+              <th class="col-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (key of translationKeys(); track key.id) {
+            <tr class="translation-row">
+              <!-- Key -->
+              <td class="col-key">
+                <div class="key-cell">
+                  <z-icon zType="code" class="key-icon" />
+                  <span class="key-text">{{ key.key }}</span>
+                </div>
+              </td>
+
+              <!-- Category -->
+              <td class="col-category">
+                @if (key.category) {
+                <z-badge zType="outline" zShape="pill">
+                  {{ key.category }}
+                </z-badge>
+                } @else {
+                <span class="no-category">-</span>
+                }
+              </td>
+
+              <!-- Description -->
+              <td class="col-description">
+                <span class="description-text">{{
+                  key.description || '-'
+                }}</span>
+              </td>
+
+              <!-- Languages -->
+              <td class="col-languages">
+                <div class="languages-badges">
+                  @for (lang of getLanguages(key); track lang) {
+                  <z-badge zType="secondary" zShape="pill">
+                    {{ lang }}
+                  </z-badge>
+                  } @empty {
+                  <span class="no-languages">No translations</span>
+                  }
+                </div>
+              </td>
+
+              <!-- Values Count -->
+              <td class="col-values">
+                <z-badge zType="default" zShape="pill">
+                  {{ getValueCount(key) }}
+                  {{ getValueCount(key) === 1 ? 'value' : 'values' }}
+                </z-badge>
+              </td>
+
+              <!-- Created Date -->
+              <td class="col-created">
+                <span class="date-text">{{
+                  key.created | date : 'mediumDate'
+                }}</span>
+              </td>
+
+              <!-- Actions Dropdown -->
+              <td class="col-actions">
+                <button
+                  z-button
+                  zType="outline"
+                  zSize="sm"
+                  z-dropdown
+                  [zDropdownMenu]="actionsMenu"
+                  [id]="'translation-key-actions-' + key.id"
+                >
+                  <z-icon zType="ellipsis" />
+                </button>
+                <z-dropdown-menu-content #actionsMenu="zDropdownMenuContent">
+                  <z-dropdown-menu-item
+                    (click)="onViewValues(key)"
+                    [id]="'view-values-' + key.id"
+                  >
+                    <z-icon zType="eye" />
+                    View Values
+                  </z-dropdown-menu-item>
+
+                  <z-dropdown-menu-item
+                    (click)="onEditKey(key)"
+                    [id]="'edit-key-' + key.id"
+                  >
+                    <z-icon zType="file-text" />
+                    Edit Key
+                  </z-dropdown-menu-item>
+
+                  <z-dropdown-menu-item
+                    (click)="onDeleteKey(key)"
+                    [id]="'delete-key-' + key.id"
+                    class="delete-action"
+                  >
+                    <z-icon zType="trash" />
+                    Delete Key
+                  </z-dropdown-menu-item>
+                </z-dropdown-menu-content>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      @if (totalPages() > 1) {
+      <div class="pagination-container">
+        <z-pagination [zTotal]="totalPages()" [(zPageIndex)]="currentPage" />
+      </div>
+      }
+    </div>
+    }
+  </z-card>
+</div>

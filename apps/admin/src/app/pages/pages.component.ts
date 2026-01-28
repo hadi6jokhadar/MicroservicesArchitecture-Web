@@ -65,6 +65,12 @@ export class PagesComponent {
       route: '/tenant',
     }),
     new SidebarPageClass({
+      label: 'Translation',
+      icon: 'book-open-text' as ZardIcon,
+      group: 'System Group',
+      route: '/translation',
+    }),
+    new SidebarPageClass({
       label: 'FileManager',
       icon: 'folder' as ZardIcon,
       group: 'System Group',

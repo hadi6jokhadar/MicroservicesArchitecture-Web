@@ -10,6 +10,9 @@ export * from './lib/notification';
 // File Manager
 export * from './lib/file-manager';
 
+// Translation
+export * from './lib/translation';
+
 // Interceptors
 export * from './lib/interceptors';
 

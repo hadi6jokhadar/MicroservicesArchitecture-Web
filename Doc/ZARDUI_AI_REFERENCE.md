@@ -836,8 +836,7 @@ openSheet(): void {
   this._sheetService.create({
     zContent: MySheetComponent,
     zData: { filters: [] },
-    zPosition: 'right',
-    zSize: 'md',
+    zSide: 'right',
   });
 }
 
@@ -846,6 +845,26 @@ export class MySheetComponent {
   protected readonly _data = inject<{ filters: any[] }>(Z_SHEET_DATA);
 }
 ```
+
+**Configuration Options (VERIFIED):**
+
+- `zContent: Component | TemplateRef` - Content component to display
+- `zData: object` - Data to pass to the content component
+- `zSide: 'left' | 'right' | 'top' | 'bottom'` - Sheet position (default: 'left')
+- `zWidth: string` - Custom width (e.g., '400px', '50%')
+- `zHeight: string` - Custom height (e.g., '80vh', '500px')
+- `zTitle: string | TemplateRef` - Sheet title
+- `zDescription: string` - Sheet description
+- `zOkText: string | null` - OK button text (null to hide)
+- `zCancelText: string | null` - Cancel button text (null to hide)
+- `zHideFooter: boolean` - Hide footer buttons (default: false)
+- `zMaskClosable: boolean` - Close on outside click (default: true)
+
+**CRITICAL NOTES:**
+
+- ❌ **NO `zPosition` property** - Use `zSide` instead
+- ❌ **NO `zSize` property** - Use `zWidth`/`zHeight` for dimensions
+- ✅ Default side is `'left'`, not `'right'`
 
 ---
 
@@ -1389,6 +1408,29 @@ ngOnInit() {
 - Wrapping with `@if` forces the entire component to re-render when data is ready
 - This ensures all items are present when z-select initializes
 
+### 17. Sheet Service with Wrong Property Names
+
+```typescript
+// ❌ WRONG - Using non-existent properties
+this._sheetService.create({
+  zContent: MyComponent,
+  zPosition: 'right', // ❌ Wrong property name
+  zSize: 'lg', // ❌ Wrong property name
+});
+
+// ✅ CORRECT - Using correct property names
+this._sheetService.create({
+  zContent: MyComponent,
+  zSide: 'right', // ✅ Correct - use zSide not zPosition
+  zWidth: '500px', // ✅ Correct - use zWidth/zHeight not zSize
+});
+```
+
+**Common sheet property mistakes:**
+
+- ❌ `zPosition` → ✅ `zSide: 'left' | 'right' | 'top' | 'bottom'`
+- ❌ `zSize` → ✅ `zWidth: string` or `zHeight: string`
+
 ---
 
 ## 📚 Additional Resources
@@ -1399,6 +1441,6 @@ ngOnInit() {
 
 ---
 
-**Version:** 3.1 (100% Verified)  
-**Last Updated:** January 24, 2026  
+**Version:** 3.2 (100% Verified)  
+**Last Updated:** January 28, 2026  
 **Verification:** All properties verified against actual component source code
