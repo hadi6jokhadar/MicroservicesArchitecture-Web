@@ -87,7 +87,7 @@
     "start-backend": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "..\\MicroservicesArchitecture\\src\\Services\\run-all-development-instances.bat"
+        "command": "node ..\\MicroservicesArchitecture\\src\\Services\\start-all-services.mjs"
       }
     }
   }
