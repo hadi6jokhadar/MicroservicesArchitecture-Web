@@ -1,0 +1,117 @@
+<div class="dialog-container">
+  <h2 class="dialog-title">{{ 'import.title' | translate }}</h2>
+
+  <form [formGroup]="importForm" (ngSubmit)="onImport()" class="dialog-form">
+    <!-- File Upload -->
+    <z-form-field zardId="fileUpload" #fileUpload="zardId">
+      <label z-form-label [for]="fileUpload.id()">
+        {{ 'import.jsonFile' | translate }} *
+      </label>
+      <z-form-control>
+        <div
+          [id]="fileUpload.id()"
+          class="file-upload-area"
+          (click)="onBrowseFile()"
+          (keyup.enter)="onBrowseFile()"
+          tabindex="0"
+        >
+          @if (selectedFileName()) {
+          <div class="file-selected">
+            <z-icon zType="file-text" />
+            <span>{{ selectedFileName() }}</span>
+          </div>
+          } @else {
+          <div class="file-placeholder">
+            <z-icon zType="arrow-up" />
+            <span>{{ 'import.browseOrDrop' | translate }}</span>
+            <small>{{ 'import.jsonFilesOnly' | translate }}</small>
+          </div>
+          }
+        </div>
+      </z-form-control>
+      @if (importForm.get('file')?.touched &&
+      importForm.get('file')?.hasError('required')) {
+      <span z-form-error>{{ 'import.jsonFileRequired' | translate }}</span>
+      }
+    </z-form-field>
+
+    <!-- Language Selection -->
+    <z-form-field zardId="language" #lang="zardId">
+      <label z-form-label [for]="lang.id()">
+        {{ 'import.language' | translate }} <span class="required">*</span>
+      </label>
+      <z-form-control>
+        <z-select
+          [id]="lang.id()"
+          formControlName="language"
+          [zPlaceholder]="'import.selectLanguage' | translate"
+        >
+          @for (language of availableLanguages; track language.code) {
+          <z-select-item [zValue]="language.code">
+            {{ language.name }} ({{ language.code }})
+          </z-select-item>
+          }
+        </z-select>
+      </z-form-control>
+      @if (importForm.get('language')?.touched &&
+      importForm.get('language')?.hasError('required')) {
+      <span z-form-error>{{ 'import.languageRequired' | translate }}</span>
+      }
+    </z-form-field>
+
+    <!-- Category for New Keys -->
+    <z-form-field zardId="category" #cat="zardId">
+      <label z-form-label [for]="cat.id()">
+        {{ 'import.categoryForNewKeys' | translate }}
+      </label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="cat.id()"
+          type="text"
+          formControlName="category"
+          [placeholder]="'import.categoryPlaceholder' | translate"
+        />
+      </z-form-control>
+      <span z-form-description>{{
+        'import.categoryDescription1' | translate
+      }}</span>
+      <span z-form-description>{{
+        'import.categoryDescription2' | translate
+      }}</span>
+    </z-form-field>
+
+    <!-- Error Display -->
+    @if (errorMessage()) {
+    <z-alert
+      zType="destructive"
+      zIcon="circle-alert"
+      [zDescription]="errorMessage()!"
+    />
+    }
+
+    <!-- Form Actions -->
+    <div class="dialog-actions">
+      <button
+        z-button
+        zType="outline"
+        type="button"
+        (click)="onCancel()"
+        [disabled]="isImporting()"
+        id="cancel-import-btn"
+      >
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        z-button
+        zType="default"
+        type="submit"
+        [zLoading]="isImporting()"
+        [zDisabled]="importForm.invalid"
+        id="submit-import-btn"
+      >
+        {{ 'import.import' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

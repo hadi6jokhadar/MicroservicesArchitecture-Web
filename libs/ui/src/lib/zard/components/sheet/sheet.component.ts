@@ -167,6 +167,8 @@ export class ZardSheetComponent<T, U> extends BasePortalOutlet {
     const zSize =
       this.config.zWidth || this.config.zHeight ? 'custom' : this.config.zSize;
 
+    // Automatically flip side for RTL based on document direction
+    // This is handled globally via styles.css
     return mergeClasses(
       sheetVariants({
         zSide: this.config.zSide,
@@ -188,6 +190,8 @@ export class ZardSheetComponent<T, U> extends BasePortalOutlet {
 
   constructor() {
     super();
+    // Direction is inherited automatically from document.documentElement.dir
+    // Sheet side flipping is handled via CSS in styles.css
   }
 
   getNativeElement(): HTMLElement {

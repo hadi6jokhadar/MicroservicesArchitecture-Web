@@ -18,7 +18,7 @@ import {
   ZardSegmentedComponent,
   ZardSegmentedItemComponent,
 } from '@ihsan/ui';
-import { AuthService, ILoginRequest } from '@ihsan/core';
+import { AuthService, ILoginRequest, TranslatePipe } from '@ihsan/core';
 import {
   SKIP_ERROR_TOAST,
   extractErrorMessage,
@@ -48,6 +48,7 @@ interface ILoginForm {
     ZardIconComponent,
     ZardAlertComponent,
     ZardSegmentedComponent,
+    TranslatePipe,
     ZardSegmentedItemComponent,
   ],
   templateUrl: './login.component.html',

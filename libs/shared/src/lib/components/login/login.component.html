@@ -2,8 +2,8 @@
   <div class="login-wrapper">
     <!-- Logo Section -->
     <div class="logo-section">
-      <h1 class="title">Welcome Back</h1>
-      <p class="subtitle">Sign in to your account to continue</p>
+      <h1 class="title">{{ 'login.title' | translate }}</h1>
+      <p class="subtitle">{{ 'login.subtitle' | translate }}</p>
     </div>
 
     <!-- Login Card -->
@@ -15,17 +15,26 @@
           [zDefaultValue]="loginMode()"
           (zChange)="onLoginModeChange($any($event))"
         >
-          <z-segmented-item value="email-password" label="Email/Password">
+          <z-segmented-item
+            [value]="'email-password'"
+            [label]="'login.mode.emailPassword' | translate"
+          >
             <z-icon zType="mail" />
-            Email/Password
+            {{ 'login.mode.emailPassword' | translate }}
           </z-segmented-item>
-          <z-segmented-item value="email-code" label="Email Code">
+          <z-segmented-item
+            [value]="'email-code'"
+            [label]="'login.mode.emailCode' | translate"
+          >
             <z-icon zType="mail" />
-            Email Code
+            {{ 'login.mode.emailCode' | translate }}
           </z-segmented-item>
-          <z-segmented-item value="phone-code" label="Phone Code">
+          <z-segmented-item
+            [value]="'phone-code'"
+            [label]="'login.mode.phoneCode' | translate"
+          >
             <z-icon zType="smartphone" />
-            Phone Code
+            {{ 'login.mode.phoneCode' | translate }}
           </z-segmented-item>
         </z-segmented>
       </div>
@@ -37,7 +46,9 @@
         <!-- Email/Password Mode -->
         @if (loginMode() === 'email-password') {
         <z-form-field>
-          <label z-form-label for="email">Email</label>
+          <label z-form-label for="email">{{
+            'login.email' | translate
+          }}</label>
           <div class="input-icon-wrapper">
             <z-icon zType="mail" class="input-icon" />
             <input
@@ -45,19 +56,25 @@
               zId="email"
               type="email"
               formControlName="email"
-              placeholder="you@example.com"
+              [placeholder]="'login.emailPlaceholder' | translate"
               [class.error]="emailControl?.invalid && emailControl?.touched"
             />
           </div>
           @if (emailControl?.hasError('required') && emailControl?.touched) {
-          <span z-form-error>Email is required</span>
+          <span z-form-error>{{
+            'login.validation.emailRequired' | translate
+          }}</span>
           } @if (emailControl?.hasError('email') && emailControl?.touched) {
-          <span z-form-error>Please enter a valid email address</span>
+          <span z-form-error>{{
+            'login.validation.emailInvalid' | translate
+          }}</span>
           }
         </z-form-field>
 
         <z-form-field>
-          <label z-form-label for="password">Password</label>
+          <label z-form-label for="password">{{
+            'login.password' | translate
+          }}</label>
           <div class="input-icon-wrapper password-wrapper">
             <z-icon zType="shield" class="input-icon" />
             <input
@@ -65,7 +82,7 @@
               zId="password"
               [type]="showPassword() ? 'text' : 'password'"
               formControlName="password"
-              placeholder="Enter your password"
+              [placeholder]="'login.passwordPlaceholder' | translate"
               [class.error]="
                 passwordControl?.invalid && passwordControl?.touched
               "
@@ -75,7 +92,9 @@
               class="password-toggle"
               (click)="togglePasswordVisibility()"
               [attr.aria-label]="
-                showPassword() ? 'Hide password' : 'Show password'
+                showPassword()
+                  ? ('login.hidePassword' | translate)
+                  : ('login.showPassword' | translate)
               "
             >
               <z-icon [zType]="showPassword() ? 'eye' : 'eye'" />
@@ -83,10 +102,14 @@
           </div>
           @if (passwordControl?.hasError('required') &&
           passwordControl?.touched) {
-          <span z-form-error>Password is required</span>
+          <span z-form-error>{{
+            'login.validation.passwordRequired' | translate
+          }}</span>
           } @if (passwordControl?.hasError('minlength') &&
           passwordControl?.touched) {
-          <span z-form-error>Password must be at least 6 characters</span>
+          <span z-form-error>{{
+            'login.validation.passwordMinLength' | translate
+          }}</span>
           }
         </z-form-field>
         }
@@ -94,7 +117,9 @@
         <!-- Email Code Mode -->
         @if (loginMode() === 'email-code') {
         <z-form-field>
-          <label z-form-label for="email-code">Email</label>
+          <label z-form-label for="email-code">{{
+            'login.email' | translate
+          }}</label>
           <div class="input-icon-wrapper">
             <z-icon zType="mail" class="input-icon" />
             <input
@@ -102,17 +127,22 @@
               zId="email-code"
               type="email"
               formControlName="email"
-              placeholder="you@example.com"
+              [placeholder]="'login.emailPlaceholder' | translate"
               [class.error]="emailControl?.invalid && emailControl?.touched"
             />
           </div>
           @if (emailControl?.hasError('required') && emailControl?.touched) {
-          <span z-form-error>Email is required</span>
+          <span z-form-error>{{
+            'login.validation.emailRequired' | translate
+          }}</span>
           } @if (emailControl?.hasError('email') && emailControl?.touched) {
-          <span z-form-error>Please enter a valid email address</span>
+          <span z-form-error>{{
+            'login.validation.emailInvalid' | translate
+          }}</span>
           }
           <span z-form-description
-            >We'll send a verification code to this email</span
+            >{{ 'login.sendCode' | translate }}
+            {{ 'login.email.label' | translate }}</span
           >
         </z-form-field>
         }
@@ -120,7 +150,9 @@
         <!-- Phone Code Mode -->
         @if (loginMode() === 'phone-code') {
         <z-form-field>
-          <label z-form-label for="phone">Phone Number</label>
+          <label z-form-label for="phone">{{
+            'login.phoneNumber' | translate
+          }}</label>
           <div class="input-icon-wrapper">
             <z-icon zType="smartphone" class="input-icon" />
             <input
@@ -128,7 +160,7 @@
               zId="phone"
               type="tel"
               formControlName="phoneNumber"
-              placeholder="+1 (555) 123-4567"
+              [placeholder]="'login.phoneNumberPlaceholder' | translate"
               [class.error]="
                 phoneNumberControl?.invalid && phoneNumberControl?.touched
               "
@@ -136,10 +168,13 @@
           </div>
           @if (phoneNumberControl?.hasError('required') &&
           phoneNumberControl?.touched) {
-          <span z-form-error>Phone number is required</span>
+          <span z-form-error>{{
+            'login.validation.phoneRequired' | translate
+          }}</span>
           }
           <span z-form-description
-            >We'll send a verification code to this phone</span
+            >{{ 'login.sendCode' | translate }}
+            {{ 'login.phone.label' | translate }}</span
           >
         </z-form-field>
         } }
@@ -147,7 +182,9 @@
         <!-- Step 2: Verification Code Input -->
         @if (currentStep() === 'verification-code') {
         <z-form-field>
-          <label z-form-label for="verification-code">Verification Code</label>
+          <label z-form-label for="verification-code">{{
+            'login.verificationCode' | translate
+          }}</label>
           <div class="input-icon-wrapper">
             <z-icon zType="shield" class="input-icon" />
             <input
@@ -155,7 +192,7 @@
               zId="verification-code"
               type="text"
               formControlName="verificationCode"
-              placeholder="Enter 6-digit code"
+              [placeholder]="'login.verificationCodePlaceholder' | translate"
               maxlength="6"
               [class.error]="
                 verificationCodeControl?.invalid &&
@@ -165,14 +202,22 @@
           </div>
           @if (verificationCodeControl?.hasError('required') &&
           verificationCodeControl?.touched) {
-          <span z-form-error>Verification code is required</span>
+          <span z-form-error>{{
+            'login.validation.codeRequired' | translate
+          }}</span>
           } @if (verificationCodeControl?.hasError('minlength') &&
           verificationCodeControl?.touched) {
-          <span z-form-error>Code must be 6 digits</span>
+          <span z-form-error>{{
+            'login.validation.codeMinLength' | translate
+          }}</span>
           }
           <span z-form-description
-            >Enter the verification code sent to your
-            {{ loginMode() === 'email-code' ? 'email' : 'phone' }}</span
+            >{{ 'login.enterCode' | translate }}
+            {{
+              loginMode() === 'email-code'
+                ? ('login.email.label' | translate)
+                : ('login.phone.label' | translate)
+            }}</span
           >
         </z-form-field>
 
@@ -185,7 +230,7 @@
           id="back-to-credentials-button"
         >
           <z-icon zType="arrow-left" />
-          Back
+          {{ 'common.back' | translate }}
         </button>
         }
 
@@ -217,11 +262,15 @@
         showCreateAccount())) {
         <div class="links-section">
           @if (showForgotPassword()) {
-          <a routerLink="/forgot-password" class="link">Forgot password?</a>
+          <a routerLink="/forgot-password" class="link">{{
+            'login.forgotPassword' | translate
+          }}</a>
           } @if (showForgotPassword() && showCreateAccount()) {
           <span class="separator">•</span>
           } @if (showCreateAccount()) {
-          <a routerLink="/register" class="link">Create account</a>
+          <a routerLink="/register" class="link">{{
+            'login.createAccount' | translate
+          }}</a>
           }
         </div>
         }

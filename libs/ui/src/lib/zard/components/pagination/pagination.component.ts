@@ -182,6 +182,7 @@ export class ZardPaginationEllipsisComponent {
     ZardPaginationButtonComponent,
     ZardPaginationPreviousComponent,
     ZardPaginationNextComponent,
+    ZardPaginationEllipsisComponent,
     NgTemplateOutlet,
   ],
   template: `
@@ -198,8 +199,11 @@ export class ZardPaginationEllipsisComponent {
         />
       </li>
 
-      @for (page of pages(); track page) {
+      @for (page of pages(); track $index) {
       <li z-pagination-item>
+        @if (page === 'ellipsis') {
+        <z-pagination-ellipsis />
+        } @else {
         <button
           z-pagination-button
           type="button"
@@ -209,13 +213,14 @@ export class ZardPaginationEllipsisComponent {
           [zActive]="page === zPageIndex()"
           [zDisabled]="zDisabled()"
           [zSize]="zSize()"
-          (click)="goToPage(page)"
+          (click)="goToPage($any(page))"
         >
           <span class="sr-only">{{
             pages().length === page ? 'To last page, page' : 'To page'
           }}</span>
           {{ page }}
         </button>
+        }
       </li>
       }
 
@@ -256,9 +261,55 @@ export class ZardPaginationComponent {
   protected readonly classes = computed(() =>
     mergeClasses(paginationVariants(), this.class())
   );
-  readonly pages = computed<number[]>(() =>
-    Array.from({ length: Math.max(0, this.zTotal()) }, (_, i) => i + 1)
-  );
+  readonly pages = computed<(number | 'ellipsis')[]>(() => {
+    const total = this.zTotal();
+    const current = this.zPageIndex();
+    const siblingCount = 1;
+
+    // If total pages is small, show all
+    if (total <= 7) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+
+    const leftSiblingIndex = Math.max(current - siblingCount, 1);
+    const rightSiblingIndex = Math.min(current + siblingCount, total);
+
+    const showLeftEllipsis = leftSiblingIndex > 2;
+    const showRightEllipsis = rightSiblingIndex < total - 1;
+
+    const firstPageIndex = 1;
+    const lastPageIndex = total;
+
+    if (!showLeftEllipsis && showRightEllipsis) {
+      const leftItemCount = 3 + 2 * siblingCount;
+      const leftRange = Array.from({ length: leftItemCount }, (_, i) => i + 1);
+      return [...leftRange, 'ellipsis', total];
+    }
+
+    if (showLeftEllipsis && !showRightEllipsis) {
+      const rightItemCount = 3 + 2 * siblingCount;
+      const rightRange = Array.from(
+        { length: rightItemCount },
+        (_, i) => total - rightItemCount + i + 1
+      );
+      return [firstPageIndex, 'ellipsis', ...rightRange];
+    }
+
+    if (showLeftEllipsis && showRightEllipsis) {
+      const middleRange = Array.from(
+        { length: rightSiblingIndex - leftSiblingIndex + 1 },
+        (_, i) => leftSiblingIndex + i
+      );
+      return [
+        firstPageIndex,
+        'ellipsis',
+        ...middleRange,
+        'ellipsis',
+        lastPageIndex,
+      ];
+    }
+    return Array.from({ length: total }, (_, i) => i + 1);
+  });
 
   goToPage(page: number): void {
     if (!this.zDisabled() && page !== this.zPageIndex()) {

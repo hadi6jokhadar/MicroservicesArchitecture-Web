@@ -1,7 +1,9 @@
 <aside class="sidebar">
   <!-- Header with App Title -->
   <div class="sidebar-header">
-    <h1 id="app-title" class="sidebar-title">{{ appTitle() }}</h1>
+    <h1 id="app-title" class="sidebar-title">
+      {{ appTitleTranslationKey() | translate }}
+    </h1>
   </div>
 
   <z-divider [zSpacing]="'sm'" />
@@ -14,52 +16,48 @@
       class="nav-group-label"
       [id]="'group-' + group.key.toLowerCase().replace(' ', '-')"
     >
-      {{ group.key }}
+      {{ group.key | translate }}
     </div>
-    } @for (page of group.value; track page.label) {
+    } @for (page of group.value; track page.translationKey) {
     <!-- Parent Item (with or without children) -->
     @if (page.children && page.children.length > 0) {
     <button
       z-button
       zType="ghost"
       zFull
-      [id]="'nav-' + page.label.toLowerCase().replace(' ', '-')"
+      [id]="'nav-' + page.translationKey"
       class="nav-item nav-parent"
       (click)="onPageClick(page)"
     >
       @if (page.icon) {
-      <i z-icon [zType]="page.icon" class="nav-icon"></i>
+      <z-icon [zType]="page.icon" class="nav-icon" />
       }
-      <span class="nav-label">{{ page.label }}</span>
-      <i
-        z-icon
-        [zType]="isExpanded(page.label) ? 'chevron-down' : 'chevron-right'"
+      <span class="nav-label">{{ page.translationKey | translate }}</span>
+      <z-icon
+        [zType]="
+          isExpanded(page.translationKey) ? 'chevron-down' : 'chevron-right'
+        "
         class="nav-chevron"
-      ></i>
+      />
     </button>
     <!-- Children Items -->
-    @if (isExpanded(page.label)) {
+    @if (isExpanded(page.translationKey)) {
     <div class="nav-children">
-      @for (child of page.children; track child.label) {
+      @for (child of page.children; track child.translationKey) {
       <a
         z-button
         zType="ghost"
         zFull
-        [id]="
-          'nav-' +
-          page.label.toLowerCase().replace(' ', '-') +
-          '-' +
-          child.label.toLowerCase().replace(' ', '-')
-        "
+        [id]="'nav-' + page.translationKey + '-' + child.translationKey"
         [routerLink]="child.route"
         routerLinkActive="active"
         class="nav-item nav-child"
         (click)="onPageClick(child)"
       >
         @if (child.icon) {
-        <i z-icon [zType]="child.icon" class="nav-icon"></i>
+        <z-icon [zType]="child.icon" class="nav-icon" />
         }
-        <span class="nav-label">{{ child.label }}</span>
+        <span class="nav-label">{{ child.translationKey | translate }}</span>
       </a>
       }
     </div>
@@ -69,16 +67,16 @@
       z-button
       zType="ghost"
       zFull
-      [id]="'nav-' + page.label.toLowerCase().replace(' ', '-')"
+      [id]="'nav-' + page.translationKey"
       [routerLink]="page.route"
       routerLinkActive="active"
       class="nav-item"
       (click)="onPageClick(page)"
     >
       @if (page.icon) {
-      <i z-icon [zType]="page.icon" class="nav-icon"></i>
+      <z-icon [zType]="page.icon" class="nav-icon" />
       }
-      <span class="nav-label">{{ page.label }}</span>
+      <span class="nav-label">{{ page.translationKey | translate }}</span>
     </a>
     } } @if (!$last) {
     <z-divider [zSpacing]="'none'" class="group-divider" />
@@ -88,25 +86,55 @@
   <!-- Footer Actions -->
   <div class="sidebar-footer">
     <z-divider [zSpacing]="'sm'" />
-    <z-button
+
+    <!-- Language Switcher -->
+    <button
+      z-button
+      zType="outline"
+      zSize="sm"
+      zFull
+      class="language-btn"
+      z-dropdown
+      [zDropdownMenu]="languageMenu"
+      id="language-switcher"
+    >
+      <z-icon zType="book-open" class="language-icon" />
+      <span>{{ getCurrentLanguageName() }}</span>
+      <z-icon zType="chevron-down" class="chevron-icon" />
+    </button>
+    <z-dropdown-menu-content #languageMenu="zDropdownMenuContent">
+      @for (lang of availableLanguages; track lang.code) {
+      <z-dropdown-menu-item
+        (click)="onLanguageChange(lang.code)"
+        [id]="'lang-' + lang.code"
+      >
+        <span class="language-flag">{{ lang.flag }}</span>
+        <span>{{ lang.name }}</span>
+      </z-dropdown-menu-item>
+      }
+    </z-dropdown-menu-content>
+
+    <button
+      z-button
       id="dark-mode-toggle"
-      zVariant="outline"
+      zType="outline"
       zSize="sm"
       class="dark-mode-btn"
       (click)="onToggleDarkMode()"
     >
-      <i z-icon zType="moon" class="dark-mode-icon"></i>
-      <span>Dark Mode</span>
-    </z-button>
-    <z-button
+      <z-icon zType="moon" class="dark-mode-icon" />
+      <span>{{ 'sidebar.darkMode' | translate }}</span>
+    </button>
+    <button
+      z-button
       id="logout-button"
-      zVariant="destructive"
+      zType="destructive"
       zSize="sm"
       class="logout-btn"
       (click)="onLogout()"
     >
-      <i z-icon zType="log-out" class="logout-icon"></i>
-      <span>Logout</span>
-    </z-button>
+      <z-icon zType="log-out" class="logout-icon" />
+      <span>{{ 'sidebar.logout' | translate }}</span>
+    </button>
   </div>
 </aside>

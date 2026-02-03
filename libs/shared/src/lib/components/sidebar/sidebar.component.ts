@@ -12,8 +12,10 @@ import {
   ZardButtonComponent,
   ZardDividerComponent,
   ZardIconComponent,
+  ZardDropdownImports,
 } from '@ihsan/ui';
 import { ISidebarPage, ISidebarUser } from './sidebar.model';
+import { TranslatePipe, TranslationService } from '@ihsan/core';
 
 @Component({
   selector: 'shared-sidebar',
@@ -24,6 +26,8 @@ import { ISidebarPage, ISidebarUser } from './sidebar.model';
     ZardButtonComponent,
     ZardDividerComponent,
     ZardIconComponent,
+    TranslatePipe,
+    ...ZardDropdownImports,
   ],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
@@ -31,17 +35,30 @@ import { ISidebarPage, ISidebarUser } from './sidebar.model';
 export class SidebarComponent {
   pages = input.required<ISidebarPage[]>();
   currentUser = input.required<ISidebarUser>();
-  appTitle = input<string>('Application');
+  appTitleTranslationKey = input<string>('Application');
 
   pageClicked = output<ISidebarPage>();
   darkModeToggled = output<void>();
   logoutClicked = output<void>();
 
   expandedPages = signal<Set<string>>(new Set());
+  currentLanguage = signal<string>('en');
 
   private _router = inject(Router);
+  private _translationService = inject(TranslationService);
+
+  availableLanguages = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'ar', name: 'العربية', flag: '🇸🇦' },
+  ];
 
   constructor() {
+    // Load saved language from localStorage
+    const savedLanguage = localStorage.getItem('app-language');
+    if (savedLanguage) {
+      this.currentLanguage.set(savedLanguage);
+    }
+
     // Auto-expand parent pages when navigating to a child route
     effect(() => {
       // Reading pages() triggers the effect when the input changes
@@ -88,7 +105,7 @@ export class SidebarComponent {
           );
 
           if (hasMatchingChild) {
-            expandedSet.add(page.label);
+            expandedSet.add(page.translationKey);
           }
         }
       });
@@ -100,27 +117,27 @@ export class SidebarComponent {
 
   onPageClick(page: ISidebarPage): void {
     if (page.children && page.children.length > 0) {
-      this.toggleExpand(page.label);
+      this.toggleExpand(page.translationKey);
     } else {
       this.pageClicked.emit(page);
     }
   }
 
-  toggleExpand(pageLabel: string): void {
+  toggleExpand(pageTranslationKey: string): void {
     const expanded = this.expandedPages();
     const newExpanded = new Set(expanded);
 
-    if (newExpanded.has(pageLabel)) {
-      newExpanded.delete(pageLabel);
+    if (newExpanded.has(pageTranslationKey)) {
+      newExpanded.delete(pageTranslationKey);
     } else {
-      newExpanded.add(pageLabel);
+      newExpanded.add(pageTranslationKey);
     }
 
     this.expandedPages.set(newExpanded);
   }
 
-  isExpanded(pageLabel: string): boolean {
-    return this.expandedPages().has(pageLabel);
+  isExpanded(pageTranslationKey: string): boolean {
+    return this.expandedPages().has(pageTranslationKey);
   }
 
   onToggleDarkMode(): void {
@@ -129,6 +146,34 @@ export class SidebarComponent {
 
   onLogout(): void {
     this.logoutClicked.emit();
+  }
+
+  onLanguageChange(languageCode: string): void {
+    // Save language to localStorage
+    localStorage.setItem('app-language', languageCode);
+    this.currentLanguage.set(languageCode);
+
+    this._translationService.getTranslations(languageCode).subscribe({
+      next: (data) => {
+        this._translationService.setTranslations(
+          data.translations,
+          data.language
+        );
+        // Reload the current page to apply translations
+        window.location.reload();
+      },
+      error: (error) => {
+        console.error('Failed to change language:', error);
+      },
+    });
+  }
+
+  getCurrentLanguageName(): string {
+    const currentLang = this.currentLanguage();
+    return (
+      this.availableLanguages.find((lang) => lang.code === currentLang)?.name ||
+      'English'
+    );
   }
 
   getGroupedPages(): Map<string, ISidebarPage[]> {

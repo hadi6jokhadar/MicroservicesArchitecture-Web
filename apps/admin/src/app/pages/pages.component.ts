@@ -27,59 +27,59 @@ export class PagesComponent {
 
   sidebarPages = signal<ISidebarPage[]>([
     new SidebarPageClass({
-      label: 'Dashboard',
+      translationKey: 'sidebar.pages.dashboard',
       icon: 'layout-dashboard' as ZardIcon,
       route: '/dashboard',
     }),
     new SidebarPageClass({
-      label: 'Test Components',
+      translationKey: 'sidebar.pages.testComponents',
       icon: 'lightbulb' as ZardIcon,
       route: '/test-components',
     }),
     new SidebarPageClass({
-      label: 'Identity',
+      translationKey: 'sidebar.pages.identity',
       icon: 'shield' as ZardIcon,
-      group: 'User Group',
+      group: 'sidebar.groups.user',
       children: [
         new SidebarPageClass({
-          label: 'Users',
+          translationKey: 'sidebar.pages.users',
           icon: 'users' as ZardIcon,
           route: '/identity/users',
         }),
         new SidebarPageClass({
-          label: 'Roles',
+          translationKey: 'sidebar.pages.roles',
           icon: 'badge-check' as ZardIcon,
           route: '/identity/roles',
         }),
         new SidebarPageClass({
-          label: 'Claims',
+          translationKey: 'sidebar.pages.claims',
           icon: 'shield' as ZardIcon,
           route: '/identity/claims',
         }),
       ],
     }),
     new SidebarPageClass({
-      label: 'Tenant',
+      translationKey: 'sidebar.pages.tenant',
       icon: 'house' as ZardIcon,
-      group: 'System Group',
+      group: 'sidebar.groups.system',
       route: '/tenant',
     }),
     new SidebarPageClass({
-      label: 'Translation',
+      translationKey: 'sidebar.pages.translation',
       icon: 'book-open-text' as ZardIcon,
-      group: 'System Group',
+      group: 'sidebar.groups.system',
       route: '/translation',
     }),
     new SidebarPageClass({
-      label: 'FileManager',
+      translationKey: 'sidebar.pages.fileManager',
       icon: 'folder' as ZardIcon,
-      group: 'System Group',
+      group: 'sidebar.groups.system',
       route: '/file-manager',
     }),
     new SidebarPageClass({
-      label: 'Notification',
+      translationKey: 'sidebar.pages.notification',
       icon: 'bell' as ZardIcon,
-      group: 'System Group',
+      group: 'sidebar.groups.system',
       route: '/notification',
     }),
   ]);
@@ -92,7 +92,7 @@ export class PagesComponent {
     })
   );
 
-  appTitle = signal<string>('Admin Panel');
+  appTitleTranslationKey = signal<string>('app.title');
 
   constructor() {
     // Load theme preference on init
@@ -128,7 +128,7 @@ export class PagesComponent {
   }
 
   onPageClick(page: ISidebarPage): void {
-    console.log('Page clicked:', page);
+    // Page navigation handled by routerLink
   }
 
   toggleDarkMode(): void {

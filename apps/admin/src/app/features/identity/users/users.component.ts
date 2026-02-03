@@ -10,6 +10,7 @@ import {
   IUser,
   IUserFilterRequest,
   RoleService,
+  TranslatePipe,
 } from '@ihsan/core';
 import {
   ZardAlertDialogService,
@@ -42,6 +43,7 @@ interface IUserFilterForm {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    TranslatePipe,
     ZardButtonComponent,
     ZardInputDirective,
     ZardCardComponent,

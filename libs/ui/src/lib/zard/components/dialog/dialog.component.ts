@@ -166,6 +166,7 @@ export class ZardDialogOptions<T, U> {
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
+    'data-slot': 'dialog',
     '[class]': 'classes()',
     '[style.width]': 'config.zWidth ? config.zWidth : null',
     'animate.enter': 'dialog-enter',
@@ -191,6 +192,8 @@ export class ZardDialogComponent<T, U> extends BasePortalOutlet {
 
   constructor() {
     super();
+    // Direction is inherited automatically from document.documentElement.dir
+    // which is set globally in app.ts when language changes
   }
 
   getNativeElement(): HTMLElement {

@@ -1,65 +1,87 @@
 <div class="dialog-container">
   <h2 class="dialog-title">
-    {{ isEditMode() ? 'Edit Translation Key' : 'Add Translation Key' }}
+    {{
+      isEditMode()
+        ? ('translations.dialog.editTitle' | translate)
+        : ('translations.dialog.addTitle' | translate)
+    }}
   </h2>
 
   <form [formGroup]="keyForm" (ngSubmit)="onSubmit()" class="dialog-form">
     <!-- Key Input -->
     <z-form-field zardId="key" #k="zardId">
-      <label z-form-label [for]="k.id()">Key *</label>
+      <label z-form-label [for]="k.id()"
+        >{{ 'translations.dialog.keyLabel' | translate }} *</label
+      >
       <z-form-control>
         <input
           z-input
           [id]="k.id()"
           type="text"
           formControlName="key"
-          placeholder="e.g., app.welcome.title"
+          [placeholder]="'translations.dialog.keyPlaceholder' | translate"
           [disabled]="isEditMode()"
         />
       </z-form-control>
       @if (keyForm.get('key')?.hasError('required') &&
       keyForm.get('key')?.touched) {
-      <span z-form-error>Key is required</span>
+      <span z-form-error>{{
+        'translations.validation.keyRequired' | translate
+      }}</span>
       } @else if (keyForm.get('key')?.hasError('maxlength')) {
-      <span z-form-error>Key must not exceed 200 characters</span>
+      <span z-form-error>{{
+        'translations.validation.keyMaxLength' | translate
+      }}</span>
       }
     </z-form-field>
 
     <!-- Category Input -->
     <z-form-field zardId="category" #c="zardId">
-      <label z-form-label [for]="c.id()">Category *</label>
+      <label z-form-label [for]="c.id()"
+        >{{ 'translations.dialog.categoryLabel' | translate }} *</label
+      >
       <z-form-control>
         <input
           z-input
           [id]="c.id()"
           type="text"
           formControlName="category"
-          placeholder="e.g., General, Validation, Errors"
+          [placeholder]="'translations.dialog.categoryPlaceholder' | translate"
           [disabled]="isEditMode()"
         />
       </z-form-control>
       @if (keyForm.get('category')?.hasError('required') &&
       keyForm.get('category')?.touched) {
-      <span z-form-error>Category is required</span>
+      <span z-form-error>{{
+        'translations.validation.categoryRequired' | translate
+      }}</span>
       } @else if (keyForm.get('category')?.hasError('maxlength')) {
-      <span z-form-error>Category must not exceed 100 characters</span>
+      <span z-form-error>{{
+        'translations.validation.categoryMaxLength' | translate
+      }}</span>
       }
     </z-form-field>
 
     <!-- Description Input -->
     <z-form-field zardId="description" #d="zardId">
-      <label z-form-label [for]="d.id()">Description</label>
+      <label z-form-label [for]="d.id()">{{
+        'translations.dialog.descriptionLabel' | translate
+      }}</label>
       <z-form-control>
         <textarea
           z-input
           [id]="d.id()"
           formControlName="description"
-          placeholder="Optional description of this translation key..."
+          [placeholder]="
+            'translations.dialog.descriptionPlaceholder' | translate
+          "
           rows="3"
         ></textarea>
       </z-form-control>
       @if (keyForm.get('description')?.hasError('maxlength')) {
-      <span z-form-error>Description must not exceed 500 characters</span>
+      <span z-form-error>{{
+        'translations.validation.descriptionMaxLength' | translate
+      }}</span>
       }
     </z-form-field>
 
@@ -81,7 +103,7 @@
         (click)="onCancel()"
         id="cancel-btn"
       >
-        Cancel
+        {{ 'common.cancel' | translate }}
       </button>
       <button
         z-button
@@ -91,7 +113,11 @@
         [zDisabled]="keyForm.invalid"
         id="submit-btn"
       >
-        {{ isEditMode() ? 'Update Key' : 'Create Key' }}
+        {{
+          isEditMode()
+            ? ('translations.dialog.updateKey' | translate)
+            : ('translations.dialog.createKey' | translate)
+        }}
       </button>
     </div>
   </form>

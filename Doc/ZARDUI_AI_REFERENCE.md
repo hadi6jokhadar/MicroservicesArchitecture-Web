@@ -748,7 +748,7 @@ import { ZardIconComponent } from '@ihsan/ui';
   'circle-small';
 ```
 
-`````
+````
 
 **Common Icon Name Corrections:**
 
@@ -784,7 +784,7 @@ import { ZardIconComponent } from '@ihsan/ui';
 **Import:**
 
 ```typescript
-import { ZardDialogService, Z_MODAL_DATA } from '@ihsan/ui';
+import { ZardDialogService, Z_MODAL_DATA, ZardDialogRef } from '@ihsan/ui';
 ```
 
 **Service Injection:**
@@ -793,24 +793,98 @@ import { ZardDialogService, Z_MODAL_DATA } from '@ihsan/ui';
 private readonly _dialogService = inject(ZardDialogService);
 ```
 
+**CRITICAL NOTES:**
+
+- ❌ **NO `closed` property or observable** - The dialog ref does NOT have a `closed` property
+- ✅ **Use `zOnOk` and `zOnCancel` callbacks** for handling dialog close events
+- ✅ **Use event services** to communicate dialog results to parent components
+- ✅ **Dialog ref only has `close(result?)` method** - Use `this._dialogRef.close()` inside dialog component
+
 **Usage:**
 
 ```typescript
-// Open Dialog
+// ❌ WRONG - No 'closed' observable exists
+const ref = this._dialogService.create({
+  zContent: MyDialogComponent,
+  zData: { userId: 123 },
+});
+ref.closed.subscribe(() => { }); // ERROR: Property 'closed' does not exist
+
+// ✅ CORRECT - Simple dialog without result handling
 openDialog(): void {
   this._dialogService.create({
     zContent: MyDialogComponent,
     zData: { userId: 123 },
     zTitle: 'User Details',
-    zSize: 'md',
+    zHideFooter: true, // Hide default OK/Cancel buttons
   });
 }
 
-// Dialog Component
+// ✅ CORRECT - Dialog with callbacks
+openConfirmDialog(): void {
+  this._dialogService.create({
+    zContent: MyDialogComponent,
+    zTitle: 'Confirm Action',
+    zDescription: 'Are you sure?',
+    zOkText: 'Confirm',
+    zCancelText: 'Cancel',
+    zOnOk: (instance) => {
+      console.log('OK clicked', instance);
+      // Return false to prevent dialog from closing
+      // return false;
+    },
+    zOnCancel: (instance) => {
+      console.log('Cancel clicked', instance);
+    },
+  });
+}
+
+// ✅ CORRECT - Use event service for parent-child communication
+// In parent component
+openDialog(): void {
+  this._dialogService.create({
+    zContent: MyDialogComponent,
+    zHideFooter: true,
+  });
+}
+
+// In dialog component
 export class MyDialogComponent {
-  protected readonly _data = inject<{ userId: number }>(Z_MODAL_DATA);
+  private readonly _dialogRef = inject(ZardDialogRef);
+  private readonly _data = inject<{ userId: number }>(Z_MODAL_DATA);
+  private readonly _eventService = inject(MyEventService); // Your custom event service
+
+  onSave(): void {
+    // Perform save operation
+    this._eventService.notifyDataChanged(); // Notify parent
+    this._dialogRef.close(); // Close dialog
+  }
+
+  onCancel(): void {
+    this._dialogRef.close();
+  }
 }
 ```
+
+**Dialog Options (ZardDialogOptions):**
+
+- `zContent: Component | TemplateRef | string` - Dialog content
+- `zData: object` - Data passed to dialog component (inject with `Z_MODAL_DATA`)
+- `zTitle: string | TemplateRef` - Dialog title
+- `zDescription: string` - Dialog description
+- `zWidth: string` - Custom width (e.g., '500px', '80%')
+- `zHideFooter: boolean` - Hide default OK/Cancel footer
+- `zOkText: string | null` - OK button text (null to hide)
+- `zCancelText: string | null` - Cancel button text (null to hide)
+- `zOkDestructive: boolean` - Make OK button red (for delete actions)
+- `zOkDisabled: boolean` - Disable OK button
+- `zOkIcon: ZardIcon` - Icon for OK button
+- `zCancelIcon: ZardIcon` - Icon for Cancel button
+- `zClosable: boolean` - Show X close button (default: true)
+- `zMaskClosable: boolean` - Close on backdrop click (default: true)
+- `zOnOk: (instance) => false | void | object` - OK button callback
+- `zOnCancel: (instance) => false | void | object` - Cancel button callback
+- `zCustomClasses: string` - Additional CSS classes
 
 ---
 
@@ -1125,9 +1199,31 @@ readonly modeOptions = signal<SegmentedOption[]>([
 
 ## ❌ Common Mistakes to Avoid
 
-### 1. Wrong Button Type
+### 1. Using Dialog `ref.closed` (Does Not Exist)
 
-````html
+```typescript
+// ❌ WRONG - Dialog ref has NO 'closed' property
+const ref = this._dialogService.create({
+  zContent: MyDialog,
+});
+ref.closed.subscribe(() => { }); // ERROR!
+
+// ✅ CORRECT - Use event service for parent-child communication
+this._dialogService.create({
+  zContent: MyDialog,
+  zHideFooter: true,
+});
+
+// In dialog component:
+onSave(): void {
+  this._eventService.notifyDataChanged(); // Notify parent via event service
+  this._dialogRef.close();
+}
+```
+
+### 2. Wrong Button Type
+
+```html
 <!-- ❌ WRONG -->
 <button z-button zType="primary">Save</button>
 
@@ -1140,7 +1236,7 @@ readonly modeOptions = signal<SegmentedOption[]>([
 
 <!-- ✅ CORRECT -->
 <z-icon zType="settings" />
-`````
+````
 
 ### 7. Icon with Number Size Instead of Predefined Variants
 

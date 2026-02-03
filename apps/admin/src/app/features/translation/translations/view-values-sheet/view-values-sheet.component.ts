@@ -12,6 +12,7 @@ import {
   ITranslationValueDto,
   ISetTranslationCommand,
   TranslationService,
+  TranslatePipe,
 } from '@ihsan/core';
 import {
   ZardAlertDialogService,
@@ -26,6 +27,7 @@ import {
   Z_SHEET_DATA,
   ZardEmptyComponent,
   ZardDropdownImports,
+  ZardSelectImports,
 } from '@ihsan/ui';
 import { SKIP_ERROR_TOAST, extractErrorMessage } from '@ihsan/shared';
 import { TranslationEventsService } from '../../translation-events.service';
@@ -46,11 +48,13 @@ interface IEditValueForm {
     ZardInputDirective,
     ZardBadgeComponent,
     ZardAlertComponent,
+    TranslatePipe,
     ...ZardFormImports,
     ZardIconComponent,
     ZardIdDirective,
     ZardEmptyComponent,
     ...ZardDropdownImports,
+    ...ZardSelectImports,
   ],
   templateUrl: './view-values-sheet.component.html',
   styleUrls: ['./view-values-sheet.component.scss'],
@@ -75,15 +79,15 @@ export class ViewValuesSheetComponent implements OnInit {
   readonly editingValue = signal<ITranslationValueDto | null>(null);
   readonly isAddMode = signal(false);
 
+  get availableLanguages() {
+    return this._translationService.availableLanguages;
+  }
+
   // Edit Form
   readonly editForm = new FormGroup<IEditValueForm>({
     language: new FormControl<string>('', {
       nonNullable: true,
-      validators: [
-        Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(5),
-      ],
+      validators: [Validators.required],
     }),
     value: new FormControl<string>('', {
       nonNullable: true,
@@ -152,7 +156,9 @@ export class ViewValuesSheetComponent implements OnInit {
       language: formValue.language,
       value: formValue.value,
       tenantId: formValue.tenantId || undefined, // Empty string = global translation
-      category: this.translationKey().category || 'General',
+      category: this.capitalizeFirstLetter(
+        this.translationKey().category || 'General'
+      ),
     };
 
     const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
@@ -229,6 +235,14 @@ export class ViewValuesSheetComponent implements OnInit {
   }
 
   getTenantLabel(value: ITranslationValueDto): string {
-    return value.tenantId ? 'Tenant-specific' : 'Global';
+    const key = value.tenantId
+      ? 'translations.values.tenant.specific'
+      : 'translations.values.tenant.global';
+    return this._translationService.getCachedTranslation(key);
+  }
+
+  private capitalizeFirstLetter(text: string): string {
+    if (!text) return text;
+    return text.charAt(0).toUpperCase() + text.slice(1);
   }
 }

@@ -1,0 +1,72 @@
+<div class="dialog-container">
+  <h2 class="dialog-title">{{ 'export.title' | translate }}</h2>
+
+  <form [formGroup]="exportForm" (ngSubmit)="onExport()" class="dialog-form">
+    <!-- Language Selection -->
+    <z-form-field zardId="language" #lang="zardId">
+      <label z-form-label [for]="lang.id()">
+        {{ 'export.language' | translate }} *
+      </label>
+      <z-form-control>
+        <z-select
+          [id]="lang.id()"
+          formControlName="language"
+          [zPlaceholder]="'export.selectLanguage' | translate"
+        >
+          @for (language of availableLanguages; track language.code) {
+          <z-select-item [zValue]="language.code">
+            {{ language.name }} ({{ language.code }})
+          </z-select-item>
+          }
+        </z-select>
+      </z-form-control>
+      @if (exportForm.get('language')?.touched &&
+      exportForm.get('language')?.hasError('required')) {
+      <span z-form-error>{{ 'export.languageRequired' | translate }}</span>
+      }
+    </z-form-field>
+
+    <!-- Category Filter (Optional) -->
+    <z-form-field zardId="category" #cat="zardId">
+      <label z-form-label [for]="cat.id()">
+        {{ 'export.category' | translate }}
+      </label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="cat.id()"
+          type="text"
+          formControlName="category"
+          [placeholder]="'export.categoryPlaceholder' | translate"
+        />
+      </z-form-control>
+      <span z-form-description>
+        {{ 'export.categoryDescription' | translate }}
+      </span>
+    </z-form-field>
+
+    <!-- Form Actions -->
+    <div class="dialog-actions">
+      <button
+        z-button
+        zType="outline"
+        type="button"
+        (click)="onCancel()"
+        [disabled]="isExporting()"
+        id="cancel-export-btn"
+      >
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        z-button
+        zType="default"
+        type="submit"
+        [zLoading]="isExporting()"
+        [zDisabled]="exportForm.invalid"
+        id="submit-export-btn"
+      >
+        {{ 'export.export' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

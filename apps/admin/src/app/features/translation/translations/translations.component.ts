@@ -7,6 +7,8 @@ import {
   IPaginatedList,
   IGetTranslationKeysQuery,
   TranslationService,
+  TranslatePipe,
+  RtlService,
 } from '@ihsan/core';
 import {
   ZardAlertDialogService,
@@ -27,6 +29,8 @@ import {
 import { toast } from 'ngx-sonner';
 import { ViewValuesSheetComponent } from './view-values-sheet/view-values-sheet.component';
 import { AddEditKeyDialogComponent } from './add-edit-key-dialog/add-edit-key-dialog.component';
+import { ExportDialogComponent } from './export-dialog/export-dialog.component';
+import { ImportDialogComponent } from './import-dialog/import-dialog.component';
 import { TranslationEventsService } from '../translation-events.service';
 
 interface ITranslationFilterForm {
@@ -44,6 +48,7 @@ interface ITranslationFilterForm {
     ZardInputDirective,
     ZardCardComponent,
     ZardBadgeComponent,
+    TranslatePipe,
     ...ZardDropdownImports,
     ...ZardFormImports,
     ...ZardPaginationImports,
@@ -60,6 +65,7 @@ export class TranslationsComponent implements OnInit {
   private readonly _alertDialogService = inject(ZardAlertDialogService);
   private readonly _sheetService = inject(ZardSheetService);
   private readonly _dialogService = inject(ZardDialogService);
+  private readonly _rtlService = inject(RtlService);
   private readonly _translationEvents = inject(TranslationEventsService);
 
   // Signals
@@ -115,7 +121,9 @@ export class TranslationsComponent implements OnInit {
       pageNumber: this.currentPage(),
       pageSize: this.pageSize,
       searchTerm: formValue.searchTerm || undefined,
-      category: formValue.category || undefined,
+      category: formValue.category
+        ? this.capitalizeFirstLetter(formValue.category)
+        : undefined,
     };
 
     this._translationService.getTranslationKeys(query).subscribe({
@@ -158,7 +166,7 @@ export class TranslationsComponent implements OnInit {
     this._sheetService.create({
       zContent: ViewValuesSheetComponent,
       zData: { translationKey },
-      zSide: 'right',
+      zSide: this._rtlService.getSheetSide('right'),
       zClosable: false,
       zHideFooter: true,
     });
@@ -210,5 +218,24 @@ export class TranslationsComponent implements OnInit {
     return (
       translationKey.values?.map((v) => v.language).filter((l) => !!l) || []
     );
+  }
+
+  onExportTranslations(): void {
+    this._dialogService.create({
+      zContent: ExportDialogComponent,
+      zHideFooter: true,
+    });
+  }
+
+  onImportTranslations(): void {
+    this._dialogService.create({
+      zContent: ImportDialogComponent,
+      zHideFooter: true,
+    });
+  }
+
+  private capitalizeFirstLetter(text: string): string {
+    if (!text) return text;
+    return text.charAt(0).toUpperCase() + text.slice(1);
   }
 }

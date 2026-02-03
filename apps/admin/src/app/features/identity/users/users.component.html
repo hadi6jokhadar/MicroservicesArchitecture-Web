@@ -3,8 +3,8 @@
   <div class="header">
     <div class="header-content">
       <div class="header-text">
-        <h1>Users Management</h1>
-        <p>Manage user accounts, roles, and permissions</p>
+        <h1>{{ 'users.title' | translate }}</h1>
+        <p>{{ 'users.subtitle' | translate }}</p>
       </div>
       <button
         z-button
@@ -14,7 +14,7 @@
         id="add-user-btn"
       >
         <z-icon zType="user-plus" />
-        Add User
+        {{ 'users.addUser' | translate }}
       </button>
     </div>
   </div>
@@ -29,7 +29,9 @@
           zardId="searchTerm"
           #s="zardId"
         >
-          <label z-form-label [for]="s.id()">Search</label>
+          <label z-form-label [for]="s.id()">
+            {{ 'users.search' | translate }}
+          </label>
           <z-form-control>
             <div class="search-input-wrapper">
               <z-icon zType="search" class="search-icon" />
@@ -38,7 +40,7 @@
                 [id]="s.id()"
                 type="text"
                 formControlName="searchTerm"
-                placeholder="Search by name, email, or phone..."
+                [placeholder]="'users.searchPlaceholder' | translate"
                 (keyup.enter)="onSearch()"
               />
             </div>
@@ -47,15 +49,19 @@
 
         <!-- Role Filter -->
         <z-form-field class="filter-field" zardId="roleName" #f="zardId">
-          <label z-form-label [for]="f.id()">Role</label>
+          <label z-form-label [for]="f.id()">
+            {{ 'users.role' | translate }}
+          </label>
           <z-form-control>
             @if (rolesLoaded()) {
             <z-select
               [id]="f.id()"
-              zPlaceholder="All Roles"
+              [zPlaceholder]="'users.allRoles' | translate"
               formControlName="roleName"
             >
-              <z-select-item zValue="__all__">All Roles</z-select-item>
+              <z-select-item zValue="__all__">
+                {{ 'users.allRoles' | translate }}
+              </z-select-item>
               @for (role of roles(); track role.id) {
               <z-select-item [zValue]="role.name">
                 {{ role.name }}
@@ -70,16 +76,24 @@
 
         <!-- Status Filter -->
         <z-form-field class="filter-field" zardId="status" #st="zardId">
-          <label z-form-label [for]="st.id()">Status</label>
+          <label z-form-label [for]="st.id()">
+            {{ 'users.status' | translate }}
+          </label>
           <z-form-control>
             <z-select
               [id]="st.id()"
-              zPlaceholder="All Status"
+              [zPlaceholder]="'users.allStatus' | translate"
               formControlName="status"
             >
-              <z-select-item zValue="__all__">All Status</z-select-item>
-              <z-select-item zValue="true">Active</z-select-item>
-              <z-select-item zValue="false">Inactive</z-select-item>
+              <z-select-item zValue="__all__">
+                {{ 'users.allStatus' | translate }}
+              </z-select-item>
+              <z-select-item zValue="true">
+                {{ 'users.active' | translate }}
+              </z-select-item>
+              <z-select-item zValue="false">
+                {{ 'users.inactive' | translate }}
+              </z-select-item>
             </z-select>
           </z-form-control>
         </z-form-field>
@@ -95,7 +109,7 @@
             id="clear-filters-btn"
           >
             <z-icon zType="x" />
-            Clear
+            {{ 'common.clear' | translate }}
           </button>
           <button
             z-button
@@ -106,7 +120,7 @@
             id="search-btn"
           >
             <z-icon zType="search" />
-            Search
+            {{ 'common.search' | translate }}
           </button>
         </div>
       </div>
@@ -118,14 +132,14 @@
     @if (isLoading()) {
     <div class="loading-container">
       <z-loader zSize="lg" />
-      <p>Loading users...</p>
+      <p>{{ 'users.loadingUsers' | translate }}</p>
     </div>
     } @else if (users().length === 0) {
     <div class="empty-container">
       <z-empty
         zIcon="users"
-        zTitle="No users found"
-        zDescription="No users match your search criteria. Try adjusting your filters."
+        [zTitle]="'users.noUsersFound' | translate"
+        [zDescription]="'users.noUsersFoundDesc' | translate"
       />
     </div>
     } @else {
@@ -134,7 +148,11 @@
       <div class="table-header">
         <div class="results-info">
           <z-icon zType="users" />
-          <span>Showing {{ users().length }} of {{ totalCount() }} users</span>
+          <span>
+            {{ 'users.showingResults' | translate }} {{ users().length }}
+            {{ 'common.of' | translate }} {{ totalCount() }}
+            {{ 'users.users' | translate }}
+          </span>
         </div>
       </div>
 
@@ -143,14 +161,18 @@
         <table class="users-table">
           <thead>
             <tr>
-              <th class="col-avatar">Avatar</th>
-              <th class="col-name">Name</th>
-              <th class="col-email">Email</th>
-              <th class="col-phone">Phone</th>
-              <th class="col-roles">Roles</th>
-              <th class="col-status">Status</th>
-              <th class="col-created">Created</th>
-              <th class="col-actions">Actions</th>
+              <th class="col-avatar">{{ 'users.table.avatar' | translate }}</th>
+              <th class="col-name">{{ 'users.table.name' | translate }}</th>
+              <th class="col-email">{{ 'users.table.email' | translate }}</th>
+              <th class="col-phone">{{ 'users.table.phone' | translate }}</th>
+              <th class="col-roles">{{ 'users.table.roles' | translate }}</th>
+              <th class="col-status">{{ 'users.table.status' | translate }}</th>
+              <th class="col-created">
+                {{ 'users.table.created' | translate }}
+              </th>
+              <th class="col-actions">
+                {{ 'users.table.actions' | translate }}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -177,7 +199,7 @@
                   <z-icon
                     zType="badge-check"
                     class="verified-icon"
-                    title="Email verified"
+                    [title]="'users.emailVerified' | translate"
                   />
                   }
                 </div>
@@ -185,12 +207,16 @@
 
               <!-- Email -->
               <td class="col-email">
-                <span class="email-text">{{ user.email || 'N/A' }}</span>
+                <span class="email-text">
+                  {{ user.email || ('users.na' | translate) }}
+                </span>
               </td>
 
               <!-- Phone -->
               <td class="col-phone">
-                <span class="phone-text">{{ user.phoneNumber || 'N/A' }}</span>
+                <span class="phone-text">
+                  {{ user.phoneNumber || ('users.na' | translate) }}
+                </span>
               </td>
 
               <!-- Roles -->
@@ -201,7 +227,9 @@
                     {{ role.name }}
                   </z-badge>
                   } @empty {
-                  <span class="no-roles">No roles</span>
+                  <span class="no-roles">{{
+                    'users.noRoles' | translate
+                  }}</span>
                   }
                 </div>
               </td>
@@ -212,7 +240,11 @@
                   [zType]="getStatusBadgeType(user.status)"
                   zShape="pill"
                 >
-                  {{ user.status ? 'Active' : 'Inactive' }}
+                  {{
+                    user.status
+                      ? ('users.active' | translate)
+                      : ('users.inactive' | translate)
+                  }}
                 </z-badge>
               </td>
 
@@ -241,7 +273,7 @@
                     [id]="'edit-user-' + user.id"
                   >
                     <z-icon zType="file-text" />
-                    Edit User
+                    {{ 'users.actions.editUser' | translate }}
                   </z-dropdown-menu-item>
 
                   <z-dropdown-menu-item
@@ -249,7 +281,11 @@
                     [id]="'toggle-status-' + user.id"
                   >
                     <z-icon [zType]="user.status ? 'ban' : 'check'" />
-                    {{ user.status ? 'Deactivate' : 'Activate' }}
+                    {{
+                      user.status
+                        ? ('users.actions.deactivate' | translate)
+                        : ('users.actions.activate' | translate)
+                    }}
                   </z-dropdown-menu-item>
 
                   <z-dropdown-menu-item
@@ -258,7 +294,7 @@
                     class="delete-action"
                   >
                     <z-icon zType="trash" />
-                    Delete User
+                    {{ 'users.actions.deleteUser' | translate }}
                   </z-dropdown-menu-item>
                 </z-dropdown-menu-content>
               </td>
@@ -271,7 +307,11 @@
       <!-- Pagination -->
       @if (totalPages() > 1) {
       <div class="pagination-container">
-        <z-pagination [zTotal]="totalPages()" [(zPageIndex)]="currentPage" />
+        <z-pagination
+          zSize="sm"
+          [zTotal]="totalPages()"
+          [(zPageIndex)]="currentPage"
+        />
       </div>
       }
     </div>

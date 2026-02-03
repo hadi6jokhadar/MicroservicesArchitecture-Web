@@ -266,3 +266,38 @@
   border-radius: 5px;
   background: var(--muted);
 }
+
+/* ===== RTL (Right-to-Left) Support ===== */
+/* Automatically apply direction to dialogs in RTL mode */
+[dir='rtl'] [data-slot='dialog'] {
+  direction: rtl;
+}
+
+/* Automatically flip sheet sides when in RTL mode */
+[dir='rtl'] [data-slot='sheet'] {
+  direction: rtl;
+}
+
+[dir='rtl'] [data-slot='sheet'][data-side='left'] {
+  left: auto;
+  right: 0;
+}
+
+[dir='rtl'] [data-slot='sheet'][data-side='right'] {
+  right: auto;
+  left: 0;
+}
+
+/* Animation transforms for RTL sheets */
+[dir='rtl'] [data-slot='sheet'][data-side='left'][data-state='closed'] {
+  transform: translateX(100%);
+}
+
+[dir='rtl'] [data-slot='sheet'][data-side='right'][data-state='closed'] {
+  transform: translateX(-100%);
+}
+
+/* Prevent z-icon from flipping in RTL */
+[dir='rtl'] z-icon {
+  transform: scaleX(-1);
+}

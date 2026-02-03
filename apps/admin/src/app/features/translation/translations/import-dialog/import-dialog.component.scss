@@ -1,0 +1,89 @@
+:host {
+  display: block;
+
+  .dialog-container {
+    padding: 1.5rem;
+
+    .dialog-title {
+      margin: 0 0 1.5rem 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-foreground);
+    }
+
+    .dialog-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      .file-upload-area {
+        border: 2px dashed var(--color-border);
+        border-radius: var(--radius);
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: var(--color-background);
+
+        &:hover {
+          border-color: var(--color-primary);
+          background: var(--color-accent);
+        }
+
+        .file-placeholder {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+          color: var(--color-muted-foreground);
+
+          z-icon {
+            font-size: 2rem;
+          }
+
+          span {
+            font-weight: 500;
+          }
+
+          small {
+            font-size: 0.75rem;
+          }
+        }
+
+        .file-selected {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.75rem;
+          color: var(--color-foreground);
+
+          z-icon {
+            font-size: 1.5rem;
+            color: var(--color-primary);
+          }
+
+          span {
+            font-weight: 500;
+          }
+        }
+      }
+
+      code {
+        background: var(--color-muted);
+        padding: 0.125rem 0.375rem;
+        border-radius: 0.25rem;
+        font-size: 0.875em;
+        font-family: monospace;
+      }
+
+      .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        margin-block-start: 1.5rem;
+        padding-block-start: 1.5rem;
+        border-block-start: 1px solid var(--color-border);
+      }
+    }
+  }
+}

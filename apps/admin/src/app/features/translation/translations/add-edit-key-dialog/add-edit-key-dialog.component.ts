@@ -11,6 +11,7 @@ import {
   ICreateTranslationKeyCommand,
   IUpdateTranslationKeyCommand,
   TranslationService,
+  TranslatePipe,
 } from '@ihsan/core';
 import {
   ZardAlertComponent,
@@ -38,6 +39,7 @@ interface IKeyForm {
     ZardButtonComponent,
     ZardInputDirective,
     ZardAlertComponent,
+    TranslatePipe,
     ...ZardFormImports,
     ZardIdDirective,
   ],
@@ -131,7 +133,7 @@ export class AddEditKeyDialogComponent {
       // Create new key
       const command: ICreateTranslationKeyCommand = {
         key: formValue.key,
-        category: formValue.category,
+        category: this.capitalizeFirstLetter(formValue.category),
         description: formValue.description || undefined,
       };
 
@@ -148,5 +150,10 @@ export class AddEditKeyDialogComponent {
           },
         });
     }
+  }
+
+  private capitalizeFirstLetter(text: string): string {
+    if (!text) return text;
+    return text.charAt(0).toUpperCase() + text.slice(1);
   }
 }

@@ -3,19 +3,41 @@
   <div class="header">
     <div class="header-content">
       <div class="header-text">
-        <h1>Translations Management</h1>
-        <p>Manage translation keys and values for multi-language support</p>
+        <h1>{{ 'page.title.translations' | translate }}</h1>
+        <p>{{ 'page.subtitle.translations' | translate }}</p>
       </div>
-      <button
-        z-button
-        zType="default"
-        zSize="lg"
-        (click)="onAddKey()"
-        id="add-translation-key-btn"
-      >
-        <z-icon zType="plus" />
-        Add Translation Key
-      </button>
+      <div class="header-actions">
+        <button
+          z-button
+          zType="outline"
+          zSize="lg"
+          (click)="onExportTranslations()"
+          id="export-translations-btn"
+        >
+          <z-icon zType="archive" />
+          {{ 'translations.exportTranslations' | translate }}
+        </button>
+        <button
+          z-button
+          zType="outline"
+          zSize="lg"
+          (click)="onImportTranslations()"
+          id="import-translations-btn"
+        >
+          <z-icon zType="arrow-up" />
+          {{ 'translations.importTranslations' | translate }}
+        </button>
+        <button
+          z-button
+          zType="default"
+          zSize="lg"
+          (click)="onAddKey()"
+          id="add-translation-key-btn"
+        >
+          <z-icon zType="plus" />
+          {{ 'translations.addKey' | translate }}
+        </button>
+      </div>
     </div>
   </div>
 
@@ -29,7 +51,9 @@
           zardId="searchTerm"
           #s="zardId"
         >
-          <label z-form-label [for]="s.id()">Search</label>
+          <label z-form-label [for]="s.id()">{{
+            'common.search' | translate
+          }}</label>
           <z-form-control>
             <div class="search-input-wrapper">
               <z-icon zType="search" class="search-icon" />
@@ -38,7 +62,7 @@
                 [id]="s.id()"
                 type="text"
                 formControlName="searchTerm"
-                placeholder="Search by key name or description..."
+                [placeholder]="'translations.searchPlaceholder' | translate"
                 (keyup.enter)="onSearch()"
               />
             </div>
@@ -47,14 +71,16 @@
 
         <!-- Category Filter -->
         <z-form-field class="filter-field" zardId="category" #c="zardId">
-          <label z-form-label [for]="c.id()">Category</label>
+          <label z-form-label [for]="c.id()">{{
+            'translations.category' | translate
+          }}</label>
           <z-form-control>
             <input
               z-input
               [id]="c.id()"
               type="text"
               formControlName="category"
-              placeholder="Filter by category..."
+              [placeholder]="'translations.filterByCategory' | translate"
             />
           </z-form-control>
         </z-form-field>
@@ -70,7 +96,7 @@
             id="clear-filters-btn"
           >
             <z-icon zType="x" />
-            Clear
+            {{ 'common.clear' | translate }}
           </button>
           <button
             z-button
@@ -81,7 +107,7 @@
             id="search-btn"
           >
             <z-icon zType="search" />
-            Search
+            {{ 'common.search' | translate }}
           </button>
         </div>
       </div>
@@ -93,14 +119,14 @@
     @if (isLoading()) {
     <div class="loading-container">
       <z-loader zSize="lg" />
-      <p>Loading translation keys...</p>
+      <p>{{ 'translations.loadingKeys' | translate }}</p>
     </div>
     } @else if (translationKeys().length === 0) {
     <div class="empty-container">
       <z-empty
         zIcon="book-open-text"
-        zTitle="No translation keys found"
-        zDescription="No translation keys match your search criteria. Try adjusting your filters or add a new translation key."
+        [zTitle]="'translations.noKeysFound' | translate"
+        [zDescription]="'translations.noKeysFoundDesc' | translate"
       />
     </div>
     } @else {
@@ -110,8 +136,11 @@
         <div class="results-info">
           <z-icon zType="book-open-text" />
           <span
-            >Showing {{ translationKeys().length }} of
-            {{ totalCount() }} translation keys</span
+            >{{ 'translations.showingKeys' | translate }}
+            {{ translationKeys().length }}
+            {{ 'common.of' | translate }}
+            {{ totalCount() }}
+            {{ 'translations.translationKeys' | translate }}</span
           >
         </div>
       </div>
@@ -121,13 +150,27 @@
         <table class="translations-table">
           <thead>
             <tr>
-              <th class="col-key">Key</th>
-              <th class="col-category">Category</th>
-              <th class="col-description">Description</th>
-              <th class="col-languages">Languages</th>
-              <th class="col-values">Values</th>
-              <th class="col-created">Created</th>
-              <th class="col-actions">Actions</th>
+              <th class="col-key">
+                {{ 'translations.table.key' | translate }}
+              </th>
+              <th class="col-category">
+                {{ 'translations.table.category' | translate }}
+              </th>
+              <th class="col-description">
+                {{ 'translations.table.description' | translate }}
+              </th>
+              <th class="col-languages">
+                {{ 'translations.table.languages' | translate }}
+              </th>
+              <th class="col-values">
+                {{ 'translations.table.values' | translate }}
+              </th>
+              <th class="col-created">
+                {{ 'translations.table.created' | translate }}
+              </th>
+              <th class="col-actions">
+                {{ 'translations.table.actions' | translate }}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -148,7 +191,9 @@
                   {{ key.category }}
                 </z-badge>
                 } @else {
-                <span class="no-category">-</span>
+                <span class="no-category">{{
+                  'translations.table.noCategory' | translate
+                }}</span>
                 }
               </td>
 
@@ -167,7 +212,9 @@
                     {{ lang }}
                   </z-badge>
                   } @empty {
-                  <span class="no-languages">No translations</span>
+                  <span class="no-languages">{{
+                    'translations.table.noLanguages' | translate
+                  }}</span>
                   }
                 </div>
               </td>
@@ -176,7 +223,11 @@
               <td class="col-values">
                 <z-badge zType="default" zShape="pill">
                   {{ getValueCount(key) }}
-                  {{ getValueCount(key) === 1 ? 'value' : 'values' }}
+                  {{
+                    getValueCount(key) === 1
+                      ? ('common.value' | translate)
+                      : ('common.values' | translate)
+                  }}
                 </z-badge>
               </td>
 
@@ -205,7 +256,7 @@
                     [id]="'view-values-' + key.id"
                   >
                     <z-icon zType="eye" />
-                    View Values
+                    {{ 'translations.actions.viewValues' | translate }}
                   </z-dropdown-menu-item>
 
                   <z-dropdown-menu-item
@@ -213,7 +264,7 @@
                     [id]="'edit-key-' + key.id"
                   >
                     <z-icon zType="file-text" />
-                    Edit Key
+                    {{ 'translations.actions.editKey' | translate }}
                   </z-dropdown-menu-item>
 
                   <z-dropdown-menu-item
@@ -222,7 +273,7 @@
                     class="delete-action"
                   >
                     <z-icon zType="trash" />
-                    Delete Key
+                    {{ 'translations.actions.deleteKey' | translate }}
                   </z-dropdown-menu-item>
                 </z-dropdown-menu-content>
               </td>
@@ -235,7 +286,11 @@
       <!-- Pagination -->
       @if (totalPages() > 1) {
       <div class="pagination-container">
-        <z-pagination [zTotal]="totalPages()" [(zPageIndex)]="currentPage" />
+        <z-pagination
+          zSize="sm"
+          [zTotal]="totalPages()"
+          [(zPageIndex)]="currentPage"
+        />
       </div>
       }
     </div>

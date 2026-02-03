@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams, HttpContext } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { ENVIRONMENT } from '../core/environment.token';
 import { IPaginatedList } from '../file-manager';
 import {
@@ -23,6 +24,16 @@ export class TranslationService {
   private readonly _env = inject(ENVIRONMENT);
   private readonly _baseUrl = `${this._env.apiUrls.translation}/api/translations`;
 
+  // Translation cache
+  private readonly _translations = signal<Record<string, string>>({});
+  private readonly _currentLanguage = signal<string>('en');
+
+  readonly availableLanguages = [
+    { code: 'en', name: 'English' },
+    { code: 'ar', name: 'Arabic' },
+    { code: 'tr', name: 'Turkish' },
+  ];
+
   // Public endpoint - Get translations for a language
   getTranslations(
     language: string,
@@ -32,9 +43,46 @@ export class TranslationService {
     if (category) {
       params = params.set('category', category);
     }
-    return this._http.get<ITranslationsDto>(`${this._baseUrl}/${language}`, {
-      params,
-    });
+    return this._http
+      .get<ITranslationsDto>(`${this._baseUrl}/${language}`, {
+        params,
+      })
+      .pipe(
+        tap((data) => {
+          this._translations.set(data.translations);
+          this._currentLanguage.set(data.language);
+        })
+      );
+  }
+
+  // Get cached translations (for pipe usage)
+  getCachedTranslations(): Record<string, string> {
+    return this._translations();
+  }
+
+  // Get cached translation by key (for pipe usage)
+  getCachedTranslation(key: string, defaultValue?: string): string {
+    const translations = this._translations();
+    return translations[key] || defaultValue || key;
+  }
+
+  // Get current language
+  getCurrentLanguage(): string {
+    return this._currentLanguage();
+  }
+
+  // Get current language as signal (for reactive updates)
+  getCurrentLanguageSignal() {
+    return this._currentLanguage;
+  }
+
+  // Set translations manually (for resolver)
+  setTranslations(
+    translations: Record<string, string>,
+    language: string
+  ): void {
+    this._translations.set(translations);
+    this._currentLanguage.set(language);
   }
 
   // Admin endpoints

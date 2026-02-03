@@ -3,7 +3,7 @@
   <div class="sheet-header">
     <div class="header-content">
       <div class="header-text">
-        <h2>Translation Values</h2>
+        <h2>{{ 'translations.values.title' | translate }}</h2>
         <div class="key-info">
           <z-icon zType="code" />
           <span class="key-name">{{ translationKey().key }}</span>
@@ -37,67 +37,85 @@
     @if (isEditMode() || isAddMode()) {
     <div class="edit-form-container">
       <div class="form-header">
-        <h3>{{ isAddMode() ? 'Add New Value' : 'Edit Value' }}</h3>
+        <h3>
+          {{
+            isAddMode()
+              ? ('translations.values.addNew' | translate)
+              : ('translations.values.editValue' | translate)
+          }}
+        </h3>
       </div>
       <form [formGroup]="editForm" class="edit-form">
         <!-- Language Input -->
         <z-form-field zardId="language" #l="zardId">
-          <label z-form-label [for]="l.id()">Language Code *</label>
+          <label z-form-label [for]="l.id()"
+            >{{ 'translations.values.languageLabel' | translate }} *</label
+          >
           <z-form-control>
-            <input
-              z-input
+            <z-select
               [id]="l.id()"
-              type="text"
               formControlName="language"
-              placeholder="e.g., en, ar, fr"
-              [disabled]="isEditMode()"
-            />
+              [zPlaceholder]="
+                'translations.values.languagePlaceholder' | translate
+              "
+              [zDisabled]="isEditMode()"
+            >
+              @for (language of availableLanguages; track language.code) {
+              <z-select-item [zValue]="language.code">
+                {{ language.name }} ({{ language.code }})
+              </z-select-item>
+              }
+            </z-select>
           </z-form-control>
           @if (editForm.get('language')?.hasError('required') &&
           editForm.get('language')?.touched) {
-          <span z-form-error>Language code is required</span>
-          } @else if (editForm.get('language')?.hasError('minlength') &&
-          editForm.get('language')?.touched) {
-          <span z-form-error>Language code must be at least 2 characters</span>
-          } @else if (editForm.get('language')?.hasError('maxlength') &&
-          editForm.get('language')?.touched) {
-          <span z-form-error>Language code must not exceed 5 characters</span>
+          <span z-form-error>{{
+            'translations.values.validation.languageRequired' | translate
+          }}</span>
           }
         </z-form-field>
 
         <!-- Value Input -->
         <z-form-field zardId="value" #v="zardId">
-          <label z-form-label [for]="v.id()">Translation Value *</label>
+          <label z-form-label [for]="v.id()"
+            >{{ 'translations.values.valueLabel' | translate }} *</label
+          >
           <z-form-control>
             <textarea
               z-input
               [id]="v.id()"
               formControlName="value"
-              placeholder="Enter translation value..."
+              [placeholder]="'translations.values.valuePlaceholder' | translate"
               rows="4"
             ></textarea>
           </z-form-control>
           @if (editForm.get('value')?.hasError('required') &&
           editForm.get('value')?.touched) {
-          <span z-form-error>Translation value is required</span>
+          <span z-form-error>{{
+            'translations.values.validation.valueRequired' | translate
+          }}</span>
           }
         </z-form-field>
 
         <!-- Tenant ID Input -->
         <z-form-field zardId="tenantId" #t="zardId">
-          <label z-form-label [for]="t.id()">Tenant ID (Optional)</label>
+          <label z-form-label [for]="t.id()">{{
+            'translations.values.tenantIdLabel' | translate
+          }}</label>
           <z-form-control>
             <input
               z-input
               [id]="t.id()"
               type="text"
               formControlName="tenantId"
-              placeholder="Leave empty for global translation"
+              [placeholder]="
+                'translations.values.tenantIdPlaceholder' | translate
+              "
             />
           </z-form-control>
-          <span z-form-description
-            >Leave empty to create a global translation for all tenants</span
-          >
+          <span z-form-description>{{
+            'translations.values.tenantIdDescription' | translate
+          }}</span>
         </z-form-field>
 
         <!-- Error Display -->
@@ -119,7 +137,7 @@
             type="button"
             id="cancel-edit-btn"
           >
-            Cancel
+            {{ 'common.cancel' | translate }}
           </button>
           <button
             z-button
@@ -131,7 +149,11 @@
             [zLoading]="isLoading()"
             [zDisabled]="editForm.invalid"
           >
-            {{ isAddMode() ? 'Add Value' : 'Save Changes' }}
+            {{
+              isAddMode()
+                ? ('common.add' | translate)
+                : ('common.save' | translate)
+            }}
           </button>
         </div>
       </form>
@@ -141,7 +163,9 @@
     <!-- Values List -->
     <div class="values-section">
       <div class="section-header">
-        <h3>Translation Values ({{ values().length }})</h3>
+        <h3>
+          {{ 'translations.values.count' | translate }} ({{ values().length }})
+        </h3>
         @if (!isEditMode() && !isAddMode()) {
         <button
           z-button
@@ -151,7 +175,7 @@
           id="add-value-btn"
         >
           <z-icon zType="plus" />
-          Add Value
+          {{ 'common.add' | translate }}
         </button>
         }
       </div>
@@ -160,8 +184,8 @@
       <div class="empty-values">
         <z-empty
           zIcon="book-open"
-          zTitle="No translation values"
-          zDescription="This translation key doesn't have any values yet. Add your first translation value."
+          [zTitle]="'translations.values.noValues' | translate"
+          [zDescription]="'translations.values.noValuesDesc' | translate"
         />
       </div>
       } @else {
@@ -194,7 +218,7 @@
                   [id]="'edit-value-' + value.id"
                 >
                   <z-icon zType="file-text" />
-                  Edit Value
+                  {{ 'common.edit' | translate }}
                 </z-dropdown-menu-item>
 
                 <z-dropdown-menu-item
@@ -203,7 +227,7 @@
                   class="delete-action"
                 >
                   <z-icon zType="trash" />
-                  Delete Value
+                  {{ 'common.delete' | translate }}
                 </z-dropdown-menu-item>
               </z-dropdown-menu-content>
             </div>
@@ -217,11 +241,13 @@
             <div class="value-meta">
               <span class="meta-item">
                 <z-icon zType="calendar" />
-                Created: {{ value.created | date : 'medium' }}
+                {{ 'translations.values.created' | translate }}:
+                {{ value.created | date : 'medium' }}
               </span>
               <span class="meta-item">
                 <z-icon zType="clock" />
-                Modified: {{ value.lastModified | date : 'medium' }}
+                {{ 'translations.values.modified' | translate }}:
+                {{ value.lastModified | date : 'medium' }}
               </span>
             </div>
           </div>

@@ -280,9 +280,10 @@ export class ExampleComponent {
   private _dialogService = inject(ZardDialogService);
 
   openDialog() {
-    this._dialogService.open(MyDialogComponent, {
-      data: { userId: 123 },
-      zSize: 'md',
+    this._dialogService.create({
+      zContent: MyDialogComponent,
+      zData: { userId: 123 },
+      zWidth: 'md',
       zTitle: 'User Details',
     });
   }
@@ -1094,10 +1095,11 @@ import { ZardSheetService } from '@ihsan/ui';
 private _sheet = inject(ZardSheetService);
 
 openSheet() {
-  const ref = this._sheet.open(MySheetComponent, {
-    side: 'right',
-    width: '400px',
-    data: { userId: 123 }
+  const ref = this._sheet.create({
+    zContent: MySheetComponent,
+    zSide: 'right',
+    zWidth: '400px',
+    zData: { userId: 123 }
   });
 
   ref.closed.subscribe(result => {
