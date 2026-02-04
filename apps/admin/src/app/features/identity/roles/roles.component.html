@@ -1,3 +1,187 @@
 <div class="roles-page">
-  <h1>{{ 'roles.title' | translate }}</h1>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>{{ 'page.title.roles' | translate }}</h1>
+        <p>{{ 'roles.subtitle' | translate }}</p>
+      </div>
+      <button
+        z-button
+        zType="default"
+        zSize="lg"
+        (click)="onAddRole()"
+        id="add-role-button"
+      >
+        <z-icon zType="plus" />
+        {{ 'roles.actions.addRole' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Filter -->
+  <z-card>
+    <form [formGroup]="filterForm" class="filter-form">
+      <div z-form-field class="search-field">
+        <label z-label for="search">{{
+          'roles.filter.search' | translate
+        }}</label>
+        <input
+          z-input
+          zId="search"
+          formControlName="searchTerm"
+          [placeholder]="'roles.filter.searchPlaceholder' | translate"
+        />
+      </div>
+
+      @if (filterForm.controls.searchTerm.value) {
+      <button
+        z-button
+        zType="outline"
+        (click)="onClearSearch()"
+        id="clear-search-button"
+      >
+        {{ 'common.clear' | translate }}
+      </button>
+      }
+    </form>
+  </z-card>
+
+  <!-- Roles Table Card -->
+  <z-card class="table-card">
+    @if (isLoading()) {
+    <div class="loading-container">
+      <z-loader zSize="lg" />
+      <p>{{ 'roles.loading' | translate }}</p>
+    </div>
+    } @else if (filteredRoles().length === 0) {
+    <div class="empty-container">
+      <z-empty
+        zIcon="shield"
+        [zTitle]="'roles.empty.title' | translate"
+        [zDescription]="'roles.empty.description' | translate"
+      />
+    </div>
+    } @else {
+    <div class="table-container">
+      <!-- Results Info -->
+      <div class="table-header">
+        <div class="results-info">
+          <z-icon zType="shield" />
+          <span>
+            {{ 'users.showingResults' | translate }}
+            {{ filteredRoles().length }}
+            {{ 'roles.results' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table class="roles-table">
+          <thead>
+            <tr>
+              <th>{{ 'roles.table.name' | translate }}</th>
+              <th>{{ 'roles.table.description' | translate }}</th>
+              <th>{{ 'roles.table.claims' | translate }}</th>
+              <th>{{ 'roles.table.status' | translate }}</th>
+              <th>{{ 'roles.table.type' | translate }}</th>
+              <th>{{ 'roles.table.actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (role of filteredRoles(); track role.id) {
+            <tr>
+              <td>
+                <div class="role-name">
+                  <z-avatar
+                    zSize="sm"
+                    zShape="square"
+                    [zFallback]="role.name.substring(0, 2).toUpperCase()"
+                  />
+                  <span class="name">{{ role.name }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="description">{{ role.description || '-' }}</span>
+              </td>
+              <td>
+                <div class="claims-container">
+                  @if (role.claims && role.claims.length > 0) {
+                  <z-badge zType="default" zShape="pill">
+                    {{ role.claims.length }}
+                    {{ 'roles.table.claimsCount' | translate }}
+                  </z-badge>
+                  } @else {
+                  <span class="no-claims">{{
+                    'roles.table.noClaims' | translate
+                  }}</span>
+                  }
+                </div>
+              </td>
+              <td>
+                @if (role.status) {
+                <z-badge zType="default">{{
+                  'common.active' | translate
+                }}</z-badge>
+                } @else {
+                <z-badge zType="destructive">{{
+                  'common.inactive' | translate
+                }}</z-badge>
+                }
+              </td>
+              <td>
+                @if (role.isSystemRole) {
+                <z-badge zType="secondary">{{
+                  'roles.table.systemRole' | translate
+                }}</z-badge>
+                } @else {
+                <z-badge zType="outline">{{
+                  'roles.table.customRole' | translate
+                }}</z-badge>
+                }
+              </td>
+              <td>
+                <button
+                  z-button
+                  zType="outline"
+                  zSize="sm"
+                  z-dropdown
+                  [zDropdownMenu]="roleActionsMenu"
+                  [id]="'role-actions-' + role.id"
+                >
+                  <z-icon zType="ellipsis" />
+                </button>
+                <z-dropdown-menu-content
+                  #roleActionsMenu="zDropdownMenuContent"
+                >
+                  <z-dropdown-menu-item (click)="onEditRole(role)">
+                    <z-icon zType="file-text" />
+                    {{ 'roles.actions.edit' | translate }}
+                  </z-dropdown-menu-item>
+
+                  <z-dropdown-menu-item (click)="onManageClaims(role)">
+                    <z-icon zType="shield" />
+                    {{ 'roles.actions.manageClaims' | translate }}
+                  </z-dropdown-menu-item>
+
+                  @if (!role.isSystemRole) {
+                  <z-dropdown-menu-item
+                    (click)="onDeleteRole(role)"
+                    class="delete-action"
+                  >
+                    <z-icon zType="trash" />
+                    {{ 'roles.actions.delete' | translate }}
+                  </z-dropdown-menu-item>
+                  }
+                </z-dropdown-menu-content>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    }
+  </z-card>
 </div>

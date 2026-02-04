@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ENVIRONMENT } from '../core/environment.token';
 import { IClaim, ICreateClaimRequest, IUpdateClaimRequest } from './models';
@@ -20,12 +20,19 @@ export class ClaimService {
     return this._http.get<IClaim>(`${this._baseUrl}/${id}`);
   }
 
-  createClaim(request: ICreateClaimRequest): Observable<object> {
-    return this._http.post(this._baseUrl, request);
+  createClaim(
+    request: ICreateClaimRequest,
+    context?: HttpContext
+  ): Observable<object> {
+    return this._http.post(this._baseUrl, request, { context });
   }
 
-  updateClaim(id: number, request: IUpdateClaimRequest): Observable<object> {
-    return this._http.put(`${this._baseUrl}/${id}`, request);
+  updateClaim(
+    id: number,
+    request: IUpdateClaimRequest,
+    context?: HttpContext
+  ): Observable<object> {
+    return this._http.put(`${this._baseUrl}/${id}`, request, { context });
   }
 
   deleteClaim(id: number): Observable<object> {

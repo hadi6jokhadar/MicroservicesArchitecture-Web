@@ -1,3 +1,167 @@
 <div class="claims-page">
-  <h1>Claims</h1>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>{{ 'page.title.claims' | translate }}</h1>
+        <p>{{ 'claims.subtitle' | translate }}</p>
+      </div>
+      <button
+        z-button
+        zType="default"
+        zSize="lg"
+        (click)="onAddClaim()"
+        id="add-claim-button"
+      >
+        <z-icon zType="plus" />
+        {{ 'claims.actions.addClaim' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Filter -->
+  <z-card>
+    <form [formGroup]="filterForm" class="filter-form">
+      <div z-form-field class="search-field">
+        <label z-label for="search">{{
+          'claims.filter.search' | translate
+        }}</label>
+        <input
+          z-input
+          zId="search"
+          formControlName="searchTerm"
+          [placeholder]="'claims.filter.searchPlaceholder' | translate"
+        />
+      </div>
+
+      @if (filterForm.controls.searchTerm.value) {
+      <button
+        z-button
+        zType="outline"
+        (click)="onClearSearch()"
+        id="clear-search-button"
+      >
+        {{ 'common.clear' | translate }}
+      </button>
+      }
+    </form>
+  </z-card>
+
+  <!-- Claims Table Card -->
+  <z-card class="table-card">
+    @if (isLoading()) {
+    <div class="loading-container">
+      <z-loader zSize="lg" />
+      <p>{{ 'claims.loading' | translate }}</p>
+    </div>
+    } @else if (filteredClaims().length === 0) {
+    <div class="empty-container">
+      <z-empty
+        zIcon="shield"
+        [zTitle]="'claims.empty.title' | translate"
+        [zDescription]="'claims.empty.description' | translate"
+      />
+    </div>
+    } @else {
+    <div class="table-container">
+      <!-- Results Info -->
+      <div class="table-header">
+        <div class="results-info">
+          <z-icon zType="shield" />
+          <span>
+            {{ 'users.showingResults' | translate }}
+            {{ filteredClaims().length }}
+            {{ 'claims.results' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table class="claims-table">
+          <thead>
+            <tr>
+              <th>{{ 'claims.table.name' | translate }}</th>
+              <th>{{ 'claims.table.type' | translate }}</th>
+              <th>{{ 'claims.table.value' | translate }}</th>
+              <th>{{ 'claims.table.description' | translate }}</th>
+              <th>{{ 'claims.table.superAdmin' | translate }}</th>
+              <th>{{ 'claims.table.status' | translate }}</th>
+              <th>{{ 'claims.table.actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (claim of filteredClaims(); track claim.id) {
+            <tr>
+              <td>
+                <div class="claim-name">
+                  <z-icon zType="shield" />
+                  <span class="name">{{ claim.name }}</span>
+                </div>
+              </td>
+              <td>
+                <code class="claim-type">{{ claim.claimType }}</code>
+              </td>
+              <td>
+                <code class="claim-value">{{ claim.claimValue }}</code>
+              </td>
+              <td>
+                <span class="description">{{ claim.description || '-' }}</span>
+              </td>
+              <td>
+                @if (claim.isSuperAdminOnly) {
+                <z-badge zType="destructive" zSize="sm">{{
+                  'common.yes' | translate
+                }}</z-badge>
+                } @else {
+                <span class="text-muted">{{ 'common.no' | translate }}</span>
+                }
+              </td>
+              <td>
+                @if (claim.status) {
+                <z-badge zType="default">{{
+                  'common.active' | translate
+                }}</z-badge>
+                } @else {
+                <z-badge zType="destructive">{{
+                  'common.inactive' | translate
+                }}</z-badge>
+                }
+              </td>
+              <td>
+                <button
+                  z-button
+                  zType="outline"
+                  zSize="sm"
+                  z-dropdown
+                  [zDropdownMenu]="claimActionsMenu"
+                  [id]="'claim-actions-' + claim.id"
+                >
+                  <z-icon zType="ellipsis" />
+                </button>
+                <z-dropdown-menu-content
+                  #claimActionsMenu="zDropdownMenuContent"
+                >
+                  <z-dropdown-menu-item (click)="onEditClaim(claim)">
+                    <z-icon zType="file-text" />
+                    {{ 'claims.actions.edit' | translate }}
+                  </z-dropdown-menu-item>
+
+                  <z-dropdown-menu-item
+                    (click)="onDeleteClaim(claim)"
+                    class="delete-action"
+                  >
+                    <z-icon zType="trash" />
+                    {{ 'claims.actions.delete' | translate }}
+                  </z-dropdown-menu-item>
+                </z-dropdown-menu-content>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    }
+  </z-card>
 </div>

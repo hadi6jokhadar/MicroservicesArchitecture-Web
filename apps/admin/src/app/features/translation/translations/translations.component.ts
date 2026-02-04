@@ -157,6 +157,12 @@ export class TranslationsComponent implements OnInit {
 
   onAddKey(): void {
     this._dialogService.create({
+      zTitle: this._translationService.getCachedTranslation(
+        'translations.dialog.addTitle'
+      ),
+      zDescription: this._translationService.getCachedTranslation(
+        'translations.dialog.addDescription'
+      ),
       zContent: AddEditKeyDialogComponent,
       zHideFooter: true,
     });
@@ -174,6 +180,12 @@ export class TranslationsComponent implements OnInit {
 
   onEditKey(translationKey: ITranslationKeyDto): void {
     this._dialogService.create({
+      zTitle: this._translationService.getCachedTranslation(
+        'translations.dialog.editTitle'
+      ),
+      zDescription: this._translationService.getCachedTranslation(
+        'translations.dialog.editDescription'
+      ),
       zContent: AddEditKeyDialogComponent,
       zData: { translationKey },
       zHideFooter: true,
@@ -222,6 +234,9 @@ export class TranslationsComponent implements OnInit {
 
   onExportTranslations(): void {
     this._dialogService.create({
+      zTitle: this._translationService.getCachedTranslation('export.title'),
+      zDescription:
+        this._translationService.getCachedTranslation('export.description'),
       zContent: ExportDialogComponent,
       zHideFooter: true,
     });
@@ -229,6 +244,9 @@ export class TranslationsComponent implements OnInit {
 
   onImportTranslations(): void {
     this._dialogService.create({
+      zTitle: this._translationService.getCachedTranslation('import.title'),
+      zDescription:
+        this._translationService.getCachedTranslation('import.description'),
       zContent: ImportDialogComponent,
       zHideFooter: true,
     });

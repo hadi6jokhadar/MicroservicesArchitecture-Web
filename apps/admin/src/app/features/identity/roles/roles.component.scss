@@ -1,11 +1,193 @@
 :host {
   display: block;
-}
 
-.roles-page {
-  h1 {
-    margin: 0 0 1rem 0;
-    font-size: 1.875rem;
-    font-weight: 700;
+  .roles-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 1400px;
+    margin-inline: auto;
+
+    // Header Section
+    .header {
+      margin-block-end: 1rem;
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .header-text {
+        h1 {
+          margin: 0;
+          font-size: 2rem;
+          font-weight: 700;
+          color: var(--color-foreground);
+          margin-block-end: 0.25rem;
+        }
+
+        p {
+          margin: 0;
+          color: var(--color-muted-foreground);
+          font-size: 0.9375rem;
+        }
+      }
+    }
+
+    .filter-form {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+
+      .search-field {
+        flex: 1;
+      }
+    }
+
+    // Table Card
+    .table-card {
+      .loading-container,
+      .empty-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-block: 4rem;
+        padding-inline: 2rem;
+        gap: 1rem;
+
+        p {
+          color: var(--color-muted-foreground);
+          font-size: 0.9375rem;
+        }
+      }
+
+      .table-container {
+        .table-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-block: 1rem;
+          padding-inline: 1.5rem;
+          border-block-end: 1px solid var(--color-border);
+
+          .results-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--color-muted-foreground);
+            font-size: 0.875rem;
+
+            z-icon {
+              color: var(--color-primary);
+            }
+          }
+        }
+
+        .table-wrapper {
+          overflow-x: auto;
+
+          .roles-table {
+            width: 100%;
+            border-collapse: collapse;
+
+            thead {
+              background: var(--color-muted);
+              border-block-end: 1px solid var(--color-border);
+
+              th {
+                padding-block: 0.75rem;
+                padding-inline: 1rem;
+                text-align: start;
+                font-size: 0.8125rem;
+                font-weight: 600;
+                color: var(--color-foreground);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+              }
+            }
+
+            tbody {
+              tr {
+                border-block-end: 1px solid var(--color-border);
+                transition: background-color 0.2s ease;
+
+                &:hover {
+                  background: var(--color-muted);
+                }
+
+                td {
+                  padding-block: 1rem;
+                  padding-inline: 1rem;
+                  vertical-align: middle;
+
+                  .role-name {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+
+                    .name {
+                      font-weight: 500;
+                      color: var(--color-foreground);
+                    }
+                  }
+
+                  .description {
+                    color: var(--color-muted-foreground);
+                    font-size: 0.875rem;
+                  }
+
+                  .claims-container {
+                    .no-claims {
+                      color: var(--color-muted-foreground);
+                      font-size: 0.875rem;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    z-dropdown-menu-content {
+      .delete-action {
+        color: var(--color-destructive);
+
+        z-icon {
+          color: var(--color-destructive);
+        }
+
+        &:hover {
+          background: var(--color-destructive);
+          color: white;
+
+          z-icon {
+            color: white;
+          }
+        }
+      }
+    }
+
+    // Responsive Design
+    @media (max-width: 768px) {
+      .header {
+        .header-text {
+          h1 {
+            font-size: 1.5rem;
+          }
+        }
+      }
+
+      .table-wrapper {
+        .roles-table {
+          font-size: 0.875rem;
+        }
+      }
+    }
   }
 }

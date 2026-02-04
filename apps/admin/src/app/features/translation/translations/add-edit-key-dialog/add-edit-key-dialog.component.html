@@ -1,12 +1,4 @@
 <div class="dialog-container">
-  <h2 class="dialog-title">
-    {{
-      isEditMode()
-        ? ('translations.dialog.editTitle' | translate)
-        : ('translations.dialog.addTitle' | translate)
-    }}
-  </h2>
-
   <form [formGroup]="keyForm" (ngSubmit)="onSubmit()" class="dialog-form">
     <!-- Key Input -->
     <z-form-field zardId="key" #k="zardId">

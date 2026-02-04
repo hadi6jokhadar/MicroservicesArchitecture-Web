@@ -11,6 +11,7 @@ import {
   IUserFilterRequest,
   RoleService,
   TranslatePipe,
+  TranslationService,
 } from '@ihsan/core';
 import {
   ZardAlertDialogService,
@@ -18,6 +19,7 @@ import {
   ZardBadgeComponent,
   ZardButtonComponent,
   ZardCardComponent,
+  ZardDialogService,
   ZardDropdownImports,
   ZardEmptyComponent,
   ZardFormImports,
@@ -30,6 +32,8 @@ import {
   ZardSelectItemComponent,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
+import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
+import { EditUserDialogComponent } from './edit-user-dialog/edit-user-dialog.component';
 
 interface IUserFilterForm {
   searchTerm: FormControl<string>;
@@ -66,6 +70,8 @@ export class UsersComponent implements OnInit {
   private readonly _adminService = inject(IdentityAdminService);
   private readonly _roleService = inject(RoleService);
   private readonly _alertDialogService = inject(ZardAlertDialogService);
+  private readonly _dialogService = inject(ZardDialogService);
+  private readonly _translationService = inject(TranslationService);
   protected readonly _env = inject(ENVIRONMENT);
 
   // Signals
@@ -126,7 +132,11 @@ export class UsersComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading roles:', error);
-        toast.error('Failed to load roles');
+        toast.error(
+          this._translationService.getCachedTranslation(
+            'users.error.loadRolesFailed'
+          )
+        );
         this.rolesLoaded.set(true);
       },
     });
@@ -166,7 +176,11 @@ export class UsersComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading users:', error);
-        toast.error('Failed to load users');
+        toast.error(
+          this._translationService.getCachedTranslation(
+            'users.error.loadUsersFailed'
+          )
+        );
         this.isLoading.set(false);
       },
     });
@@ -188,59 +202,155 @@ export class UsersComponent implements OnInit {
   }
 
   onAddUser(): void {
-    // TODO: Open add user dialog
-    toast.info('Add User dialog will be implemented');
+    this._dialogService.create({
+      zTitle: this._translationService.getCachedTranslation(
+        'users.dialog.addTitle'
+      ),
+      zDescription: this._translationService.getCachedTranslation(
+        'users.dialog.addDescription'
+      ),
+      zContent: AddUserDialogComponent,
+      zData: { roles: this.roles() },
+      zWidth: '550px',
+      zHideFooter: true,
+      zClosable: false,
+      zOnOk: (result: unknown) => {
+        if (
+          result &&
+          typeof result === 'object' &&
+          'success' in result &&
+          result.success
+        ) {
+          this.loadUsers();
+        }
+      },
+    });
   }
 
   onEditUser(user: IUser): void {
-    // TODO: Open edit user dialog
-    toast.info(`Edit user: ${user.firstName} ${user.lastName}`);
+    this._dialogService.create({
+      zTitle: this._translationService.getCachedTranslation(
+        'users.dialog.editTitle'
+      ),
+      zDescription: this._translationService.getCachedTranslation(
+        'users.dialog.editDescription'
+      ),
+      zContent: EditUserDialogComponent,
+      zData: { user, roles: this.roles() },
+      zWidth: '550px',
+      zHideFooter: true,
+      zClosable: false,
+      zOnOk: (result: unknown) => {
+        if (
+          result &&
+          typeof result === 'object' &&
+          'success' in result &&
+          result.success
+        ) {
+          this.loadUsers();
+        }
+      },
+    });
   }
 
   onToggleStatus(user: IUser): void {
-    this._alertDialogService.confirm({
-      zTitle: `${user.status ? 'Deactivate' : 'Activate'} User`,
-      zDescription: `Are you sure you want to ${
-        user.status ? 'deactivate' : 'activate'
-      } ${user.firstName} ${user.lastName}?`,
-      zOkText: user.status ? 'Deactivate' : 'Activate',
-      zCancelText: 'Cancel',
-      zOkDestructive: user.status,
-    });
+    const action = user.status
+      ? this._translationService.getCachedTranslation(
+          'users.actions.deactivate'
+        )
+      : this._translationService.getCachedTranslation('users.actions.activate');
 
-    // TODO: Implement actual status toggle after confirmation
-    // this._adminService.toggleUserStatus(user.id).subscribe({
-    //   next: () => {
-    //     toast.success('User status updated successfully');
-    //     this.loadUsers();
-    //   },
-    //   error: (error) => {
-    //     console.error('Error toggling user status:', error);
-    //     toast.error('Failed to update user status');
-    //   },
-    // });
+    const title = user.status
+      ? this._translationService.getCachedTranslation(
+          'users.dialog.deactivateTitle'
+        )
+      : this._translationService.getCachedTranslation(
+          'users.dialog.activateTitle'
+        );
+
+    const description = user.status
+      ? this._translationService.getCachedTranslation(
+          'users.dialog.deactivateDescription'
+        )
+      : this._translationService.getCachedTranslation(
+          'users.dialog.activateDescription'
+        );
+
+    this._alertDialogService.confirm({
+      zTitle: title.replace('{name}', `${user.firstName} ${user.lastName}`),
+      zDescription: description.replace(
+        '{name}',
+        `${user.firstName} ${user.lastName}`
+      ),
+      zOkText: action,
+      zCancelText:
+        this._translationService.getCachedTranslation('common.cancel'),
+      zOkDestructive: user.status,
+      zOnOk: () => {
+        this._adminService.toggleUserStatus(user.id).subscribe({
+          next: () => {
+            const successMsg = user.status
+              ? this._translationService.getCachedTranslation(
+                  'users.success.userDeactivated'
+                )
+              : this._translationService.getCachedTranslation(
+                  'users.success.userActivated'
+                );
+            toast.success(successMsg);
+            this.loadUsers();
+          },
+          error: (error) => {
+            console.error('Error toggling user status:', error);
+            toast.error(
+              this._translationService.getCachedTranslation(
+                'users.error.toggleStatusFailed'
+              )
+            );
+          },
+        });
+      },
+    });
   }
 
   onDeleteUser(user: IUser): void {
-    this._alertDialogService.confirm({
-      zTitle: 'Delete User',
-      zDescription: `Are you sure you want to delete ${user.firstName} ${user.lastName}? This action cannot be undone.`,
-      zOkText: 'Delete',
-      zCancelText: 'Cancel',
-      zOkDestructive: true,
-    });
+    const title = this._translationService.getCachedTranslation(
+      'users.dialog.deleteTitle'
+    );
+    const description = this._translationService.getCachedTranslation(
+      'users.dialog.deleteDescription'
+    );
 
-    // TODO: Implement actual delete after confirmation
-    // this._adminService.deleteUser(user.id).subscribe({
-    //   next: () => {
-    //     toast.success('User deleted successfully');
-    //     this.loadUsers();
-    //   },
-    //   error: (error) => {
-    //     console.error('Error deleting user:', error);
-    //     toast.error('Failed to delete user');
-    //   },
-    // });
+    this._alertDialogService.confirm({
+      zTitle: title,
+      zDescription: description.replace(
+        '{name}',
+        `${user.firstName} ${user.lastName}`
+      ),
+      zOkText: this._translationService.getCachedTranslation('common.delete'),
+      zCancelText:
+        this._translationService.getCachedTranslation('common.cancel'),
+      zOkDestructive: true,
+      zOnOk: () => {
+        this._adminService.deleteUser(user.id).subscribe({
+          next: () => {
+            toast.success(
+              this._translationService.getCachedTranslation(
+                'users.success.userDeleted'
+              )
+            );
+            this.loadUsers();
+          },
+          error: (error) => {
+            console.error('Error deleting user:', error);
+            toast.error(
+              this._translationService.getCachedTranslation(
+                'users.error.deleteFailed'
+              )
+            );
+          },
+        });
+      },
+    });
   }
 
   getProfilePictureUrl(user: IUser): string | undefined {

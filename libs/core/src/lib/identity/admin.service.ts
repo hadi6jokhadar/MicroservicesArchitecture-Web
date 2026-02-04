@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpContext } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ENVIRONMENT } from '../core/environment.token';
 import {
@@ -51,12 +51,19 @@ export class IdentityAdminService {
     return this._http.get<IUser>(`${this._baseUrl}/users/${id}`);
   }
 
-  createUser(request: ICreateUserRequest): Observable<object> {
-    return this._http.post(`${this._baseUrl}/users`, request);
+  createUser(
+    request: ICreateUserRequest,
+    context?: HttpContext
+  ): Observable<object> {
+    return this._http.post(`${this._baseUrl}/users`, request, { context });
   }
 
-  updateUser(id: number, request: IUpdateUserRequest): Observable<object> {
-    return this._http.put(`${this._baseUrl}/users/${id}`, request);
+  updateUser(
+    id: number,
+    request: IUpdateUserRequest,
+    context?: HttpContext
+  ): Observable<object> {
+    return this._http.put(`${this._baseUrl}/users/${id}`, request, { context });
   }
 
   toggleUserStatus(id: number): Observable<object> {

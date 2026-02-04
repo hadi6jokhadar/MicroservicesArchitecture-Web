@@ -1,11 +1,223 @@
-import { Component } from '@angular/core';
-import { TranslatePipe } from '@ihsan/core';
+import { Component, inject, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  TranslatePipe,
+  TranslationService,
+  RoleService,
+  ClaimService,
+} from '@ihsan/core';
+import {
+  ZardButtonComponent,
+  ZardCardComponent,
+  ZardFormImports,
+  ZardInputDirective,
+  ZardBadgeComponent,
+  ZardIconComponent,
+  ZardDropdownImports,
+  ZardAlertDialogService,
+  ZardDialogService,
+  ZardLoaderComponent,
+  ZardEmptyComponent,
+  ZardAvatarComponent,
+} from '@ihsan/ui';
+import { toast } from 'ngx-sonner';
+import { IRole } from '@ihsan/core';
+import { AddRoleDialogComponent } from './add-role-dialog/add-role-dialog.component';
+import { EditRoleDialogComponent } from './edit-role-dialog/edit-role-dialog.component';
+import { ManageClaimsDialogComponent } from './manage-claims-dialog/manage-claims-dialog.component';
+
+interface IRoleFilterForm {
+  searchTerm: FormControl<string>;
+}
 
 @Component({
   selector: 'app-roles',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [
+    TranslatePipe,
+    ReactiveFormsModule,
+    ZardButtonComponent,
+    ZardCardComponent,
+    ...ZardFormImports,
+    ZardInputDirective,
+    ZardBadgeComponent,
+    ZardIconComponent,
+    ...ZardDropdownImports,
+    ZardLoaderComponent,
+    ZardEmptyComponent,
+    ZardAvatarComponent,
+  ],
   templateUrl: './roles.component.html',
   styleUrls: ['./roles.component.scss'],
 })
-export class RolesComponent {}
+export class RolesComponent {
+  private readonly _roleService = inject(RoleService);
+  private readonly _claimService = inject(ClaimService);
+  private readonly _translationService = inject(TranslationService);
+  private readonly _dialogService = inject(ZardDialogService);
+  private readonly _alertDialogService = inject(ZardAlertDialogService);
+
+  readonly isLoading = signal(false);
+  readonly roles = signal<IRole[]>([]);
+  readonly filteredRoles = signal<IRole[]>([]);
+
+  readonly filterForm = new FormGroup<IRoleFilterForm>({
+    searchTerm: new FormControl<string>('', { nonNullable: true }),
+  });
+
+  constructor() {
+    this.loadRoles();
+
+    // Watch for search term changes using takeUntilDestroyed for proper cleanup
+    this.filterForm.controls.searchTerm.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.applyFilter();
+      });
+  }
+
+  private applyFilter(): void {
+    const searchTerm = this.filterForm.controls.searchTerm.value.toLowerCase();
+    const allRoles = this.roles();
+
+    if (!searchTerm) {
+      this.filteredRoles.set(allRoles);
+    } else {
+      const filtered = allRoles.filter(
+        (role) =>
+          role.name.toLowerCase().includes(searchTerm) ||
+          role.description?.toLowerCase().includes(searchTerm)
+      );
+      this.filteredRoles.set(filtered);
+    }
+  }
+
+  loadRoles(): void {
+    this.isLoading.set(true);
+    this._roleService.getAllRoles(true).subscribe({
+      next: (roles) => {
+        this.roles.set(roles);
+        this.applyFilter();
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  onAddRole(): void {
+    this._dialogService.create({
+      zTitle: this._translationService.getCachedTranslation(
+        'roles.dialog.addTitle'
+      ),
+      zDescription: this._translationService.getCachedTranslation(
+        'roles.dialog.addDescription'
+      ),
+      zContent: AddRoleDialogComponent,
+      zWidth: '550px',
+      zHideFooter: true,
+      zOnOk: (result: unknown) => {
+        if (
+          result &&
+          typeof result === 'object' &&
+          'success' in result &&
+          result.success
+        ) {
+          this.loadRoles();
+        }
+      },
+    });
+  }
+
+  onEditRole(role: IRole): void {
+    this._dialogService.create({
+      zTitle: this._translationService.getCachedTranslation(
+        'roles.dialog.editTitle'
+      ),
+      zDescription: this._translationService.getCachedTranslation(
+        'roles.dialog.editDescription'
+      ),
+      zContent: EditRoleDialogComponent,
+      zData: { role },
+      zWidth: '550px',
+      zHideFooter: true,
+      zOnOk: (result: unknown) => {
+        if (
+          result &&
+          typeof result === 'object' &&
+          'success' in result &&
+          result.success
+        ) {
+          this.loadRoles();
+        }
+      },
+    });
+  }
+
+  onManageClaims(role: IRole): void {
+    this._dialogService.create({
+      zTitle: this._translationService.getCachedTranslation(
+        'roles.dialog.manageClaimsTitle'
+      ),
+      zDescription: this._translationService.getCachedTranslation(
+        'roles.dialog.manageClaimsDescription'
+      ),
+      zContent: ManageClaimsDialogComponent,
+      zData: { role },
+      zOkText: this._translationService.getCachedTranslation('common.save'),
+      zCancelText:
+        this._translationService.getCachedTranslation('common.cancel'),
+      zWidth: '600px',
+      zOnOk: (instance) => {
+        const dialog = instance as ManageClaimsDialogComponent;
+        const claimIds = dialog.getSelectedClaimIds();
+
+        this._roleService.assignClaimsToRole(role.id, { claimIds }).subscribe({
+          next: () => {
+            toast.success(
+              this._translationService.getCachedTranslation(
+                'roles.success.claimsUpdated'
+              )
+            );
+            this.loadRoles();
+          },
+        });
+        return undefined;
+      },
+    });
+  }
+
+  onDeleteRole(role: IRole): void {
+    this._alertDialogService.confirm({
+      zTitle: this._translationService.getCachedTranslation(
+        'roles.dialog.deleteTitle'
+      ),
+      zDescription: this._translationService.getCachedTranslation(
+        'roles.dialog.deleteDescription',
+        `Are you sure you want to delete the role "${role.name}"?`
+      ),
+      zOkText: this._translationService.getCachedTranslation('common.delete'),
+      zCancelText:
+        this._translationService.getCachedTranslation('common.cancel'),
+      zOkDestructive: true,
+      zOnOk: () => {
+        this._roleService.deleteRole(role.id).subscribe({
+          next: () => {
+            toast.success(
+              this._translationService.getCachedTranslation(
+                'roles.success.deleted'
+              )
+            );
+            this.loadRoles();
+          },
+        });
+      },
+    });
+  }
+
+  onClearSearch(): void {
+    this.filterForm.controls.searchTerm.setValue('');
+  }
+}
