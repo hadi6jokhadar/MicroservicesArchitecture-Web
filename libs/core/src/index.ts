@@ -21,3 +21,6 @@ export * from './lib/services/page-title.service';
 
 // Core
 export * from './lib/core/environment.token';
+
+// Models
+export * from './lib/models/common';

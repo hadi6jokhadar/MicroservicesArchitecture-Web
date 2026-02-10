@@ -48,6 +48,7 @@ const HEIGHT_BY_SIZE: Record<NonNullable<ZardButtonSizeVariants>, string> = {
   standalone: true,
   template: `
     <button
+      style="width: 100%;"
       z-button
       type="button"
       [zType]="zType()"

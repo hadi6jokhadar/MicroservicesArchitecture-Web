@@ -1,4 +1,4 @@
-import { IFileManagerResponse } from '../file-manager/models';
+import { IFileManagerResponse } from '../file-manager';
 
 export enum Role {
   User = 'User',
@@ -23,15 +23,6 @@ export interface IUser {
   profilePicture?: IFileManagerResponse | null;
   verificationCode?: string | null;
   data?: string | null;
-}
-
-export interface IPaginatedResponse<T> {
-  items: T[];
-  pageNumber: number;
-  totalPages: number;
-  totalCount: number;
-  hasPreviousPage: boolean;
-  hasNextPage: boolean;
 }
 
 export class UserClass implements IUser {

@@ -1,0 +1,289 @@
+:host {
+  display: block;
+
+  .tenants-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 1400px;
+    margin-inline: auto;
+  }
+
+  // Header Section
+  .header {
+    margin-block-end: 1rem;
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-text {
+      h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-foreground);
+        margin-block-end: 0.25rem;
+      }
+
+      p {
+        margin: 0;
+        color: var(--color-muted-foreground);
+        font-size: 0.9375rem;
+      }
+    }
+  }
+
+  // Filter Form
+  .filter-form {
+    .filter-row {
+      display: grid;
+      grid-template-columns: 3fr 1fr auto;
+      gap: 1rem;
+      align-items: end;
+
+      @media (max-width: 1024px) {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .filter-field {
+      width: 100%;
+
+      &.search-field {
+        .search-input-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+
+          .search-icon {
+            position: absolute;
+            inset-inline-start: 0.75rem;
+            color: var(--color-muted-foreground);
+            pointer-events: none;
+          }
+
+          input {
+            padding-inline-start: 2.5rem;
+          }
+        }
+      }
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: 0.5rem;
+      align-items: end;
+
+      @media (max-width: 1024px) {
+        grid-column: span 2;
+      }
+
+      @media (max-width: 768px) {
+        grid-column: span 1;
+        justify-content: stretch;
+
+        button {
+          flex: 1;
+        }
+      }
+    }
+  }
+
+  // Table Card
+  .table-card {
+    .loading-container,
+    .empty-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-block: 4rem;
+      padding-inline: 2rem;
+      gap: 1rem;
+
+      p {
+        color: var(--color-muted-foreground);
+        font-size: 0.9375rem;
+      }
+    }
+
+    .table-container {
+      .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-block: 1rem;
+        padding-inline: 1.5rem;
+        border-block-end: 1px solid var(--color-border);
+
+        .results-info {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: var(--color-muted-foreground);
+          font-size: 0.875rem;
+
+          z-icon {
+            color: var(--color-primary);
+          }
+        }
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+
+        .tenants-table {
+          width: 100%;
+          border-collapse: collapse;
+
+          thead {
+            background: var(--color-muted);
+            border-block-end: 1px solid var(--color-border);
+
+            tr {
+              th {
+                padding-block: 0.75rem;
+                padding-inline: 1rem;
+                text-align: start;
+                font-size: 0.8125rem;
+                font-weight: 600;
+                color: var(--color-foreground);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                white-space: nowrap;
+
+                &.col-id {
+                  width: 15%;
+                }
+                &.col-name {
+                  width: 25%;
+                }
+                &.col-dates {
+                  width: 30%;
+                }
+                &.col-status {
+                  width: 15%;
+                }
+                &.col-actions {
+                  width: 15%;
+                  text-align: center;
+                }
+              }
+            }
+          }
+
+          tbody {
+            .tenant-row {
+              border-block-end: 1px solid var(--color-border);
+              transition: background-color 0.2s ease;
+
+              &:hover {
+                background: var(--color-muted);
+              }
+
+              td {
+                padding-block: 1rem;
+                padding-inline: 1rem;
+                vertical-align: middle;
+
+                &.col-id {
+                  .id-text {
+                    font-family: var(--font-mono);
+                    color: var(--color-muted-foreground);
+                    font-size: 0.875rem;
+                  }
+                }
+
+                &.col-name {
+                  .name-text {
+                    font-weight: 500;
+                    color: var(--color-foreground);
+                  }
+                }
+
+                &.col-dates {
+                  .dates-cell {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.25rem;
+                    font-size: 0.875rem;
+
+                    .date-start,
+                    .date-end {
+                      display: flex;
+                      align-items: center;
+                      gap: 0.5rem;
+                      color: var(--color-muted-foreground);
+
+                      z-icon {
+                        width: 0.875rem;
+                        height: 0.875rem;
+                        opacity: 0.7;
+                      }
+                    }
+                  }
+                }
+
+                &.col-actions {
+                  text-align: center;
+
+                  .delete-action {
+                    color: var(--color-destructive);
+
+                    &:hover {
+                      background: var(--color-destructive);
+                      color: white;
+                      z-icon {
+                        color: white;
+                      }
+                    }
+                    z-icon {
+                      color: var(--color-destructive);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .pagination-container {
+        display: flex;
+        justify-content: center;
+        padding-block: 1.5rem;
+        padding-inline: 1.5rem;
+        border-block-start: 1px solid var(--color-border);
+      }
+    }
+  }
+
+  // Responsive Design
+  @media (max-width: 768px) {
+    padding-block: 1rem;
+    padding-inline: 1rem;
+
+    .header {
+      .header-text {
+        h1 {
+          font-size: 1.5rem;
+        }
+      }
+    }
+
+    .table-wrapper {
+      .tenants-table {
+        font-size: 0.875rem;
+      }
+    }
+  }
+}

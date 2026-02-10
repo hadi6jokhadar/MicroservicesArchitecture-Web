@@ -3,6 +3,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { TestComponentsComponent } from './test-components/test-components.component';
 import { identityRoutes } from '../features/identity/identity.routes';
 import { translationRoutes } from '../features/translation/translation.routes';
+import { tenantRoutes } from '../features/tenant/tenant.routes';
 import { authGuard } from '@ihsan/core';
 
 export const pagesRoutes: Routes = [
@@ -20,6 +21,11 @@ export const pagesRoutes: Routes = [
       {
         path: 'identity',
         loadChildren: () => Promise.resolve(identityRoutes),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'tenant',
+        loadChildren: () => Promise.resolve(tenantRoutes),
         canActivate: [authGuard],
       },
       {

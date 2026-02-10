@@ -85,14 +85,15 @@ export interface ICreateTenantRequest {
   userId: number;
   startDate: string;
   expireDate: string;
-  data?: ITenantConfiguration;
+  data: ITenantConfiguration;
   isActive?: boolean;
 }
 
 export interface IUpdateTenantRequest {
+  tenantId: string;
   tenantName: string;
   startDate: string;
   expireDate: string;
-  data?: ITenantConfiguration;
+  data: ITenantConfiguration;
   isActive: boolean;
 }

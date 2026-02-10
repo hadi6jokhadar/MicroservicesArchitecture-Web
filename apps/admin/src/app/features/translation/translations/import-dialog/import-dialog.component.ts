@@ -58,7 +58,7 @@ export class ImportDialogComponent {
       nonNullable: true,
       validators: [Validators.required],
     }),
-    category: new FormControl<string>('', { nonNullable: true }),
+    category: new FormControl<string>('General', { nonNullable: true }),
     file: new FormControl<File | null>(null, {
       validators: [Validators.required],
     }),
@@ -74,6 +74,11 @@ export class ImportDialogComponent {
     if (file) {
       this.importForm.patchValue({ file });
       this.selectedFileName.set(file.name);
+
+      const languageCode = file.name.split('.')[0];
+      if (languageCode) {
+        this.importForm.patchValue({ language: languageCode });
+      }
     }
   }
 

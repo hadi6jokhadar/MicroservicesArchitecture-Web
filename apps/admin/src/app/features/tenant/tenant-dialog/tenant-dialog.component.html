@@ -1,0 +1,168 @@
+<div class="dialog-container">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+    <!-- Tenant ID (Create Only) -->
+    @if (!isEditMode()) {
+    <z-form-field zardId="tenantId" #tid="zardId">
+      <label z-form-label [for]="tid.id()">
+        {{ 'tenants.dialog.fields.tenantId' | translate }}
+      </label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="tid.id()"
+          type="text"
+          formControlName="tenantId"
+          [placeholder]="'tenants.dialog.placeholders.tenantId' | translate"
+        />
+      </z-form-control>
+      @if (form.controls.tenantId.touched && form.controls.tenantId.errors) {
+      <z-form-message zType="error">
+        {{ 'tenants.dialog.errors.tenantId' | translate }}
+      </z-form-message>
+      }
+    </z-form-field>
+    } @else {
+    <!-- Read-only Tenant ID for Edit Mode visual confirmation -->
+    <z-form-field zardId="tenantId" #tid="zardId">
+      <label z-form-label [for]="tid.id()">{{
+        'tenants.dialog.fields.tenantId' | translate
+      }}</label>
+      <div class="read-only-field">{{ form.controls.tenantId.value }}</div>
+    </z-form-field>
+    }
+
+    <!-- Tenant Name -->
+    <z-form-field zardId="tenantName" #tn="zardId">
+      <label z-form-label [for]="tn.id()">
+        {{ 'tenants.dialog.fields.tenantName' | translate }}
+      </label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="tn.id()"
+          type="text"
+          formControlName="tenantName"
+          [placeholder]="'tenants.dialog.placeholders.tenantName' | translate"
+        />
+      </z-form-control>
+      @if (form.controls.tenantName.touched && form.controls.tenantName.errors)
+      {
+      <z-form-message zType="error">
+        {{ 'tenants.dialog.errors.tenantName' | translate }}
+      </z-form-message>
+      }
+    </z-form-field>
+
+    <!-- User (Create Only) -->
+    @if (!isEditMode()) {
+    <z-form-field zardId="userId" #uid="zardId">
+      <label z-form-label [for]="uid.id()">
+        {{ 'tenants.dialog.fields.user' | translate }}
+      </label>
+      <z-form-control>
+        <z-combobox
+          [id]="uid.id()"
+          formControlName="userId"
+          [options]="userOptions()"
+          [searchPlaceholder]="
+            'tenants.dialog.placeholders.searchUser' | translate
+          "
+          [placeholder]="'tenants.dialog.placeholders.selectUser' | translate"
+          (zSearchChange)="onUserSearch($event)"
+        />
+      </z-form-control>
+      @if (form.controls.userId.touched && form.controls.userId.errors) {
+      <z-form-message zType="error">
+        {{ 'tenants.dialog.errors.userRequired' | translate }}
+      </z-form-message>
+      }
+    </z-form-field>
+    }
+
+    <div class="form-row">
+      <!-- Start Date -->
+      <z-form-field zardId="startDate" #sd="zardId">
+        <label z-form-label [for]="sd.id()">
+          {{ 'tenants.dialog.fields.startDate' | translate }}
+        </label>
+        <z-form-control>
+          <z-date-picker formControlName="startDate" [id]="sd.id()" />
+        </z-form-control>
+        @if (form.controls.startDate.touched && form.controls.startDate.errors)
+        {
+        <z-form-message zType="error">
+          {{ 'tenants.dialog.errors.startDate' | translate }}
+        </z-form-message>
+        }
+      </z-form-field>
+
+      <!-- Expire Date -->
+      <z-form-field zardId="expireDate" #ed="zardId">
+        <label z-form-label [for]="ed.id()">
+          {{ 'tenants.dialog.fields.expireDate' | translate }}
+        </label>
+        <z-form-control>
+          <z-date-picker formControlName="expireDate" [id]="ed.id()" />
+        </z-form-control>
+        @if (form.controls.expireDate.touched &&
+        form.controls.expireDate.errors) {
+        <z-form-message zType="error">
+          {{ 'tenants.dialog.errors.expireDate' | translate }}
+        </z-form-message>
+        }
+      </z-form-field>
+    </div>
+
+    <!-- Is Active -->
+    <z-form-field zardId="isActive" #ia="zardId">
+      <label z-form-label [for]="ia.id()">
+        {{ 'tenants.dialog.fields.status' | translate }}
+      </label>
+      <z-form-control>
+        <z-select
+          [id]="ia.id()"
+          formControlName="isActive"
+          [zPlaceholder]="'tenants.dialog.selectStatus' | translate"
+        >
+          <z-select-item zValue="true">
+            {{ 'tenants.dialog.status.active' | translate }}
+          </z-select-item>
+          <z-select-item zValue="false">
+            {{ 'tenants.dialog.status.inactive' | translate }}
+          </z-select-item>
+        </z-select>
+      </z-form-control>
+    </z-form-field>
+
+    @if (errorMessage()) {
+    <z-alert zType="destructive" [zDescription]="errorMessage()!" />
+    } @if (successMessage()) {
+    <z-alert zType="success" [zDescription]="successMessage()!" />
+    }
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <button
+        z-button
+        zType="outline"
+        type="button"
+        (click)="onCancel()"
+        [disabled]="isLoading()"
+      >
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        z-button
+        zType="default"
+        type="submit"
+        [disabled]="isLoading()"
+        [zLoading]="isLoading()"
+      >
+        {{
+          (isEditMode() ? 'tenants.dialog.update' : 'tenants.dialog.create')
+            | translate
+        }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,240 @@
+<div class="tenants-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>{{ 'tenants.title' | translate }}</h1>
+        <p>{{ 'tenants.subtitle' | translate }}</p>
+      </div>
+      <button
+        z-button
+        zType="default"
+        zSize="lg"
+        (click)="onAddTenant()"
+        id="add-tenant-btn"
+      >
+        <z-icon zType="plus" />
+        {{ 'tenants.addTenant' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Form Card -->
+  <z-card zPadding="lg">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <!-- Search Input -->
+        <z-form-field
+          class="filter-field search-field"
+          zardId="searchTerm"
+          #s="zardId"
+        >
+          <label z-form-label [for]="s.id()">
+            {{ 'tenants.search' | translate }}
+          </label>
+          <z-form-control>
+            <div class="search-input-wrapper">
+              <z-icon zType="search" class="search-icon" />
+              <input
+                z-input
+                [id]="s.id()"
+                type="text"
+                formControlName="searchTerm"
+                [placeholder]="'tenants.searchPlaceholder' | translate"
+                (keyup.enter)="onSearch()"
+              />
+            </div>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Status Filter -->
+        <z-form-field class="filter-field" zardId="isActive" #st="zardId">
+          <label z-form-label [for]="st.id()">
+            {{ 'tenants.status' | translate }}
+          </label>
+          <z-form-control>
+            <z-select
+              [id]="st.id()"
+              [zPlaceholder]="'tenants.allStatus' | translate"
+              formControlName="isActive"
+            >
+              <z-select-item zValue="__all__">
+                {{ 'tenants.allStatus' | translate }}
+              </z-select-item>
+              <z-select-item zValue="true">
+                {{ 'tenants.active' | translate }}
+              </z-select-item>
+              <z-select-item zValue="false">
+                {{ 'tenants.inactive' | translate }}
+              </z-select-item>
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Action Buttons -->
+        <div class="filter-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            (click)="onClearFilters()"
+            type="button"
+            id="clear-filters-btn"
+          >
+            <z-icon zType="x" />
+            {{ 'common.clear' | translate }}
+          </button>
+          <button
+            z-button
+            zType="default"
+            zSize="default"
+            (click)="onSearch()"
+            type="button"
+            id="search-btn"
+          >
+            <z-icon zType="search" />
+            {{ 'common.search' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </z-card>
+
+  <!-- Tenants Table Card -->
+  <z-card class="table-card">
+    @if (isLoading()) {
+    <div class="loading-container">
+      <z-loader zSize="lg" />
+      <p>{{ 'tenants.loadingTenants' | translate }}</p>
+    </div>
+    } @else if (filteredTenants().length === 0) {
+    <div class="empty-container">
+      <z-empty
+        zIcon="search"
+        [zTitle]="'tenants.noTenantsFound' | translate"
+        [zDescription]="'tenants.noTenantsFoundDesc' | translate"
+      />
+    </div>
+    } @else {
+    <div class="table-container">
+      <!-- Results Info -->
+      <div class="table-header">
+        <div class="results-info">
+          <z-icon zType="layout-dashboard" />
+          <span>
+            {{ 'tenants.showingResults' | translate }}
+            {{ filteredTenants().length }} {{ 'common.of' | translate }}
+            {{ totalCount() }}
+            {{ 'tenants.tenants' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table class="tenants-table">
+          <thead>
+            <tr>
+              <th class="col-id">{{ 'tenants.table.id' | translate }}</th>
+              <th class="col-name">{{ 'tenants.table.name' | translate }}</th>
+              <th class="col-dates">{{ 'tenants.table.dates' | translate }}</th>
+              <th class="col-status">
+                {{ 'tenants.table.status' | translate }}
+              </th>
+              <th class="col-actions">
+                {{ 'tenants.table.actions' | translate }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (tenant of paginatedTenants; track tenant.id) {
+            <tr class="tenant-row">
+              <!-- ID -->
+              <td class="col-id">
+                <span class="id-text">{{ tenant.tenantId }}</span>
+              </td>
+
+              <!-- Name -->
+              <td class="col-name">
+                <span class="name-text">{{ tenant.tenantName }}</span>
+              </td>
+
+              <!-- Dates -->
+              <td class="col-dates">
+                <div class="dates-cell">
+                  <span class="date-start">
+                    <z-icon zType="calendar" class="date-icon" />
+                    {{ tenant.startDate | date : 'mediumDate' }}
+                  </span>
+                  <span class="date-end">
+                    <z-icon zType="calendar" class="date-icon" />
+                    {{ tenant.expireDate | date : 'mediumDate' }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- Status -->
+              <td class="col-status">
+                <z-badge
+                  [zType]="tenant.isActive ? 'default' : 'destructive'"
+                  zShape="pill"
+                >
+                  {{
+                    tenant.isActive
+                      ? ('tenants.active' | translate)
+                      : ('tenants.inactive' | translate)
+                  }}
+                </z-badge>
+              </td>
+
+              <!-- Actions Dropdown -->
+              <td class="col-actions">
+                <button
+                  z-button
+                  zType="outline"
+                  zSize="sm"
+                  z-dropdown
+                  [zDropdownMenu]="actionsMenu"
+                  [id]="'tenant-actions-' + tenant.id"
+                >
+                  <z-icon zType="ellipsis" />
+                </button>
+                <z-dropdown-menu-content #actionsMenu="zDropdownMenuContent">
+                  <z-dropdown-menu-item
+                    (click)="onEditTenant(tenant)"
+                    [id]="'edit-tenant-' + tenant.id"
+                  >
+                    <z-icon zType="file-text" />
+                    {{ 'tenants.actions.editTenant' | translate }}
+                  </z-dropdown-menu-item>
+
+                  <z-dropdown-menu-item
+                    (click)="onDeleteTenant(tenant)"
+                    [id]="'delete-tenant-' + tenant.id"
+                    class="delete-action"
+                  >
+                    <z-icon zType="trash" />
+                    {{ 'tenants.actions.deleteTenant' | translate }}
+                  </z-dropdown-menu-item>
+                </z-dropdown-menu-content>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      @if (totalPages() > 1) {
+      <div class="pagination-container">
+        <z-pagination
+          zSize="sm"
+          [zTotal]="totalPages()"
+          [(zPageIndex)]="currentPage"
+        />
+      </div>
+      }
+    </div>
+    }
+  </z-card>
+</div>

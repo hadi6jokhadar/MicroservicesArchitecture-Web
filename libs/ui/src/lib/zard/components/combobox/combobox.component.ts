@@ -110,6 +110,7 @@ export interface ZardComboboxGroup {
           @if (searchable()) {
           <z-command-input
             [placeholder]="searchPlaceholder()"
+            (valueChange)="zSearchChange.emit($event)"
             #commandInputRef
           />
           }
@@ -210,6 +211,7 @@ export class ZardComboboxComponent implements ControlValueAccessor {
 
   readonly zValueChange = output<string | null>();
   readonly zComboSelected = output<ZardComboboxOption>();
+  readonly zSearchChange = output<string>();
 
   readonly popoverDirective = viewChild.required('popoverTrigger', {
     read: ZardPopoverDirective,

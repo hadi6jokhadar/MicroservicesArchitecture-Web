@@ -1,13 +1,9 @@
+import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams, HttpContext } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ENVIRONMENT } from '../core/environment.token';
-import {
-  IUser,
-  ICreateUserRequest,
-  IUpdateUserRequest,
-  IPaginatedResponse,
-} from './models';
+import { IPaginatedResponse } from '../models/common';
+import { ICreateUserRequest, IUpdateUserRequest, IUser } from './models';
 
 export interface IUserFilterRequest {
   pageNumber?: number;
