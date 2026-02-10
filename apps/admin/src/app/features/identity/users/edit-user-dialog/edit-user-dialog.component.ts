@@ -13,6 +13,7 @@ import {
   TranslatePipe,
   IdentityAdminService,
   TranslationService,
+  AuthService,
 } from '@ihsan/core';
 import { extractErrorMessage, SKIP_ERROR_TOAST } from '@ihsan/shared';
 import {
@@ -64,6 +65,7 @@ export class EditUserDialogComponent {
   private readonly _dialogRef = inject(ZardDialogRef);
   private readonly _adminService = inject(IdentityAdminService);
   private readonly _translationService = inject(TranslationService);
+  private readonly _authService = inject(AuthService);
   protected readonly data = inject<IEditUserData>(Z_MODAL_DATA);
 
   readonly errorMessage = signal<string | null>(null);
@@ -103,6 +105,15 @@ export class EditUserDialogComponent {
       nonNullable: true,
     }),
   });
+
+  constructor() {
+    // Prevent user from changing their own roles or status
+    if (this.data.user.id === this._authService.currentUser()?.id) {
+      this.form.controls.roleIds.disable();
+      this.form.controls.status.disable();
+      this.form.controls.emailConfirmed.disable();
+    }
+  }
 
   onSubmit(): void {
     if (this.form.invalid) {

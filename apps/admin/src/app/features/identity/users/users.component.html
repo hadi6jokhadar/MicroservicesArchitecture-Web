@@ -181,7 +181,7 @@
               <!-- Avatar -->
               <td class="col-avatar">
                 <z-avatar
-                  zSize="md"
+                  zSize="sm"
                   zShape="circle"
                   [zSrc]="getProfilePictureUrl(user)"
                   [zFallback]="getUserInitials(user)"
@@ -276,6 +276,7 @@
                     {{ 'users.actions.editUser' | translate }}
                   </z-dropdown-menu-item>
 
+                  @if (user.id !== _authService.currentUser()?.id) {
                   <z-dropdown-menu-item
                     (click)="onToggleStatus(user)"
                     [id]="'toggle-status-' + user.id"
@@ -296,6 +297,7 @@
                     <z-icon zType="trash" />
                     {{ 'users.actions.deleteUser' | translate }}
                   </z-dropdown-menu-item>
+                  }
                 </z-dropdown-menu-content>
               </td>
             </tr>

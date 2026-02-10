@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   ENVIRONMENT,
+  AuthService,
   IdentityAdminService,
   IPaginatedResponse,
   IRole,
@@ -72,6 +73,7 @@ export class UsersComponent implements OnInit {
   private readonly _alertDialogService = inject(ZardAlertDialogService);
   private readonly _dialogService = inject(ZardDialogService);
   private readonly _translationService = inject(TranslationService);
+  protected readonly _authService = inject(AuthService);
   protected readonly _env = inject(ENVIRONMENT);
 
   // Signals

@@ -9,3 +9,4 @@ export * from './token.interceptor';
 export * from './auth.guard';
 export * from './role.guard';
 export * from './profile.resolver';
+export * from './identity-storage.service';

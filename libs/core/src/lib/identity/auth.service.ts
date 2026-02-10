@@ -10,7 +10,10 @@ import {
   IRefreshTokenRequest,
   IForgotPasswordRequest,
   IVerificationCodeResponse,
+  IUser,
 } from './models';
+
+import { IdentityStorageService } from './identity-storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +21,7 @@ import {
 export class AuthService {
   private _http = inject(HttpClient);
   private _env = inject(ENVIRONMENT);
+  private _identityStorage = inject(IdentityStorageService);
   private readonly _baseUrl = `${this._env.apiUrls.identity}/api/auth`;
 
   currentUser = signal<UserClass | null>(null);
@@ -143,30 +147,45 @@ export class AuthService {
   }
 
   private _handleAuthResponse(response: IAuthResponse) {
-    localStorage.setItem('token', response.accessToken);
-    localStorage.setItem('refreshToken', response.refreshToken);
+    this._identityStorage.setAccessToken(response.accessToken);
+    this._identityStorage.setRefreshToken(response.refreshToken);
     this.currentUser.set(new UserClass(response.user));
   }
 
   private _clearAuth() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
+    this._identityStorage.clearAuth();
     this.currentUser.set(null);
   }
 
+  getProfile(): Observable<IUser> {
+    return this._http.get<IUser>(
+      `${this._env.apiUrls.identity}/api/user/profile`
+    );
+  }
+
   private _loadUserFromStorage() {
-    // Only load user if token exists
-    const token = localStorage.getItem('token');
-    if (!token) {
+    const token = this._identityStorage.getAccessToken();
+    if (token) {
+      this.getProfile().subscribe({
+        next: (user) => this.currentUser.set(new UserClass(user)),
+        error: (error) => {
+          console.error(error);
+
+          if (error.status === 401) {
+            this._clearAuth();
+          }
+        },
+      });
+    } else {
       this.currentUser.set(null);
     }
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return this._identityStorage.getAccessToken();
   }
 
   getRefreshToken(): string | null {
-    return localStorage.getItem('refreshToken');
+    return this._identityStorage.getRefreshToken();
   }
 }

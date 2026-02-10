@@ -14,6 +14,7 @@ import {
   ZardDialogService,
   ZardLoaderComponent,
   ZardEmptyComponent,
+  ZardAvatarComponent,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
 import { IClaim } from '@ihsan/core';
@@ -39,6 +40,7 @@ interface IClaimFilterForm {
     ...ZardDropdownImports,
     ZardLoaderComponent,
     ZardEmptyComponent,
+    ZardAvatarComponent,
   ],
   templateUrl: './claims.component.html',
   styleUrls: ['./claims.component.scss'],

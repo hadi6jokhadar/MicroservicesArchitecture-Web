@@ -95,15 +95,23 @@
             <tr>
               <td>
                 <div class="claim-name">
-                  <z-icon zType="shield" />
+                  <z-avatar
+                    zSize="sm"
+                    zShape="circle"
+                    [zFallback]="claim.name.substring(0, 2).toUpperCase()"
+                  />
                   <span class="name">{{ claim.name }}</span>
                 </div>
               </td>
               <td>
-                <code class="claim-type">{{ claim.claimType }}</code>
+                <z-badge zType="secondary" zShape="pill">{{
+                  claim.claimType
+                }}</z-badge>
               </td>
               <td>
-                <code class="claim-value">{{ claim.claimValue }}</code>
+                <z-badge zType="outline" zShape="pill">{{
+                  claim.claimValue
+                }}</z-badge>
               </td>
               <td>
                 <span class="description">{{ claim.description || '-' }}</span>
