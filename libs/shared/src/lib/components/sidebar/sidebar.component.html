@@ -1,6 +1,15 @@
 <aside class="sidebar">
   <!-- Header with App Title -->
   <div class="sidebar-header">
+    <button
+      z-button
+      zType="ghost"
+      zSize="sm"
+      class="mobile-toggle-btn"
+      (click)="toggleMobileMenu()"
+    >
+      <z-icon [zType]="isMobileOpen() ? 'x' : 'panel-left'" />
+    </button>
     <h1 id="app-title" class="sidebar-title">
       {{ appTitleTranslationKey() | translate }}
     </h1>

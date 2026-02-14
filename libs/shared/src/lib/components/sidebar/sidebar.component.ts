@@ -31,6 +31,9 @@ import { TranslatePipe, TranslationService } from '@ihsan/core';
   ],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
+  host: {
+    '[class.mobile-open]': 'isMobileOpen()',
+  },
 })
 export class SidebarComponent {
   pages = input.required<ISidebarPage[]>();
@@ -43,6 +46,7 @@ export class SidebarComponent {
 
   expandedPages = signal<Set<string>>(new Set());
   currentLanguage = signal<string>('en');
+  isMobileOpen = signal<boolean>(false);
 
   private _router = inject(Router);
   private _translationService = inject(TranslationService);
@@ -115,10 +119,20 @@ export class SidebarComponent {
     this.expandedPages.set(expandedSet);
   }
 
+  toggleMobileMenu(): void {
+    this.isMobileOpen.update((open) => !open);
+  }
+
+  closeMobileMenu(): void {
+    this.isMobileOpen.set(false);
+  }
+
   onPageClick(page: ISidebarPage): void {
     if (page.children && page.children.length > 0) {
       this.toggleExpand(page.translationKey);
+      this.isMobileOpen.set(true);
     } else {
+      this.closeMobileMenu();
       this.pageClicked.emit(page);
     }
   }

@@ -16,6 +16,9 @@
   }
 
   .sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     margin-block-end: 1rem;
 
     .sidebar-title {
@@ -25,6 +28,10 @@
       margin: 0;
       padding-inline-start: 0.5rem;
     }
+  }
+
+  .mobile-toggle-btn {
+    display: none;
   }
 
   .user-profile-card {
@@ -190,6 +197,9 @@
 
   @media (max-width: 768px) {
     inline-size: 200px;
+    .sidebar {
+      padding-inline: 0.2rem;
+    }
 
     .sidebar-header .sidebar-title {
       font-size: 1.25rem;
@@ -206,39 +216,77 @@
   }
 
   @media (max-width: 480px) {
-    inline-size: 60px;
-
-    .sidebar-header .sidebar-title,
-    .user-info,
-    .nav-label,
-    .nav-group-label,
-    .dark-mode-btn span:not(.dark-mode-icon) {
-      display: none;
+    .mobile-toggle-btn {
+      display: flex;
     }
 
-    .user-profile-card {
-      padding: 0.5rem;
+    &:not(.mobile-open) {
+      inline-size: 60px;
 
-      .user-profile {
+      .sidebar-header {
         justify-content: center;
-      }
-    }
 
-    .nav-item {
-      justify-content: center;
-      padding-inline: 0.5rem;
-
-      .nav-icon {
-        margin: 0 auto;
+        .sidebar-title {
+          display: none;
+        }
       }
 
-      .nav-chevron {
+      .user-info,
+      .nav-label,
+      .nav-group-label,
+      .dark-mode-btn span:not(.dark-mode-icon) {
+        display: none;
+      }
+
+      .user-profile-card {
+        padding: 0.5rem;
+
+        .user-profile {
+          justify-content: center;
+        }
+      }
+
+      .nav-item {
+        justify-content: center;
+        padding-inline: 0.5rem;
+
+        .nav-icon {
+          margin: 0 auto;
+        }
+
+        .nav-chevron {
+          display: none;
+        }
+      }
+
+      .nav-children {
         display: none;
       }
     }
 
-    .nav-children {
-      display: none;
+    .sidebar-footer {
+      .dark-mode-btn,
+      .logout-btn,
+      .language-btn {
+        span {
+          display: none;
+        }
+      }
+    }
+
+    &.mobile-open {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      width: 100vw;
+      inline-size: 100vw;
+
+      /* Ensure layout overrides previous responsive steps */
+      .user-profile-card .user-profile {
+        flex-direction: row;
+        text-align: start;
+        justify-content: flex-start;
+      }
     }
   }
 }
