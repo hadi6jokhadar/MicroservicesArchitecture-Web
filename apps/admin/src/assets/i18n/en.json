@@ -159,6 +159,33 @@
   "sidebar.pages.fileManager": "File Manager",
   "sidebar.pages.notification": "Notification",
 
+  "fileManager.viewFiles": "View Files",
+  "fileManager.uploadFiles": "Upload Files",
+  "fileManager.allGroups": "All Groups",
+  "fileManager.group": "Group",
+  "fileManager.type": "Type",
+  "fileManager.allTypes": "All Types",
+  "fileManager.temporary": "Temporary",
+  "fileManager.size": "Size",
+  "fileManager.created": "Created",
+  "fileManager.temporaryFile": "Temporary File",
+  "fileManager.selected": "{{count}} selected",
+  "fileManager.totalFiles": "Total {{count}} files",
+  "fileManager.dragDrop": "Drag & Drop files here or click to browse",
+  "fileManager.browseFiles": "Browse Files",
+  "fileManager.uploading": "Uploading...",
+
+  "fileManager.groups.Personal": "Personal",
+  "fileManager.groups.Shared": "Shared",
+  "fileManager.groups.System": "System",
+  "fileManager.groups.Project": "Project",
+  "fileManager.groups.Archive": "Archive",
+
+  "fileManager.types.Music": "Music",
+  "fileManager.types.Video": "Video",
+  "fileManager.types.Image": "Image",
+  "fileManager.types.Other": "Other",
+
   "sidebar.groups.user": "User Management",
   "sidebar.groups.system": "System",
 

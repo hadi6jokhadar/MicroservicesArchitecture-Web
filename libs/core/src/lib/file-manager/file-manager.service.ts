@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpContext } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ENVIRONMENT } from '../core/environment.token';
 import {
@@ -23,7 +23,8 @@ export class FileManagerService {
   uploadFile(
     file: File,
     group?: FileGroup,
-    userId?: number
+    userId?: number,
+    context?: HttpContext
   ): Observable<IFileManagerResponse> {
     const formData = new FormData();
     formData.append('file', file);
@@ -32,7 +33,8 @@ export class FileManagerService {
 
     return this._http.post<IFileManagerResponse>(
       `${this._baseUrl}/files`,
-      formData
+      formData,
+      { context }
     );
   }
 
@@ -41,7 +43,8 @@ export class FileManagerService {
   }
 
   getFiles(
-    request: IFileManagerListRequest
+    request: IFileManagerListRequest,
+    context?: HttpContext
   ): Observable<IPaginatedList<IFileManagerResponse>> {
     let params = new HttpParams();
 
@@ -55,7 +58,7 @@ export class FileManagerService {
 
     return this._http.get<IPaginatedList<IFileManagerResponse>>(
       `${this._baseUrl}/files`,
-      { params }
+      { params, context }
     );
   }
 

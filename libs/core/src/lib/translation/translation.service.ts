@@ -61,9 +61,24 @@ export class TranslationService {
   }
 
   // Get cached translation by key (for pipe usage)
-  getCachedTranslation(key: string, defaultValue?: string): string {
+  getCachedTranslation(
+    key: string,
+    defaultValue?: string,
+    params?: Record<string, unknown>
+  ): string {
     const translations = this._translations();
-    return translations[key] || defaultValue || key;
+    let value = translations[key] || defaultValue || key;
+
+    if (params) {
+      Object.keys(params).forEach((paramKey) => {
+        value = value.replace(
+          new RegExp(`{{${paramKey}}}`, 'g'),
+          String(params[paramKey])
+        );
+      });
+    }
+
+    return value;
   }
 
   // Get current language

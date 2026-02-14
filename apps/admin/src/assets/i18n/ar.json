@@ -158,6 +158,33 @@
   "sidebar.pages.fileManager": "مدير الملفات",
   "sidebar.pages.notification": "الإشعارات",
 
+  "fileManager.viewFiles": "عرض الملفات",
+  "fileManager.uploadFiles": "رفع الملفات",
+  "fileManager.allGroups": "جميع المجموعات",
+  "fileManager.group": "المجموعة",
+  "fileManager.type": "النوع",
+  "fileManager.allTypes": "جميع الأنواع",
+  "fileManager.temporary": "مؤقت",
+  "fileManager.size": "الحجم",
+  "fileManager.created": "تاريخ الإنشاء",
+  "fileManager.temporaryFile": "ملف مؤقت",
+  "fileManager.selected": "تم تحديد {{count}}",
+  "fileManager.totalFiles": "الإجمالي {{count}} ملف",
+  "fileManager.dragDrop": "اسحب وأفلت الملفات هنا أو انقر للتصفح",
+  "fileManager.browseFiles": "تصفح الملفات",
+  "fileManager.uploading": "جاري الرفع...",
+
+  "fileManager.groups.Personal": "شخصي",
+  "fileManager.groups.Shared": "مشترك",
+  "fileManager.groups.System": "نظام",
+  "fileManager.groups.Project": "مشروع",
+  "fileManager.groups.Archive": "أرشيف",
+
+  "fileManager.types.Music": "موسيقى",
+  "fileManager.types.Video": "فيديو",
+  "fileManager.types.Image": "صورة",
+  "fileManager.types.Other": "أخرى",
+
   "sidebar.groups.user": "إدارة المستخدمين",
   "sidebar.groups.system": "النظام",
 

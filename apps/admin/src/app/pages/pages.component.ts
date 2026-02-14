@@ -10,6 +10,7 @@ import {
   SidebarComponent,
   SidebarPageClass,
   SidebarUserClass,
+  FileManagerComponent,
 } from '@ihsan/shared';
 
 @Component({
@@ -151,11 +152,18 @@ export class PagesComponent {
 
   openFileManagerDialog(): void {
     this._dialogService.create({
-      zTitle: 'File Manager',
-      zContent: 'Empty Dialog',
-      zOkText: 'Close',
-      zOnOk: () => {
-        console.log('Dialog closed');
+      zContent: FileManagerComponent,
+      zData: {
+        allowedTypes: ['image/*', 'video/*'], // Example settings
+        maxFiles: 5,
+        selectionMode: 'multiple',
+        viewMode: 'grid',
+      },
+      zWidth: '80vw', // Detailed view needs width.
+      zCustomClasses: 'z-dialog-max-width-100',
+      zHideFooter: true,
+      zOnOk: (files) => {
+        console.log('Selected files:', files);
       },
     });
   }
