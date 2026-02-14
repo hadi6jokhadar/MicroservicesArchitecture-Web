@@ -4,7 +4,10 @@ import { EventEmitter, Inject, PLATFORM_ID } from '@angular/core';
 
 import { filter, fromEvent, Subject, takeUntil } from 'rxjs';
 
-import type { ZardDialogComponent, ZardDialogOptions } from './dialog.component';
+import type {
+  ZardDialogComponent,
+  ZardDialogOptions,
+} from './dialog.component';
 
 const enum eTriggerAction {
   CANCEL = 'cancel',
@@ -13,6 +16,7 @@ const enum eTriggerAction {
 
 export class ZardDialogRef<T = any, R = any, U = any> {
   private destroy$ = new Subject<void>();
+  private readonly _afterClosed = new Subject<R | undefined>();
   private isClosing = false;
   protected result?: R;
   componentInstance: T | null = null;
@@ -21,12 +25,19 @@ export class ZardDialogRef<T = any, R = any, U = any> {
     private overlayRef: OverlayRef,
     private config: ZardDialogOptions<T, U>,
     private containerInstance: ZardDialogComponent<T, U>,
-    @Inject(PLATFORM_ID) private platformId: object,
+    @Inject(PLATFORM_ID) private platformId: object
   ) {
-    this.containerInstance.cancelTriggered.subscribe(() => this.trigger(eTriggerAction.CANCEL));
-    this.containerInstance.okTriggered.subscribe(() => this.trigger(eTriggerAction.OK));
+    this.containerInstance.cancelTriggered.subscribe(() =>
+      this.trigger(eTriggerAction.CANCEL)
+    );
+    this.containerInstance.okTriggered.subscribe(() =>
+      this.trigger(eTriggerAction.OK)
+    );
 
-    if ((this.config.zMaskClosable ?? true) && isPlatformBrowser(this.platformId)) {
+    if (
+      (this.config.zMaskClosable ?? true) &&
+      isPlatformBrowser(this.platformId)
+    ) {
       this.overlayRef
         .outsidePointerEvents()
         .pipe(takeUntil(this.destroy$))
@@ -36,11 +47,15 @@ export class ZardDialogRef<T = any, R = any, U = any> {
     if (isPlatformBrowser(this.platformId)) {
       fromEvent<KeyboardEvent>(document, 'keydown')
         .pipe(
-          filter(event => event.key === 'Escape'),
-          takeUntil(this.destroy$),
+          filter((event) => event.key === 'Escape'),
+          takeUntil(this.destroy$)
         )
         .subscribe(() => this.close());
     }
+  }
+
+  afterClosed() {
+    return this._afterClosed.asObservable();
   }
 
   close(result?: R) {
@@ -50,6 +65,9 @@ export class ZardDialogRef<T = any, R = any, U = any> {
 
     this.isClosing = true;
     this.result = result;
+
+    this._afterClosed.next(result);
+    this._afterClosed.complete();
 
     if (isPlatformBrowser(this.platformId)) {
       const hostElement = this.containerInstance.getNativeElement();
@@ -72,7 +90,9 @@ export class ZardDialogRef<T = any, R = any, U = any> {
   }
 
   private trigger(action: eTriggerAction) {
-    const trigger = { ok: this.config.zOnOk, cancel: this.config.zOnCancel }[action];
+    const trigger = { ok: this.config.zOnOk, cancel: this.config.zOnCancel }[
+      action
+    ];
 
     if (trigger instanceof EventEmitter) {
       trigger.emit(this.getContentComponent());

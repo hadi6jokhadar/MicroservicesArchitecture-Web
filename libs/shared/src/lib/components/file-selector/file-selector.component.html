@@ -1,0 +1,48 @@
+<div class="file-selector-wrapper">
+  @if (selectedFiles().length > 0) {
+  <div
+    class="file-previews"
+    cdkDropList
+    (cdkDropListDropped)="drop($event)"
+    cdkDropListOrientation="horizontal"
+  >
+    @for (file of selectedFiles(); track file.id) {
+    <div
+      class="file-item"
+      [attr.title]="file.name"
+      cdkDrag
+      [cdkDragDisabled]="selectionMode() === 'single'"
+    >
+      <div class="drag-placeholder" *cdkDragPlaceholder></div>
+
+      @if (isImage(file)) {
+      <img [src]="file.url" [alt]="file.name" class="file-thumb" />
+      } @else {
+      <div class="file-icon-placeholder">
+        <z-icon zType="file" class="file-icon" />
+        <span class="file-ext">{{ file.extension }}</span>
+      </div>
+      }
+
+      <button
+        class="remove-btn"
+        (click)="removeFile(file, $event)"
+        type="button"
+      >
+        <z-icon zType="x" style="width: 12px; height: 12px" />
+      </button>
+    </div>
+    }
+  </div>
+  }
+
+  <z-button
+    [zType]="buttonType()"
+    (click)="openFileManagerDialog()"
+    class="select-btn"
+    type="button"
+  >
+    <z-icon zType="folder-plus" class="mr-2" />
+    {{ label() }}
+  </z-button>
+</div>

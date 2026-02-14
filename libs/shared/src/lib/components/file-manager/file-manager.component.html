@@ -29,6 +29,7 @@
             formControlName="group"
             [zPlaceholder]="'fileManager.group' | translate"
             class="filter-select"
+            [zDisabled]="!!group()"
           >
             <z-select-item [zValue]="''">{{
               'fileManager.allGroups' | translate
@@ -44,6 +45,7 @@
             formControlName="type"
             [zPlaceholder]="'fileManager.type' | translate"
             class="filter-select"
+            [zDisabled]="!!type()"
           >
             <z-select-item [zValue]="''">{{
               'fileManager.allTypes' | translate
@@ -118,9 +120,9 @@
           </div>
 
           <!-- Details Panel -->
-          @if (selectedFiles().length === 1) { @let selected =
-          selectedFiles()[0];
+          <!-- Details Panel -->
           <div class="fm-details-panel">
+            @if (activeFile(); as selected) {
             <div class="preview-large">
               @if (isImage(selected)) {
               <img [src]="selected.url" [alt]="selected.name" />
@@ -183,8 +185,13 @@
                 >{{ 'common.cancel' | translate }}</z-button
               >
             </div>
+            } @else {
+            <div class="empty-details">
+              <z-icon zType="info" />
+              <p>{{ 'fileManager.selectFileDetails' | translate }}</p>
+            </div>
+            }
           </div>
-          }
         </div>
 
         <!-- Pagination -->

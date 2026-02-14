@@ -2,6 +2,52 @@
 <div class="test-components-container">
   <h1 class="page-title">Zardui Component Demos</h1>
 
+  <!-- File Selector -->
+  <section class="component-section" id="file-selector">
+    <h2 class="section-title">File Selector</h2>
+    <div class="demo-grid">
+      <div class="demo-item">
+        <h3>Multiple - 5 Files - Images & Videos</h3>
+        <shared-file-selector
+          [allowedTypes]="['image/*', 'video/*']"
+          [maxFiles]="5"
+          selectionMode="multiple"
+          [group]="fileGroup.Personal"
+          [type]="fileType.Image"
+          (filesChanged)="onFilesSelected($event)"
+        ></shared-file-selector>
+      </div>
+      <div class="demo-item">
+        <h3>Multiple - 5 Files - Images & Videos - List View</h3>
+        <shared-file-selector
+          [allowedTypes]="['image/*', 'video/*']"
+          [maxFiles]="5"
+          selectionMode="multiple"
+          viewMode="list"
+          (filesChanged)="onFilesSelected($event)"
+        ></shared-file-selector>
+      </div>
+      <div class="demo-item">
+        <h3>Single - 1 File - Image</h3>
+        <shared-file-selector
+          [allowedTypes]="['image/*']"
+          [maxFiles]="1"
+          selectionMode="single"
+          (filesChanged)="onFilesSelected($event)"
+        ></shared-file-selector>
+      </div>
+      <div class="demo-item">
+        <h3>Single - 1 File - Video</h3>
+        <shared-file-selector
+          [allowedTypes]="['video/*']"
+          [maxFiles]="1"
+          selectionMode="single"
+          [type]="fileType.Video"
+          (filesChanged)="onFilesSelected($event)"
+        ></shared-file-selector>
+      </div>
+    </div>
+  </section>
   <!-- Accordion -->
   <section class="component-section" id="accordion">
     <h2 class="section-title">Accordion</h2>

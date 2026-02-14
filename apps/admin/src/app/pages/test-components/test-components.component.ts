@@ -115,6 +115,8 @@ import {
 
 // Local Components
 import { TestComponent } from './test/test';
+import { FileSelectorComponent } from '@ihsan/shared';
+import { FileGroup, FileType, IFileManagerResponse } from '@ihsan/core';
 
 // #region Type Definitions
 
@@ -218,6 +220,7 @@ interface iDialogData {
     ZardToggleComponent,
     ZardToggleGroupComponent,
     ZardTooltipDirective,
+    FileSelectorComponent,
   ],
   templateUrl: './test-components.component.html',
   styleUrls: ['./test-components.component.scss'],
@@ -1455,4 +1458,10 @@ export class TestComponentsComponent implements OnInit, AfterViewInit {
   }
 
   // #endregion
+
+  fileGroup = FileGroup;
+  fileType = FileType;
+  onFilesSelected(files: IFileManagerResponse[]) {
+    console.log(files);
+  }
 }

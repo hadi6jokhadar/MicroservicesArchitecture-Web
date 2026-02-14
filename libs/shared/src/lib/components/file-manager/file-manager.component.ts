@@ -45,6 +45,9 @@ export interface IFileManagerDialogData {
   viewMode?: 'list' | 'grid';
   selectionMode?: 'single' | 'multiple';
   canSubmit?: boolean;
+  selectedFiles?: IFileManagerResponse[];
+  group?: FileGroup;
+  type?: FileType;
 }
 
 @Component({
@@ -82,7 +85,9 @@ export class FileManagerComponent implements OnInit {
 
   // Signals
   files = signal<IFileManagerResponse[]>([]);
-  selectedFiles = signal<IFileManagerResponse[]>([]);
+  selectedFiles = signal<IFileManagerResponse[]>(
+    this._data?.selectedFiles || []
+  );
   totalFiles = signal<number>(0);
   loading = signal<boolean>(false);
   errorMessage = signal<string | null>(null);
@@ -96,12 +101,24 @@ export class FileManagerComponent implements OnInit {
     this._data?.selectionMode || 'single'
   );
   canSubmit = signal<boolean>(this._data?.canSubmit ?? true);
+  group = signal<FileGroup | undefined>(this._data?.group);
+  type = signal<FileType | undefined>(this._data?.type);
 
   // Filters
   filterForm = this._fb.group({
     search: [''],
-    group: [null as string | null],
-    type: [null as string | null],
+    group: [
+      {
+        value: this.group()?.toString() || (null as string | null),
+        disabled: !!this.group(),
+      },
+    ],
+    type: [
+      {
+        value: this.type()?.toString() || (null as string | null),
+        disabled: !!this.type(),
+      },
+    ],
     temporary: [false],
   });
 
@@ -139,6 +156,8 @@ export class FileManagerComponent implements OnInit {
 
   Math = Math;
 
+  activeFile = signal<IFileManagerResponse | null>(null);
+
   ngOnInit(): void {
     this.loadFiles();
 
@@ -151,7 +170,7 @@ export class FileManagerComponent implements OnInit {
   loadFiles(): void {
     this.loading.set(true);
     this.errorMessage.set(null);
-    const filterValue = this.filterForm.value;
+    const filterValue = this.filterForm.getRawValue();
 
     const request: IFileManagerListRequest = {
       pageNumber: this.pageIndex(),
@@ -187,14 +206,22 @@ export class FileManagerComponent implements OnInit {
   onFileClick(file: IFileManagerResponse): void {
     if (this.selectionMode() === 'single') {
       this.selectedFiles.set([file]);
+      this.activeFile.set(file);
     } else {
       if (this.isSelected(file)) {
         this.selectedFiles.update((curr) =>
           curr.filter((f) => f.id !== file.id)
         );
+        if (this.activeFile()?.id === file.id) {
+          const remaining = this.selectedFiles();
+          this.activeFile.set(
+            remaining.length > 0 ? remaining[remaining.length - 1] : null
+          );
+        }
       } else {
         if (this.selectedFiles().length < this.maxFiles()) {
           this.selectedFiles.update((curr) => [...curr, file]);
+          this.activeFile.set(file);
         }
       }
     }
@@ -232,17 +259,19 @@ export class FileManagerComponent implements OnInit {
 
     files.forEach((file) => {
       const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
-      this._service.uploadFile(file, undefined, undefined, context).subscribe({
-        next: () => {
-          completed++;
-          this.checkUploadCompletion(completed, files.length, failed);
-        },
-        error: () => {
-          completed++;
-          failed++;
-          this.checkUploadCompletion(completed, files.length, failed);
-        },
-      });
+      this._service
+        .uploadFile(file, this.group(), this.type(), context)
+        .subscribe({
+          next: () => {
+            completed++;
+            this.checkUploadCompletion(completed, files.length, failed);
+          },
+          error: () => {
+            completed++;
+            failed++;
+            this.checkUploadCompletion(completed, files.length, failed);
+          },
+        });
     });
   }
 
@@ -279,6 +308,7 @@ export class FileManagerComponent implements OnInit {
 
   deselectAll(): void {
     this.selectedFiles.set([]);
+    this.activeFile.set(null);
   }
 
   formatBytes(bytes: number, decimals = 2): string {
