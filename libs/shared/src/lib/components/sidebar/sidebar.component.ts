@@ -134,6 +134,9 @@ export class SidebarComponent {
     } else {
       this.closeMobileMenu();
       this.pageClicked.emit(page);
+      if (page.action) {
+        page.action();
+      }
     }
   }
 

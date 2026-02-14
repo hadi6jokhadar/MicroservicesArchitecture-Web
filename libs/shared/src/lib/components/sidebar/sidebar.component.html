@@ -52,7 +52,8 @@
     <!-- Children Items -->
     @if (isExpanded(page.translationKey)) {
     <div class="nav-children">
-      @for (child of page.children; track child.translationKey) {
+      @for (child of page.children; track child.translationKey) { @if
+      (child.route) {
       <a
         z-button
         zType="ghost"
@@ -68,10 +69,26 @@
         }
         <span class="nav-label">{{ child.translationKey | translate }}</span>
       </a>
-      }
+      } @else {
+      <button
+        type="button"
+        z-button
+        zType="ghost"
+        zFull
+        [id]="'nav-' + page.translationKey + '-' + child.translationKey"
+        class="nav-item nav-child"
+        (click)="onPageClick(child)"
+      >
+        @if (child.icon) {
+        <z-icon [zType]="child.icon" class="nav-icon" />
+        }
+        <span class="nav-label">{{ child.translationKey | translate }}</span>
+      </button>
+      } }
     </div>
     } } @else {
     <!-- Regular Item (no children) -->
+    @if (page.route) {
     <a
       z-button
       zType="ghost"
@@ -87,7 +104,22 @@
       }
       <span class="nav-label">{{ page.translationKey | translate }}</span>
     </a>
-    } } @if (!$last) {
+    } @else {
+    <button
+      type="button"
+      z-button
+      zType="ghost"
+      zFull
+      [id]="'nav-' + page.translationKey"
+      class="nav-item"
+      (click)="onPageClick(page)"
+    >
+      @if (page.icon) {
+      <z-icon [zType]="page.icon" class="nav-icon" />
+      }
+      <span class="nav-label">{{ page.translationKey | translate }}</span>
+    </button>
+    } } } @if (!$last) {
     <z-divider [zSpacing]="'none'" class="group-divider" />
     } }
   </nav>

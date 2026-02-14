@@ -2,6 +2,7 @@ import { Component, signal, effect, inject, PLATFORM_ID } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { ZardIcon } from '@ihsan/ui/lib/zard/components/icon';
+import { ZardDialogService } from '@ihsan/ui';
 import { AuthService } from '@ihsan/core';
 import {
   ISidebarPage,
@@ -21,6 +22,7 @@ export class PagesComponent {
   private _platformId = inject(PLATFORM_ID);
   private _authService = inject(AuthService);
   private _router = inject(Router);
+  private _dialogService = inject(ZardDialogService);
   private readonly DARK_MODE_KEY = 'theme-preference';
 
   isDarkMode = signal<boolean>(false);
@@ -74,7 +76,7 @@ export class PagesComponent {
       translationKey: 'sidebar.pages.fileManager',
       icon: 'folder' as ZardIcon,
       group: 'sidebar.groups.system',
-      route: '/file-manager',
+      action: () => this.openFileManagerDialog(),
     }),
     new SidebarPageClass({
       translationKey: 'sidebar.pages.notification',
@@ -143,6 +145,17 @@ export class PagesComponent {
       error: () => {
         // Even if API call fails, clear local auth and redirect
         this._router.navigate(['/login']);
+      },
+    });
+  }
+
+  openFileManagerDialog(): void {
+    this._dialogService.create({
+      zTitle: 'File Manager',
+      zContent: 'Empty Dialog',
+      zOkText: 'Close',
+      zOnOk: () => {
+        console.log('Dialog closed');
       },
     });
   }
