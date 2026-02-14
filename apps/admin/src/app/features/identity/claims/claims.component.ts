@@ -1,23 +1,33 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslatePipe, TranslationService, ClaimService } from '@ihsan/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
+  ClaimService,
+  IClaim,
+  TranslatePipe,
+  TranslationService,
+} from '@ihsan/core';
+import {
+  ZardAlertDialogService,
+  ZardAvatarComponent,
+  ZardBadgeComponent,
   ZardButtonComponent,
   ZardCardComponent,
-  ZardFormImports,
-  ZardInputDirective,
-  ZardBadgeComponent,
-  ZardIconComponent,
-  ZardDropdownImports,
-  ZardAlertDialogService,
   ZardDialogService,
-  ZardLoaderComponent,
+  ZardDropdownImports,
   ZardEmptyComponent,
-  ZardAvatarComponent,
+  ZardFormImports,
+  ZardIconComponent,
+  ZardInputDirective,
+  ZardLoaderComponent,
+  ZardTableBodyComponent,
+  ZardTableCellComponent,
+  ZardTableComponent,
+  ZardTableHeadComponent,
+  ZardTableHeaderComponent,
+  ZardTableRowComponent,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
-import { IClaim } from '@ihsan/core';
 import { AddClaimDialogComponent } from './add-claim-dialog/add-claim-dialog.component';
 import { EditClaimDialogComponent } from './edit-claim-dialog/edit-claim-dialog.component';
 
@@ -41,6 +51,12 @@ interface IClaimFilterForm {
     ZardLoaderComponent,
     ZardEmptyComponent,
     ZardAvatarComponent,
+    ZardTableComponent,
+    ZardTableHeaderComponent,
+    ZardTableBodyComponent,
+    ZardTableRowComponent,
+    ZardTableHeadComponent,
+    ZardTableCellComponent,
   ],
   templateUrl: './claims.component.html',
   styleUrls: ['./claims.component.scss'],

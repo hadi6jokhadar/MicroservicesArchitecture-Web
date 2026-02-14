@@ -8,6 +8,7 @@ import {
 import { HttpContext, HttpErrorResponse } from '@angular/common/http';
 import {
   ITenant,
+  ITenantConfiguration,
   ICreateTenantRequest,
   IUpdateTenantRequest,
   TranslatePipe,
@@ -103,6 +104,8 @@ export class TenantDialogComponent implements OnInit {
     }),
   });
 
+  readonly existingConfig = signal<ITenantConfiguration>({});
+
   ngOnInit(): void {
     if (this.data?.tenant) {
       this.isEditMode.set(true);
@@ -114,10 +117,21 @@ export class TenantDialogComponent implements OnInit {
         startDate: new Date(tenant.startDate),
         expireDate: new Date(tenant.expireDate),
         isActive: tenant.isActive ? 'true' : 'false',
-        // userId: tenant.userId // If tenant has userId, we might set it here, but it's not in ITenant interface usually visible in table. Assuming we might not edit owner easily or it's not provided.
       });
 
       this.form.controls.tenantId.disable();
+
+      // Fetch existing config to preserve it
+      this.isLoading.set(true);
+      this._tenantService.getTenantConfig(tenant.tenantId).subscribe({
+        next: (config) => {
+          if (config.data) {
+            this.existingConfig.set(config.data);
+          }
+          this.isLoading.set(false);
+        },
+        error: () => this.isLoading.set(false), // Non-critical if fails, will just use empty
+      });
     } else {
       // Set default expire date to 1 year from now
       const nextYear = new Date();
@@ -127,7 +141,6 @@ export class TenantDialogComponent implements OnInit {
       // Set default user as current user
       const currentUser = this._authService.currentUser();
       if (currentUser) {
-        // Pre-load current user into options so it displays correctly
         this.userOptions.set([
           {
             value: currentUser.id.toString(),
@@ -156,14 +169,6 @@ export class TenantDialogComponent implements OnInit {
           value: user.id.toString(),
           label: `${user.firstName} ${user.lastName} (${user.email})`,
         }));
-
-        // If current user is selected but not in the new list (e.g. search happened), we should probably keep it?
-        // But for autocomplete, usually we show what matches the search.
-        // However, if the initial value (current user) is set, we want it to be in the options initially.
-        // The first call onInit with empty query will load top 10 users.
-        // If current user is not in top 10, we might need to fetch it specifically or rely on the pre-set option.
-        // Since we pre-set the option in ngOnInit, and then call onUserSearch(''), the pre-set option might be overwritten if spread operator isn't used.
-        // But typically the combobox will use the existing value's label if found, or we rely on options being present.
 
         this.userOptions.set(options);
         this.isSearchingUsers.set(false);
@@ -197,7 +202,7 @@ export class TenantDialogComponent implements OnInit {
         startDate: formValue.startDate?.toISOString() || '',
         expireDate: formValue.expireDate?.toISOString() || '',
         isActive: formValue.isActive === 'true',
-        data: (this.data.tenant as any)['data'] || {},
+        data: this.existingConfig(), // Preserve existing config
       };
 
       this._tenantService.updateTenant(tenantId, request, context).subscribe({

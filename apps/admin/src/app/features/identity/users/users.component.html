@@ -98,6 +98,33 @@
           </z-form-control>
         </z-form-field>
 
+        <!-- Archived Filter (SuperAdmin Only) -->
+        <!-- Archived Filter (SuperAdmin Only) -->
+        @if (isSuperAdmin) {
+        <z-form-field class="filter-field" zardId="isArchived" #arch="zardId">
+          <label z-form-label [for]="arch.id()">
+            {{ 'users.archived' | translate }}
+          </label>
+          <z-form-control>
+            <z-select
+              [id]="arch.id()"
+              [zPlaceholder]="'users.allStatus' | translate"
+              formControlName="isArchived"
+            >
+              <z-select-item zValue="__all__">
+                {{ 'users.allStatus' | translate }}
+              </z-select-item>
+              <z-select-item zValue="false">
+                {{ 'users.active' | translate }}
+              </z-select-item>
+              <z-select-item zValue="true">
+                {{ 'users.archived' | translate }}
+              </z-select-item>
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+        }
+
         <!-- Action Buttons -->
         <div class="filter-actions">
           <button
@@ -158,28 +185,44 @@
 
       <!-- Table -->
       <div class="table-wrapper">
-        <table class="users-table">
-          <thead>
-            <tr>
-              <th class="col-avatar">{{ 'users.table.avatar' | translate }}</th>
-              <th class="col-name">{{ 'users.table.name' | translate }}</th>
-              <th class="col-email">{{ 'users.table.email' | translate }}</th>
-              <th class="col-phone">{{ 'users.table.phone' | translate }}</th>
-              <th class="col-roles">{{ 'users.table.roles' | translate }}</th>
-              <th class="col-status">{{ 'users.table.status' | translate }}</th>
-              <th class="col-created">
+        <table class="users-table" z-table>
+          <thead z-table-header>
+            <tr z-table-row>
+              <th z-table-head class="col-avatar">
+                {{ 'users.table.avatar' | translate }}
+              </th>
+              <th z-table-head class="col-name">
+                {{ 'users.table.name' | translate }}
+              </th>
+              <th z-table-head class="col-email">
+                {{ 'users.table.email' | translate }}
+              </th>
+              <th z-table-head class="col-phone">
+                {{ 'users.table.phone' | translate }}
+              </th>
+              <th z-table-head class="col-roles">
+                {{ 'users.table.roles' | translate }}
+              </th>
+              <th z-table-head class="col-status">
+                {{ 'users.table.status' | translate }}
+              </th>
+              <th z-table-head class="col-created">
                 {{ 'users.table.created' | translate }}
               </th>
-              <th class="col-actions">
+              <th z-table-head class="col-actions">
                 {{ 'users.table.actions' | translate }}
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody z-table-body>
             @for (user of users(); track user.id) {
-            <tr class="user-row">
+            <tr z-table-row class="user-row">
               <!-- Avatar -->
-              <td class="col-avatar">
+              <td
+                z-table-cell
+                class="col-avatar"
+                [attr.data-label]="'users.table.avatar' | translate"
+              >
                 <z-avatar
                   zSize="sm"
                   zShape="circle"
@@ -190,7 +233,11 @@
               </td>
 
               <!-- Name -->
-              <td class="col-name">
+              <td
+                z-table-cell
+                class="col-name"
+                [attr.data-label]="'users.table.name' | translate"
+              >
                 <div class="name-cell">
                   <span class="name-text"
                     >{{ user.firstName }} {{ user.lastName }}</span
@@ -206,21 +253,33 @@
               </td>
 
               <!-- Email -->
-              <td class="col-email">
+              <td
+                z-table-cell
+                class="col-email"
+                [attr.data-label]="'users.table.email' | translate"
+              >
                 <span class="email-text">
                   {{ user.email || ('users.na' | translate) }}
                 </span>
               </td>
 
               <!-- Phone -->
-              <td class="col-phone">
+              <td
+                z-table-cell
+                class="col-phone"
+                [attr.data-label]="'users.table.phone' | translate"
+              >
                 <span class="phone-text">
                   {{ user.phoneNumber || ('users.na' | translate) }}
                 </span>
               </td>
 
               <!-- Roles -->
-              <td class="col-roles">
+              <td
+                z-table-cell
+                class="col-roles"
+                [attr.data-label]="'users.table.roles' | translate"
+              >
                 <div class="roles-badges">
                   @for (role of user.roles; track role.id) {
                   <z-badge [zType]="getRoleBadgeType(role)" zShape="pill">
@@ -235,7 +294,11 @@
               </td>
 
               <!-- Status -->
-              <td class="col-status">
+              <td
+                z-table-cell
+                class="col-status"
+                [attr.data-label]="'users.table.status' | translate"
+              >
                 <z-badge
                   [zType]="getStatusBadgeType(user.status)"
                   zShape="pill"
@@ -249,14 +312,22 @@
               </td>
 
               <!-- Created Date -->
-              <td class="col-created">
+              <td
+                z-table-cell
+                class="col-created"
+                [attr.data-label]="'users.table.created' | translate"
+              >
                 <span class="date-text">{{
                   user.created | date : 'mediumDate'
                 }}</span>
               </td>
 
               <!-- Actions Dropdown -->
-              <td class="col-actions">
+              <td
+                z-table-cell
+                class="col-actions"
+                [attr.data-label]="'users.table.actions' | translate"
+              >
                 <button
                   z-button
                   zType="outline"
@@ -276,7 +347,22 @@
                     {{ 'users.actions.editUser' | translate }}
                   </z-dropdown-menu-item>
 
-                  @if (user.id !== _authService.currentUser()?.id) {
+                  @if (isSuperAdmin && user.id !==
+                  _authService.currentUser()?.id) {
+                  <z-dropdown-menu-item
+                    (click)="onToggleArchive(user)"
+                    [id]="'toggle-archive-' + user.id"
+                  >
+                    <z-icon
+                      [zType]="user.isArchived ? 'folder-open' : 'archive'"
+                    />
+                    {{
+                      user.isArchived
+                        ? ('users.actions.unarchive' | translate)
+                        : ('users.actions.archive' | translate)
+                    }}
+                  </z-dropdown-menu-item>
+                  } @if (user.id !== _authService.currentUser()?.id) {
                   <z-dropdown-menu-item
                     (click)="onToggleStatus(user)"
                     [id]="'toggle-status-' + user.id"

@@ -78,21 +78,37 @@
 
       <!-- Table -->
       <div class="table-wrapper">
-        <table class="roles-table">
-          <thead>
-            <tr>
-              <th>{{ 'roles.table.name' | translate }}</th>
-              <th>{{ 'roles.table.description' | translate }}</th>
-              <th>{{ 'roles.table.claims' | translate }}</th>
-              <th>{{ 'roles.table.status' | translate }}</th>
-              <th>{{ 'roles.table.type' | translate }}</th>
-              <th>{{ 'roles.table.actions' | translate }}</th>
+        <table class="roles-table" z-table>
+          <thead z-table-header>
+            <tr z-table-row>
+              <th z-table-head class="col-name">
+                {{ 'roles.table.name' | translate }}
+              </th>
+              <th z-table-head class="col-description">
+                {{ 'roles.table.description' | translate }}
+              </th>
+              <th z-table-head class="col-claims">
+                {{ 'roles.table.claims' | translate }}
+              </th>
+              <th z-table-head class="col-status">
+                {{ 'roles.table.status' | translate }}
+              </th>
+              <th z-table-head class="col-type">
+                {{ 'roles.table.type' | translate }}
+              </th>
+              <th z-table-head class="col-actions">
+                {{ 'roles.table.actions' | translate }}
+              </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody z-table-body>
             @for (role of filteredRoles(); track role.id) {
-            <tr>
-              <td>
+            <tr z-table-row class="role-row">
+              <td
+                z-table-cell
+                class="col-name"
+                [attr.data-label]="'roles.table.name' | translate"
+              >
                 <div class="role-name">
                   <z-avatar
                     zSize="sm"
@@ -102,10 +118,18 @@
                   <span class="name">{{ role.name }}</span>
                 </div>
               </td>
-              <td>
+              <td
+                z-table-cell
+                class="col-description"
+                [attr.data-label]="'roles.table.description' | translate"
+              >
                 <span class="description">{{ role.description || '-' }}</span>
               </td>
-              <td>
+              <td
+                z-table-cell
+                class="col-claims"
+                [attr.data-label]="'roles.table.claims' | translate"
+              >
                 <div class="claims-container">
                   @if (role.claims && role.claims.length > 0) {
                   <z-badge zType="default" zShape="pill">
@@ -119,7 +143,11 @@
                   }
                 </div>
               </td>
-              <td>
+              <td
+                z-table-cell
+                class="col-status"
+                [attr.data-label]="'roles.table.status' | translate"
+              >
                 @if (role.status) {
                 <z-badge zType="default">{{
                   'common.active' | translate
@@ -130,7 +158,11 @@
                 }}</z-badge>
                 }
               </td>
-              <td>
+              <td
+                z-table-cell
+                class="col-type"
+                [attr.data-label]="'roles.table.type' | translate"
+              >
                 @if (role.isSystemRole) {
                 <z-badge zType="secondary">{{
                   'roles.table.systemRole' | translate
@@ -141,7 +173,11 @@
                 }}</z-badge>
                 }
               </td>
-              <td>
+              <td
+                z-table-cell
+                class="col-actions"
+                [attr.data-label]="'roles.table.actions' | translate"
+              >
                 <button
                   z-button
                   zType="outline"

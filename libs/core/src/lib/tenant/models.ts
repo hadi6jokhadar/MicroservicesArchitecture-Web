@@ -38,6 +38,7 @@ export interface ITenant {
   isExpired: boolean;
   created: string;
   lastModified?: string;
+  isArchived: boolean;
 }
 
 export class TenantClass implements ITenant {
@@ -51,6 +52,7 @@ export class TenantClass implements ITenant {
   isExpired: boolean;
   created: string;
   lastModified?: string;
+  isArchived: boolean;
 
   constructor(data: Partial<ITenant> = {}) {
     this.id = data.id || 0;
@@ -63,6 +65,7 @@ export class TenantClass implements ITenant {
     this.isExpired = data.isExpired ?? false;
     this.created = data.created || '';
     this.lastModified = data.lastModified;
+    this.isArchived = data.isArchived ?? false;
   }
 }
 
@@ -86,7 +89,7 @@ export interface ICreateTenantRequest {
   startDate: string;
   expireDate: string;
   data: ITenantConfiguration;
-  isActive?: boolean;
+  isActive: boolean;
 }
 
 export interface IUpdateTenantRequest {

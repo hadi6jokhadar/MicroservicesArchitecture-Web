@@ -138,7 +138,6 @@
           [id]="r.id()"
           [zPlaceholder]="'users.dialog.rolesPlaceholder' | translate"
           formControlName="roleIds"
-          [zValue]="form.controls.roleIds.value"
           [zMultiple]="true"
         >
           @for (role of data.roles; track role.id) { @if (role.status) {

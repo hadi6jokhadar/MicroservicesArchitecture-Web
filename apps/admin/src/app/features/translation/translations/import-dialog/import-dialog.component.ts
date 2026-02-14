@@ -18,8 +18,8 @@ import {
   ZardSelectImports,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
-import { HttpContext } from '@angular/common/http';
-import { SKIP_ERROR_TOAST, extractErrorMessage } from '@ihsan/shared';
+
+import { DragDropFilesDirective, extractErrorMessage } from '@ihsan/shared';
 
 interface IImportForm {
   language: FormControl<string>;
@@ -40,6 +40,7 @@ interface IImportForm {
     ...ZardSelectImports,
     ZardIdDirective,
     TranslatePipe,
+    DragDropFilesDirective,
   ],
   templateUrl: './import-dialog.component.html',
   styleUrl: './import-dialog.component.scss',
@@ -72,13 +73,24 @@ export class ImportDialogComponent {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (file) {
-      this.importForm.patchValue({ file });
-      this.selectedFileName.set(file.name);
+      this._handleFile(file);
+    }
+  }
 
-      const languageCode = file.name.split('.')[0];
-      if (languageCode) {
-        this.importForm.patchValue({ language: languageCode });
-      }
+  onFileDropped(event: DragEvent): void {
+    const file = event.dataTransfer?.files?.[0];
+    if (file) {
+      this._handleFile(file);
+    }
+  }
+
+  private _handleFile(file: File): void {
+    this.importForm.patchValue({ file });
+    this.selectedFileName.set(file.name);
+
+    const languageCode = file.name.split('.')[0];
+    if (languageCode) {
+      this.importForm.patchValue({ language: languageCode });
     }
   }
 
@@ -117,8 +129,6 @@ export class ImportDialogComponent {
           category: this.capitalizeFirstLetter(formValue.category || ''),
           tenantId: undefined,
         };
-
-        const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
 
         this._translationService.importTranslations(command).subscribe({
           next: (result) => {

@@ -78,22 +78,40 @@
 
       <!-- Table -->
       <div class="table-wrapper">
-        <table class="claims-table">
-          <thead>
-            <tr>
-              <th>{{ 'claims.table.name' | translate }}</th>
-              <th>{{ 'claims.table.type' | translate }}</th>
-              <th>{{ 'claims.table.value' | translate }}</th>
-              <th>{{ 'claims.table.description' | translate }}</th>
-              <th>{{ 'claims.table.superAdmin' | translate }}</th>
-              <th>{{ 'claims.table.status' | translate }}</th>
-              <th>{{ 'claims.table.actions' | translate }}</th>
+        <table class="claims-table" z-table>
+          <thead z-table-header>
+            <tr z-table-row>
+              <th z-table-head class="col-name">
+                {{ 'claims.table.name' | translate }}
+              </th>
+              <th z-table-head class="col-type">
+                {{ 'claims.table.type' | translate }}
+              </th>
+              <th z-table-head class="col-value">
+                {{ 'claims.table.value' | translate }}
+              </th>
+              <th z-table-head class="col-description">
+                {{ 'claims.table.description' | translate }}
+              </th>
+              <th z-table-head class="col-super-admin">
+                {{ 'claims.table.superAdmin' | translate }}
+              </th>
+              <th z-table-head class="col-status">
+                {{ 'claims.table.status' | translate }}
+              </th>
+              <th z-table-head class="col-actions">
+                {{ 'claims.table.actions' | translate }}
+              </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody z-table-body>
             @for (claim of filteredClaims(); track claim.id) {
-            <tr>
-              <td>
+            <tr z-table-row class="claim-row">
+              <td
+                z-table-cell
+                class="col-name"
+                [attr.data-label]="'claims.table.name' | translate"
+              >
                 <div class="claim-name">
                   <z-avatar
                     zSize="sm"
@@ -103,20 +121,36 @@
                   <span class="name">{{ claim.name }}</span>
                 </div>
               </td>
-              <td>
+              <td
+                z-table-cell
+                class="col-type"
+                [attr.data-label]="'claims.table.type' | translate"
+              >
                 <z-badge zType="secondary" zShape="pill">{{
                   claim.claimType
                 }}</z-badge>
               </td>
-              <td>
+              <td
+                z-table-cell
+                class="col-value"
+                [attr.data-label]="'claims.table.value' | translate"
+              >
                 <z-badge zType="outline" zShape="pill">{{
                   claim.claimValue
                 }}</z-badge>
               </td>
-              <td>
+              <td
+                z-table-cell
+                class="col-description"
+                [attr.data-label]="'claims.table.description' | translate"
+              >
                 <span class="description">{{ claim.description || '-' }}</span>
               </td>
-              <td>
+              <td
+                z-table-cell
+                class="col-super-admin"
+                [attr.data-label]="'claims.table.superAdmin' | translate"
+              >
                 @if (claim.isSuperAdminOnly) {
                 <z-badge zType="destructive" zSize="sm">{{
                   'common.yes' | translate
@@ -125,7 +159,11 @@
                 <span class="text-muted">{{ 'common.no' | translate }}</span>
                 }
               </td>
-              <td>
+              <td
+                z-table-cell
+                class="col-status"
+                [attr.data-label]="'claims.table.status' | translate"
+              >
                 @if (claim.status) {
                 <z-badge zType="default">{{
                   'common.active' | translate
@@ -136,7 +174,11 @@
                 }}</z-badge>
                 }
               </td>
-              <td>
+              <td
+                z-table-cell
+                class="col-actions"
+                [attr.data-label]="'claims.table.actions' | translate"
+              >
                 <button
                   z-button
                   zType="outline"

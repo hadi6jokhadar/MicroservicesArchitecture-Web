@@ -14,7 +14,11 @@ export default [
         'error',
         {
           enforceBuildableLibDependency: false,
-          allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$', '@ihsan/ui'],
+          allow: [
+            '^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$',
+            '@ihsan/ui',
+            'vanilla-jsoneditor',
+          ],
           depConstraints: [
             {
               sourceTag: 'type:shared',

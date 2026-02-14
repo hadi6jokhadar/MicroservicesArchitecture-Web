@@ -1,0 +1,57 @@
+<div class="tenant-configuration-sheet">
+  <!-- <div class="sheet-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h2>{{ 'tenants.configuration.title' | translate }}</h2>
+      </div>
+      <button
+        z-button
+        zType="outline"
+        zSize="sm"
+        (click)="onCancel()"
+        type="button"
+      >
+        <z-icon zType="x" />
+      </button>
+    </div>
+  </div> -->
+
+  <div class="sheet-content">
+    @if (isLoading()) {
+    <div class="loading">
+      <z-loader />
+    </div>
+    } @else {
+    <div class="edit-form-container">
+      <div class="edit-form">
+        <div #editorContainer class="json-editor-container"></div>
+        <div class="form-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            type="button"
+            (click)="onCancel()"
+            [disabled]="isSaving()"
+            id="cancel-config-btn"
+          >
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button
+            z-button
+            zType="default"
+            zSize="default"
+            type="button"
+            (click)="onSubmit()"
+            [disabled]="isSaving()"
+            [zLoading]="isSaving()"
+            id="save-config-btn"
+          >
+            {{ 'common.save' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+</div>

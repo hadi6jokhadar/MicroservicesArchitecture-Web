@@ -16,9 +16,9 @@
         />
       </z-form-control>
       @if (form.controls.tenantId.touched && form.controls.tenantId.errors) {
-      <z-form-message zType="error">
+      <span z-form-error>
         {{ 'tenants.dialog.errors.tenantId' | translate }}
-      </z-form-message>
+      </span>
       }
     </z-form-field>
     } @else {
@@ -47,9 +47,9 @@
       </z-form-control>
       @if (form.controls.tenantName.touched && form.controls.tenantName.errors)
       {
-      <z-form-message zType="error">
+      <span z-form-error>
         {{ 'tenants.dialog.errors.tenantName' | translate }}
-      </z-form-message>
+      </span>
       }
     </z-form-field>
 
@@ -72,9 +72,9 @@
         />
       </z-form-control>
       @if (form.controls.userId.touched && form.controls.userId.errors) {
-      <z-form-message zType="error">
+      <span z-form-error>
         {{ 'tenants.dialog.errors.userRequired' | translate }}
-      </z-form-message>
+      </span>
       }
     </z-form-field>
     }
@@ -90,9 +90,9 @@
         </z-form-control>
         @if (form.controls.startDate.touched && form.controls.startDate.errors)
         {
-        <z-form-message zType="error">
+        <span z-form-error>
           {{ 'tenants.dialog.errors.startDate' | translate }}
-        </z-form-message>
+        </span>
         }
       </z-form-field>
 
@@ -106,9 +106,9 @@
         </z-form-control>
         @if (form.controls.expireDate.touched &&
         form.controls.expireDate.errors) {
-        <z-form-message zType="error">
+        <span z-form-error>
           {{ 'tenants.dialog.errors.expireDate' | translate }}
-        </z-form-message>
+        </span>
         }
       </z-form-field>
     </div>

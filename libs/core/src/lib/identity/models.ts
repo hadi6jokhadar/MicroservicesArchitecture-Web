@@ -23,6 +23,7 @@ export interface IUser {
   profilePicture?: IFileManagerResponse | null;
   verificationCode?: string | null;
   data?: string | null;
+  isArchived: boolean;
 }
 
 export class UserClass implements IUser {
@@ -41,6 +42,7 @@ export class UserClass implements IUser {
   profilePicture?: IFileManagerResponse | null;
   verificationCode?: string | null;
   data?: string | null;
+  isArchived: boolean;
 
   constructor(data: Partial<IUser> = {}) {
     this.id = data.id || 0;
@@ -58,6 +60,7 @@ export class UserClass implements IUser {
     this.profilePicture = data.profilePicture;
     this.verificationCode = data.verificationCode;
     this.data = data.data;
+    this.isArchived = data.isArchived ?? false;
   }
 }
 

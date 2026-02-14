@@ -11,6 +11,7 @@ export interface IUserFilterRequest {
   searchTerm?: string;
   roleName?: string;
   status?: boolean;
+  isArchived?: boolean;
 }
 
 @Injectable({
@@ -60,6 +61,10 @@ export class IdentityAdminService {
 
   toggleUserStatus(id: number): Observable<object> {
     return this._http.patch(`${this._baseUrl}/users/${id}/toggle-status`, {});
+  }
+
+  toggleArchive(id: number): Observable<object> {
+    return this._http.patch(`${this._baseUrl}/users/${id}/toggle-archive`, {});
   }
 
   deleteUser(id: number): Observable<object> {

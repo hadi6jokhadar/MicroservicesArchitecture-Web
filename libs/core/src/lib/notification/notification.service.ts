@@ -10,6 +10,23 @@ import {
   ISendNotificationRequest,
 } from './models';
 
+import { IPaginatedResponse } from '../models/common';
+import { HttpParams } from '@angular/common/http';
+
+export interface IQueueItemFilterRequest {
+  pageNumber?: number;
+  pageSize?: number;
+  isArchived?: boolean;
+  tenantId?: string;
+  userId?: number;
+  status?: number;
+  priority?: number;
+  deliveryType?: number;
+  fromDate?: string;
+  toDate?: string;
+  searchTerm?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -43,8 +60,27 @@ export class NotificationService {
     );
   }
 
-  getQueueItems(): Observable<IQueueItemDto[]> {
-    // Note: Pagination logic can be added if needed
-    return this._http.get<IQueueItemDto[]>(`${this._baseUrl}/queue`);
+  getQueueItems(
+    request?: IQueueItemFilterRequest
+  ): Observable<IPaginatedResponse<IQueueItemDto>> {
+    let params = new HttpParams();
+
+    if (request) {
+      Object.keys(request).forEach((key) => {
+        const value = (request as any)[key];
+        if (value !== undefined && value !== null) {
+          params = params.append(key, value.toString());
+        }
+      });
+    }
+
+    return this._http.get<IPaginatedResponse<IQueueItemDto>>(
+      `${this._baseUrl}/queue`,
+      { params }
+    );
+  }
+
+  toggleQueueItemArchive(id: number): Observable<any> {
+    return this._http.patch(`${this._baseUrl}/queue/${id}/toggle-archive`, {});
   }
 }

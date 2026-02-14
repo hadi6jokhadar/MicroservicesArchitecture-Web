@@ -12,6 +12,9 @@
           (click)="onBrowseFile()"
           (keyup.enter)="onBrowseFile()"
           tabindex="0"
+          appDragDropFiles
+          accept=".json"
+          (filesDropped)="onFileDropped($event)"
         >
           @if (selectedFileName()) {
           <div class="file-selected">

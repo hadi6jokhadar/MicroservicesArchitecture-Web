@@ -23,9 +23,15 @@ export interface INotificationResponse {
   message?: string;
   data?: string;
   isRead: boolean;
-  createdAt: string;
   readAt?: string;
   userId?: number;
+  // BaseDto properties
+  created: string;
+  createdBy?: string;
+  lastModified?: string;
+  lastModifiedBy?: string;
+  isArchived: boolean;
+  status: boolean;
 }
 
 export class NotificationResponseClass implements INotificationResponse {
@@ -34,9 +40,14 @@ export class NotificationResponseClass implements INotificationResponse {
   message?: string;
   data?: string;
   isRead: boolean;
-  createdAt: string;
   readAt?: string;
   userId?: number;
+  created: string;
+  createdBy?: string;
+  lastModified?: string;
+  lastModifiedBy?: string;
+  isArchived: boolean;
+  status: boolean;
 
   constructor(data: Partial<INotificationResponse> = {}) {
     this.id = data.id || 0;
@@ -44,9 +55,14 @@ export class NotificationResponseClass implements INotificationResponse {
     this.message = data.message;
     this.data = data.data;
     this.isRead = data.isRead ?? false;
-    this.createdAt = data.createdAt || '';
     this.readAt = data.readAt;
     this.userId = data.userId;
+    this.created = data.created || '';
+    this.createdBy = data.createdBy;
+    this.lastModified = data.lastModified;
+    this.lastModifiedBy = data.lastModifiedBy;
+    this.isArchived = data.isArchived ?? false;
+    this.status = data.status ?? true;
   }
 }
 
@@ -83,7 +99,7 @@ export interface IQueueItemStatusResponse {
   processedAt?: string;
   error?: string;
   notificationId?: number;
-  createdAt: string;
+  created: string;
 }
 
 export class QueueItemStatusResponseClass implements IQueueItemStatusResponse {
@@ -93,7 +109,7 @@ export class QueueItemStatusResponseClass implements IQueueItemStatusResponse {
   processedAt?: string;
   error?: string;
   notificationId?: number;
-  createdAt: string;
+  created: string;
 
   constructor(data: Partial<IQueueItemStatusResponse> = {}) {
     this.queueItemId = data.queueItemId || 0;
@@ -102,7 +118,7 @@ export class QueueItemStatusResponseClass implements IQueueItemStatusResponse {
     this.processedAt = data.processedAt;
     this.error = data.error;
     this.notificationId = data.notificationId;
-    this.createdAt = data.createdAt || '';
+    this.created = data.created || '';
   }
 }
 
@@ -121,8 +137,13 @@ export interface IQueueItemDto {
   expiresAt: string;
   error?: string;
   notificationId?: number;
-  createdAt: string;
-  updatedAt?: string;
+  // BaseDto properties
+  created: string;
+  createdBy?: string;
+  lastModified?: string;
+  lastModifiedBy?: string;
+  isArchived: boolean;
+  status: boolean;
 }
 
 export class QueueItemDtoClass implements IQueueItemDto {
@@ -140,8 +161,12 @@ export class QueueItemDtoClass implements IQueueItemDto {
   expiresAt: string;
   error?: string;
   notificationId?: number;
-  createdAt: string;
-  updatedAt?: string;
+  created: string;
+  createdBy?: string;
+  lastModified?: string;
+  lastModifiedBy?: string;
+  isArchived: boolean;
+  status: boolean;
 
   constructor(data: Partial<IQueueItemDto> = {}) {
     this.id = data.id || 0;
@@ -158,8 +183,12 @@ export class QueueItemDtoClass implements IQueueItemDto {
     this.expiresAt = data.expiresAt || '';
     this.error = data.error;
     this.notificationId = data.notificationId;
-    this.createdAt = data.createdAt || '';
-    this.updatedAt = data.updatedAt;
+    this.created = data.created || '';
+    this.createdBy = data.createdBy;
+    this.lastModified = data.lastModified;
+    this.lastModifiedBy = data.lastModifiedBy;
+    this.isArchived = data.isArchived ?? false;
+    this.status = data.status ?? true;
   }
 }
 

@@ -48,17 +48,13 @@
   // Filter Form
   .filter-form {
     .filter-row {
-      display: grid;
-      grid-template-columns: 2fr 1fr auto;
+      display: flex;
+      flex-flow: row nowrap;
       gap: 1rem;
       align-items: end;
 
       @media (max-width: 1024px) {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      @media (max-width: 768px) {
-        grid-template-columns: 1fr;
+        flex-wrap: wrap;
       }
     }
 
@@ -91,11 +87,11 @@
       align-items: end;
 
       @media (max-width: 1024px) {
-        grid-column: span 2;
+        width: 100%;
       }
 
       @media (max-width: 768px) {
-        grid-column: span 1;
+        width: 100%;
         justify-content: stretch;
 
         button {
@@ -348,36 +344,56 @@
       }
     }
 
-    .table-wrapper {
-      .translations-table {
-        thead {
-          display: none;
-        }
+    // Override table styles for card view
+    .table-card .table-container {
+      .table-wrapper {
+        border: none;
+        overflow: visible;
 
-        tbody {
-          .translation-row {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.5rem;
-            padding: 1rem;
+        .translations-table {
+          thead {
+            display: none;
+          }
 
-            td {
-              padding: 0 !important;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
+          tbody {
+            .translation-row {
+              display: grid;
+              grid-template-columns: 1fr;
+              gap: 0.75rem;
+              padding: 1rem;
+              margin-bottom: 1rem;
+              border: 1px solid var(--color-border);
+              border-radius: var(--radius);
+              background: var(--color-card);
 
-              &::before {
-                content: attr(data-label);
-                font-weight: 600;
-                color: var(--color-muted-foreground);
+              // Reset hover effect
+              &:hover {
+                background: var(--color-card);
               }
 
-              &.col-actions {
-                justify-content: flex-end;
+              td {
+                padding: 0 !important;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border: none;
 
                 &::before {
-                  content: none;
+                  content: attr(data-label);
+                  font-weight: 600;
+                  color: var(--color-muted-foreground);
+                  font-size: 0.875rem;
+                }
+
+                &.col-actions {
+                  justify-content: flex-end;
+                  padding-top: 0.5rem !important;
+                  border-top: 1px solid var(--color-border);
+                  margin-top: 0.5rem;
+
+                  &::before {
+                    content: none;
+                  }
                 }
               }
             }

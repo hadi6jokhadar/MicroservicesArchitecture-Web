@@ -1,28 +1,34 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
+  ClaimService,
+  IRole,
+  RoleService,
   TranslatePipe,
   TranslationService,
-  RoleService,
-  ClaimService,
 } from '@ihsan/core';
 import {
+  ZardAlertDialogService,
+  ZardAvatarComponent,
+  ZardBadgeComponent,
   ZardButtonComponent,
   ZardCardComponent,
-  ZardFormImports,
-  ZardInputDirective,
-  ZardBadgeComponent,
-  ZardIconComponent,
-  ZardDropdownImports,
-  ZardAlertDialogService,
   ZardDialogService,
-  ZardLoaderComponent,
+  ZardDropdownImports,
   ZardEmptyComponent,
-  ZardAvatarComponent,
+  ZardFormImports,
+  ZardIconComponent,
+  ZardInputDirective,
+  ZardLoaderComponent,
+  ZardTableBodyComponent,
+  ZardTableCellComponent,
+  ZardTableComponent,
+  ZardTableHeadComponent,
+  ZardTableHeaderComponent,
+  ZardTableRowComponent,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
-import { IRole } from '@ihsan/core';
 import { AddRoleDialogComponent } from './add-role-dialog/add-role-dialog.component';
 import { EditRoleDialogComponent } from './edit-role-dialog/edit-role-dialog.component';
 import { ManageClaimsDialogComponent } from './manage-claims-dialog/manage-claims-dialog.component';
@@ -45,6 +51,12 @@ interface IRoleFilterForm {
     ZardIconComponent,
     ...ZardDropdownImports,
     ZardLoaderComponent,
+    ZardTableComponent,
+    ZardTableHeaderComponent,
+    ZardTableBodyComponent,
+    ZardTableRowComponent,
+    ZardTableHeadComponent,
+    ZardTableCellComponent,
     ZardEmptyComponent,
     ZardAvatarComponent,
   ],

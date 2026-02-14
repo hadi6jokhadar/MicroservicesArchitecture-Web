@@ -3,8 +3,8 @@ import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
-  ENVIRONMENT,
   AuthService,
+  ENVIRONMENT,
   IdentityAdminService,
   IPaginatedResponse,
   IRole,
@@ -31,6 +31,12 @@ import {
   ZardPaginationImports,
   ZardSelectComponent,
   ZardSelectItemComponent,
+  ZardTableBodyComponent,
+  ZardTableCellComponent,
+  ZardTableComponent,
+  ZardTableHeadComponent,
+  ZardTableHeaderComponent,
+  ZardTableRowComponent,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
 import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
@@ -40,6 +46,7 @@ interface IUserFilterForm {
   searchTerm: FormControl<string>;
   roleName: FormControl<string>;
   status: FormControl<string>;
+  isArchived: FormControl<string>;
 }
 
 @Component({
@@ -60,6 +67,12 @@ interface IUserFilterForm {
     ZardIconComponent,
     ZardSelectComponent,
     ZardSelectItemComponent,
+    ZardTableComponent,
+    ZardTableHeaderComponent,
+    ZardTableBodyComponent,
+    ZardTableRowComponent,
+    ZardTableHeadComponent,
+    ZardTableCellComponent,
     ZardLoaderComponent,
     ZardEmptyComponent,
     ZardIdDirective,
@@ -86,11 +99,20 @@ export class UsersComponent implements OnInit {
   readonly totalCount = signal(0);
   readonly pageSize = 10;
 
+  get isSuperAdmin(): boolean {
+    const user = this._authService.currentUser();
+    return (
+      user?.roles?.some((r) => r.name.toLowerCase().includes('superadmin')) ??
+      false
+    );
+  }
+
   // Filter Form
   readonly filterForm = new FormGroup<IUserFilterForm>({
     searchTerm: new FormControl<string>('', { nonNullable: true }),
     roleName: new FormControl<string>('__all__', { nonNullable: true }),
     status: new FormControl<string>('__all__', { nonNullable: true }),
+    isArchived: new FormControl<string>('__all__', { nonNullable: true }),
   });
 
   constructor() {
@@ -103,21 +125,16 @@ export class UsersComponent implements OnInit {
     });
 
     // Watch for filter changes (except searchTerm which uses manual search)
-    this.filterForm
-      .get('roleName')
-      ?.valueChanges.pipe(takeUntilDestroyed())
-      .subscribe(() => {
-        this.currentPage.set(1);
-        this.loadUsers();
-      });
-
-    this.filterForm
-      .get('status')
-      ?.valueChanges.pipe(takeUntilDestroyed())
-      .subscribe(() => {
-        this.currentPage.set(1);
-        this.loadUsers();
-      });
+    const controls = ['roleName', 'status', 'isArchived'];
+    controls.forEach((control) => {
+      this.filterForm
+        .get(control)
+        ?.valueChanges.pipe(takeUntilDestroyed())
+        .subscribe(() => {
+          this.currentPage.set(1);
+          this.loadUsers();
+        });
+    });
   }
 
   ngOnInit(): void {
@@ -167,6 +184,10 @@ export class UsersComponent implements OnInit {
           : formValue.status === 'true'
           ? true
           : false,
+      isArchived:
+        formValue.isArchived === '__all__'
+          ? undefined
+          : formValue.isArchived === 'true',
     };
 
     this._adminService.getUsers(request).subscribe({
@@ -198,6 +219,7 @@ export class UsersComponent implements OnInit {
       searchTerm: '',
       roleName: '__all__',
       status: '__all__',
+      isArchived: '__all__',
     });
     this.currentPage.set(1);
     this.loadUsers();
@@ -251,6 +273,60 @@ export class UsersComponent implements OnInit {
         ) {
           this.loadUsers();
         }
+      },
+    });
+  }
+
+  onToggleArchive(user: IUser): void {
+    const action = user.isArchived
+      ? this._translationService.getCachedTranslation('users.actions.unarchive')
+      : this._translationService.getCachedTranslation('users.actions.archive');
+
+    const title = user.isArchived
+      ? this._translationService.getCachedTranslation(
+          'users.dialog.unarchiveTitle'
+        )
+      : this._translationService.getCachedTranslation(
+          'users.dialog.archiveTitle'
+        );
+
+    const description = user.isArchived
+      ? this._translationService.getCachedTranslation(
+          'users.dialog.unarchiveDescription'
+        )
+      : this._translationService.getCachedTranslation(
+          'users.dialog.archiveDescription'
+        );
+
+    this._alertDialogService.confirm({
+      zTitle: title, // Simplified for brevity in this example
+      zDescription: description,
+      zOkText: action,
+      zCancelText:
+        this._translationService.getCachedTranslation('common.cancel'),
+      zOkDestructive: !user.isArchived,
+      zOnOk: () => {
+        this._adminService.toggleArchive(user.id).subscribe({
+          next: () => {
+            const successMsg = user.isArchived
+              ? this._translationService.getCachedTranslation(
+                  'users.success.userUnarchived'
+                )
+              : this._translationService.getCachedTranslation(
+                  'users.success.userArchived'
+                );
+            toast.success(successMsg);
+            this.loadUsers();
+          },
+          error: (error) => {
+            console.error('Error toggling user archive status:', error);
+            toast.error(
+              this._translationService.getCachedTranslation(
+                'users.error.toggleArchiveFailed'
+              )
+            );
+          },
+        });
       },
     });
   }

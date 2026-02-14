@@ -72,6 +72,10 @@ export class FileManagerService {
     return this._http.delete(`${this._baseUrl}/files/${id}`);
   }
 
+  toggleArchive(id: number): Observable<object> {
+    return this._http.patch(`${this._baseUrl}/files/${id}/toggle-archive`, {});
+  }
+
   downloadFile(id: number): Observable<Blob> {
     return this._http.get(`${this._baseUrl}/files/${id}/download`, {
       responseType: 'blob',

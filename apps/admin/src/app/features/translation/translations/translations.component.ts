@@ -25,6 +25,9 @@ import {
   ZardLoaderComponent,
   ZardPaginationImports,
   ZardSheetService,
+  ZardSelectComponent,
+  ZardSelectItemComponent,
+  ZardTableImports,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
 import { ViewValuesSheetComponent } from './view-values-sheet/view-values-sheet.component';
@@ -36,6 +39,7 @@ import { TranslationEventsService } from '../translation-events.service';
 interface ITranslationFilterForm {
   searchTerm: FormControl<string>;
   category: FormControl<string>;
+  isArchived: FormControl<string>;
 }
 
 @Component({
@@ -52,10 +56,13 @@ interface ITranslationFilterForm {
     ...ZardDropdownImports,
     ...ZardFormImports,
     ...ZardPaginationImports,
+    ...ZardTableImports,
     ZardIconComponent,
     ZardLoaderComponent,
     ZardEmptyComponent,
     ZardIdDirective,
+    ZardSelectComponent,
+    ZardSelectItemComponent,
   ],
   templateUrl: './translations.component.html',
   styleUrls: ['./translations.component.scss'],
@@ -80,6 +87,7 @@ export class TranslationsComponent implements OnInit {
   readonly filterForm = new FormGroup<ITranslationFilterForm>({
     searchTerm: new FormControl<string>('', { nonNullable: true }),
     category: new FormControl<string>('', { nonNullable: true }),
+    isArchived: new FormControl<string>('false', { nonNullable: true }),
   });
 
   constructor() {
@@ -91,14 +99,17 @@ export class TranslationsComponent implements OnInit {
       }
     });
 
-    // Watch for category filter changes
-    this.filterForm
-      .get('category')
-      ?.valueChanges.pipe(takeUntilDestroyed())
-      .subscribe(() => {
-        this.currentPage.set(1);
-        this.loadTranslationKeys();
-      });
+    // Watch for category and isArchived filter changes
+    const controls = ['category', 'isArchived'];
+    controls.forEach((control) => {
+      this.filterForm
+        .get(control)
+        ?.valueChanges.pipe(takeUntilDestroyed())
+        .subscribe(() => {
+          this.currentPage.set(1);
+          this.loadTranslationKeys();
+        });
+    });
 
     // Subscribe to translation keys changed events from dialogs
     this._translationEvents.translationKeysChanged$
@@ -124,6 +135,7 @@ export class TranslationsComponent implements OnInit {
       category: formValue.category
         ? this.capitalizeFirstLetter(formValue.category)
         : undefined,
+      isArchived: formValue.isArchived === 'true',
     };
 
     this._translationService.getTranslationKeys(query).subscribe({
@@ -150,6 +162,7 @@ export class TranslationsComponent implements OnInit {
     this.filterForm.reset({
       searchTerm: '',
       category: '',
+      isArchived: 'false',
     });
     this.currentPage.set(1);
     this.loadTranslationKeys();
@@ -189,6 +202,69 @@ export class TranslationsComponent implements OnInit {
       zContent: AddEditKeyDialogComponent,
       zData: { translationKey },
       zHideFooter: true,
+      zClosable: true,
+      zWidth: '550px',
+    });
+  }
+
+  onToggleArchive(translationKey: ITranslationKeyDto): void {
+    const action = translationKey.isArchived
+      ? this._translationService.getCachedTranslation(
+          'translations.actions.unarchive'
+        )
+      : this._translationService.getCachedTranslation(
+          'translations.actions.archive'
+        );
+
+    const title = translationKey.isArchived
+      ? this._translationService.getCachedTranslation(
+          'translations.dialog.unarchiveTitle'
+        )
+      : this._translationService.getCachedTranslation(
+          'translations.dialog.archiveTitle'
+        );
+
+    const description = translationKey.isArchived
+      ? this._translationService.getCachedTranslation(
+          'translations.dialog.unarchiveDescription'
+        )
+      : this._translationService.getCachedTranslation(
+          'translations.dialog.archiveDescription'
+        );
+
+    this._alertDialogService.confirm({
+      zTitle: title,
+      zDescription: description,
+      zOkText: action,
+      zCancelText:
+        this._translationService.getCachedTranslation('common.cancel'),
+      zOkDestructive: !translationKey.isArchived,
+      zOnOk: () => {
+        this._translationService.toggleArchive(translationKey.id).subscribe({
+          next: () => {
+            const successMsg = translationKey.isArchived
+              ? this._translationService.getCachedTranslation(
+                  'translations.success.keyUnarchived'
+                )
+              : this._translationService.getCachedTranslation(
+                  'translations.success.keyArchived'
+                );
+            toast.success(successMsg);
+            this.loadTranslationKeys();
+          },
+          error: (error) => {
+            console.error(
+              'Error toggling translation key archive status:',
+              error
+            );
+            toast.error(
+              this._translationService.getCachedTranslation(
+                'translations.error.toggleArchiveFailed'
+              )
+            );
+          },
+        });
+      },
     });
   }
 

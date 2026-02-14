@@ -11,6 +11,16 @@ import {
 } from './models';
 import { IPaginatedResponse } from '../models/common';
 
+import { HttpParams } from '@angular/common/http';
+
+export interface ITenantFilterRequest {
+  pageNumber?: number;
+  pageSize?: number;
+  isArchived?: boolean;
+  isActive?: boolean;
+  searchTerm?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -23,6 +33,7 @@ export class TenantService {
   // State
   readonly tenants = signal<ITenant[]>([]);
   readonly isLoading = signal<boolean>(false);
+  readonly totalCount = signal<number>(0);
 
   // Public Endpoints
   getTenantById(tenantId: string): Observable<ITenant> {
@@ -41,21 +52,37 @@ export class TenantService {
       `${this._baseUrl}/config`
     );
   }
+  getAllActiveTenants(
+    request?: ITenantFilterRequest
+  ): Observable<IPaginatedResponse<ITenant>> {
+    let params = new HttpParams();
 
-  // Admin Endpoints
-  getAllActiveTenants(): Observable<IPaginatedResponse<ITenant>> {
+    if (request) {
+      Object.keys(request).forEach((key) => {
+        const value = (request as any)[key];
+        if (value !== undefined && value !== null) {
+          params = params.append(key, value.toString());
+        }
+      });
+    }
+
     this.isLoading.set(true);
     return this._http
-      .get<IPaginatedResponse<ITenant>>(`${this._adminUrl}`)
+      .get<IPaginatedResponse<ITenant>>(`${this._adminUrl}`, { params })
       .pipe(
         tap({
           next: (response) => {
             this.tenants.set(response.items);
+            this.totalCount.set(response.totalCount);
             this.isLoading.set(false);
           },
           error: () => this.isLoading.set(false),
         })
       );
+  }
+
+  toggleArchive(tenantId: string): Observable<object> {
+    return this._http.patch(`${this._adminUrl}/${tenantId}/toggle-archive`, {});
   }
 
   getTenantByUser(userId: number): Observable<ITenant> {

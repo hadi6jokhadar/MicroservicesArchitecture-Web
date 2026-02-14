@@ -101,9 +101,24 @@ export class TranslationService {
       params = params.set('category', query.category);
     }
 
+    if (query.isArchived !== undefined) {
+      params = params.set('isArchived', query.isArchived.toString());
+    }
+
+    if (query.tenantId) {
+      params = params.set('tenantId', query.tenantId);
+    }
+
     return this._http.get<IPaginatedList<ITranslationKeyDto>>(
       `${this._baseUrl}/keys`,
       { params }
+    );
+  }
+
+  toggleArchive(id: number): Observable<ITranslationKeyDto> {
+    return this._http.patch<ITranslationKeyDto>(
+      `${this._baseUrl}/keys/${id}/toggle-archive`,
+      {}
     );
   }
 

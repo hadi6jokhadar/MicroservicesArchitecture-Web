@@ -85,6 +85,27 @@
           </z-form-control>
         </z-form-field>
 
+        <!-- Archived Filter -->
+        <z-form-field class="filter-field" zardId="isArchived" #arch="zardId">
+          <label z-form-label [for]="arch.id()">{{
+            'translations.archived' | translate
+          }}</label>
+          <z-form-control>
+            <z-select
+              [id]="arch.id()"
+              [zPlaceholder]="'translations.active' | translate"
+              formControlName="isArchived"
+            >
+              <z-select-item zValue="false">
+                {{ 'translations.active' | translate }}
+              </z-select-item>
+              <z-select-item zValue="true">
+                {{ 'translations.archived' | translate }}
+              </z-select-item>
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+
         <!-- Action Buttons -->
         <div class="filter-actions">
           <button
@@ -147,37 +168,41 @@
 
       <!-- Table -->
       <div class="table-wrapper">
-        <table class="translations-table">
-          <thead>
+        <table z-table class="translations-table">
+          <thead z-table-header>
             <tr>
-              <th class="col-key">
+              <th z-table-head class="col-key">
                 {{ 'translations.table.key' | translate }}
               </th>
-              <th class="col-category">
+              <th z-table-head class="col-category">
                 {{ 'translations.table.category' | translate }}
               </th>
-              <th class="col-description">
+              <th z-table-head class="col-description">
                 {{ 'translations.table.description' | translate }}
               </th>
-              <th class="col-languages">
+              <th z-table-head class="col-languages">
                 {{ 'translations.table.languages' | translate }}
               </th>
-              <th class="col-values">
+              <th z-table-head class="col-values">
                 {{ 'translations.table.values' | translate }}
               </th>
-              <th class="col-created">
+              <th z-table-head class="col-created">
                 {{ 'translations.table.created' | translate }}
               </th>
-              <th class="col-actions">
+              <th z-table-head class="col-actions">
                 {{ 'translations.table.actions' | translate }}
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody z-table-body>
             @for (key of translationKeys(); track key.id) {
-            <tr class="translation-row">
+            <tr z-table-row class="translation-row">
               <!-- Key -->
-              <td class="col-key">
+              <td
+                z-table-cell
+                class="col-key"
+                [attr.data-label]="'translations.table.key' | translate"
+              >
                 <div class="key-cell">
                   <z-icon zType="code" class="key-icon" />
                   <span class="key-text">{{ key.key }}</span>
@@ -185,7 +210,11 @@
               </td>
 
               <!-- Category -->
-              <td class="col-category">
+              <td
+                z-table-cell
+                class="col-category"
+                [attr.data-label]="'translations.table.category' | translate"
+              >
                 @if (key.category) {
                 <z-badge zType="outline" zShape="pill">
                   {{ key.category }}
@@ -198,14 +227,22 @@
               </td>
 
               <!-- Description -->
-              <td class="col-description">
+              <td
+                z-table-cell
+                class="col-description"
+                [attr.data-label]="'translations.table.description' | translate"
+              >
                 <span class="description-text">{{
                   key.description || '-'
                 }}</span>
               </td>
 
               <!-- Languages -->
-              <td class="col-languages">
+              <td
+                z-table-cell
+                class="col-languages"
+                [attr.data-label]="'translations.table.languages' | translate"
+              >
                 <div class="languages-badges">
                   @for (lang of getLanguages(key); track lang) {
                   <z-badge zType="secondary" zShape="pill">
@@ -220,7 +257,11 @@
               </td>
 
               <!-- Values Count -->
-              <td class="col-values">
+              <td
+                z-table-cell
+                class="col-values"
+                [attr.data-label]="'translations.table.values' | translate"
+              >
                 <z-badge zType="default" zShape="pill">
                   {{ getValueCount(key) }}
                   {{
@@ -232,14 +273,22 @@
               </td>
 
               <!-- Created Date -->
-              <td class="col-created">
+              <td
+                z-table-cell
+                class="col-created"
+                [attr.data-label]="'translations.table.created' | translate"
+              >
                 <span class="date-text">{{
                   key.created | date : 'mediumDate'
                 }}</span>
               </td>
 
               <!-- Actions Dropdown -->
-              <td class="col-actions">
+              <td
+                z-table-cell
+                class="col-actions"
+                [attr.data-label]="'translations.table.actions' | translate"
+              >
                 <button
                   z-button
                   zType="outline"
@@ -265,6 +314,20 @@
                   >
                     <z-icon zType="file-text" />
                     {{ 'translations.actions.editKey' | translate }}
+                  </z-dropdown-menu-item>
+
+                  <z-dropdown-menu-item
+                    (click)="onToggleArchive(key)"
+                    [id]="'toggle-archive-' + key.id"
+                  >
+                    <z-icon
+                      [zType]="key.isArchived ? 'folder-open' : 'archive'"
+                    />
+                    {{
+                      key.isArchived
+                        ? ('translations.actions.unarchive' | translate)
+                        : ('translations.actions.archive' | translate)
+                    }}
                   </z-dropdown-menu-item>
 
                   <z-dropdown-menu-item

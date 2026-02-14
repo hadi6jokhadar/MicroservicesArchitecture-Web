@@ -23,6 +23,7 @@ export interface ITranslationKeyDto {
   description?: string;
   values: ITranslationValueDto[];
   created: string;
+  isArchived: boolean;
 }
 
 export interface ITranslationValueDto {
@@ -41,6 +42,7 @@ export interface IGetTranslationKeysQuery {
   category?: string;
   tenantId?: string;
   searchTerm?: string;
+  isArchived?: boolean;
 }
 
 export interface ICreateTranslationKeyCommand {

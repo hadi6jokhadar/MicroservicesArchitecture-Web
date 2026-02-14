@@ -71,6 +71,30 @@
           </z-form-control>
         </z-form-field>
 
+        <!-- Archived Filter -->
+        <z-form-field class="filter-field" zardId="isArchived" #arch="zardId">
+          <label z-form-label [for]="arch.id()">
+            {{ 'tenants.archived' | translate }}
+          </label>
+          <z-form-control>
+            <z-select
+              [id]="arch.id()"
+              [zPlaceholder]="'tenants.allStatus' | translate"
+              formControlName="isArchived"
+            >
+              <z-select-item zValue="__all__">
+                {{ 'tenants.allStatus' | translate }}
+              </z-select-item>
+              <z-select-item zValue="false">
+                {{ 'tenants.active' | translate }}
+              </z-select-item>
+              <z-select-item zValue="true">
+                {{ 'tenants.archived' | translate }}
+              </z-select-item>
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+
         <!-- Action Buttons -->
         <div class="filter-actions">
           <button
@@ -107,7 +131,7 @@
       <z-loader zSize="lg" />
       <p>{{ 'tenants.loadingTenants' | translate }}</p>
     </div>
-    } @else if (filteredTenants().length === 0) {
+    } @else if (tenants().length === 0) {
     <div class="empty-container">
       <z-empty
         zIcon="search"
@@ -123,7 +147,7 @@
           <z-icon zType="layout-dashboard" />
           <span>
             {{ 'tenants.showingResults' | translate }}
-            {{ filteredTenants().length }} {{ 'common.of' | translate }}
+            {{ tenants().length }} {{ 'common.of' | translate }}
             {{ totalCount() }}
             {{ 'tenants.tenants' | translate }}
           </span>
@@ -132,35 +156,53 @@
 
       <!-- Table -->
       <div class="table-wrapper">
-        <table class="tenants-table">
-          <thead>
-            <tr>
-              <th class="col-id">{{ 'tenants.table.id' | translate }}</th>
-              <th class="col-name">{{ 'tenants.table.name' | translate }}</th>
-              <th class="col-dates">{{ 'tenants.table.dates' | translate }}</th>
-              <th class="col-status">
+        <table z-table class="standard-table">
+          <thead z-table-header>
+            <tr z-table-row>
+              <th z-table-head class="col-id">
+                {{ 'tenants.table.id' | translate }}
+              </th>
+              <th z-table-head class="col-name">
+                {{ 'tenants.table.name' | translate }}
+              </th>
+              <th z-table-head class="col-dates">
+                {{ 'tenants.table.dates' | translate }}
+              </th>
+              <th z-table-head class="col-status">
                 {{ 'tenants.table.status' | translate }}
               </th>
-              <th class="col-actions">
+              <th z-table-head class="col-actions">
                 {{ 'tenants.table.actions' | translate }}
               </th>
             </tr>
           </thead>
-          <tbody>
-            @for (tenant of paginatedTenants; track tenant.id) {
-            <tr class="tenant-row">
+          <tbody z-table-body>
+            @for (tenant of tenants(); track tenant.id) {
+            <tr z-table-row class="standard-row">
               <!-- ID -->
-              <td class="col-id">
+              <td
+                z-table-cell
+                class="col-id"
+                [attr.data-label]="'tenants.table.id' | translate"
+              >
                 <span class="id-text">{{ tenant.tenantId }}</span>
               </td>
 
               <!-- Name -->
-              <td class="col-name">
+              <td
+                z-table-cell
+                class="col-name"
+                [attr.data-label]="'tenants.table.name' | translate"
+              >
                 <span class="name-text">{{ tenant.tenantName }}</span>
               </td>
 
               <!-- Dates -->
-              <td class="col-dates">
+              <td
+                z-table-cell
+                class="col-dates"
+                [attr.data-label]="'tenants.table.dates' | translate"
+              >
                 <div class="dates-cell">
                   <span class="date-start">
                     <z-icon zType="calendar" class="date-icon" />
@@ -174,7 +216,11 @@
               </td>
 
               <!-- Status -->
-              <td class="col-status">
+              <td
+                z-table-cell
+                class="col-status"
+                [attr.data-label]="'tenants.table.status' | translate"
+              >
                 <z-badge
                   [zType]="tenant.isActive ? 'default' : 'destructive'"
                   zShape="pill"
@@ -188,7 +234,7 @@
               </td>
 
               <!-- Actions Dropdown -->
-              <td class="col-actions">
+              <td z-table-cell class="col-actions">
                 <button
                   z-button
                   zType="outline"
@@ -206,6 +252,28 @@
                   >
                     <z-icon zType="file-text" />
                     {{ 'tenants.actions.editTenant' | translate }}
+                  </z-dropdown-menu-item>
+
+                  <z-dropdown-menu-item
+                    (click)="onConfigureTenant(tenant)"
+                    [id]="'configure-tenant-' + tenant.id"
+                  >
+                    <z-icon zType="settings" />
+                    {{ 'tenants.actions.configure' | translate }}
+                  </z-dropdown-menu-item>
+
+                  <z-dropdown-menu-item
+                    (click)="onToggleArchive(tenant)"
+                    [id]="'toggle-archive-' + tenant.id"
+                  >
+                    <z-icon
+                      [zType]="tenant.isArchived ? 'folder-open' : 'archive'"
+                    />
+                    {{
+                      tenant.isArchived
+                        ? ('tenants.actions.unarchive' | translate)
+                        : ('tenants.actions.archive' | translate)
+                    }}
                   </z-dropdown-menu-item>
 
                   <z-dropdown-menu-item
