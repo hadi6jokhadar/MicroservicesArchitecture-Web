@@ -57,15 +57,19 @@ export class AuthService {
   forgotPassword(
     request: IForgotPasswordRequest,
     context?: HttpContext
-  ): Observable<object> {
-    return this._http.post(`${this._baseUrl}/forgot-password`, request, {
-      context,
-    });
+  ): Observable<string> {
+    return this._http.post<string>(
+      `${this._baseUrl}/forgot-password`,
+      request,
+      {
+        context,
+      }
+    );
   }
 
-  logout(): Observable<object> {
+  logout(): Observable<void> {
     return this._http
-      .post(`${this._baseUrl}/logout`, {})
+      .post<void>(`${this._baseUrl}/logout`, {})
       .pipe(tap(() => this._clearAuth()));
   }
 

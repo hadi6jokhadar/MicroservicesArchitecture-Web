@@ -142,6 +142,8 @@ export class EditUserDialogComponent {
     this.successMessage.set(null);
 
     const formValue = this.form.getRawValue();
+    console.log(formValue);
+
     const request: IUpdateUserRequest = {
       id: this.data.user.id,
       firstName: formValue.firstName,
@@ -160,7 +162,7 @@ export class EditUserDialogComponent {
     this._adminService
       .updateUser(this.data.user.id, request, context)
       .subscribe({
-        next: () => {
+        next: (user) => {
           this.isLoading.set(false);
           this.successMessage.set(
             this._translationService.getCachedTranslation(
@@ -168,7 +170,7 @@ export class EditUserDialogComponent {
             )
           );
           setTimeout(() => {
-            this._dialogRef.close({ success: true });
+            this._dialogRef.close({ success: true, user });
           }, 1000);
         },
         error: (error) => {

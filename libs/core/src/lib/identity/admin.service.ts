@@ -29,7 +29,7 @@ export class IdentityAdminService {
 
     if (request) {
       Object.keys(request).forEach((key) => {
-        const value = (request as any)[key];
+        const value = request[key as keyof IUserFilterRequest];
         if (value !== undefined && value !== null) {
           params = params.append(key, value.toString());
         }
@@ -47,27 +47,37 @@ export class IdentityAdminService {
   createUser(
     request: ICreateUserRequest,
     context?: HttpContext
-  ): Observable<object> {
-    return this._http.post(`${this._baseUrl}/users`, request, { context });
+  ): Observable<IUser> {
+    return this._http.post<IUser>(`${this._baseUrl}/users`, request, {
+      context,
+    });
   }
 
   updateUser(
     id: number,
     request: IUpdateUserRequest,
     context?: HttpContext
-  ): Observable<object> {
-    return this._http.put(`${this._baseUrl}/users/${id}`, request, { context });
+  ): Observable<IUser> {
+    return this._http.put<IUser>(`${this._baseUrl}/users/${id}`, request, {
+      context,
+    });
   }
 
-  toggleUserStatus(id: number): Observable<object> {
-    return this._http.patch(`${this._baseUrl}/users/${id}/toggle-status`, {});
+  toggleUserStatus(id: number): Observable<boolean> {
+    return this._http.patch<boolean>(
+      `${this._baseUrl}/users/${id}/toggle-status`,
+      {}
+    );
   }
 
-  toggleArchive(id: number): Observable<object> {
-    return this._http.patch(`${this._baseUrl}/users/${id}/toggle-archive`, {});
+  toggleArchive(id: number): Observable<boolean> {
+    return this._http.patch<boolean>(
+      `${this._baseUrl}/users/${id}/toggle-archive`,
+      {}
+    );
   }
 
-  deleteUser(id: number): Observable<object> {
-    return this._http.delete(`${this._baseUrl}/users/${id}`);
+  deleteUser(id: number): Observable<boolean> {
+    return this._http.delete<boolean>(`${this._baseUrl}/users/${id}`);
   }
 }

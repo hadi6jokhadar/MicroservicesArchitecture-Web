@@ -134,7 +134,7 @@ export class AddUserDialogComponent {
     const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
 
     this._adminService.createUser(request, context).subscribe({
-      next: () => {
+      next: (user) => {
         this.isLoading.set(false);
         this.successMessage.set(
           this._translationService.getCachedTranslation(
@@ -142,7 +142,7 @@ export class AddUserDialogComponent {
           )
         );
         setTimeout(() => {
-          this._dialogRef.close({ success: true });
+          this._dialogRef.close({ success: true, user });
         }, 1000);
       },
       error: (error) => {

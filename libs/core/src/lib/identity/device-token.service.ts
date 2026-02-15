@@ -16,10 +16,10 @@ import {
 export class DeviceTokenService {
   private _http = inject(HttpClient);
   private _env = inject(ENVIRONMENT);
-  private readonly _baseUrl = `${this._env.apiUrls.identity}/api/devicetokens`;
+  private readonly _baseUrl = `${this._env.apiUrls.identity}/api/device-tokens`;
 
-  addDeviceToken(request: IAddDeviceTokenRequest): Observable<object> {
-    return this._http.post(this._baseUrl, request);
+  addDeviceToken(request: IAddDeviceTokenRequest): Observable<IDeviceToken> {
+    return this._http.post<IDeviceToken>(this._baseUrl, request);
   }
 
   getDeviceTokenById(id: number): Observable<IDeviceToken> {
@@ -44,28 +44,32 @@ export class DeviceTokenService {
   updateDeviceToken(
     id: number,
     request: IUpdateDeviceTokenRequest
-  ): Observable<object> {
-    return this._http.put(`${this._baseUrl}/${id}`, request);
+  ): Observable<IDeviceToken> {
+    return this._http.put<IDeviceToken>(`${this._baseUrl}/${id}`, request);
   }
 
-  deleteDeviceToken(id: number): Observable<object> {
-    return this._http.delete(`${this._baseUrl}/${id}`);
+  deleteDeviceToken(id: number): Observable<void> {
+    return this._http.delete<void>(`${this._baseUrl}/${id}`);
   }
 
-  deleteAllUserDeviceTokens(userId: number): Observable<object> {
-    return this._http.delete(`${this._baseUrl}/user/${userId}`);
+  deleteAllUserDeviceTokens(userId: number): Observable<void> {
+    return this._http.delete<void>(`${this._baseUrl}/user/${userId}`);
   }
 
   getBatchDeviceTokens(
     request: IGetBatchDeviceTokensRequest
-  ): Observable<IDeviceToken[]> {
-    return this._http.post<IDeviceToken[]>(`${this._baseUrl}/batch`, request);
+  ): Observable<Record<number, IDeviceToken[]>> {
+    return this._http.post<Record<number, IDeviceToken[]>>(
+      `${this._baseUrl}/batch`,
+      request
+    );
   }
-
   deleteBatchDeviceTokens(
     request: IDeleteBatchDeviceTokensRequest
-  ): Observable<object> {
-    return this._http.delete(`${this._baseUrl}/batch`, { body: request });
+  ): Observable<number> {
+    return this._http.delete<number>(`${this._baseUrl}/batch`, {
+      body: request,
+    });
   }
 
   getTenantDeviceTokens(): Observable<IDeviceToken[]> {

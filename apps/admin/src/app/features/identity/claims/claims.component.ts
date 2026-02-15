@@ -119,52 +119,46 @@ export class ClaimsComponent {
   }
 
   onAddClaim(): void {
-    this._dialogService.create({
-      zTitle: this._translationService.getCachedTranslation(
-        'claims.dialog.addTitle'
-      ),
-      zDescription: this._translationService.getCachedTranslation(
-        'claims.dialog.addDescription'
-      ),
-      zContent: AddClaimDialogComponent,
-      zWidth: '550px',
-      zHideFooter: true,
-      zOnOk: (result: unknown) => {
-        if (
-          result &&
-          typeof result === 'object' &&
-          'success' in result &&
-          result.success
-        ) {
+    this._dialogService
+      .create({
+        zTitle: this._translationService.getCachedTranslation(
+          'claims.dialog.addTitle'
+        ),
+        zDescription: this._translationService.getCachedTranslation(
+          'claims.dialog.addDescription'
+        ),
+        zContent: AddClaimDialogComponent,
+        zWidth: '550px',
+        zHideFooter: true,
+      })
+      .afterClosed()
+      .subscribe((result: { success: boolean }) => {
+        if (result?.success) {
           this.loadClaims();
         }
-      },
-    });
+      });
   }
 
   onEditClaim(claim: IClaim): void {
-    this._dialogService.create({
-      zTitle: this._translationService.getCachedTranslation(
-        'claims.dialog.editTitle'
-      ),
-      zDescription: this._translationService.getCachedTranslation(
-        'claims.dialog.editDescription'
-      ),
-      zContent: EditClaimDialogComponent,
-      zData: { claim },
-      zWidth: '550px',
-      zHideFooter: true,
-      zOnOk: (result: unknown) => {
-        if (
-          result &&
-          typeof result === 'object' &&
-          'success' in result &&
-          result.success
-        ) {
+    this._dialogService
+      .create({
+        zTitle: this._translationService.getCachedTranslation(
+          'claims.dialog.editTitle'
+        ),
+        zDescription: this._translationService.getCachedTranslation(
+          'claims.dialog.editDescription'
+        ),
+        zContent: EditClaimDialogComponent,
+        zData: { claim },
+        zWidth: '550px',
+        zHideFooter: true,
+      })
+      .afterClosed()
+      .subscribe((result: { success: boolean }) => {
+        if (result?.success) {
           this.loadClaims();
         }
-      },
-    });
+      });
   }
 
   onDeleteClaim(claim: IClaim): void {

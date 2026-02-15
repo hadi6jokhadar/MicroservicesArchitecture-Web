@@ -83,23 +83,23 @@ Wrap your content in a `.dialog-container`. Use `z-form-field`, `z-input`, and `
 - Use `signal`s and `ReactiveFormsModule` for form handling.
 
 ```typescript
-import { Component, inject, signal } from "@angular/core";
+import { Component, inject, signal } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormGroup,
   FormControl,
   Validators,
-} from "@angular/forms";
+} from '@angular/forms';
 import {
   ZardDialogRef,
   Z_MODAL_DATA,
   ZardButtonComponent,
   ZardInputDirective,
   ZardFormImports,
-} from "@ihsan/ui";
+} from '@ihsan/ui';
 
 @Component({
-  selector: "app-my-dialog",
+  selector: 'app-my-dialog',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -107,8 +107,8 @@ import {
     ZardInputDirective,
     ...ZardFormImports,
   ],
-  templateUrl: "./my-dialog.component.html",
-  styleUrls: ["./my-dialog.component.scss"],
+  templateUrl: './my-dialog.component.html',
+  styleUrls: ['./my-dialog.component.scss'],
 })
 export class MyDialogComponent {
   // Inject data passed to the dialog
@@ -142,29 +142,38 @@ export class MyDialogComponent {
 
 ## 3. Creating the Dialog
 
-Here is how the dialog is created and opened, based on the implementation in:
-`c:\Users\Hady Joukhadar\Desktop\Projects\MicroservicesArchitecture\MicroservicesArchitecture-Web\apps\admin\src\app\features\translation\translations\translations.component.ts`
+Here is how the dialog is created and opened, using the `.afterClosed()` observable to handle the result, as implemented in `users.component.ts`.
 
-Use the `create()` method with the following configuration pattern:
+> **Important**: When `zHideFooter` is `true`, the `zOnOk` callback will **not** be triggered because the default OK button is hidden. Use `.afterClosed()` instead.
 
 ```typescript
-onEditKey(translationKey: ITranslationKeyDto): void {
-  this._dialogService.create({
-    // Title and Description (can use translation service)
-    zTitle: this._translationService.getCachedTranslation('translations.dialog.editTitle'),
-    zDescription: this._translationService.getCachedTranslation('translations.dialog.editDescription'),
+onEditUser(user: IUser): void {
+  this._dialogService
+    .create({
+      // Title and Description (can use translation service)
+      zTitle: this._translationService.getCachedTranslation('users.dialog.editTitle'),
+      zDescription: this._translationService.getCachedTranslation('users.dialog.editDescription'),
 
-    // The component to render inside the dialog
-    zContent: AddEditKeyDialogComponent,
+      // The component to render inside the dialog
+      zContent: EditUserDialogComponent,
 
-    // Data to pass to the dialog component (available via Z_MODAL_DATA)
-    zData: { translationKey },
+      // Data to pass to the dialog component (available via Z_MODAL_DATA)
+      zData: { user, roles: this.roles() },
 
-    // UI Options
-    zHideFooter: true,  // Hide default footer if you implement custom actions in the component
-    zClosable: true,    // Allow closing via 'X' button or mask click
-    zWidth: '550px',    // Set specific width
-  });
+      // UI Options
+      zHideFooter: true,  // Hide default footer to use custom actions in the component
+      zClosable: false,   // Disable close button if you want to force action through component
+      zWidth: '550px',    // Set specific width
+    })
+    .afterClosed()
+    .subscribe((result: { success: boolean; user: IUser }) => {
+      // Handle the result passed to this._dialogRef.close(result)
+      if (result?.success && result.user) {
+        this.users.update((users) =>
+          users.map((u) => (u.id === result.user.id ? result.user : u))
+        );
+      }
+    });
 }
 ```
 
@@ -193,3 +202,6 @@ The following options are available when creating a dialog, as documented in:
 | `zTitle`            | Sets the dialog title.                              | `string \| TemplateRef<T>`              |          |
 | `zViewContainerRef` | View container ref for dynamic component loading.   | `ViewContainerRef`                      |          |
 | `zWidth`            | Sets the dialog width.                              | `string`                                |          |
+| ------------------- | --------------------------------------------------- | --------------------------------------- | -------- |
+
+> **Note**: `zOnOk` and `zOnCancel` are specifically for the **default footer buttons**. If you set `zHideFooter: true`, you should use the `.afterClosed()` observable on the object returned by `create()` to handle events and data from your custom dialog components.

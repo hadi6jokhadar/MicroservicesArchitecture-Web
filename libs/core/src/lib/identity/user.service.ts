@@ -16,11 +16,11 @@ export class IdentityUserService {
     return this._http.get<IUser>(`${this._baseUrl}/profile`);
   }
 
-  updateProfile(request: IUpdateProfileRequest): Observable<object> {
-    return this._http.put(`${this._baseUrl}/profile`, request);
+  updateProfile(request: IUpdateProfileRequest): Observable<IUser> {
+    return this._http.put<IUser>(`${this._baseUrl}/profile`, request);
   }
 
-  deleteAccount(): Observable<object> {
-    return this._http.delete(`${this._baseUrl}/me`);
+  deleteAccount(): Observable<boolean> {
+    return this._http.delete<boolean>(`${this._baseUrl}/me`);
   }
 }

@@ -47,9 +47,9 @@ export class RoleService {
   createRole(
     request: ICreateRoleRequest,
     context?: HttpContext
-  ): Observable<object> {
+  ): Observable<IRole> {
     return this._http
-      .post(this._baseUrl, request, { context })
+      .post<IRole>(this._baseUrl, request, { context })
       .pipe(tap(() => this.clearCache()));
   }
 
@@ -57,32 +57,32 @@ export class RoleService {
     id: number,
     request: IUpdateRoleRequest,
     context?: HttpContext
-  ): Observable<object> {
+  ): Observable<IRole> {
     return this._http
-      .put(`${this._baseUrl}/${id}`, request, { context })
+      .put<IRole>(`${this._baseUrl}/${id}`, request, { context })
       .pipe(tap(() => this.clearCache()));
   }
 
-  deleteRole(id: number): Observable<object> {
+  deleteRole(id: number): Observable<boolean> {
     return this._http
-      .delete(`${this._baseUrl}/${id}`)
+      .delete<boolean>(`${this._baseUrl}/${id}`)
       .pipe(tap(() => this.clearCache()));
   }
 
   assignClaimsToRole(
     roleId: number,
     request: IAssignClaimsToRoleRequest
-  ): Observable<object> {
-    return this._http.post(`${this._baseUrl}/${roleId}/claims`, request);
+  ): Observable<boolean> {
+    return this._http.post<boolean>(
+      `${this._baseUrl}/${roleId}/claims`,
+      request
+    );
   }
 
   assignRolesToUser(
     userId: number,
     request: IAssignRolesToUserRequest
-  ): Observable<object> {
-    return this._http.post(
-      `${this._env.apiUrls.identity}/api/admin/users/${userId}/roles`,
-      request
-    );
+  ): Observable<boolean> {
+    return this._http.post<boolean>(`${this._baseUrl}/user/${userId}`, request);
   }
 }

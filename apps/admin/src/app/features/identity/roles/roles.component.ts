@@ -120,85 +120,73 @@ export class RolesComponent {
   }
 
   onAddRole(): void {
-    this._dialogService.create({
-      zTitle: this._translationService.getCachedTranslation(
-        'roles.dialog.addTitle'
-      ),
-      zDescription: this._translationService.getCachedTranslation(
-        'roles.dialog.addDescription'
-      ),
-      zContent: AddRoleDialogComponent,
-      zWidth: '550px',
-      zHideFooter: true,
-      zOnOk: (result: unknown) => {
-        if (
-          result &&
-          typeof result === 'object' &&
-          'success' in result &&
-          result.success
-        ) {
+    this._dialogService
+      .create({
+        zTitle: this._translationService.getCachedTranslation(
+          'roles.dialog.addTitle'
+        ),
+        zDescription: this._translationService.getCachedTranslation(
+          'roles.dialog.addDescription'
+        ),
+        zContent: AddRoleDialogComponent,
+        zWidth: '550px',
+        zHideFooter: true,
+      })
+      .afterClosed()
+      .subscribe((result: { success: boolean }) => {
+        if (result?.success) {
           this.loadRoles();
         }
-      },
-    });
+      });
   }
 
   onEditRole(role: IRole): void {
-    this._dialogService.create({
-      zTitle: this._translationService.getCachedTranslation(
-        'roles.dialog.editTitle'
-      ),
-      zDescription: this._translationService.getCachedTranslation(
-        'roles.dialog.editDescription'
-      ),
-      zContent: EditRoleDialogComponent,
-      zData: { role },
-      zWidth: '550px',
-      zHideFooter: true,
-      zOnOk: (result: unknown) => {
-        if (
-          result &&
-          typeof result === 'object' &&
-          'success' in result &&
-          result.success
-        ) {
+    this._dialogService
+      .create({
+        zTitle: this._translationService.getCachedTranslation(
+          'roles.dialog.editTitle'
+        ),
+        zDescription: this._translationService.getCachedTranslation(
+          'roles.dialog.editDescription'
+        ),
+        zContent: EditRoleDialogComponent,
+        zData: { role },
+        zWidth: '550px',
+        zHideFooter: true,
+      })
+      .afterClosed()
+      .subscribe((result: { success: boolean }) => {
+        if (result?.success) {
           this.loadRoles();
         }
-      },
-    });
+      });
   }
 
   onManageClaims(role: IRole): void {
-    this._dialogService.create({
-      zTitle: this._translationService.getCachedTranslation(
-        'roles.dialog.manageClaimsTitle'
-      ),
-      zDescription: this._translationService.getCachedTranslation(
-        'roles.dialog.manageClaimsDescription'
-      ),
-      zContent: ManageClaimsDialogComponent,
-      zData: { role },
-      zOkText: this._translationService.getCachedTranslation('common.save'),
-      zCancelText:
-        this._translationService.getCachedTranslation('common.cancel'),
-      zWidth: '600px',
-      zOnOk: (instance) => {
-        const dialog = instance as ManageClaimsDialogComponent;
-        const claimIds = dialog.getSelectedClaimIds();
-
-        this._roleService.assignClaimsToRole(role.id, { claimIds }).subscribe({
-          next: () => {
-            toast.success(
-              this._translationService.getCachedTranslation(
-                'roles.success.claimsUpdated'
-              )
-            );
-            this.loadRoles();
-          },
-        });
-        return undefined;
-      },
-    });
+    this._dialogService
+      .create({
+        zTitle: this._translationService.getCachedTranslation(
+          'roles.dialog.manageClaimsTitle'
+        ),
+        zDescription: this._translationService.getCachedTranslation(
+          'roles.dialog.manageClaimsDescription'
+        ),
+        zContent: ManageClaimsDialogComponent,
+        zData: { role },
+        zWidth: '600px',
+        zHideFooter: true,
+      })
+      .afterClosed()
+      .subscribe((result: { success: boolean }) => {
+        if (result?.success) {
+          toast.success(
+            this._translationService.getCachedTranslation(
+              'roles.success.claimsUpdated'
+            )
+          );
+          this.loadRoles();
+        }
+      });
   }
 
   onDeleteRole(role: IRole): void {

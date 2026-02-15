@@ -63,6 +63,21 @@
       {{ 'roles.dialog.outOf' | translate }}
       <strong>{{ availableClaims().length }}</strong>
     </div>
+
+    <div class="dialog-actions">
+      <button z-button zType="outline" type="button" (click)="onCancel()">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        z-button
+        zType="default"
+        type="button"
+        (click)="onSave()"
+        [zLoading]="isSaving()"
+      >
+        {{ 'common.save' | translate }}
+      </button>
+    </div>
   </div>
   }
 </div>

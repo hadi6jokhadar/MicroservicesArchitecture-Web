@@ -102,6 +102,18 @@
           color: var(--color-primary);
         }
       }
+
+      .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--color-border);
+        position: sticky;
+        bottom: 0;
+        background-color: var(--color-background);
+        margin-top: auto;
+      }
     }
   }
 }

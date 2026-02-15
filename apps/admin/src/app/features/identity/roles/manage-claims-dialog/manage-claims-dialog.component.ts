@@ -1,12 +1,19 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { TranslatePipe, ClaimService } from '@ihsan/core';
+import {
+  TranslatePipe,
+  ClaimService,
+  IRole,
+  IClaim,
+  RoleService,
+} from '@ihsan/core';
 import {
   ZardLoaderComponent,
   ZardEmptyComponent,
   ZardBadgeComponent,
   Z_MODAL_DATA,
+  ZardDialogRef,
+  ZardButtonComponent,
 } from '@ihsan/ui';
-import { IRole, IClaim } from '@ihsan/core';
 
 interface IClaimsDialogData {
   role: IRole;
@@ -20,6 +27,7 @@ interface IClaimsDialogData {
     ZardLoaderComponent,
     ZardEmptyComponent,
     ZardBadgeComponent,
+    ZardButtonComponent,
   ],
   templateUrl: './manage-claims-dialog.component.html',
   styleUrls: ['./manage-claims-dialog.component.scss'],
@@ -27,8 +35,11 @@ interface IClaimsDialogData {
 export class ManageClaimsDialogComponent implements OnInit {
   protected readonly data = inject<IClaimsDialogData>(Z_MODAL_DATA);
   private readonly _claimService = inject(ClaimService);
+  private readonly _roleService = inject(RoleService);
+  private readonly _dialogRef = inject(ZardDialogRef);
 
   readonly isLoading = signal(false);
+  readonly isSaving = signal(false);
   readonly availableClaims = signal<IClaim[]>([]);
   readonly selectedClaimIds = signal<Set<number>>(new Set());
 
@@ -73,5 +84,26 @@ export class ManageClaimsDialogComponent implements OnInit {
 
   getSelectedClaimIds(): number[] {
     return Array.from(this.selectedClaimIds());
+  }
+
+  onSave(): void {
+    this.isSaving.set(true);
+    const claimIds = this.getSelectedClaimIds();
+
+    this._roleService
+      .assignClaimsToRole(this.data.role.id, { claimIds })
+      .subscribe({
+        next: () => {
+          this.isSaving.set(false);
+          this._dialogRef.close({ success: true });
+        },
+        error: () => {
+          this.isSaving.set(false);
+        },
+      });
+  }
+
+  onCancel(): void {
+    this._dialogRef.close();
   }
 }

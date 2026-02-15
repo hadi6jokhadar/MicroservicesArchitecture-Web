@@ -118,6 +118,7 @@
           [zPlaceholder]="'users.dialog.rolesPlaceholder' | translate"
           formControlName="roleIds"
           [zValue]="form.controls.roleIds.value"
+          (zSelectionChange)="form.controls.roleIds.setValue($any($event))"
           [zMultiple]="true"
           [zDisabled]="form.controls.roleIds.disabled"
         >

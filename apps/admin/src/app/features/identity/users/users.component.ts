@@ -226,55 +226,51 @@ export class UsersComponent implements OnInit {
   }
 
   onAddUser(): void {
-    this._dialogService.create({
-      zTitle: this._translationService.getCachedTranslation(
-        'users.dialog.addTitle'
-      ),
-      zDescription: this._translationService.getCachedTranslation(
-        'users.dialog.addDescription'
-      ),
-      zContent: AddUserDialogComponent,
-      zData: { roles: this.roles() },
-      zWidth: '550px',
-      zHideFooter: true,
-      zClosable: false,
-      zOnOk: (result: unknown) => {
-        if (
-          result &&
-          typeof result === 'object' &&
-          'success' in result &&
-          result.success
-        ) {
-          this.loadUsers();
+    this._dialogService
+      .create({
+        zTitle: this._translationService.getCachedTranslation(
+          'users.dialog.addTitle'
+        ),
+        zDescription: this._translationService.getCachedTranslation(
+          'users.dialog.addDescription'
+        ),
+        zContent: AddUserDialogComponent,
+        zData: { roles: this.roles() },
+        zWidth: '550px',
+        zHideFooter: true,
+        zClosable: false,
+      })
+      .afterClosed()
+      .subscribe((result: { success: boolean; user: IUser }) => {
+        if (result?.success && result.user) {
+          this.users.update((users) => [...users, result.user]);
         }
-      },
-    });
+      });
   }
 
   onEditUser(user: IUser): void {
-    this._dialogService.create({
-      zTitle: this._translationService.getCachedTranslation(
-        'users.dialog.editTitle'
-      ),
-      zDescription: this._translationService.getCachedTranslation(
-        'users.dialog.editDescription'
-      ),
-      zContent: EditUserDialogComponent,
-      zData: { user, roles: this.roles() },
-      zWidth: '550px',
-      zHideFooter: true,
-      zClosable: false,
-      zOnOk: (result: unknown) => {
-        if (
-          result &&
-          typeof result === 'object' &&
-          'success' in result &&
-          result.success
-        ) {
-          this.loadUsers();
+    this._dialogService
+      .create({
+        zTitle: this._translationService.getCachedTranslation(
+          'users.dialog.editTitle'
+        ),
+        zDescription: this._translationService.getCachedTranslation(
+          'users.dialog.editDescription'
+        ),
+        zContent: EditUserDialogComponent,
+        zData: { user, roles: this.roles() },
+        zWidth: '550px',
+        zHideFooter: true,
+        zClosable: false,
+      })
+      .afterClosed()
+      .subscribe((result: { success: boolean; user: IUser }) => {
+        if (result?.success && result.user) {
+          this.users.update((users) =>
+            users.map((u) => (u.id === result.user.id ? result.user : u))
+          );
         }
-      },
-    });
+      });
   }
 
   onToggleArchive(user: IUser): void {

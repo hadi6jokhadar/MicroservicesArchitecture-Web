@@ -23,19 +23,21 @@ export class ClaimService {
   createClaim(
     request: ICreateClaimRequest,
     context?: HttpContext
-  ): Observable<object> {
-    return this._http.post(this._baseUrl, request, { context });
+  ): Observable<IClaim> {
+    return this._http.post<IClaim>(this._baseUrl, request, { context });
   }
 
   updateClaim(
     id: number,
     request: IUpdateClaimRequest,
     context?: HttpContext
-  ): Observable<object> {
-    return this._http.put(`${this._baseUrl}/${id}`, request, { context });
+  ): Observable<IClaim> {
+    return this._http.put<IClaim>(`${this._baseUrl}/${id}`, request, {
+      context,
+    });
   }
 
-  deleteClaim(id: number): Observable<object> {
-    return this._http.delete(`${this._baseUrl}/${id}`);
+  deleteClaim(id: number): Observable<boolean> {
+    return this._http.delete<boolean>(`${this._baseUrl}/${id}`);
   }
 }
