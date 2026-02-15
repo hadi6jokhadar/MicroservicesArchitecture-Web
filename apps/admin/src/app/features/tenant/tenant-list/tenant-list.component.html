@@ -178,7 +178,11 @@
           </thead>
           <tbody z-table-body>
             @for (tenant of tenants(); track tenant.id) {
-            <tr z-table-row class="standard-row">
+            <tr
+              z-table-row
+              class="standard-row"
+              [class.expired-row]="tenant.isExpired"
+            >
               <!-- ID -->
               <td
                 z-table-cell
@@ -221,16 +225,27 @@
                 class="col-status"
                 [attr.data-label]="'tenants.table.status' | translate"
               >
-                <z-badge
-                  [zType]="tenant.isActive ? 'default' : 'destructive'"
-                  zShape="pill"
-                >
-                  {{
-                    tenant.isActive
-                      ? ('tenants.active' | translate)
-                      : ('tenants.inactive' | translate)
-                  }}
-                </z-badge>
+                <div class="status-wrapper">
+                  <z-badge
+                    [zType]="tenant.isActive ? 'default' : 'destructive'"
+                    zShape="pill"
+                  >
+                    {{
+                      tenant.isActive
+                        ? ('tenants.active' | translate)
+                        : ('tenants.inactive' | translate)
+                    }}
+                  </z-badge>
+                  @if (tenant.isExpired) {
+                  <z-badge
+                    zType="destructive"
+                    zShape="pill"
+                    class="expired-badge"
+                  >
+                    {{ 'tenants.expired' | translate }}
+                  </z-badge>
+                  }
+                </div>
               </td>
 
               <!-- Actions Dropdown -->

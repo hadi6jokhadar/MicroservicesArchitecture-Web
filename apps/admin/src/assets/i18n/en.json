@@ -200,6 +200,7 @@
   "tenants.allStatus": "All Status",
   "tenants.active": "Active",
   "tenants.inactive": "Inactive",
+  "tenants.expired": "Expired",
   "tenants.loadingTenants": "Loading tenants...",
   "tenants.noTenantsFound": "No tenants found",
   "tenants.noTenantsFoundDesc": "No tenants match your search criteria. Try adjusting your filters.",
