@@ -1,2 +1,39 @@
 <router-outlet></router-outlet>
+@if (isDevMode) {
+<input
+  placeholder="Tenant ID"
+  [value]="tenantId"
+  (input)="onTenantIdChange($event)"
+  style="
+    position: fixed;
+    bottom: 10px;
+    left: 38%;
+    z-index: 9999;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  "
+/>
+<button
+  (click)="clearTenantIdStorage()"
+  style="
+    position: fixed;
+    bottom: 10px;
+    left: 52%;
+    z-index: 9999;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+  "
+>
+  Clear Tenant ID Storage
+</button>
+}
 <z-toaster position="bottom-right" [richColors]="true" />

@@ -11,6 +11,7 @@ import {
   SidebarPageClass,
   SidebarUserClass,
   FileManagerComponent,
+  SidebarPageType,
 } from '@ihsan/shared';
 
 @Component({
@@ -33,31 +34,38 @@ export class PagesComponent {
       translationKey: 'sidebar.pages.dashboard',
       icon: 'layout-dashboard' as ZardIcon,
       route: '/dashboard',
+      type: SidebarPageType.Both,
     }),
     new SidebarPageClass({
       translationKey: 'sidebar.pages.testComponents',
       icon: 'lightbulb' as ZardIcon,
       route: '/test-components',
+      type: SidebarPageType.Both,
     }),
     new SidebarPageClass({
       translationKey: 'sidebar.pages.identity',
       icon: 'shield' as ZardIcon,
       group: 'sidebar.groups.user',
+      roles: ['SuperAdmin'],
+      type: SidebarPageType.Both,
       children: [
         new SidebarPageClass({
           translationKey: 'sidebar.pages.users',
           icon: 'users' as ZardIcon,
           route: '/identity/users',
+          type: SidebarPageType.Both,
         }),
         new SidebarPageClass({
           translationKey: 'sidebar.pages.roles',
           icon: 'badge-check' as ZardIcon,
           route: '/identity/roles',
+          type: SidebarPageType.Both,
         }),
         new SidebarPageClass({
           translationKey: 'sidebar.pages.claims',
           icon: 'shield' as ZardIcon,
           route: '/identity/claims',
+          type: SidebarPageType.Both,
         }),
       ],
     }),
@@ -66,24 +74,28 @@ export class PagesComponent {
       icon: 'house' as ZardIcon,
       group: 'sidebar.groups.system',
       route: '/tenant',
+      type: SidebarPageType.Management,
     }),
     new SidebarPageClass({
       translationKey: 'sidebar.pages.translation',
       icon: 'book-open-text' as ZardIcon,
       group: 'sidebar.groups.system',
       route: '/translation',
+      type: SidebarPageType.Management,
     }),
     new SidebarPageClass({
       translationKey: 'sidebar.pages.fileManager',
       icon: 'folder' as ZardIcon,
       group: 'sidebar.groups.system',
       action: () => this.openFileManagerDialog(),
+      type: SidebarPageType.Both,
     }),
     new SidebarPageClass({
       translationKey: 'sidebar.pages.notification',
       icon: 'bell' as ZardIcon,
       group: 'sidebar.groups.system',
       route: '/notification',
+      type: SidebarPageType.Both,
     }),
   ]);
 
@@ -92,6 +104,7 @@ export class PagesComponent {
       name: 'John Doe',
       username: 'johndoe',
       imageUrl: undefined,
+      roles: ['SuperAdmin'],
     })
   );
 

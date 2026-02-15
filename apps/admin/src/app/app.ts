@@ -1,4 +1,10 @@
-import { Component, effect, inject, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  isDevMode,
+  PLATFORM_ID,
+} from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ZardToastComponent } from '@ihsan/ui';
@@ -15,6 +21,9 @@ export class App {
 
   private _translationService = inject(TranslationService);
   private _platformId = inject(PLATFORM_ID);
+
+  protected isDevMode = isDevMode();
+  protected tenantId = '';
 
   constructor() {
     // Automatically update direction and lang attribute based on current language
@@ -34,5 +43,28 @@ export class App {
         }
       }
     });
+
+    if (isPlatformBrowser(this._platformId)) {
+      this.tenantId = localStorage.getItem('tenantId') || '';
+    }
+  }
+
+  protected onTenantIdChange(event: Event) {
+    if (isPlatformBrowser(this._platformId)) {
+      const input = event.target as HTMLInputElement;
+      this.tenantId = input.value;
+      if (input.value) {
+        localStorage.setItem('tenantId', input.value);
+      } else {
+        localStorage.removeItem('tenantId');
+      }
+    }
+  }
+
+  protected clearTenantIdStorage() {
+    if (isPlatformBrowser(this._platformId)) {
+      localStorage.removeItem('tenantId');
+      this.tenantId = '';
+    }
   }
 }
