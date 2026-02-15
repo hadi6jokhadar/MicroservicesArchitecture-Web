@@ -14,6 +14,7 @@ import {
   IdentityAdminService,
   TranslationService,
   AuthService,
+  FileGroup,
 } from '@ihsan/core';
 import { extractErrorMessage, SKIP_ERROR_TOAST } from '@ihsan/shared';
 import {
@@ -28,6 +29,8 @@ import {
   ZardIdDirective,
   ZardButtonComponent,
 } from '@ihsan/ui';
+import { IFileManagerResponse, FileType } from '@ihsan/core';
+import { FileSelectorComponent } from '@ihsan/shared';
 
 interface IEditUserForm {
   firstName: FormControl<string>;
@@ -36,6 +39,7 @@ interface IEditUserForm {
   roleIds: FormControl<string[]>;
   emailConfirmed: FormControl<string>;
   status: FormControl<string>;
+  profilePictureId: FormControl<number | null>;
 }
 
 interface IEditUserData {
@@ -57,6 +61,7 @@ interface IEditUserData {
     ZardLoaderComponent,
     ZardIdDirective,
     ZardButtonComponent,
+    FileSelectorComponent,
   ],
   templateUrl: './edit-user-dialog.component.html',
   styleUrls: ['./edit-user-dialog.component.scss'],
@@ -71,6 +76,10 @@ export class EditUserDialogComponent {
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
   readonly isLoading = signal(false);
+  protected readonly FileType = FileType;
+  protected readonly FileGroup = FileGroup;
+
+  existingFiles: IFileManagerResponse[] = [];
 
   readonly form = new FormGroup<IEditUserForm>({
     firstName: new FormControl<string>(this.data.user.firstName || '', {
@@ -104,6 +113,9 @@ export class EditUserDialogComponent {
     status: new FormControl<string>(this.data.user.status ? 'true' : 'false', {
       nonNullable: true,
     }),
+    profilePictureId: new FormControl<number | null>(
+      this.data.user.profilePictureId || null
+    ),
   });
 
   constructor() {
@@ -112,6 +124,10 @@ export class EditUserDialogComponent {
       this.form.controls.roleIds.disable();
       this.form.controls.status.disable();
       this.form.controls.emailConfirmed.disable();
+    }
+
+    if (this.data.user.profilePicture) {
+      this.existingFiles = [this.data.user.profilePicture];
     }
   }
 
@@ -136,6 +152,7 @@ export class EditUserDialogComponent {
         : [],
       emailConfirmed: formValue.emailConfirmed === 'true',
       status: formValue.status === 'true',
+      profilePictureId: formValue.profilePictureId,
     };
 
     const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
@@ -163,5 +180,13 @@ export class EditUserDialogComponent {
 
   onCancel(): void {
     this._dialogRef.close();
+  }
+
+  onFileSelected(files: IFileManagerResponse[]) {
+    if (files.length > 0) {
+      this.form.controls.profilePictureId.setValue(files[0].id);
+    } else {
+      this.form.controls.profilePictureId.setValue(null);
+    }
   }
 }

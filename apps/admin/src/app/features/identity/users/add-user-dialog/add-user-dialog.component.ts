@@ -12,6 +12,7 @@ import {
   TranslatePipe,
   IdentityAdminService,
   TranslationService,
+  FileGroup,
 } from '@ihsan/core';
 import { extractErrorMessage, SKIP_ERROR_TOAST } from '@ihsan/shared';
 import {
@@ -26,6 +27,8 @@ import {
   ZardIdDirective,
   ZardButtonComponent,
 } from '@ihsan/ui';
+import { FileSelectorComponent } from '@ihsan/shared';
+import { IFileManagerResponse, FileType } from '@ihsan/core';
 
 interface IAddUserForm {
   email: FormControl<string>;
@@ -33,6 +36,7 @@ interface IAddUserForm {
   firstName: FormControl<string>;
   lastName: FormControl<string>;
   phoneNumber: FormControl<string | null>;
+  profilePictureId: FormControl<number | null>;
   roleIds: FormControl<string[]>;
 }
 
@@ -54,6 +58,7 @@ interface IAddUserData {
     ZardLoaderComponent,
     ZardIdDirective,
     ZardButtonComponent,
+    FileSelectorComponent,
   ],
   templateUrl: './add-user-dialog.component.html',
   styleUrls: ['./add-user-dialog.component.scss'],
@@ -67,6 +72,8 @@ export class AddUserDialogComponent {
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
   readonly isLoading = signal(false);
+  protected readonly FileType = FileType;
+  protected readonly FileGroup = FileGroup;
 
   readonly form = new FormGroup<IAddUserForm>({
     email: new FormControl<string>('', {
@@ -92,6 +99,7 @@ export class AddUserDialogComponent {
       ],
     }),
     phoneNumber: new FormControl<string | null>(null),
+    profilePictureId: new FormControl<number | null>(null),
     roleIds: new FormControl<string[]>([], {
       nonNullable: true,
       validators: [Validators.required],
@@ -117,6 +125,7 @@ export class AddUserDialogComponent {
       firstName: formValue.firstName,
       lastName: formValue.lastName,
       phoneNumber: formValue.phoneNumber,
+      profilePictureId: formValue.profilePictureId,
       roleIds: Array.isArray(formValue.roleIds)
         ? formValue.roleIds.map((id) => parseInt(id, 10))
         : [],
@@ -145,5 +154,13 @@ export class AddUserDialogComponent {
 
   onCancel(): void {
     this._dialogRef.close();
+  }
+
+  onFileSelected(files: IFileManagerResponse[]) {
+    if (files.length > 0) {
+      this.form.controls.profilePictureId.setValue(files[0].id);
+    } else {
+      this.form.controls.profilePictureId.setValue(null);
+    }
   }
 }

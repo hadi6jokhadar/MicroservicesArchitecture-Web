@@ -432,8 +432,8 @@ export class UsersComponent implements OnInit {
   }
 
   getProfilePictureUrl(user: IUser): string | undefined {
-    if (user.profilePicture?.path) {
-      return `${this._env.apiUrls.fileManager}${user.profilePicture.path}`;
+    if (user.profilePicture?.url) {
+      return `${user.profilePicture.url}`;
     }
     return undefined;
   }

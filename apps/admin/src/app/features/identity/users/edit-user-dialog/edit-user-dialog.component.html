@@ -21,6 +21,19 @@
       </p>
     </z-form-field>
 
+    <!-- Profile Picture -->
+    <div class="mb-4">
+      <shared-file-selector
+        [label]="'users.dialog.uploadProfilePicture' | translate"
+        [maxFiles]="1"
+        selectionMode="single"
+        [files]="existingFiles"
+        [type]="FileType.Image"
+        [group]="FileGroup.Personal"
+        (filesChanged)="onFileSelected($event)"
+      ></shared-file-selector>
+    </div>
+
     <!-- First Name -->
     <z-form-field zardId="firstName" #fn="zardId">
       <label z-form-label [for]="fn.id()">
