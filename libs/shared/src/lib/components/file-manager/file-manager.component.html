@@ -31,7 +31,7 @@
             class="filter-select"
             [zDisabled]="!!group()"
           >
-            <z-select-item [zValue]="''">{{
+            <z-select-item [zValue]="'all'">{{
               'fileManager.allGroups' | translate
             }}</z-select-item>
             @for (group of fileGroups; track group.value) {
@@ -47,7 +47,7 @@
             class="filter-select"
             [zDisabled]="!!type()"
           >
-            <z-select-item [zValue]="''">{{
+            <z-select-item [zValue]="'all'">{{
               'fileManager.allTypes' | translate
             }}</z-select-item>
             @for (type of fileTypes; track type.value) {

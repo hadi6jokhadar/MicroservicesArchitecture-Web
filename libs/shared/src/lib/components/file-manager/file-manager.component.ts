@@ -109,13 +109,13 @@ export class FileManagerComponent implements OnInit {
     search: [''],
     group: [
       {
-        value: this.group()?.toString() || (null as string | null),
+        value: this.group()?.toString() || 'all',
         disabled: !!this.group(),
       },
     ],
     type: [
       {
-        value: this.type()?.toString() || (null as string | null),
+        value: this.type()?.toString() || 'all',
         disabled: !!this.type(),
       },
     ],
@@ -176,8 +176,14 @@ export class FileManagerComponent implements OnInit {
       pageNumber: this.pageIndex(),
       pageSize: this.pageSize(),
       textFilter: filterValue.search || undefined,
-      group: filterValue.group ? Number(filterValue.group) : undefined,
-      type: filterValue.type ? Number(filterValue.type) : undefined,
+      group:
+        filterValue.group && filterValue.group !== 'all'
+          ? Number(filterValue.group)
+          : undefined,
+      type:
+        filterValue.type && filterValue.type !== 'all'
+          ? Number(filterValue.type)
+          : undefined,
       temp: filterValue.temporary || undefined,
       sortBy: 'created',
       ascending: false,
