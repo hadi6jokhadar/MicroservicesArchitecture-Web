@@ -75,7 +75,6 @@ export class TenantDialogComponent implements OnInit {
   protected readonly data = inject<ITenantDialogData>(Z_MODAL_DATA);
 
   readonly errorMessage = signal<string | null>(null);
-  readonly successMessage = signal<string | null>(null);
   readonly isLoading = signal(false);
   readonly isEditMode = signal(false);
   readonly userOptions = signal<ZardComboboxOption[]>([]);

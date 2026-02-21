@@ -1,10 +1,14 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
+import { HttpContext } from '@angular/common/http';
+import { extractErrorMessage, SKIP_ERROR_TOAST } from '@ihsan/shared';
+import { toast } from 'ngx-sonner';
 import {
   TranslatePipe,
   ClaimService,
   IRole,
   IClaim,
   RoleService,
+  TranslationService,
 } from '@ihsan/core';
 import {
   ZardLoaderComponent,
@@ -13,6 +17,7 @@ import {
   Z_MODAL_DATA,
   ZardDialogRef,
   ZardButtonComponent,
+  ZardAlertComponent,
 } from '@ihsan/ui';
 
 interface IClaimsDialogData {
@@ -28,6 +33,7 @@ interface IClaimsDialogData {
     ZardEmptyComponent,
     ZardBadgeComponent,
     ZardButtonComponent,
+    ZardAlertComponent,
   ],
   templateUrl: './manage-claims-dialog.component.html',
   styleUrls: ['./manage-claims-dialog.component.scss'],
@@ -37,9 +43,11 @@ export class ManageClaimsDialogComponent implements OnInit {
   private readonly _claimService = inject(ClaimService);
   private readonly _roleService = inject(RoleService);
   private readonly _dialogRef = inject(ZardDialogRef);
+  private readonly _translationService = inject(TranslationService);
 
   readonly isLoading = signal(false);
   readonly isSaving = signal(false);
+  readonly errorMessage = signal<string | null>(null);
   readonly availableClaims = signal<IClaim[]>([]);
   readonly selectedClaimIds = signal<Set<number>>(new Set());
 
@@ -88,17 +96,26 @@ export class ManageClaimsDialogComponent implements OnInit {
 
   onSave(): void {
     this.isSaving.set(true);
+    this.errorMessage.set(null);
     const claimIds = this.getSelectedClaimIds();
 
+    const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
+
     this._roleService
-      .assignClaimsToRole(this.data.role.id, { claimIds })
+      .assignClaimsToRole(this.data.role.id, { claimIds }, context)
       .subscribe({
         next: () => {
           this.isSaving.set(false);
+          toast.success(
+            this._translationService.getCachedTranslation(
+              'roles.success.claimsUpdated'
+            ) || 'Claims updated successfully'
+          );
           this._dialogRef.close({ success: true });
         },
-        error: () => {
+        error: (error) => {
           this.isSaving.set(false);
+          this.errorMessage.set(extractErrorMessage(error));
         },
       });
   }

@@ -31,6 +31,7 @@ import {
 } from '@ihsan/ui';
 import { IFileManagerResponse, FileType } from '@ihsan/core';
 import { FileSelectorComponent } from '@ihsan/shared';
+import { toast } from 'ngx-sonner';
 
 interface IEditUserForm {
   firstName: FormControl<string>;
@@ -74,7 +75,6 @@ export class EditUserDialogComponent {
   protected readonly data = inject<IEditUserData>(Z_MODAL_DATA);
 
   readonly errorMessage = signal<string | null>(null);
-  readonly successMessage = signal<string | null>(null);
   readonly isLoading = signal(false);
   protected readonly FileType = FileType;
   protected readonly FileGroup = FileGroup;
@@ -139,7 +139,6 @@ export class EditUserDialogComponent {
 
     this.isLoading.set(true);
     this.errorMessage.set(null);
-    this.successMessage.set(null);
 
     const formValue = this.form.getRawValue();
     console.log(formValue);
@@ -164,14 +163,12 @@ export class EditUserDialogComponent {
       .subscribe({
         next: (user) => {
           this.isLoading.set(false);
-          this.successMessage.set(
+          toast.success(
             this._translationService.getCachedTranslation(
               'users.success.userUpdated'
             )
           );
-          setTimeout(() => {
-            this._dialogRef.close({ success: true, user });
-          }, 1000);
+          this._dialogRef.close({ success: true, user });
         },
         error: (error) => {
           this.isLoading.set(false);

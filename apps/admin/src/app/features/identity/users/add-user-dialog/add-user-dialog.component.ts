@@ -29,6 +29,7 @@ import {
 } from '@ihsan/ui';
 import { FileSelectorComponent } from '@ihsan/shared';
 import { IFileManagerResponse, FileType } from '@ihsan/core';
+import { toast } from 'ngx-sonner';
 
 interface IAddUserForm {
   email: FormControl<string>;
@@ -70,7 +71,6 @@ export class AddUserDialogComponent {
   protected readonly data = inject<IAddUserData>(Z_MODAL_DATA);
 
   readonly errorMessage = signal<string | null>(null);
-  readonly successMessage = signal<string | null>(null);
   readonly isLoading = signal(false);
   protected readonly FileType = FileType;
   protected readonly FileGroup = FileGroup;
@@ -114,7 +114,6 @@ export class AddUserDialogComponent {
 
     this.isLoading.set(true);
     this.errorMessage.set(null);
-    this.successMessage.set(null);
 
     const formValue = this.form.getRawValue();
     console.log(formValue);
@@ -136,14 +135,12 @@ export class AddUserDialogComponent {
     this._adminService.createUser(request, context).subscribe({
       next: (user) => {
         this.isLoading.set(false);
-        this.successMessage.set(
+        toast.success(
           this._translationService.getCachedTranslation(
             'users.success.userCreated'
           )
         );
-        setTimeout(() => {
-          this._dialogRef.close({ success: true, user });
-        }, 1000);
+        this._dialogRef.close({ success: true, user });
       },
       error: (error) => {
         this.isLoading.set(false);

@@ -17,6 +17,7 @@ import {
   Z_MODAL_DATA,
 } from '@ihsan/ui';
 import { IRole, IUpdateRoleRequest } from '@ihsan/core';
+import { toast } from 'ngx-sonner';
 
 interface IRoleDialogData {
   role: IRole;
@@ -48,7 +49,6 @@ export class EditRoleDialogComponent {
   protected readonly data = inject<IRoleDialogData>(Z_MODAL_DATA);
 
   readonly errorMessage = signal<string | null>(null);
-  readonly successMessage = signal<string | null>(null);
   readonly isLoading = signal(false);
 
   readonly roleForm = new FormGroup<IRoleForm>({
@@ -69,7 +69,6 @@ export class EditRoleDialogComponent {
 
     this.isLoading.set(true);
     this.errorMessage.set(null);
-    this.successMessage.set(null);
 
     const formValue = this.roleForm.getRawValue();
     const request: IUpdateRoleRequest = {
@@ -84,14 +83,12 @@ export class EditRoleDialogComponent {
       .subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.successMessage.set(
+          toast.success(
             this._translationService.getCachedTranslation(
               'roles.success.updated'
             )
           );
-          setTimeout(() => {
-            this._dialogRef.close({ success: true });
-          }, 1000);
+          this._dialogRef.close({ success: true });
         },
         error: (error) => {
           this.isLoading.set(false);

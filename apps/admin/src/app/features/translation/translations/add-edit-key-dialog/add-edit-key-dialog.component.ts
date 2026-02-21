@@ -24,6 +24,7 @@ import {
 } from '@ihsan/ui';
 import { SKIP_ERROR_TOAST, extractErrorMessage } from '@ihsan/shared';
 import { TranslationEventsService } from '../../translation-events.service';
+import { toast } from 'ngx-sonner';
 
 interface IKeyForm {
   key: FormControl<string>;
@@ -121,6 +122,11 @@ export class AddEditKeyDialogComponent {
         .updateTranslationKey(command, context)
         .subscribe({
           next: (result) => {
+            toast.success(
+              this._translationService.getCachedTranslation(
+                'translations.success.keyUpdated'
+              ) || 'Translation key updated successfully'
+            );
             this._translationEvents.notifyTranslationKeysChanged();
             this._dialogRef.close(result);
           },
@@ -141,6 +147,11 @@ export class AddEditKeyDialogComponent {
         .createTranslationKey(command, context)
         .subscribe({
           next: (result) => {
+            toast.success(
+              this._translationService.getCachedTranslation(
+                'translations.success.keyCreated'
+              ) || 'Translation key created successfully'
+            );
             this._translationEvents.notifyTranslationKeysChanged();
             this._dialogRef.close(result);
           },

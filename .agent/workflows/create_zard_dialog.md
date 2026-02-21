@@ -29,6 +29,11 @@ export class MyComponent {
 The dialog component's styling and structure should follow the pattern established in:
 `MicroservicesArchitecture-Web/apps/admin/src/app/features/translation/translations/add-edit-key-dialog`
 
+### Best Practices for Success & Error States
+
+- **Errors**: Show error messages inline using the `z-alert` component with `zType="destructive"`.
+- **Success**: Do **NOT** use inline alerts or `setTimeout` delays for success messages. Instead, use a global toast notification (`toast.success()` from `ngx-sonner`) and immediately close the dialog to instantly unblock the user.
+
 ### HTML Structure (`add-edit-key-dialog.component.html`)
 
 Wrap your content in a `.dialog-container`. Use `z-form-field`, `z-input`, and `z-button` components for consistent styling.
@@ -97,6 +102,7 @@ import {
   ZardInputDirective,
   ZardFormImports,
 } from '@ihsan/ui';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-my-dialog',
@@ -135,6 +141,7 @@ export class MyDialogComponent {
     this.isLoading.set(true);
     // Perform async operation...
     // On success:
+    toast.success('Action completed successfully');
     this._dialogRef.close(result);
   }
 }

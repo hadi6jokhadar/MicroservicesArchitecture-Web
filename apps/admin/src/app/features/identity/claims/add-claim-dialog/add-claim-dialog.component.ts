@@ -17,6 +17,7 @@ import {
   ZardButtonComponent,
 } from '@ihsan/ui';
 import { ICreateClaimRequest } from '@ihsan/core';
+import { toast } from 'ngx-sonner';
 
 interface IClaimForm {
   name: FormControl<string>;
@@ -47,7 +48,6 @@ export class AddClaimDialogComponent {
   private readonly _translationService = inject(TranslationService);
 
   readonly errorMessage = signal<string | null>(null);
-  readonly successMessage = signal<string | null>(null);
   readonly isLoading = signal(false);
 
   readonly claimForm = new FormGroup<IClaimForm>({
@@ -79,7 +79,6 @@ export class AddClaimDialogComponent {
 
     this.isLoading.set(true);
     this.errorMessage.set(null);
-    this.successMessage.set(null);
 
     const formValue = this.claimForm.getRawValue();
     const request: ICreateClaimRequest = {
@@ -95,14 +94,12 @@ export class AddClaimDialogComponent {
     this._claimService.createClaim(request, context).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.successMessage.set(
+        toast.success(
           this._translationService.getCachedTranslation(
             'claims.success.created'
           )
         );
-        setTimeout(() => {
-          this._dialogRef.close({ success: true });
-        }, 1000);
+        this._dialogRef.close({ success: true });
       },
       error: (error) => {
         this.isLoading.set(false);

@@ -71,11 +71,15 @@ export class RoleService {
 
   assignClaimsToRole(
     roleId: number,
-    request: IAssignClaimsToRoleRequest
+    request: IAssignClaimsToRoleRequest,
+    context?: HttpContext
   ): Observable<boolean> {
     return this._http.post<boolean>(
       `${this._baseUrl}/${roleId}/claims`,
-      request
+      request,
+      {
+        context,
+      }
     );
   }
 

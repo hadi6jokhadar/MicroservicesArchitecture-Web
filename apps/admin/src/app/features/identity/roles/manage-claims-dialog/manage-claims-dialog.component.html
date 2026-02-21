@@ -64,6 +64,14 @@
       <strong>{{ availableClaims().length }}</strong>
     </div>
 
+    @if (errorMessage()) {
+    <z-alert
+      zType="destructive"
+      zIcon="circle-alert"
+      [zDescription]="errorMessage()!"
+    />
+    }
+
     <div class="dialog-actions">
       <button z-button zType="outline" type="button" (click)="onCancel()">
         {{ 'common.cancel' | translate }}

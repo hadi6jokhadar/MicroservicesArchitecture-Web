@@ -18,6 +18,7 @@ import {
   Z_MODAL_DATA,
 } from '@ihsan/ui';
 import { IClaim, IUpdateClaimRequest } from '@ihsan/core';
+import { toast } from 'ngx-sonner';
 
 interface IClaimDialogData {
   claim: IClaim;
@@ -53,7 +54,6 @@ export class EditClaimDialogComponent {
   protected readonly data = inject<IClaimDialogData>(Z_MODAL_DATA);
 
   readonly errorMessage = signal<string | null>(null);
-  readonly successMessage = signal<string | null>(null);
   readonly isLoading = signal(false);
 
   readonly claimForm = new FormGroup<IClaimForm>({
@@ -88,7 +88,6 @@ export class EditClaimDialogComponent {
 
     this.isLoading.set(true);
     this.errorMessage.set(null);
-    this.successMessage.set(null);
 
     const formValue = this.claimForm.getRawValue();
     const request: IUpdateClaimRequest = {
@@ -106,14 +105,12 @@ export class EditClaimDialogComponent {
       .subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.successMessage.set(
+          toast.success(
             this._translationService.getCachedTranslation(
               'claims.success.updated'
             )
           );
-          setTimeout(() => {
-            this._dialogRef.close({ success: true });
-          }, 1000);
+          this._dialogRef.close({ success: true });
         },
         error: (error) => {
           this.isLoading.set(false);

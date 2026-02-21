@@ -16,6 +16,7 @@ import {
   ZardButtonComponent,
 } from '@ihsan/ui';
 import { ICreateRoleRequest } from '@ihsan/core';
+import { toast } from 'ngx-sonner';
 
 interface IRoleForm {
   name: FormControl<string>;
@@ -42,7 +43,6 @@ export class AddRoleDialogComponent {
   private readonly _translationService = inject(TranslationService);
 
   readonly errorMessage = signal<string | null>(null);
-  readonly successMessage = signal<string | null>(null);
   readonly isLoading = signal(false);
 
   readonly roleForm = new FormGroup<IRoleForm>({
@@ -63,7 +63,6 @@ export class AddRoleDialogComponent {
 
     this.isLoading.set(true);
     this.errorMessage.set(null);
-    this.successMessage.set(null);
 
     const formValue = this.roleForm.getRawValue();
     const request: ICreateRoleRequest = {
@@ -76,12 +75,10 @@ export class AddRoleDialogComponent {
     this._roleService.createRole(request, context).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.successMessage.set(
+        toast.success(
           this._translationService.getCachedTranslation('roles.success.created')
         );
-        setTimeout(() => {
-          this._dialogRef.close({ success: true });
-        }, 1000);
+        this._dialogRef.close({ success: true });
       },
       error: (error) => {
         this.isLoading.set(false);

@@ -38,14 +38,8 @@
       </p>
     </div>
 
-    <!-- Success/Error Messages -->
-    @if (successMessage()) {
-    <z-alert
-      zType="success"
-      zIcon="circle-check"
-      [zDescription]="successMessage()!"
-    />
-    } @if (errorMessage()) {
+    <!-- Error Messages -->
+    @if (errorMessage()) {
     <z-alert
       zType="destructive"
       zIcon="circle-alert"
