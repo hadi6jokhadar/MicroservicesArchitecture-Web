@@ -25,8 +25,7 @@ import {
   ZardLoaderComponent,
   ZardPaginationImports,
   ZardSheetService,
-  ZardSelectComponent,
-  ZardSelectItemComponent,
+  ZardSwitchComponent,
   ZardTableImports,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
@@ -39,7 +38,7 @@ import { TranslationEventsService } from '../translation-events.service';
 interface ITranslationFilterForm {
   searchTerm: FormControl<string>;
   category: FormControl<string>;
-  isArchived: FormControl<string>;
+  isArchived: FormControl<boolean>;
 }
 
 @Component({
@@ -61,8 +60,7 @@ interface ITranslationFilterForm {
     ZardLoaderComponent,
     ZardEmptyComponent,
     ZardIdDirective,
-    ZardSelectComponent,
-    ZardSelectItemComponent,
+    ZardSwitchComponent,
   ],
   templateUrl: './translations.component.html',
   styleUrls: ['./translations.component.scss'],
@@ -87,7 +85,7 @@ export class TranslationsComponent implements OnInit {
   readonly filterForm = new FormGroup<ITranslationFilterForm>({
     searchTerm: new FormControl<string>('', { nonNullable: true }),
     category: new FormControl<string>('', { nonNullable: true }),
-    isArchived: new FormControl<string>('false', { nonNullable: true }),
+    isArchived: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   constructor() {
@@ -135,7 +133,7 @@ export class TranslationsComponent implements OnInit {
       category: formValue.category
         ? this.capitalizeFirstLetter(formValue.category)
         : undefined,
-      isArchived: formValue.isArchived === 'true',
+      isArchived: formValue.isArchived ?? false,
     };
 
     this._translationService.getTranslationKeys(query).subscribe({
@@ -162,7 +160,7 @@ export class TranslationsComponent implements OnInit {
     this.filterForm.reset({
       searchTerm: '',
       category: '',
-      isArchived: 'false',
+      isArchived: false,
     });
     this.currentPage.set(1);
     this.loadTranslationKeys();

@@ -101,6 +101,7 @@
 
   "translations.showingKeys": "عرض",
   "translations.translationKeys": "مفاتيح الترجمة",
+  "translations.active": "نشط",
   "translations.archived": "مؤرشف",
   "translations.actions.archive": "أرشفة",
   "translations.actions.unarchive": "إلغاء الأرشفة",

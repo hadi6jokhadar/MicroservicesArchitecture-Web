@@ -86,25 +86,11 @@
         </z-form-field>
 
         <!-- Archived Filter -->
-        <z-form-field class="filter-field" zardId="isArchived" #arch="zardId">
-          <label z-form-label [for]="arch.id()">{{
-            'translations.archived' | translate
-          }}</label>
-          <z-form-control>
-            <z-select
-              [id]="arch.id()"
-              [zPlaceholder]="'translations.active' | translate"
-              formControlName="isArchived"
-            >
-              <z-select-item zValue="false">
-                {{ 'translations.active' | translate }}
-              </z-select-item>
-              <z-select-item zValue="true">
-                {{ 'translations.archived' | translate }}
-              </z-select-item>
-            </z-select>
-          </z-form-control>
-        </z-form-field>
+        <div class="filter-field switch-field">
+          <z-switch formControlName="isArchived">
+            {{ 'translations.archived' | translate }}
+          </z-switch>
+        </div>
 
         <!-- Action Buttons -->
         <div class="filter-actions">
@@ -126,6 +112,7 @@
             (click)="onSearch()"
             type="button"
             id="search-btn"
+            `````
           >
             <z-icon zType="search" />
             {{ 'common.search' | translate }}

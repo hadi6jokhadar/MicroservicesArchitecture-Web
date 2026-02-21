@@ -33,6 +33,7 @@ import {
   ZardTableHeadComponent,
   ZardTableHeaderComponent,
   ZardTableRowComponent,
+  ZardSwitchComponent,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
 import { debounceTime } from 'rxjs/operators';
@@ -43,7 +44,7 @@ import { TenantEventsService } from '../tenant-events.service';
 interface ITenantFilterForm {
   searchTerm: FormControl<string>;
   isActive: FormControl<string>;
-  isArchived: FormControl<string>;
+  isArchived: FormControl<boolean>;
 }
 
 @Component({
@@ -72,6 +73,7 @@ interface ITenantFilterForm {
     ZardTableRowComponent,
     ZardTableHeadComponent,
     ZardTableCellComponent,
+    ZardSwitchComponent,
   ],
   templateUrl: './tenant-list.component.html',
   styleUrls: ['./tenant-list.component.scss'],
@@ -101,7 +103,7 @@ export class TenantListComponent {
   readonly filterForm = new FormGroup<ITenantFilterForm>({
     searchTerm: new FormControl<string>('', { nonNullable: true }),
     isActive: new FormControl<string>('__all__', { nonNullable: true }),
-    isArchived: new FormControl<string>('__all__', { nonNullable: true }),
+    isArchived: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   private previousIsArchived = '__all__';
@@ -134,7 +136,7 @@ export class TenantListComponent {
       pageSize: this.pageSize,
       searchTerm: searchTerm || undefined,
       isActive: isActive === '__all__' ? undefined : isActive === 'true',
-      isArchived: isArchived === '__all__' ? undefined : isArchived === 'true',
+      isArchived: isArchived,
     };
 
     this._tenantService.getAllActiveTenants(request).subscribe();
@@ -166,7 +168,7 @@ export class TenantListComponent {
     this.filterForm.reset({
       searchTerm: '',
       isActive: '__all__',
-      isArchived: '__all__',
+      isArchived: false,
     });
   }
 

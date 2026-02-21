@@ -99,30 +99,13 @@
         </z-form-field>
 
         <!-- Archived Filter (SuperAdmin Only) -->
-        <!-- Archived Filter (SuperAdmin Only) -->
         @if (isSuperAdmin) {
-        <z-form-field class="filter-field" zardId="isArchived" #arch="zardId">
-          <label z-form-label [for]="arch.id()">
+        <div class="filter-field switch-field">
+          <label z-form-label for="isArchived">
             {{ 'users.archived' | translate }}
           </label>
-          <z-form-control>
-            <z-select
-              [id]="arch.id()"
-              [zPlaceholder]="'users.allStatus' | translate"
-              formControlName="isArchived"
-            >
-              <z-select-item zValue="__all__">
-                {{ 'users.allStatus' | translate }}
-              </z-select-item>
-              <z-select-item zValue="false">
-                {{ 'users.active' | translate }}
-              </z-select-item>
-              <z-select-item zValue="true">
-                {{ 'users.archived' | translate }}
-              </z-select-item>
-            </z-select>
-          </z-form-control>
-        </z-form-field>
+          <z-switch formControlName="isArchived" id="isArchived" />
+        </div>
         }
 
         <!-- Action Buttons -->

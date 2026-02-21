@@ -120,6 +120,8 @@ export class TenantDialogComponent implements OnInit {
       });
 
       this.form.controls.tenantId.disable();
+      this.form.controls.userId.clearValidators();
+      this.form.controls.userId.updateValueAndValidity();
 
       // Fetch existing config to preserve it
       this.isLoading.set(true);

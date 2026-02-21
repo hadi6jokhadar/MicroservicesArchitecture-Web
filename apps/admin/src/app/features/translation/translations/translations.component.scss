@@ -61,6 +61,14 @@
     .filter-field {
       width: 100%;
 
+      &.switch-field {
+        width: fit-content;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        padding-bottom: 0.5rem;
+      }
+
       &.search-field {
         .search-input-wrapper {
           position: relative;

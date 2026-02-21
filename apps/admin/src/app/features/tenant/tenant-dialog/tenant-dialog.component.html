@@ -79,39 +79,36 @@
     </z-form-field>
     }
 
-    <div class="form-row">
-      <!-- Start Date -->
-      <z-form-field zardId="startDate" #sd="zardId">
-        <label z-form-label [for]="sd.id()">
-          {{ 'tenants.dialog.fields.startDate' | translate }}
-        </label>
-        <z-form-control>
-          <z-date-picker formControlName="startDate" [id]="sd.id()" />
-        </z-form-control>
-        @if (form.controls.startDate.touched && form.controls.startDate.errors)
-        {
-        <span z-form-error>
-          {{ 'tenants.dialog.errors.startDate' | translate }}
-        </span>
-        }
-      </z-form-field>
+    <!-- Start Date -->
+    <z-form-field zardId="startDate" #sd="zardId">
+      <label z-form-label [for]="sd.id()">
+        {{ 'tenants.dialog.fields.startDate' | translate }}
+      </label>
+      <z-form-control>
+        <z-date-picker formControlName="startDate" [id]="sd.id()" />
+      </z-form-control>
+      @if (form.controls.startDate.touched && form.controls.startDate.errors) {
+      <span z-form-error>
+        {{ 'tenants.dialog.errors.startDate' | translate }}
+      </span>
+      }
+    </z-form-field>
 
-      <!-- Expire Date -->
-      <z-form-field zardId="expireDate" #ed="zardId">
-        <label z-form-label [for]="ed.id()">
-          {{ 'tenants.dialog.fields.expireDate' | translate }}
-        </label>
-        <z-form-control>
-          <z-date-picker formControlName="expireDate" [id]="ed.id()" />
-        </z-form-control>
-        @if (form.controls.expireDate.touched &&
-        form.controls.expireDate.errors) {
-        <span z-form-error>
-          {{ 'tenants.dialog.errors.expireDate' | translate }}
-        </span>
-        }
-      </z-form-field>
-    </div>
+    <!-- Expire Date -->
+    <z-form-field zardId="expireDate" #ed="zardId">
+      <label z-form-label [for]="ed.id()">
+        {{ 'tenants.dialog.fields.expireDate' | translate }}
+      </label>
+      <z-form-control>
+        <z-date-picker formControlName="expireDate" [id]="ed.id()" />
+      </z-form-control>
+      @if (form.controls.expireDate.touched && form.controls.expireDate.errors)
+      {
+      <span z-form-error>
+        {{ 'tenants.dialog.errors.expireDate' | translate }}
+      </span>
+      }
+    </z-form-field>
 
     <!-- Is Active -->
     <z-form-field zardId="isActive" #ia="zardId">

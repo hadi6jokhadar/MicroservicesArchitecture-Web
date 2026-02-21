@@ -316,3 +316,52 @@ Add the following SCSS to your component's stylesheet to replicate the Translati
   }
 }
 ```
+
+## 5. Adding an Archived Filter (Toggle Switch)
+
+When implementing an "Archived" filter for the table, always use the `ZardSwitchComponent` instead of a select dropdown.
+
+### HTML
+
+Wrap the `z-switch` in a `.switch-field` specifically styled container.
+
+```html
+<div class="filter-field switch-field">
+  <z-switch formControlName="isArchived">
+    {{ 'translations.archived' | translate }}
+  </z-switch>
+</div>
+```
+
+### SCSS Styling
+
+Ensure you have the `.switch-field` CSS nested in your `.filter-field` definition within the page component styling so it fits nicely in the filter row layout:
+
+```scss
+.filter-field {
+  width: 100%;
+
+  &.switch-field {
+    width: fit-content;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding-bottom: 0.5rem;
+  }
+}
+```
+
+### Component Logic (.ts)
+
+Import the `ZardSwitchComponent` and ensure the `formControl` is typed and initialized as a `boolean`. Note: ensure the backend payload processes the boolean accordingly.
+
+```typescript
+// Import the switch component
+import { ZardSwitchComponent } from '@microservices-architecture/ui';
+
+// Forms
+readonly filterForm = new FormGroup({
+  // ... other filters
+  isArchived: new FormControl<boolean>(false, { nonNullable: true }),
+});
+```

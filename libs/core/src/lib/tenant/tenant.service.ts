@@ -8,6 +8,7 @@ import {
   ITenantConfig,
   ICreateTenantRequest,
   IUpdateTenantRequest,
+  TenantClass,
 } from './models';
 import { IPaginatedResponse } from '../models/common';
 
@@ -31,7 +32,7 @@ export class TenantService {
   private readonly _adminUrl = `${this._env.apiUrls.tenant}/api/admin/tenant`;
 
   // State
-  readonly tenants = signal<ITenant[]>([]);
+  readonly tenants = signal<TenantClass[]>([]);
   readonly isLoading = signal<boolean>(false);
   readonly totalCount = signal<number>(0);
 
@@ -72,7 +73,9 @@ export class TenantService {
       .pipe(
         tap({
           next: (response) => {
-            this.tenants.set(response.items);
+            this.tenants.set(
+              response.items.map((item) => new TenantClass(item))
+            );
             this.totalCount.set(response.totalCount);
             this.isLoading.set(false);
           },
@@ -92,22 +95,25 @@ export class TenantService {
   createTenant(
     request: ICreateTenantRequest,
     context?: HttpContext
-  ): Observable<object> {
-    return this._http.post(`${this._adminUrl}`, request, { context }).pipe(
-      tap(() => {
-        // Refresh list after create
-        this.getAllActiveTenants().subscribe();
-      })
-    );
+  ): Observable<ITenant> {
+    return this._http
+      .post<ITenant>(`${this._adminUrl}`, request, { context })
+      .pipe(
+        tap((newTenant) => {
+          const tenant = new TenantClass(newTenant);
+          this.tenants.update((items) => [tenant, ...items]);
+          this.totalCount.update((count) => count + 1);
+        })
+      );
   }
 
   updateTenant(
     tenantId: string,
     request: IUpdateTenantRequest,
     context?: HttpContext
-  ): Observable<object> {
+  ): Observable<ITenant> {
     return this._http
-      .put(
+      .put<ITenant>(
         `${this._adminUrl}/${tenantId}`,
         { ...request, tenantId },
         {
@@ -115,9 +121,12 @@ export class TenantService {
         }
       )
       .pipe(
-        tap(() => {
-          // Refresh list after update
-          this.getAllActiveTenants().subscribe();
+        tap((updatedTenant) => {
+          this.tenants.update((items) =>
+            items.map((t) =>
+              t.tenantId === tenantId ? new TenantClass(updatedTenant) : t
+            )
+          );
         })
       );
   }

@@ -71,3 +71,12 @@ If the table does not match the standard:
 3.  **Add Data Labels**: Add `[attr.data-label]="'translation.key' | translate"` (or static `data-label`) to all `td` elements.
 4.  **Update SCSS**: Copy the standard SCSS from `create_zard_table.md` into your component's stylesheet.
 5.  **Test**: Verify the table looks correct on desktop and transforms to a card-view on mobile.
+
+## 6. Verify Filters (If Applicable)
+
+If the table includes an "Archived" or similar boolean filter:
+
+- [ ] **Component**: Is `ZardSwitchComponent` used instead of a dropdown (`z-select`)?
+- [ ] **HTML Structure**: Is the switch wrapped in `<div class="filter-field switch-field">`?
+- [ ] **TypeScript**: Is the `isArchived` form control initialized as a `boolean` (e.g., `false`) instead of a `string`?
+- [ ] **SCSS**: Is there a `.switch-field` class defining `width: fit-content`, `flex-shrink: 0`, and `align-items: center`?

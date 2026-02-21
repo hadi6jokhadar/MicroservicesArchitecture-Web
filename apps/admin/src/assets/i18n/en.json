@@ -102,6 +102,7 @@
 
   "translations.showingKeys": "Showing",
   "translations.translationKeys": "translation keys",
+  "translations.active": "Active",
   "translations.archived": "Archived",
   "translations.actions.archive": "Archive",
   "translations.actions.unarchive": "Unarchive",

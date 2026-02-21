@@ -37,6 +37,7 @@ import {
   ZardTableHeadComponent,
   ZardTableHeaderComponent,
   ZardTableRowComponent,
+  ZardSwitchComponent,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
 import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
@@ -46,7 +47,7 @@ interface IUserFilterForm {
   searchTerm: FormControl<string>;
   roleName: FormControl<string>;
   status: FormControl<string>;
-  isArchived: FormControl<string>;
+  isArchived: FormControl<boolean>;
 }
 
 @Component({
@@ -76,6 +77,7 @@ interface IUserFilterForm {
     ZardLoaderComponent,
     ZardEmptyComponent,
     ZardIdDirective,
+    ZardSwitchComponent,
   ],
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
@@ -112,7 +114,7 @@ export class UsersComponent implements OnInit {
     searchTerm: new FormControl<string>('', { nonNullable: true }),
     roleName: new FormControl<string>('__all__', { nonNullable: true }),
     status: new FormControl<string>('__all__', { nonNullable: true }),
-    isArchived: new FormControl<string>('__all__', { nonNullable: true }),
+    isArchived: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   constructor() {
@@ -184,10 +186,7 @@ export class UsersComponent implements OnInit {
           : formValue.status === 'true'
           ? true
           : false,
-      isArchived:
-        formValue.isArchived === '__all__'
-          ? undefined
-          : formValue.isArchived === 'true',
+      isArchived: formValue.isArchived,
     };
 
     this._adminService.getUsers(request).subscribe({
@@ -219,7 +218,7 @@ export class UsersComponent implements OnInit {
       searchTerm: '',
       roleName: '__all__',
       status: '__all__',
-      isArchived: '__all__',
+      isArchived: false,
     });
     this.currentPage.set(1);
     this.loadUsers();
