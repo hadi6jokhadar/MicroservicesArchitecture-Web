@@ -9,6 +9,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ZardToastComponent } from '@ihsan/ui';
 import { TenantService, TranslationService } from '@ihsan/core';
+import { SignalrService } from '@ihsan/shared';
 
 @Component({
   imports: [RouterModule, ZardToastComponent],
@@ -22,6 +23,7 @@ export class App {
   private _translationService = inject(TranslationService);
   private _tenantService = inject(TenantService);
   private _platformId = inject(PLATFORM_ID);
+  private _signalrService = inject(SignalrService);
 
   protected isDevMode = isDevMode();
   protected tenantId = '';
@@ -50,6 +52,7 @@ export class App {
       if (this.tenantId) {
         this._tenantService.setCurrentTenantId = this.tenantId;
       }
+      this._signalrService.initializeConnection();
     }
   }
 

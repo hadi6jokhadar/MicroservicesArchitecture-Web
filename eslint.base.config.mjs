@@ -18,6 +18,7 @@ export default [
             '^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$',
             '@ihsan/ui',
             'vanilla-jsoneditor',
+            '@microsoft/signalr',
           ],
           depConstraints: [
             {

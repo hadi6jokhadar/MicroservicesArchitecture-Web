@@ -10,3 +10,7 @@ export * from './lib/interceptors/error.interceptor';
 
 // Shared component (can be removed if not needed)
 export * from './lib/shared/shared';
+
+// Export services
+export * from './lib/services/base-signalr.service';
+export * from './lib/services/signalr.service';
