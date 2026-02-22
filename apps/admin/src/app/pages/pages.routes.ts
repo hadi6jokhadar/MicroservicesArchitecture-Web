@@ -4,6 +4,7 @@ import { TestComponentsComponent } from './test-components/test-components.compo
 import { identityRoutes } from '../features/identity/identity.routes';
 import { translationRoutes } from '../features/translation/translation.routes';
 import { tenantRoutes } from '../features/tenant/tenant.routes';
+import { notificationRoutes } from '../features/notification/notification.routes';
 import { authGuard } from '@ihsan/core';
 
 export const pagesRoutes: Routes = [
@@ -31,6 +32,11 @@ export const pagesRoutes: Routes = [
       {
         path: 'translation',
         loadChildren: () => Promise.resolve(translationRoutes),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'notification',
+        loadChildren: () => Promise.resolve(notificationRoutes),
         canActivate: [authGuard],
       },
     ],

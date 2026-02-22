@@ -32,9 +32,22 @@ export class TenantService {
   private readonly _adminUrl = `${this._env.apiUrls.tenant}/api/admin/tenant`;
 
   // State
+  readonly currentTenantId = signal<string | null>(null);
   readonly tenants = signal<TenantClass[]>([]);
   readonly isLoading = signal<boolean>(false);
   readonly totalCount = signal<number>(0);
+
+  set setCurrentTenantId(tenantId: string) {
+    this.currentTenantId.set(tenantId);
+  }
+
+  get getCurrentTenantId() {
+    return this.currentTenantId();
+  }
+
+  clearCurrentTenantId() {
+    this.currentTenantId.set(null);
+  }
 
   // Public Endpoints
   getTenantById(tenantId: string): Observable<ITenant> {

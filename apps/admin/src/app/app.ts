@@ -8,7 +8,7 @@ import {
 import { isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ZardToastComponent } from '@ihsan/ui';
-import { TranslationService } from '@ihsan/core';
+import { TenantService, TranslationService } from '@ihsan/core';
 
 @Component({
   imports: [RouterModule, ZardToastComponent],
@@ -20,6 +20,7 @@ export class App {
   protected title = 'Ihsandev';
 
   private _translationService = inject(TranslationService);
+  private _tenantService = inject(TenantService);
   private _platformId = inject(PLATFORM_ID);
 
   protected isDevMode = isDevMode();
@@ -46,6 +47,9 @@ export class App {
 
     if (isPlatformBrowser(this._platformId)) {
       this.tenantId = localStorage.getItem('tenantId') || '';
+      if (this.tenantId) {
+        this._tenantService.setCurrentTenantId = this.tenantId;
+      }
     }
   }
 
@@ -55,8 +59,10 @@ export class App {
       this.tenantId = input.value;
       if (input.value) {
         localStorage.setItem('tenantId', input.value);
+        this._tenantService.setCurrentTenantId = input.value;
       } else {
         localStorage.removeItem('tenantId');
+        this._tenantService.clearCurrentTenantId();
       }
     }
   }

@@ -1,0 +1,188 @@
+<div class="send-notification-sheet">
+  <!-- Header -->
+  <div class="sheet-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h2>{{ 'notifications.dialog.sendTitle' | translate }}</h2>
+      </div>
+      <button z-button zType="outline" zSize="sm" (click)="onCancel()">
+        <z-icon zType="x" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="sheet-content">
+    @if (errorMessage()) {
+    <div class="global-message">
+      <z-alert
+        zType="destructive"
+        zIcon="circle-alert"
+        [zDescription]="errorMessage()!"
+      />
+    </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+      <z-tab-group>
+        <z-tab [label]="'notifications.dialog.tabGeneral' | translate">
+          <div class="space-y-4 pt-4">
+            <z-form-field zardId="title" #t="zardId">
+              <label z-form-label [for]="t.id()">{{
+                'notifications.dialog.titleField' | translate
+              }}</label>
+              <z-form-control>
+                <input
+                  z-input
+                  type="text"
+                  [id]="t.id()"
+                  formControlName="title"
+                  placeholder="{{
+                    'notifications.dialog.titlePlaceholder' | translate
+                  }}"
+                />
+              </z-form-control>
+              @if (form.controls.title.hasError('required') &&
+              form.controls.title.touched) {
+              <span z-form-error>
+                {{ 'notifications.dialog.titleRequired' | translate }}
+              </span>
+              }
+            </z-form-field>
+
+            <z-form-field zardId="message" #m="zardId">
+              <label z-form-label [for]="m.id()">{{
+                'notifications.dialog.messageField' | translate
+              }}</label>
+              <z-form-control>
+                <textarea
+                  z-input
+                  [id]="m.id()"
+                  formControlName="message"
+                  rows="5"
+                  placeholder="{{
+                    'notifications.dialog.messagePlaceholder' | translate
+                  }}"
+                ></textarea>
+              </z-form-control>
+            </z-form-field>
+          </div>
+        </z-tab>
+
+        <z-tab [label]="'notifications.dialog.tabSettings' | translate">
+          <div class="space-y-4 pt-4">
+            @if (!_tenantService.currentTenantId()) {
+            <z-form-field zardId="tenantId" #ti="zardId">
+              <label z-form-label [for]="ti.id()">{{
+                'notifications.dialog.tenantIdField' | translate
+              }}</label>
+              <z-form-control>
+                <input
+                  z-input
+                  type="text"
+                  [id]="ti.id()"
+                  formControlName="tenantId"
+                  placeholder="{{
+                    'notifications.dialog.tenantIdPlaceholder' | translate
+                  }}"
+                />
+              </z-form-control>
+              <p class="text-xs text-muted-foreground mt-1">
+                {{ 'notifications.dialog.tenantIdNote' | translate }}
+              </p>
+              @if (form.controls.tenantId.hasError('required') &&
+              form.controls.tenantId.touched) {
+              <span z-form-error>
+                {{ 'common.required' | translate }}
+              </span>
+              }
+            </z-form-field>
+            }
+
+            <z-form-field zardId="userId" #ui="zardId">
+              <label z-form-label [for]="ui.id()">{{
+                'notifications.dialog.userIdField' | translate
+              }}</label>
+              <z-form-control>
+                <div class="flex items-center gap-2">
+                  <z-combobox
+                    [id]="ui.id()"
+                    formControlName="userId"
+                    [options]="userOptions()"
+                    [searchPlaceholder]="
+                      'notifications.dialog.userIdPlaceholder' | translate
+                    "
+                    [placeholder]="
+                      'notifications.dialog.userIdPlaceholder' | translate
+                    "
+                    (zSearchChange)="onUserSearch($event)"
+                    class="flex-1"
+                  />
+                  @if (form.controls.userId.value) {
+                  <button
+                    type="button"
+                    z-button
+                    zType="outline"
+                    zSize="sm"
+                    (click)="clearUserId()"
+                    [title]="'notifications.dialog.clearUser' | translate"
+                  >
+                    <z-icon zType="x" />
+                  </button>
+                  }
+                </div>
+              </z-form-control>
+            </z-form-field>
+
+            <z-form-field zardId="deliveryType" #dt="zardId">
+              <label z-form-label [for]="dt.id()">{{
+                'notifications.dialog.deliveryTypeField' | translate
+              }}</label>
+              <z-form-control>
+                <z-select [id]="dt.id()" formControlName="deliveryType">
+                  <z-select-item zValue="SignalR">SignalR</z-select-item>
+                  <z-select-item zValue="Firebase">Firebase</z-select-item>
+                  <z-select-item zValue="Both">Both</z-select-item>
+                </z-select>
+              </z-form-control>
+            </z-form-field>
+
+            <z-form-field zardId="priority" #p="zardId">
+              <label z-form-label [for]="p.id()">{{
+                'notifications.dialog.priorityField' | translate
+              }}</label>
+              <z-form-control>
+                <z-select [id]="p.id()" formControlName="priority">
+                  <z-select-item zValue="Waitable">Waitable</z-select-item>
+                  <z-select-item zValue="Immediate">Immediate</z-select-item>
+                </z-select>
+              </z-form-control>
+            </z-form-field>
+          </div>
+        </z-tab>
+      </z-tab-group>
+
+      <div class="dialog-actions">
+        <button
+          type="button"
+          z-button
+          zType="outline"
+          (click)="onCancel()"
+          id="cancel-btn"
+        >
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button
+          type="submit"
+          z-button
+          zType="default"
+          [zDisabled]="form.invalid || isSubmitting"
+          [zLoading]="isSubmitting"
+          id="submit-btn"
+        >
+          {{ 'common.send' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

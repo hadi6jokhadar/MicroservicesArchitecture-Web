@@ -1,0 +1,70 @@
+<div class="view-queue-item-sheet">
+  <!-- Header -->
+  <div class="sheet-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h2>{{ 'notifications.sheet.title' | translate }}</h2>
+      </div>
+      <button z-button zType="outline" zSize="sm" (click)="onClose()">
+        <z-icon zType="x"></z-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="sheet-content space-y-6">
+    @if (queueItem) {
+    <!-- Info Section -->
+    <div class="info-group">
+      <span class="text-sm font-medium text-muted-foreground block">{{
+        'notifications.table.title' | translate
+      }}</span>
+      <p class="text-base text-foreground mt-1">{{ queueItem.title }}</p>
+    </div>
+
+    <div class="info-group">
+      <span class="text-sm font-medium text-muted-foreground block">{{
+        'notifications.dialog.messageField' | translate
+      }}</span>
+      <p class="text-base text-foreground mt-1">
+        {{ queueItem.message || '-' }}
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="info-group">
+        <span class="text-sm font-medium text-muted-foreground block">{{
+          'notifications.table.priority' | translate
+        }}</span>
+        <p class="text-base text-foreground mt-1">
+          {{ getPriorityName(queueItem.priority) }}
+        </p>
+      </div>
+      <div class="info-group">
+        <span class="text-sm font-medium text-muted-foreground block">{{
+          'notifications.table.deliveryType' | translate
+        }}</span>
+        <p class="text-base text-foreground mt-1">
+          {{ getDeliveryTypeName(queueItem.deliveryType) }}
+        </p>
+      </div>
+      <div class="info-group">
+        <span class="text-sm font-medium text-muted-foreground block">{{
+          'notifications.table.status' | translate
+        }}</span>
+        <p class="text-base text-foreground mt-1">
+          {{ getQueueStatusName(queueItem.queueStatus) }}
+        </p>
+      </div>
+      <div class="info-group">
+        <span class="text-sm font-medium text-muted-foreground block">{{
+          'notifications.table.createdAt' | translate
+        }}</span>
+        <p class="text-base text-foreground mt-1">
+          {{ queueItem.created | date : 'medium' }}
+        </p>
+      </div>
+    </div>
+    }
+  </div>
+</div>

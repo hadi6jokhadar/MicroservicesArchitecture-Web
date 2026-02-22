@@ -99,7 +99,7 @@ export interface IQueueItemStatusResponse {
   processedAt?: string;
   error?: string;
   notificationId?: number;
-  created: string;
+  createdAt: string;
 }
 
 export class QueueItemStatusResponseClass implements IQueueItemStatusResponse {
@@ -109,7 +109,7 @@ export class QueueItemStatusResponseClass implements IQueueItemStatusResponse {
   processedAt?: string;
   error?: string;
   notificationId?: number;
-  created: string;
+  createdAt: string;
 
   constructor(data: Partial<IQueueItemStatusResponse> = {}) {
     this.queueItemId = data.queueItemId || 0;
@@ -118,7 +118,7 @@ export class QueueItemStatusResponseClass implements IQueueItemStatusResponse {
     this.processedAt = data.processedAt;
     this.error = data.error;
     this.notificationId = data.notificationId;
-    this.created = data.created || '';
+    this.createdAt = data.createdAt || '';
   }
 }
 
@@ -193,11 +193,11 @@ export class QueueItemDtoClass implements IQueueItemDto {
 }
 
 export interface ISendNotificationRequest {
-  tenantId: string;
-  userId: number;
+  tenantId?: string;
+  userId?: number;
   title: string;
-  message: string;
+  message?: string;
   data?: string;
-  deliveryType?: DeliveryType;
-  priority?: Priority;
+  deliveryType?: string;
+  priority?: string;
 }

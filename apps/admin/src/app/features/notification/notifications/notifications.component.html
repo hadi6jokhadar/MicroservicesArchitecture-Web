@@ -1,0 +1,238 @@
+<div class="notifications-container page-container">
+  <div class="header">
+    <div class="title-section">
+      <h1 class="page-title">{{ 'notifications.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'notifications.subtitle' | translate }}</p>
+    </div>
+    <div class="actions">
+      <button z-button variant="primary" (click)="onSendNotification()">
+        <z-icon zType="bell"></z-icon>
+        <span>{{ 'notifications.actions.send' | translate }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Form Card -->
+  <z-card zPadding="lg">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <!-- Search Input -->
+        <z-form-field
+          class="filter-field search-field"
+          zardId="searchTerm"
+          #s="zardId"
+        >
+          <label z-form-label [for]="s.id()">
+            {{ 'notifications.filters.search' | translate }}
+          </label>
+          <z-form-control>
+            <div class="search-input-wrapper">
+              <z-icon zType="search" class="search-icon"></z-icon>
+              <input
+                z-input
+                [id]="s.id()"
+                type="text"
+                formControlName="searchTerm"
+                [placeholder]="'notifications.filters.search' | translate"
+                (keyup.enter)="onSearch()"
+              />
+            </div>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Archived Filter -->
+        <div class="filter-field switch-field">
+          <z-switch formControlName="isArchived">
+            {{ 'common.archived' | translate }}
+          </z-switch>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="filter-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            (click)="onClearFilters()"
+            type="button"
+            id="clear-filters-btn"
+            [zDisabled]="isLoading()"
+          >
+            <z-icon zType="x"></z-icon>
+            {{ 'common.clear' | translate }}
+          </button>
+          <button
+            z-button
+            zType="default"
+            zSize="default"
+            (click)="onSearch()"
+            type="button"
+            id="search-btn"
+            [zDisabled]="isLoading()"
+          >
+            <z-icon zType="search"></z-icon>
+            {{ 'common.search' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </z-card>
+
+  <z-card class="table-card">
+    @if (isLoading()) {
+    <div class="loader-container">
+      <z-loader size="lg" color="primary"></z-loader>
+      <p>{{ 'common.loading' | translate }}</p>
+    </div>
+    } @else if (queueItems().length === 0) {
+    <div class="empty-state-container">
+      <z-empty
+        [zTitle]="'notifications.empty.title' | translate"
+        [zDescription]="'notifications.empty.description' | translate"
+        zIcon="bell"
+      >
+        <button z-button variant="outline" (click)="onSendNotification()">
+          {{ 'notifications.actions.send' | translate }}
+        </button>
+      </z-empty>
+    </div>
+    } @else {
+    <div class="table-container">
+      <div class="table-header">
+        <div class="results-info">
+          <z-icon zType="bell"></z-icon>
+          <span
+            >{{ 'common.showing' | translate }} {{ queueItems().length }}
+            {{ 'common.of' | translate }} {{ totalCount() }}
+            {{ 'notifications.title' | translate }}</span
+          >
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table z-table class="standard-table">
+          <thead z-table-header>
+            <tr z-table-row>
+              <th z-table-head>
+                {{ 'notifications.table.title' | translate }}
+              </th>
+              <th z-table-head>
+                {{ 'notifications.table.priority' | translate }}
+              </th>
+              <th z-table-head>
+                {{ 'notifications.table.deliveryType' | translate }}
+              </th>
+              <th z-table-head>
+                {{ 'notifications.table.status' | translate }}
+              </th>
+              <th z-table-head>
+                {{ 'notifications.table.createdAt' | translate }}
+              </th>
+              <th z-table-head class="col-actions w-[80px]"></th>
+            </tr>
+          </thead>
+          <tbody z-table-body>
+            @for (item of queueItems(); track item.id) {
+            <tr z-table-row class="standard-row">
+              <td
+                z-table-cell
+                [attr.data-label]="'notifications.table.title' | translate"
+                class="font-medium whitespace-nowrap"
+              >
+                {{ item.title }}
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'notifications.table.priority' | translate"
+              >
+                <z-badge
+                  [zType]="item.priority === 1 ? 'destructive' : 'secondary'"
+                >
+                  {{ getPriorityName(item.priority) }}
+                </z-badge>
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="
+                  'notifications.table.deliveryType' | translate
+                "
+              >
+                <z-badge zType="outline">
+                  {{ getDeliveryTypeName(item.deliveryType) }}
+                </z-badge>
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'notifications.table.status' | translate"
+              >
+                <z-badge
+                  [zType]="
+                    item.queueStatus === 2
+                      ? 'default'
+                      : item.queueStatus === 3
+                      ? 'destructive'
+                      : 'default'
+                  "
+                >
+                  {{ getQueueStatusName(item.queueStatus) }}
+                </z-badge>
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'notifications.table.createdAt' | translate"
+                class="text-muted-foreground whitespace-nowrap"
+              >
+                {{ item.created | date : 'short' }}
+              </td>
+              <td z-table-cell class="col-actions">
+                <div class="flex justify-end pr-4">
+                  <button
+                    z-button
+                    zType="outline"
+                    zSize="sm"
+                    z-dropdown
+                    [zDropdownMenu]="menu"
+                  >
+                    <z-icon zType="ellipsis"></z-icon>
+                  </button>
+                  <z-dropdown-menu-content #menu="zDropdownMenuContent">
+                    <z-dropdown-menu-item (click)="onViewItem(item)">
+                      <z-icon zType="eye" class="mr-2 h-4 w-4"></z-icon>
+                      <span>{{
+                        'notifications.actions.view' | translate
+                      }}</span>
+                    </z-dropdown-menu-item>
+                    <z-dropdown-menu-item
+                      (click)="onToggleArchive(item)"
+                      [class.text-destructive]="!item.isArchived"
+                    >
+                      <z-icon
+                        [zType]="item.isArchived ? 'folder-open' : 'archive'"
+                        class="mr-2 h-4 w-4"
+                      ></z-icon>
+                      <span>
+                        {{
+                          item.isArchived
+                            ? ('notifications.actions.unarchive' | translate)
+                            : ('notifications.actions.archive' | translate)
+                        }}
+                      </span>
+                    </z-dropdown-menu-item>
+                  </z-dropdown-menu-content>
+                </div>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="pagination-container p-4 border-t border-border">
+      <z-pagination
+        [zTotal]="totalPages()"
+        [(zPageIndex)]="currentPage"
+      ></z-pagination>
+    </div>
+    }
+  </z-card>
+</div>
