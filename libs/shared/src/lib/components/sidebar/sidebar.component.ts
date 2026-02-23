@@ -4,6 +4,7 @@ import {
   input,
   output,
   signal,
+  computed,
   effect,
   inject,
   PLATFORM_ID,
@@ -245,7 +246,7 @@ export class SidebarComponent {
     );
   }
 
-  getGroupedPages(): Map<string, ISidebarPage[]> {
+  groupedPages = computed(() => {
     const grouped = new Map<string, ISidebarPage[]>();
 
     try {
@@ -281,5 +282,5 @@ export class SidebarComponent {
     }
 
     return grouped;
-  }
+  });
 }

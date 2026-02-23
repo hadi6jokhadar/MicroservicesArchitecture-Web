@@ -153,7 +153,7 @@ export class AuthService {
   private _handleAuthResponse(response: IAuthResponse) {
     this._identityStorage.setAccessToken(response.accessToken);
     this._identityStorage.setRefreshToken(response.refreshToken);
-    this.currentUser.set(new UserClass(response.user));
+    this.currentUser.set(new UserClass(response));
   }
 
   private _clearAuth() {

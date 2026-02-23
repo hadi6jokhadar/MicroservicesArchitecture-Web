@@ -19,8 +19,8 @@
 
   <!-- Navigation Menu -->
   <nav class="sidebar-nav">
-    @for (group of getGroupedPages() | keyvalue; track group.key) { @if
-    (group.key !== 'default') {
+    @for (group of groupedPages() | keyvalue; track group.key) { @if (group.key
+    !== 'default') {
     <div
       class="nav-group-label"
       [id]="'group-' + group.key.toLowerCase().replace(' ', '-')"

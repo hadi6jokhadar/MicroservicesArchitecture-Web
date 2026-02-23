@@ -64,24 +64,22 @@ export class UserClass implements IUser {
   }
 }
 
-export interface IAuthResponse {
+export interface IAuthResponse extends IUser {
   accessToken: string;
   refreshToken: string;
   refreshTokenExpiryTime: string;
-  user: IUser;
 }
 
-export class AuthResponseClass implements IAuthResponse {
+export class AuthResponseClass extends UserClass implements IAuthResponse {
   accessToken: string;
   refreshToken: string;
   refreshTokenExpiryTime: string;
-  user: IUser;
 
   constructor(data: Partial<IAuthResponse> = {}) {
+    super(data);
     this.accessToken = data.accessToken || '';
     this.refreshToken = data.refreshToken || '';
     this.refreshTokenExpiryTime = data.refreshTokenExpiryTime || '';
-    this.user = data.user ? new UserClass(data.user) : new UserClass();
   }
 }
 

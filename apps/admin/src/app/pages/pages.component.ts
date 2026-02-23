@@ -1,4 +1,11 @@
-import { Component, signal, effect, inject, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  signal,
+  computed,
+  effect,
+  inject,
+  PLATFORM_ID,
+} from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { ZardIcon } from '@ihsan/ui/lib/zard/components/icon';
@@ -46,25 +53,28 @@ export class PagesComponent {
       translationKey: 'sidebar.pages.identity',
       icon: 'shield' as ZardIcon,
       group: 'sidebar.groups.user',
-      roles: ['SuperAdmin'],
+      roles: ['Admin', 'SuperAdmin'],
       type: SidebarPageType.Both,
       children: [
         new SidebarPageClass({
           translationKey: 'sidebar.pages.users',
           icon: 'users' as ZardIcon,
           route: '/identity/users',
+          roles: ['Admin', 'SuperAdmin'],
           type: SidebarPageType.Both,
         }),
         new SidebarPageClass({
           translationKey: 'sidebar.pages.roles',
           icon: 'badge-check' as ZardIcon,
           route: '/identity/roles',
+          roles: ['Admin', 'SuperAdmin'],
           type: SidebarPageType.Both,
         }),
         new SidebarPageClass({
           translationKey: 'sidebar.pages.claims',
           icon: 'shield' as ZardIcon,
           route: '/identity/claims',
+          roles: ['Admin', 'SuperAdmin'],
           type: SidebarPageType.Both,
         }),
       ],
@@ -73,6 +83,7 @@ export class PagesComponent {
       translationKey: 'sidebar.pages.tenant',
       icon: 'house' as ZardIcon,
       group: 'sidebar.groups.system',
+      roles: ['SuperAdmin'],
       route: '/tenant',
       type: SidebarPageType.Management,
     }),
@@ -80,6 +91,7 @@ export class PagesComponent {
       translationKey: 'sidebar.pages.translation',
       icon: 'book-open-text' as ZardIcon,
       group: 'sidebar.groups.system',
+      roles: ['Admin', 'SuperAdmin'],
       route: '/translation',
       type: SidebarPageType.Management,
     }),
@@ -88,25 +100,41 @@ export class PagesComponent {
       icon: 'folder' as ZardIcon,
       group: 'sidebar.groups.system',
       action: () => this.openFileManagerDialog(),
+      roles: ['Admin', 'SuperAdmin'],
       type: SidebarPageType.Both,
     }),
     new SidebarPageClass({
       translationKey: 'sidebar.pages.notification',
       icon: 'bell' as ZardIcon,
       group: 'sidebar.groups.system',
+      roles: ['SuperAdmin'],
       route: '/notification',
       type: SidebarPageType.Both,
     }),
   ]);
 
-  currentUser = signal<ISidebarUser>(
-    new SidebarUserClass({
-      name: 'John Doe',
-      username: 'johndoe',
+  currentUser = computed<ISidebarUser>(() => {
+    const user = this._authService.currentUser() as
+      | {
+          firstName?: string;
+          lastName?: string;
+          email?: string;
+          roles?: { name: string }[];
+        }
+      | null
+      | undefined;
+
+    const name = user?.firstName
+      ? `${user.firstName} ${user.lastName || ''}`.trim()
+      : user?.email || 'User';
+
+    return new SidebarUserClass({
+      name: name,
+      username: user?.email || '',
       imageUrl: undefined,
-      roles: ['SuperAdmin'],
-    })
-  );
+      roles: user?.roles?.map((r) => r.name) || [],
+    });
+  });
 
   appTitleTranslationKey = signal<string>('app.title');
 

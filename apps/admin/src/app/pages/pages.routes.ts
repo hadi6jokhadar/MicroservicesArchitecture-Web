@@ -5,7 +5,7 @@ import { identityRoutes } from '../features/identity/identity.routes';
 import { translationRoutes } from '../features/translation/translation.routes';
 import { tenantRoutes } from '../features/tenant/tenant.routes';
 import { notificationRoutes } from '../features/notification/notification.routes';
-import { authGuard } from '@ihsan/core';
+import { authGuard, roleGuard } from '@ihsan/core';
 
 export const pagesRoutes: Routes = [
   {
@@ -22,22 +22,26 @@ export const pagesRoutes: Routes = [
       {
         path: 'identity',
         loadChildren: () => Promise.resolve(identityRoutes),
-        canActivate: [authGuard],
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['Admin', 'SuperAdmin'] },
       },
       {
         path: 'tenant',
         loadChildren: () => Promise.resolve(tenantRoutes),
-        canActivate: [authGuard],
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['SuperAdmin'] },
       },
       {
         path: 'translation',
         loadChildren: () => Promise.resolve(translationRoutes),
-        canActivate: [authGuard],
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['Admin', 'SuperAdmin'] },
       },
       {
         path: 'notification',
         loadChildren: () => Promise.resolve(notificationRoutes),
-        canActivate: [authGuard],
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['SuperAdmin'] },
       },
     ],
   },
