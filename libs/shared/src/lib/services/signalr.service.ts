@@ -10,6 +10,7 @@ export interface SignalRNotification {
   content?: string;
   body?: string;
   type?: string;
+  queueItemId?: number;
   [key: string]: unknown;
 }
 
@@ -39,6 +40,10 @@ export class SignalrService extends BaseSignalrService implements OnDestroy {
       (data: SignalRNotification) => {
         this.notificationReceived.next(data);
 
+        if (data?.queueItemId) {
+          this.acknowledgeDelivery(data.queueItemId);
+        }
+
         const title = data?.title || 'New Notification';
         const description =
           data?.message ||
@@ -52,6 +57,26 @@ export class SignalrService extends BaseSignalrService implements OnDestroy {
         });
       }
     );
+  }
+
+  public async acknowledgeDelivery(queueItemId: number): Promise<void> {
+    if (this.hubConnection?.state === 'Connected') {
+      try {
+        await this.hubConnection.invoke('AcknowledgeDelivery', queueItemId);
+        console.info(
+          `Successfully acknowledged delivery for queue item: ${queueItemId}`
+        );
+      } catch (error) {
+        console.error(
+          `Failed to acknowledge delivery for queue item: ${queueItemId}`,
+          error
+        );
+      }
+    } else {
+      console.warn(
+        'Cannot acknowledge delivery: SignalR connection is not active.'
+      );
+    }
   }
 
   override ngOnDestroy(): void {
