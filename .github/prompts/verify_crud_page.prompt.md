@@ -1,5 +1,6 @@
 ---
-description: Verify if a page follows the CRUD page creation standards and patterns
+agent: 'agent'
+description: 'Verify if a page follows the CRUD page creation standards and patterns.'
 ---
 
 # CRUD Page Verification Workflow
@@ -8,19 +9,17 @@ Use this workflow to audit an existing CRUD page against the project's frontend 
 
 ## 1. Load Standards
 
-First, read the architectural standards defined in the `create_crud_page` workflow:
-`@[MicroservicesArchitecture/.agent/workflows/create_crud_page.md]`
+First, read the architectural standards defined in the `create_crud_page` prompt:
+`.github/prompts/create_crud_page.prompt.md`
 
 ## 2. Analyze Target Page
 
 The user should provide the path to the feature/page they want verified (e.g., `apps/admin/src/app/features/translation`).
 
-1.  **Explore the Structure**: Use `list_dir` to map out the feature's directory, looking for components (list/table, dialogs, sheets), services, and routes.
-2.  **Sample Key Files**: Use `view_file` to inspect the main page component (`.ts`, `.html`), the events service, and the routing file.
+1. **Explore the Structure**: Map out the feature's directory, looking for components (list/table, dialogs, sheets), services, and routes.
+2. **Sample Key Files**: Inspect the main page component (`.ts`, `.html`), the events service, and the routing file.
 
 ## 3. Verification Checklist
-
-Compare the page's implementation against these key requirements:
 
 ### Feature Structure & State
 
@@ -41,7 +40,7 @@ Compare the page's implementation against these key requirements:
 ### Add/Edit Dialogs
 
 - [ ] **Injection**: Must inject `Z_MODAL_DATA` and `ZardDialogRef`.
-- [ ] **Mode Detection**: logic to distinguish between Create and Edit modes.
+- [ ] **Mode Detection**: Logic to distinguish between Create and Edit modes.
 - [ ] **Validation**: Uses Reactive Forms with `z-form-field`, `z-input`, and `z-form-error`.
 - [ ] **Submission**:
   - [ ] Calls distinct API methods for Create vs Update.
@@ -56,14 +55,14 @@ Compare the page's implementation against these key requirements:
 
 ### Internationalization (i18n)
 
-- [ ] **JSON Files**: Feature keys added to `src/assets/i18n/{lang}.json`.
+- [ ] **JSON Files**: Feature keys added to `src/assets/i18n/{en,ar}.json`.
 - [ ] **Usage**: No hardcoded text strings; uses `| translate` pipe.
 
 ### Routing & Navigation
 
 - [ ] **Lazy Loading**: Feature routes defined in `[feature].routes.ts`.
 - [ ] **Main Routes**: Lazy-loaded in `pages.routes.ts` with `authGuard`.
-- [ ] **Sidebar**: Navigation item added to `sidebarPages` in `pages.component.ts`.
+- [ ] **Sidebar**: Navigation item added in `pages.component.ts`.
 
 ## 4. Report Results
 

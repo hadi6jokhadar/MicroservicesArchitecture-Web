@@ -2,9 +2,15 @@
 
 ## 📖 Documentation
 
-**ALWAYS :**
+**ALWAYS READ FIRST:**
 
 1. Tell me you have read the instructions before proceeding.
+2. **`.github/instructions/Angular.instructions.md`** - Angular workflow & mandatory rules
+3. **`.github/instructions/Terminal.instructions.md`** - Terminal command rules
+4. **`.github/instructions/Zardui-Strict.instructions.md`** - Zardui component usage rules
+5. **`Doc/ZARDUI_AI_REFERENCE.md`** - Complete Zardui component reference (MANDATORY for component usage)
+6. **`Doc/TRANSLATION_SYSTEM_GUIDE.md`** - Translation system usage and RTL support (CRITICAL)
+7. **`Doc/DIALOG_DESIGN_GUIDE.md`** - Dialog component patterns and best practices
 
 ## 🚨 Critical Errors to Avoid
 
@@ -234,3 +240,18 @@ libs/
 - ❌ Test files (.spec.ts, jest.config.ts, etc.)
 - ❌ Physical CSS properties (`left`, `right` - use logical properties)
 - ❌ Heavy custom styling when Zardui variants exist
+
+## 🤖 Auto-Maintenance Rules
+
+After completing ANY task, the agent MUST self-check and update instruction files if the codebase changed:
+
+| Change Made                                                        | Section to Update                                                    |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| New/deleted/renamed `Doc/*.md`                                     | This file → "Documentation" reading list (section 1)                 |
+| New Zardui component installed via `install-zardui-components.bat` | This file → "Available Zardui Components" list                       |
+| New lib added to `libs/`                                           | This file → "Project Structure" tree                                 |
+| New page/feature pattern discovered                                | This file → "Best Practices Checklist" or "Anti-Patterns"            |
+| New prompt created in `.github/prompts/`                           | This file → "Documentation" reading list if it's a core workflow     |
+| New Angular doc created in `Doc/`                                  | Root `copilot-instructions.md` → Frontend "Key File Locations" table |
+
+**Do updates inline** — no separate task, update as part of completing the original request.

@@ -1,10 +1,13 @@
 ---
-description: Create new table page with CRUD, filters, and design patterns based on Translations feature
+agent: 'agent'
+description: 'Create a new CRUD page with server-side table, filters, add/edit dialogs, view sheets, and consistent design patterns.'
 ---
 
 # Create New CRUD Page with Server-Side Functionality
 
 This workflow outlines the process of creating a new feature page with a data table, server-side pagination/filtering, add/edit dialogs, view sheets, and consistent design patterns, using the `Translations` feature as the reference implementation.
+
+**Reference Feature**: `apps/admin/src/app/features/translation/translations/`
 
 ## Prerequisites
 
@@ -38,8 +41,6 @@ export class [Feature]EventsService {
 
 ## Step 2: Create the Main Table Page
 
-This page includes the header, filter form, and data table.
-
 **Reference Files:**
 
 - `apps/admin/src/app/features/translation/translations/translations.component.html`
@@ -65,7 +66,6 @@ loadData(): void {
     pageNumber: this.currentPage(),
     pageSize: this.pageSize,
     searchTerm: formValue.searchTerm || undefined,
-    // ... specific filters
   };
 
   this._service.getData(query).subscribe({
@@ -75,9 +75,8 @@ loadData(): void {
       this.totalCount.set(response.totalCount);
       this.isLoading.set(false);
     },
-    error: (error) => {
-       // Handle error
-       this.isLoading.set(false);
+    error: () => {
+      this.isLoading.set(false);
     }
   });
 }
@@ -88,24 +87,21 @@ loadData(): void {
 1. **Header:** Title, subtitle, and action buttons (Create, Export, Import) using `z-button`.
 2. **Filter Card:** `z-card` containing `form` with `z-form-field` inputs.
 3. **Table Card:** `z-card` containing:
-   - `@if (isLoading)`: `z-loader`.
+   - `@if (isLoading())`: `z-loader`.
    - `@else if (empty)`: `z-empty`.
-   - `@else`: Result count header, HTML `table`, and `z-pagination`.
+   - `@else`: Result count header, HTML `table` with `z-table` directives, and `z-pagination`.
 
 ### 2.3 Styling (.scss)
 
-1. Use consistent SCSS variables (`--color-foreground`, `--color-muted`, etc.).
+1. Use CSS variables (`--color-foreground`, `--color-muted`, etc.).
 2. Implement responsive design using `@media (max-width: ...)` breakpoints.
-3. Use strict class nesting (e.g., `.translations-container > .header > .filter-form`).
+3. Use strict class nesting (e.g., `.feature-container > .header > .filter-form`).
 
 ## Step 3: Create Add/Edit Dialogs
 
 Create a dialog component that handles both creation and updates.
 
-**Reference Files:**
-
-- `apps/admin/src/app/features/translation/translations/add-edit-key-dialog/`
-- `apps/admin/src/styles/dialog-shared.css`
+**Reference Files:** `apps/admin/src/app/features/translation/translations/add-edit-key-dialog/`
 
 ### 3.1 Dialog Logic (.ts)
 
@@ -120,28 +116,26 @@ Create a dialog component that handles both creation and updates.
 
 1. Wrap content in `<div class="dialog-container">`.
 2. Use `<form class="dialog-form">`.
-3. Use `z-form-field` + `z-input` logic.
+3. Use `z-form-field` + `z-input` for form controls.
 4. Show inline validation errors using `@if (control.hasError && control.touched)`.
 5. Use `.dialog-actions` for Cancel/Submit buttons at the bottom.
 
 ## Step 4: Create View/Edit Sheet
 
-Create a side sheet for viewing details or managing sub-items (like translation values).
+Create a side sheet for viewing details or managing sub-items.
 
-**Reference Files:**
-
-- `apps/admin/src/app/features/translation/translations/view-values-sheet/`
+**Reference Files:** `apps/admin/src/app/features/translation/translations/view-values-sheet/`
 
 ### 4.1 Sheet Pattern
 
-1. Opened via `this._sheetService.create({ zContent: Component, ... })` from main page.
+1. Opened via `this._sheetService.create({ zContent: Component, zSide: this._rtlService.getSheetSide('right'), ... })` from main page.
 2. Template uses `.sheet-header`, `.sheet-content` structure.
 3. Can contain its own internal form for adding/editing sub-items without closing the sheet.
-4. Updates parent visualization via `eventsService` if changes affect the main table (e.g., counts).
+4. Updates parent via `eventsService` if changes affect the main table.
 
 ## Step 5: Update Translation Files
 
-Always add new keys to avoid hardcoded text.
+Add new keys to avoid hardcoded text.
 
 **Files:**
 
@@ -168,16 +162,13 @@ Always add new keys to avoid hardcoded text.
 
 ## Step 6: Add Routing
 
-Add the new page to the module's routes.
-
 **File:** `apps/admin/src/app/features/[feature]/[feature].routes.ts`
 
 ```typescript
 export const featureRoutes: Routes = [
   {
-    path: "",
+    path: '',
     component: FeatureComponent,
-    // Add resolver if needed to pre-load critical data
   },
 ];
 ```
@@ -197,18 +188,3 @@ export const featureRoutes: Routes = [
 Add the new navigation item to the sidebar menu.
 
 **File:** `apps/admin/src/app/pages/pages.component.ts`
-
-1. Add entry to `sidebarPages` signal:
-
-```typescript
-new SidebarPageClass({
-  translationKey: 'sidebar.pages.[feature]',
-  icon: '[z-icon-name]' as ZardIcon,
-  group: 'sidebar.groups.system', // or appropriate group
-  route: '/[feature-path]',
-}),
-```
-
----
-
-**Note:** Always ensure valid HTML structure, semantic tags, and accessibility attributes (like `[for]` on labels) as demonstrated in the reference files.
