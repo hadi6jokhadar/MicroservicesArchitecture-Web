@@ -13,6 +13,9 @@ export * from './lib/file-manager';
 // Translation
 export * from './lib/translation';
 
+// AI Settings
+export * from './lib/ai-settings';
+
 // Interceptors
 export * from './lib/interceptors';
 

@@ -8,5 +8,6 @@ export const environment: Environment = {
     notification: 'http://localhost:5004',
     fileManager: 'http://localhost:5005',
     translation: 'http://localhost:5006',
+    ai: 'http://localhost:5008',
   },
 };

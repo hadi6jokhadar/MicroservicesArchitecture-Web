@@ -8,6 +8,7 @@ export interface Environment {
     notification: string;
     fileManager: string;
     translation: string;
+    ai: string;
   };
 }
 

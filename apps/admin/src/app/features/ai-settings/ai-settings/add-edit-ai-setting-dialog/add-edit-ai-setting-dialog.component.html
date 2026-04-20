@@ -1,0 +1,157 @@
+<div class="dialog-container">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+    <z-form-field zardId="modelType" #mt="zardId">
+      <label z-form-label [for]="mt.id()"
+        >{{ 'aiSettings.dialog.modelTypeLabel' | translate }} *</label
+      >
+      <z-form-control>
+        <z-select
+          [id]="mt.id()"
+          formControlName="ModelType"
+          [zPlaceholder]="'aiSettings.dialog.modelTypePlaceholder' | translate"
+        >
+          @for (modelType of modelTypeOptions; track modelType) {
+          <z-select-item [zValue]="modelType">{{
+            'aiSettings.modelTypes.' + modelType | translate
+          }}</z-select-item>
+          }
+        </z-select>
+      </z-form-control>
+      @if (form.get('ModelType')?.hasError('required') &&
+      form.get('ModelType')?.touched) {
+      <span z-form-error>{{
+        'aiSettings.validation.modelTypeRequired' | translate
+      }}</span>
+      }
+    </z-form-field>
+
+    <z-form-field zardId="provider" #p="zardId">
+      <label z-form-label [for]="p.id()"
+        >{{ 'aiSettings.dialog.providerLabel' | translate }} *</label
+      >
+      <z-form-control>
+        <input
+          z-input
+          [id]="p.id()"
+          type="text"
+          formControlName="Provider"
+          [placeholder]="'aiSettings.dialog.providerPlaceholder' | translate"
+        />
+      </z-form-control>
+      @if (form.get('Provider')?.hasError('required') &&
+      form.get('Provider')?.touched) {
+      <span z-form-error>{{
+        'aiSettings.validation.providerRequired' | translate
+      }}</span>
+      } @else if (form.get('Provider')?.hasError('maxlength')) {
+      <span z-form-error>{{
+        'aiSettings.validation.providerMaxLength' | translate
+      }}</span>
+      }
+    </z-form-field>
+
+    <z-form-field zardId="modelName" #mn="zardId">
+      <label z-form-label [for]="mn.id()"
+        >{{ 'aiSettings.dialog.modelNameLabel' | translate }} *</label
+      >
+      <z-form-control>
+        <input
+          z-input
+          [id]="mn.id()"
+          type="text"
+          formControlName="ModelName"
+          [placeholder]="'aiSettings.dialog.modelNamePlaceholder' | translate"
+        />
+      </z-form-control>
+      @if (form.get('ModelName')?.hasError('required') &&
+      form.get('ModelName')?.touched) {
+      <span z-form-error>{{
+        'aiSettings.validation.modelNameRequired' | translate
+      }}</span>
+      } @else if (form.get('ModelName')?.hasError('maxlength')) {
+      <span z-form-error>{{
+        'aiSettings.validation.modelNameMaxLength' | translate
+      }}</span>
+      }
+    </z-form-field>
+
+    <z-form-field zardId="apiKey" #ak="zardId">
+      <label z-form-label [for]="ak.id()"
+        >{{ 'aiSettings.dialog.apiKeyLabel' | translate }} *</label
+      >
+      <z-form-control>
+        <input
+          z-input
+          [id]="ak.id()"
+          type="password"
+          formControlName="ApiKey"
+          [placeholder]="'aiSettings.dialog.apiKeyPlaceholder' | translate"
+        />
+      </z-form-control>
+      @if (form.get('ApiKey')?.hasError('required') &&
+      form.get('ApiKey')?.touched) {
+      <span z-form-error>{{
+        'aiSettings.validation.apiKeyRequired' | translate
+      }}</span>
+      } @else if (form.get('ApiKey')?.hasError('maxlength')) {
+      <span z-form-error>{{
+        'aiSettings.validation.apiKeyMaxLength' | translate
+      }}</span>
+      }
+    </z-form-field>
+
+    <z-form-field zardId="tenantId" #t="zardId">
+      <label z-form-label [for]="t.id()">{{
+        'aiSettings.dialog.tenantIdLabel' | translate
+      }}</label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="t.id()"
+          type="text"
+          formControlName="TenantId"
+          [placeholder]="'aiSettings.dialog.tenantIdPlaceholder' | translate"
+        />
+      </z-form-control>
+      @if (form.get('TenantId')?.hasError('maxlength')) {
+      <span z-form-error>{{
+        'aiSettings.validation.tenantIdMaxLength' | translate
+      }}</span>
+      }
+    </z-form-field>
+
+    @if (errorMessage()) {
+    <z-alert
+      zType="destructive"
+      zIcon="circle-alert"
+      [zDescription]="errorMessage()!"
+    />
+    }
+
+    <div class="dialog-actions">
+      <button
+        z-button
+        zType="outline"
+        type="button"
+        (click)="onCancel()"
+        id="cancel-ai-setting-btn"
+      >
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        z-button
+        zType="default"
+        type="submit"
+        [zLoading]="isLoading()"
+        [zDisabled]="form.invalid"
+        id="submit-ai-setting-btn"
+      >
+        @if (isEditMode()) {
+        {{ 'aiSettings.actions.update' | translate }}
+        } @else {
+        {{ 'aiSettings.actions.create' | translate }}
+        }
+      </button>
+    </div>
+  </form>
+</div>

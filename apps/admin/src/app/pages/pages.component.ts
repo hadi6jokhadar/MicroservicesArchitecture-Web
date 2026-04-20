@@ -96,6 +96,14 @@ export class PagesComponent {
       type: SidebarPageType.Management,
     }),
     new SidebarPageClass({
+      translationKey: 'sidebar.pages.aiSettings',
+      icon: 'settings' as ZardIcon,
+      group: 'sidebar.groups.system',
+      roles: ['Admin', 'SuperAdmin'],
+      route: '/ai-settings',
+      type: SidebarPageType.Management,
+    }),
+    new SidebarPageClass({
       translationKey: 'sidebar.pages.fileManager',
       icon: 'folder' as ZardIcon,
       group: 'sidebar.groups.system',

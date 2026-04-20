@@ -8,5 +8,6 @@ export const environment: Environment = {
     notification: 'https://api.yourdomain.com/notification',
     fileManager: 'https://api.yourdomain.com/filemanager',
     translation: 'https://api.yourdomain.com/translation',
+    ai: 'https://api.yourdomain.com/ai',
   },
 };
