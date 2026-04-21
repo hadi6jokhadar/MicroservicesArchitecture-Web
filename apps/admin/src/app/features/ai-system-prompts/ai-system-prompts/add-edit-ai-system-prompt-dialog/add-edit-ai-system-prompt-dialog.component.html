@@ -1,0 +1,111 @@
+<div class="dialog-container">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+    <z-form-field zardId="name" #n="zardId">
+      <label z-form-label [for]="n.id()"
+        >{{ 'aiSystemPrompts.dialog.nameLabel' | translate }} *</label
+      >
+      <z-form-control>
+        <input
+          z-input
+          [id]="n.id()"
+          type="text"
+          formControlName="Name"
+          [placeholder]="'aiSystemPrompts.dialog.namePlaceholder' | translate"
+        />
+      </z-form-control>
+      @if (form.get('Name')?.hasError('required') && form.get('Name')?.touched)
+      {
+      <span z-form-error>{{
+        'aiSystemPrompts.validation.nameRequired' | translate
+      }}</span>
+      } @else if (form.get('Name')?.hasError('maxlength')) {
+      <span z-form-error>{{
+        'aiSystemPrompts.validation.nameMaxLength' | translate
+      }}</span>
+      }
+    </z-form-field>
+
+    <z-form-field zardId="promptText" #pt="zardId">
+      <label z-form-label [for]="pt.id()"
+        >{{ 'aiSystemPrompts.dialog.promptTextLabel' | translate }} *</label
+      >
+      <z-form-control>
+        <textarea
+          z-input
+          [id]="pt.id()"
+          formControlName="PromptText"
+          [placeholder]="
+            'aiSystemPrompts.dialog.promptTextPlaceholder' | translate
+          "
+          rows="8"
+        ></textarea>
+      </z-form-control>
+      @if (form.get('PromptText')?.hasError('required') &&
+      form.get('PromptText')?.touched) {
+      <span z-form-error>{{
+        'aiSystemPrompts.validation.promptTextRequired' | translate
+      }}</span>
+      } @else if (form.get('PromptText')?.hasError('maxlength')) {
+      <span z-form-error>{{
+        'aiSystemPrompts.validation.promptTextMaxLength' | translate
+      }}</span>
+      }
+    </z-form-field>
+
+    <z-form-field zardId="tenantId" #t="zardId">
+      <label z-form-label [for]="t.id()">{{
+        'aiSystemPrompts.dialog.tenantIdLabel' | translate
+      }}</label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="t.id()"
+          type="text"
+          formControlName="TenantId"
+          [placeholder]="
+            'aiSystemPrompts.dialog.tenantIdPlaceholder' | translate
+          "
+        />
+      </z-form-control>
+      @if (form.get('TenantId')?.hasError('maxlength')) {
+      <span z-form-error>{{
+        'aiSystemPrompts.validation.tenantIdMaxLength' | translate
+      }}</span>
+      }
+    </z-form-field>
+
+    @if (errorMessage()) {
+    <z-alert
+      zType="destructive"
+      zIcon="circle-alert"
+      [zDescription]="errorMessage()!"
+    />
+    }
+
+    <div class="dialog-actions">
+      <button
+        z-button
+        zType="outline"
+        type="button"
+        (click)="onCancel()"
+        id="cancel-ai-system-prompt-btn"
+      >
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        z-button
+        zType="default"
+        type="submit"
+        [zLoading]="isLoading()"
+        [zDisabled]="form.invalid"
+        id="submit-ai-system-prompt-btn"
+      >
+        @if (isEditMode()) {
+        {{ 'aiSystemPrompts.actions.update' | translate }}
+        } @else {
+        {{ 'aiSystemPrompts.actions.create' | translate }}
+        }
+      </button>
+    </div>
+  </form>
+</div>

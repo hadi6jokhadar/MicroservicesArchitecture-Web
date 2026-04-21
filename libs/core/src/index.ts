@@ -16,6 +16,9 @@ export * from './lib/translation';
 // AI Settings
 export * from './lib/ai-settings';
 
+// AI System Prompts
+export * from './lib/ai-system-prompts';
+
 // Interceptors
 export * from './lib/interceptors';
 

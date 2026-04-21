@@ -104,6 +104,14 @@ export class PagesComponent {
       type: SidebarPageType.Management,
     }),
     new SidebarPageClass({
+      translationKey: 'sidebar.pages.aiSystemPrompts',
+      icon: 'file-text' as ZardIcon,
+      group: 'sidebar.groups.system',
+      roles: ['Admin', 'SuperAdmin'],
+      route: '/ai-system-prompts',
+      type: SidebarPageType.Management,
+    }),
+    new SidebarPageClass({
       translationKey: 'sidebar.pages.fileManager',
       icon: 'folder' as ZardIcon,
       group: 'sidebar.groups.system',
@@ -179,7 +187,7 @@ export class PagesComponent {
     }
   }
 
-  onPageClick(page: ISidebarPage): void {
+  onPageClick(event: ISidebarPage): void {
     // Page navigation handled by routerLink
   }
 

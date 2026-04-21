@@ -1,0 +1,238 @@
+<div class="ai-system-prompts-container">
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>{{ 'page.title.aiSystemPrompts' | translate }}</h1>
+        <p>{{ 'page.subtitle.aiSystemPrompts' | translate }}</p>
+      </div>
+      <button
+        z-button
+        zType="default"
+        zSize="lg"
+        (click)="onAddPrompt()"
+        id="add-ai-system-prompt-btn"
+      >
+        <z-icon zType="plus" />
+        {{ 'aiSystemPrompts.actions.add' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <z-card>
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <z-form-field
+          class="filter-field search-field"
+          zardId="searchTerm"
+          #s="zardId"
+        >
+          <label z-form-label [for]="s.id()">{{
+            'common.search' | translate
+          }}</label>
+          <z-form-control>
+            <div class="search-input-wrapper">
+              <z-icon zType="search" class="search-icon" />
+              <input
+                z-input
+                [id]="s.id()"
+                type="text"
+                formControlName="searchTerm"
+                [placeholder]="
+                  'aiSystemPrompts.filters.searchPlaceholder' | translate
+                "
+                (keyup.enter)="onSearch()"
+              />
+            </div>
+          </z-form-control>
+        </z-form-field>
+
+        <z-form-field class="filter-field" zardId="scope" #sc="zardId">
+          <label z-form-label [for]="sc.id()">{{
+            'aiSystemPrompts.filters.scopeLabel' | translate
+          }}</label>
+          <z-form-control>
+            <z-select
+              [id]="sc.id()"
+              formControlName="scope"
+              [zPlaceholder]="
+                'aiSystemPrompts.filters.scopePlaceholder' | translate
+              "
+            >
+              <z-select-item zValue="all">{{
+                'aiSystemPrompts.filters.scopeAll' | translate
+              }}</z-select-item>
+              <z-select-item zValue="tenant">{{
+                'aiSystemPrompts.filters.scopeTenant' | translate
+              }}</z-select-item>
+              <z-select-item zValue="global">{{
+                'aiSystemPrompts.filters.scopeGlobal' | translate
+              }}</z-select-item>
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+
+        <div class="filter-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            (click)="onClearFilters()"
+            type="button"
+            id="clear-ai-system-prompts-filters-btn"
+          >
+            <z-icon zType="x" />
+            {{ 'common.clear' | translate }}
+          </button>
+          <button
+            z-button
+            zType="default"
+            zSize="default"
+            (click)="onSearch()"
+            type="button"
+            id="search-ai-system-prompts-btn"
+          >
+            <z-icon zType="search" />
+            {{ 'common.search' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </z-card>
+
+  <z-card class="table-card">
+    @if (isLoading()) {
+    <div class="loading-container">
+      <z-loader zSize="lg" />
+      <p>{{ 'aiSystemPrompts.messages.loading' | translate }}</p>
+    </div>
+    } @else if (pagedPrompts().length === 0) {
+    <div class="empty-container">
+      <z-empty
+        zIcon="settings"
+        [zTitle]="'aiSystemPrompts.messages.emptyTitle' | translate"
+        [zDescription]="'aiSystemPrompts.messages.emptyDescription' | translate"
+      />
+    </div>
+    } @else {
+    <div class="table-container">
+      <div class="table-header">
+        <div class="results-info">
+          <z-icon zType="settings" />
+          <span>
+            {{ 'aiSystemPrompts.showingResults' | translate }}
+            {{ pagedPrompts().length }}
+            {{ 'common.of' | translate }}
+            {{ totalCount() }}
+            {{ 'aiSystemPrompts.items' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table z-table class="ai-system-prompts-table">
+          <thead z-table-header>
+            <tr z-table-row>
+              <th z-table-head class="col-name">
+                {{ 'aiSystemPrompts.table.name' | translate }}
+              </th>
+              <th z-table-head class="col-prompt">
+                {{ 'aiSystemPrompts.table.promptText' | translate }}
+              </th>
+              <th z-table-head class="col-scope">
+                {{ 'aiSystemPrompts.table.scope' | translate }}
+              </th>
+              <th z-table-head class="col-actions">
+                {{ 'aiSystemPrompts.table.actions' | translate }}
+              </th>
+            </tr>
+          </thead>
+          <tbody z-table-body>
+            @for (prompt of pagedPrompts(); track prompt.Id) {
+            <tr z-table-row class="prompt-row">
+              <td
+                z-table-cell
+                class="col-name"
+                [attr.data-label]="'aiSystemPrompts.table.name' | translate"
+              >
+                <span class="prompt-name">{{ prompt.Name }}</span>
+              </td>
+              <td
+                z-table-cell
+                class="col-prompt"
+                [attr.data-label]="
+                  'aiSystemPrompts.table.promptText' | translate
+                "
+              >
+                <span class="prompt-text-preview" [title]="prompt.PromptText">{{
+                  getTruncatedText(prompt.PromptText)
+                }}</span>
+              </td>
+              <td
+                z-table-cell
+                class="col-scope"
+                [attr.data-label]="'aiSystemPrompts.table.scope' | translate"
+              >
+                <z-badge
+                  [zType]="getTenantBadgeType(prompt.TenantId)"
+                  zShape="pill"
+                >
+                  @if (prompt.TenantId) {
+                  {{ prompt.TenantId }}
+                  } @else {
+                  {{ 'aiSystemPrompts.scope.global' | translate }}
+                  }
+                </z-badge>
+              </td>
+              <td
+                z-table-cell
+                class="col-actions"
+                [attr.data-label]="'aiSystemPrompts.table.actions' | translate"
+              >
+                <button
+                  z-button
+                  zType="outline"
+                  zSize="sm"
+                  z-dropdown
+                  [zDropdownMenu]="actionsMenu"
+                  [id]="'ai-system-prompt-actions-' + prompt.Id"
+                >
+                  <z-icon zType="ellipsis" />
+                </button>
+                <z-dropdown-menu-content #actionsMenu="zDropdownMenuContent">
+                  <z-dropdown-menu-item
+                    (click)="onEditPrompt(prompt)"
+                    [id]="'edit-ai-system-prompt-' + prompt.Id"
+                  >
+                    <z-icon zType="file-text" />
+                    {{ 'aiSystemPrompts.actions.edit' | translate }}
+                  </z-dropdown-menu-item>
+
+                  <z-dropdown-menu-item
+                    (click)="onDeletePrompt(prompt)"
+                    [id]="'delete-ai-system-prompt-' + prompt.Id"
+                    class="delete-action"
+                  >
+                    <z-icon zType="trash" />
+                    {{ 'aiSystemPrompts.actions.delete' | translate }}
+                  </z-dropdown-menu-item>
+                </z-dropdown-menu-content>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (totalPages() > 1) {
+      <div class="pagination-container">
+        <z-pagination
+          zSize="sm"
+          [zTotal]="totalPages()"
+          [(zPageIndex)]="currentPage"
+        />
+      </div>
+      }
+    </div>
+    }
+  </z-card>
+</div>

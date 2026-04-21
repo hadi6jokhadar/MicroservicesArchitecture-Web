@@ -4,6 +4,7 @@ import { TestComponentsComponent } from './test-components/test-components.compo
 import { identityRoutes } from '../features/identity/identity.routes';
 import { translationRoutes } from '../features/translation/translation.routes';
 import { aiSettingsRoutes } from '../features/ai-settings/ai-settings.routes';
+import { aiSystemPromptsRoutes } from '../features/ai-system-prompts/ai-system-prompts.routes';
 import { tenantRoutes } from '../features/tenant/tenant.routes';
 import { notificationRoutes } from '../features/notification/notification.routes';
 import { authGuard, roleGuard } from '@ihsan/core';
@@ -41,6 +42,12 @@ export const pagesRoutes: Routes = [
       {
         path: 'ai-settings',
         loadChildren: () => Promise.resolve(aiSettingsRoutes),
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['Admin', 'SuperAdmin'] },
+      },
+      {
+        path: 'ai-system-prompts',
+        loadChildren: () => Promise.resolve(aiSystemPromptsRoutes),
         canActivate: [authGuard, roleGuard],
         data: { roles: ['Admin', 'SuperAdmin'] },
       },
