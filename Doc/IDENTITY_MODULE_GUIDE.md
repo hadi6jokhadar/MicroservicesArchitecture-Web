@@ -2,7 +2,7 @@
 
 **Location:** `libs/core/src/lib/identity/`
 
-**Last Updated:** January 26, 2026
+**Last Updated:** April 21, 2026
 
 ---
 
@@ -606,6 +606,7 @@ const routes: Routes = [
 **Behavior:**
 
 - ✅ Allows access if user has one of the required roles
+- ✅ On page refresh, fetches profile once when token exists but in-memory user is not yet loaded
 - ❌ Redirects to `/login` if not authenticated
 - ❌ Redirects to `/` if authenticated but unauthorized
 
