@@ -32,6 +32,7 @@ interface IAiSettingDialogData {
 }
 
 interface IAiSettingForm {
+  Key: FormControl<string>;
   ModelType: FormControl<ModelTypeEnum>;
   Provider: FormControl<string>;
   ApiKey: FormControl<string>;
@@ -69,6 +70,10 @@ export class AddEditAiSettingDialogComponent {
   readonly modelTypeOptions = MODEL_TYPE_OPTIONS;
 
   readonly form = new FormGroup<IAiSettingForm>({
+    Key: new FormControl<string>(this._data?.setting?.Key || '', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(100)],
+    }),
     ModelType: new FormControl<ModelTypeEnum>(
       this._data?.setting?.ModelType || 'Text',
       {
@@ -106,6 +111,7 @@ export class AddEditAiSettingDialogComponent {
     const formValue = this.form.getRawValue();
     const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
     const request: IUpsertAiProviderSettingRequest = {
+      Key: formValue.Key.trim(),
       ModelType: formValue.ModelType,
       Provider: formValue.Provider.trim(),
       ApiKey: formValue.ApiKey.trim(),

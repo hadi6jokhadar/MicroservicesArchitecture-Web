@@ -98,7 +98,7 @@ export class PagesComponent {
     new SidebarPageClass({
       translationKey: 'sidebar.pages.aiSettings',
       icon: 'settings' as ZardIcon,
-      group: 'sidebar.groups.system',
+      group: 'sidebar.groups.ai',
       roles: ['Admin', 'SuperAdmin'],
       route: '/ai-settings',
       type: SidebarPageType.Management,
@@ -106,7 +106,7 @@ export class PagesComponent {
     new SidebarPageClass({
       translationKey: 'sidebar.pages.aiSystemPrompts',
       icon: 'file-text' as ZardIcon,
-      group: 'sidebar.groups.system',
+      group: 'sidebar.groups.ai',
       roles: ['Admin', 'SuperAdmin'],
       route: '/ai-system-prompts',
       type: SidebarPageType.Management,
@@ -126,6 +126,22 @@ export class PagesComponent {
       roles: ['SuperAdmin'],
       route: '/notification',
       type: SidebarPageType.Both,
+    }),
+    new SidebarPageClass({
+      translationKey: 'sidebar.pages.chatSessions',
+      icon: 'inbox' as ZardIcon,
+      group: 'sidebar.groups.ai',
+      roles: ['SuperAdmin'],
+      route: '/ai-chat-sessions',
+      type: SidebarPageType.Management,
+    }),
+    new SidebarPageClass({
+      translationKey: 'sidebar.pages.tokenUsageLogs',
+      icon: 'activity' as ZardIcon,
+      group: 'sidebar.groups.ai',
+      roles: ['SuperAdmin'],
+      route: '/ai-token-usage-logs',
+      type: SidebarPageType.Management,
     }),
   ]);
 

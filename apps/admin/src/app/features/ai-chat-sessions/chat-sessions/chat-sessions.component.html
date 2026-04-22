@@ -1,0 +1,191 @@
+<div class="chat-sessions-container">
+  <!-- Page Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>{{ 'page.title.chatSessions' | translate }}</h1>
+        <p>{{ 'page.subtitle.chatSessions' | translate }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <z-card>
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <z-form-field
+          class="filter-field search-field"
+          zardId="searchTerm"
+          #s="zardId"
+        >
+          <label z-form-label [for]="s.id()">{{
+            'common.search' | translate
+          }}</label>
+          <z-form-control>
+            <div class="search-input-wrapper">
+              <z-icon zType="search" class="search-icon" />
+              <input
+                z-input
+                [id]="s.id()"
+                type="text"
+                formControlName="searchTerm"
+                [placeholder]="
+                  'chatSessions.filters.searchPlaceholder' | translate
+                "
+                (keyup.enter)="onSearch()"
+              />
+            </div>
+          </z-form-control>
+        </z-form-field>
+
+        <z-form-field class="filter-field" zardId="userId" #u="zardId">
+          <label z-form-label [for]="u.id()">{{
+            'chatSessions.filters.userIdLabel' | translate
+          }}</label>
+          <z-form-control>
+            <input
+              z-input
+              [id]="u.id()"
+              type="text"
+              formControlName="userId"
+              [placeholder]="
+                'chatSessions.filters.userIdPlaceholder' | translate
+              "
+            />
+          </z-form-control>
+        </z-form-field>
+
+        <div class="filter-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            (click)="onClearFilters()"
+            type="button"
+          >
+            <z-icon zType="x" />
+            {{ 'common.clear' | translate }}
+          </button>
+          <button
+            z-button
+            zType="default"
+            zSize="default"
+            (click)="onSearch()"
+            type="button"
+          >
+            <z-icon zType="search" />
+            {{ 'common.search' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </z-card>
+
+  <!-- Table -->
+  <z-card class="table-card">
+    @if (isLoading()) {
+    <div class="loading-container">
+      <z-loader zSize="lg" />
+      <p>{{ 'chatSessions.messages.loading' | translate }}</p>
+    </div>
+    } @else if (pagedSessions().length === 0) {
+    <div class="empty-container">
+      <z-empty
+        zIcon="inbox"
+        [zTitle]="'chatSessions.messages.emptyTitle' | translate"
+        [zDescription]="'chatSessions.messages.emptyDescription' | translate"
+      />
+    </div>
+    } @else {
+    <div class="table-container">
+      <div class="table-header">
+        <div class="results-info">
+          <z-icon zType="inbox" />
+          <span>
+            {{ 'chatSessions.showingResults' | translate }}
+            {{ pagedSessions().length }}
+            {{ 'common.of' | translate }}
+            {{ totalCount() }}
+            {{ 'chatSessions.items' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table z-table class="sessions-table">
+          <thead z-table-header>
+            <tr z-table-row>
+              <th z-table-head>{{ 'chatSessions.table.title' | translate }}</th>
+              <th z-table-head>
+                {{ 'chatSessions.table.userId' | translate }}
+              </th>
+              <th z-table-head>
+                {{ 'chatSessions.table.tenantId' | translate }}
+              </th>
+              <th z-table-head>
+                {{ 'chatSessions.table.createdAt' | translate }}
+              </th>
+              <th z-table-head class="col-actions">
+                {{ 'chatSessions.table.actions' | translate }}
+              </th>
+            </tr>
+          </thead>
+          <tbody z-table-body>
+            @for (session of pagedSessions(); track session.Id) {
+            <tr z-table-row class="session-row">
+              <td
+                z-table-cell
+                [attr.data-label]="'chatSessions.table.title' | translate"
+              >
+                {{ session.Title || ('chatSessions.noTitle' | translate) }}
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'chatSessions.table.userId' | translate"
+              >
+                <span class="mono-text">{{ session.UserId }}</span>
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'chatSessions.table.tenantId' | translate"
+              >
+                <z-badge zType="secondary" zShape="pill">{{
+                  session.TenantId
+                }}</z-badge>
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'chatSessions.table.createdAt' | translate"
+              >
+                {{ session.CreatedAt | date : 'medium' }}
+              </td>
+              <td
+                z-table-cell
+                class="col-actions"
+                [attr.data-label]="'chatSessions.table.actions' | translate"
+              >
+                <button
+                  z-button
+                  zType="outline"
+                  zSize="sm"
+                  (click)="onViewSession(session)"
+                >
+                  <z-icon zType="inbox" />
+                  {{ 'chatSessions.actions.viewMessages' | translate }}
+                </button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (totalPages() > 1) {
+      <div class="pagination-container">
+        <z-pagination [zTotal]="totalPages()" [(zPageIndex)]="currentPage" />
+      </div>
+      }
+    </div>
+    }
+  </z-card>
+</div>

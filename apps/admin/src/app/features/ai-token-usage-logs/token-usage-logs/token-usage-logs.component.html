@@ -1,0 +1,228 @@
+<div class="token-logs-container">
+  <!-- Page Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>{{ 'page.title.tokenUsageLogs' | translate }}</h1>
+        <p>{{ 'page.subtitle.tokenUsageLogs' | translate }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <z-card>
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <z-form-field
+          class="filter-field search-field"
+          zardId="searchTerm"
+          #s="zardId"
+        >
+          <label z-form-label [for]="s.id()">{{
+            'common.search' | translate
+          }}</label>
+          <z-form-control>
+            <div class="search-input-wrapper">
+              <z-icon zType="search" class="search-icon" />
+              <input
+                z-input
+                [id]="s.id()"
+                type="text"
+                formControlName="searchTerm"
+                [placeholder]="
+                  'tokenUsageLogs.filters.searchPlaceholder' | translate
+                "
+                (keyup.enter)="onSearch()"
+              />
+            </div>
+          </z-form-control>
+        </z-form-field>
+
+        <z-form-field class="filter-field" zardId="modelName" #m="zardId">
+          <label z-form-label [for]="m.id()">{{
+            'tokenUsageLogs.filters.modelNameLabel' | translate
+          }}</label>
+          <z-form-control>
+            <input
+              z-input
+              [id]="m.id()"
+              type="text"
+              formControlName="modelName"
+              [placeholder]="
+                'tokenUsageLogs.filters.modelNamePlaceholder' | translate
+              "
+            />
+          </z-form-control>
+        </z-form-field>
+
+        <z-form-field class="filter-field" zardId="endpoint" #e="zardId">
+          <label z-form-label [for]="e.id()">{{
+            'tokenUsageLogs.filters.endpointLabel' | translate
+          }}</label>
+          <z-form-control>
+            <input
+              z-input
+              [id]="e.id()"
+              type="text"
+              formControlName="endpoint"
+              [placeholder]="
+                'tokenUsageLogs.filters.endpointPlaceholder' | translate
+              "
+            />
+          </z-form-control>
+        </z-form-field>
+
+        <div class="filter-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            (click)="onClearFilters()"
+            type="button"
+          >
+            <z-icon zType="x" />
+            {{ 'common.clear' | translate }}
+          </button>
+          <button
+            z-button
+            zType="default"
+            zSize="default"
+            (click)="onSearch()"
+            type="button"
+          >
+            <z-icon zType="search" />
+            {{ 'common.search' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </z-card>
+
+  <!-- Table -->
+  <z-card class="table-card">
+    @if (isLoading()) {
+    <div class="loading-container">
+      <z-loader zSize="lg" />
+      <p>{{ 'tokenUsageLogs.messages.loading' | translate }}</p>
+    </div>
+    } @else if (pagedLogs().length === 0) {
+    <div class="empty-container">
+      <z-empty
+        zIcon="activity"
+        [zTitle]="'tokenUsageLogs.messages.emptyTitle' | translate"
+        [zDescription]="'tokenUsageLogs.messages.emptyDescription' | translate"
+      />
+    </div>
+    } @else {
+    <div class="table-container">
+      <div class="table-header">
+        <div class="results-info">
+          <z-icon zType="activity" />
+          <span>
+            {{ 'tokenUsageLogs.showingResults' | translate }}
+            {{ pagedLogs().length }}
+            {{ 'common.of' | translate }}
+            {{ totalCount() }}
+            {{ 'tokenUsageLogs.items' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table z-table class="logs-table">
+          <thead z-table-header>
+            <tr z-table-row>
+              <th z-table-head>
+                {{ 'tokenUsageLogs.table.modelName' | translate }}
+              </th>
+              <th z-table-head>
+                {{ 'tokenUsageLogs.table.endpoint' | translate }}
+              </th>
+              <th z-table-head>
+                {{ 'tokenUsageLogs.table.tenantId' | translate }}
+              </th>
+              <th z-table-head>
+                {{ 'tokenUsageLogs.table.promptTokens' | translate }}
+              </th>
+              <th z-table-head>
+                {{ 'tokenUsageLogs.table.completionTokens' | translate }}
+              </th>
+              <th z-table-head>
+                {{ 'tokenUsageLogs.table.totalTokens' | translate }}
+              </th>
+              <th z-table-head>
+                {{ 'tokenUsageLogs.table.createdAt' | translate }}
+              </th>
+            </tr>
+          </thead>
+          <tbody z-table-body>
+            @for (log of pagedLogs(); track log.Id) {
+            <tr z-table-row class="log-row">
+              <td
+                z-table-cell
+                [attr.data-label]="'tokenUsageLogs.table.modelName' | translate"
+              >
+                <z-badge zType="secondary" zShape="pill">{{
+                  log.ModelName
+                }}</z-badge>
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'tokenUsageLogs.table.endpoint' | translate"
+              >
+                <span class="endpoint-text">{{ log.Endpoint }}</span>
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'tokenUsageLogs.table.tenantId' | translate"
+              >
+                {{ log.TenantId || '-' }}
+              </td>
+              <td
+                z-table-cell
+                class="col-number"
+                [attr.data-label]="
+                  'tokenUsageLogs.table.promptTokens' | translate
+                "
+              >
+                {{ log.PromptTokens }}
+              </td>
+              <td
+                z-table-cell
+                class="col-number"
+                [attr.data-label]="
+                  'tokenUsageLogs.table.completionTokens' | translate
+                "
+              >
+                {{ log.CompletionTokens }}
+              </td>
+              <td
+                z-table-cell
+                class="col-number total-tokens"
+                [attr.data-label]="
+                  'tokenUsageLogs.table.totalTokens' | translate
+                "
+              >
+                {{ log.TotalTokens }}
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'tokenUsageLogs.table.createdAt' | translate"
+              >
+                {{ log.CreatedAt | date : 'medium' }}
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (totalPages() > 1) {
+      <div class="pagination-container">
+        <z-pagination [zTotal]="totalPages()" [(zPageIndex)]="currentPage" />
+      </div>
+      }
+    </div>
+    }
+  </z-card>
+</div>

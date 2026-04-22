@@ -5,6 +5,8 @@ import { identityRoutes } from '../features/identity/identity.routes';
 import { translationRoutes } from '../features/translation/translation.routes';
 import { aiSettingsRoutes } from '../features/ai-settings/ai-settings.routes';
 import { aiSystemPromptsRoutes } from '../features/ai-system-prompts/ai-system-prompts.routes';
+import { aiChatSessionsRoutes } from '../features/ai-chat-sessions/ai-chat-sessions.routes';
+import { aiTokenUsageLogsRoutes } from '../features/ai-token-usage-logs/ai-token-usage-logs.routes';
 import { tenantRoutes } from '../features/tenant/tenant.routes';
 import { notificationRoutes } from '../features/notification/notification.routes';
 import { authGuard, roleGuard } from '@ihsan/core';
@@ -54,6 +56,18 @@ export const pagesRoutes: Routes = [
       {
         path: 'notification',
         loadChildren: () => Promise.resolve(notificationRoutes),
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['SuperAdmin'] },
+      },
+      {
+        path: 'ai-chat-sessions',
+        loadChildren: () => Promise.resolve(aiChatSessionsRoutes),
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['SuperAdmin'] },
+      },
+      {
+        path: 'ai-token-usage-logs',
+        loadChildren: () => Promise.resolve(aiTokenUsageLogsRoutes),
         canActivate: [authGuard, roleGuard],
         data: { roles: ['SuperAdmin'] },
       },

@@ -17,6 +17,7 @@ export type AiSettingsScopeFilter = 'all' | 'tenant' | 'global';
 
 export interface IAiProviderSetting {
   Id: string;
+  Key: string;
   ModelType: ModelTypeEnum;
   Provider: string;
   ApiKey: string;
@@ -26,6 +27,7 @@ export interface IAiProviderSetting {
 
 export class AiProviderSettingClass implements IAiProviderSetting {
   Id: string;
+  Key: string;
   ModelType: ModelTypeEnum;
   Provider: string;
   ApiKey: string;
@@ -34,6 +36,7 @@ export class AiProviderSettingClass implements IAiProviderSetting {
 
   constructor(data: Partial<IAiProviderSetting> = {}) {
     this.Id = data.Id || '';
+    this.Key = data.Key || '';
     this.ModelType = data.ModelType || 'Text';
     this.Provider = data.Provider || '';
     this.ApiKey = data.ApiKey || '';
@@ -43,6 +46,7 @@ export class AiProviderSettingClass implements IAiProviderSetting {
 }
 
 export interface IUpsertAiProviderSettingRequest {
+  Key: string;
   ModelType: ModelTypeEnum;
   Provider: string;
   ApiKey: string;

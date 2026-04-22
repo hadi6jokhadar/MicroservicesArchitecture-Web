@@ -28,6 +28,12 @@ export class AiSettingsService {
     return this._http.get<IAiProviderSetting>(`${this._baseUrl}/${id}`);
   }
 
+  getSettingByKey(key: string): Observable<IAiProviderSetting | null> {
+    return this._http.get<IAiProviderSetting | null>(
+      `${this._baseUrl}/by-key/${encodeURIComponent(key)}`
+    );
+  }
+
   createSetting(
     request: IUpsertAiProviderSettingRequest,
     context?: HttpContext

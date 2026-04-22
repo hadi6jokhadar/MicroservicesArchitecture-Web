@@ -171,6 +171,9 @@
         <table z-table class="ai-settings-table">
           <thead z-table-header>
             <tr z-table-row>
+              <th z-table-head class="col-key">
+                {{ 'aiSettings.table.key' | translate }}
+              </th>
               <th z-table-head class="col-provider">
                 {{ 'aiSettings.table.provider' | translate }}
               </th>
@@ -194,6 +197,13 @@
           <tbody z-table-body>
             @for (setting of pagedSettings(); track setting.Id) {
             <tr z-table-row class="setting-row">
+              <td
+                z-table-cell
+                class="col-key"
+                [attr.data-label]="'aiSettings.table.key' | translate"
+              >
+                <span class="key-text">{{ setting.Key }}</span>
+              </td>
               <td
                 z-table-cell
                 class="col-provider"

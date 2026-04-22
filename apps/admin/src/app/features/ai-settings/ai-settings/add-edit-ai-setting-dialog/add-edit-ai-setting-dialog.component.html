@@ -1,5 +1,29 @@
 <div class="dialog-container">
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+    <z-form-field zardId="key" #k="zardId">
+      <label z-form-label [for]="k.id()"
+        >{{ 'aiSettings.dialog.keyLabel' | translate }} *</label
+      >
+      <z-form-control>
+        <input
+          z-input
+          [id]="k.id()"
+          type="text"
+          formControlName="Key"
+          [placeholder]="'aiSettings.dialog.keyPlaceholder' | translate"
+        />
+      </z-form-control>
+      @if (form.get('Key')?.hasError('required') && form.get('Key')?.touched) {
+      <span z-form-error>{{
+        'aiSettings.validation.keyRequired' | translate
+      }}</span>
+      } @else if (form.get('Key')?.hasError('maxlength')) {
+      <span z-form-error>{{
+        'aiSettings.validation.keyMaxLength' | translate
+      }}</span>
+      }
+    </z-form-field>
+
     <z-form-field zardId="modelType" #mt="zardId">
       <label z-form-label [for]="mt.id()"
         >{{ 'aiSettings.dialog.modelTypeLabel' | translate }} *</label

@@ -1,0 +1,113 @@
+<div class="messages-sheet">
+  <!-- Header -->
+  <div class="sheet-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h2>{{ 'chatSessions.sheet.title' | translate }}</h2>
+        @if (session) {
+        <p class="session-meta">
+          <span class="meta-label">{{
+            'chatSessions.sheet.sessionId' | translate
+          }}</span>
+          <span class="mono-text">{{ session.Id }}</span>
+        </p>
+        <p class="session-meta">
+          <span class="meta-label">{{
+            'chatSessions.sheet.userId' | translate
+          }}</span>
+          <span class="mono-text">{{ session.UserId }}</span>
+        </p>
+        @if (session.Title) {
+        <p class="session-meta">
+          <span class="meta-label">{{
+            'chatSessions.sheet.sessionTitle' | translate
+          }}</span>
+          <span>{{ session.Title }}</span>
+        </p>
+        } }
+      </div>
+      <button z-button zType="outline" zSize="sm" (click)="onClose()">
+        <z-icon zType="x" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="sheet-content">
+    @if (isLoading()) {
+    <div class="loading-state">
+      <z-loader zSize="lg" />
+    </div>
+    } @else if (messagesWithFiles().length === 0) {
+    <z-empty
+      zIcon="inbox"
+      [zTitle]="'chatSessions.sheet.emptyTitle' | translate"
+      [zDescription]="'chatSessions.sheet.emptyDescription' | translate"
+    />
+    } @else {
+    <div class="messages-list">
+      @for (item of messagesWithFiles(); track item.message.Id; let i = $index)
+      {
+      <div class="message-card" [class]="'role-' + item.message.Role">
+        <!-- Message header -->
+        <div class="message-header">
+          <z-badge [zType]="getRoleBadgeType(item.message.Role)" zShape="pill">
+            {{ item.message.Role }}
+          </z-badge>
+          <span class="message-time">{{
+            item.message.CreatedAt | date : 'short'
+          }}</span>
+        </div>
+
+        <!-- Message content -->
+        <div class="message-content">
+          {{ item.message.Content }}
+        </div>
+
+        <!-- Tokens -->
+        <div class="message-tokens">
+          <span
+            ><z-icon zType="arrow-up" /> {{ item.message.PromptTokens }}</span
+          >
+          <span
+            ><z-icon zType="chevron-down" />
+            {{ item.message.CompletionTokens }}</span
+          >
+        </div>
+
+        <!-- Files toggle -->
+        @if (item.files.length > 0) {
+        <div class="files-section">
+          <button
+            z-button
+            zType="outline"
+            zSize="sm"
+            (click)="toggleFiles(i)"
+            class="files-toggle"
+          >
+            <z-icon
+              [zType]="item.filesExpanded ? 'chevron-up' : 'chevron-down'"
+            />
+            {{ 'chatSessions.sheet.files' | translate }} ({{
+              item.files.length
+            }})
+          </button>
+
+          @if (item.filesExpanded) {
+          <div class="files-list">
+            @for (file of item.files; track file.FileId) {
+            <div class="file-item">
+              <z-icon zType="file" />
+              <span class="mono-text">{{ file.FileId }}</span>
+            </div>
+            }
+          </div>
+          }
+        </div>
+        }
+      </div>
+      }
+    </div>
+    }
+  </div>
+</div>

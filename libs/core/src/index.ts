@@ -19,6 +19,9 @@ export * from './lib/ai-settings';
 // AI System Prompts
 export * from './lib/ai-system-prompts';
 
+// AI Chat
+export * from './lib/ai-chat';
+
 // Interceptors
 export * from './lib/interceptors';
 
