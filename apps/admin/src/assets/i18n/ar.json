@@ -354,6 +354,7 @@
   "fileManager.groups.System": "نظام",
   "fileManager.groups.Project": "مشروع",
   "fileManager.groups.Archive": "أرشيف",
+  "fileManager.groups.AI": "ذكاء اصطناعي",
 
   "fileManager.types.Music": "موسيقى",
   "fileManager.types.Video": "فيديو",

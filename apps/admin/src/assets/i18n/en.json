@@ -355,6 +355,7 @@
   "fileManager.groups.System": "System",
   "fileManager.groups.Project": "Project",
   "fileManager.groups.Archive": "Archive",
+  "fileManager.groups.AI": "AI",
 
   "fileManager.types.Music": "Music",
   "fileManager.types.Video": "Video",

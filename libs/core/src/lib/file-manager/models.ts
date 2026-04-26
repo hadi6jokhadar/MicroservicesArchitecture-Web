@@ -4,6 +4,7 @@ export enum FileGroup {
   System = 3,
   Project = 4,
   Archive = 5,
+  AI = 6,
 }
 
 export enum FileType {
