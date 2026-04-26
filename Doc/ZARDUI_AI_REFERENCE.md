@@ -484,6 +484,193 @@ constructor() {
 
 ---
 
+### Binding Patterns for ZardSelectComponent
+
+**RECOMMENDED PATTERN - Reactive Forms with FormGroup:**
+
+This is the **most reliable pattern** for managing z-select state, especially with dynamic items and clearing support.
+
+```typescript
+// Component
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+
+export class MyComponent {
+  filterForm: FormGroup;
+
+  constructor(private _formBuilder: FormBuilder) {
+    this.filterForm = this._formBuilder.group({
+      status: [''], // Empty string for "None" option
+      role: [''],
+    });
+  }
+
+  ngOnInit(): void {
+    // Optional: Subscribe to changes
+    this.filterForm
+      .get('status')
+      ?.valueChanges.pipe(takeUntilDestroyed())
+      .subscribe(() => this.loadData());
+  }
+
+  // Reset/Clear - Using FormGroup
+  clearSelection(): void {
+    this.filterForm.reset();
+  }
+
+  // Reset specific control
+  resetStatus(): void {
+    this.filterForm.get('status')?.setValue('');
+  }
+}
+```
+
+```html
+<!-- Static items -->
+<z-select [formControl]="$any(filterForm.get('status'))">
+  <z-select-item zValue="">All Status</z-select-item>
+  <z-select-item zValue="active">Active</z-select-item>
+  <z-select-item zValue="inactive">Inactive</z-select-item>
+</z-select>
+
+<!-- Dynamic items - MUST wrap with @if -->
+@if (roles().length > 0) {
+<z-select [formControl]="$any(filterForm.get('role'))">
+  <z-select-item zValue="">All Roles</z-select-item>
+  @for (role of roles(); track role.id) {
+  <z-select-item [zValue]="role.name">{{ role.name }}</z-select-item>
+  }
+</z-select>
+}
+```
+
+**Benefits of Reactive Forms Pattern:**
+
+- ✅ **State management** - Form controls handle all state
+- ✅ **Clearing/Reset** - Use `form.reset()` or `form.get('control').setValue('')`
+- ✅ **Validation** - Built-in validators support
+- ✅ **Dynamic updates** - Reactive to data changes
+- ✅ **Multiple controls** - Manage multiple selections easily
+- ✅ **Type safe** - Use `$any()` for template type checking bypass
+
+---
+
+**SIMPLE PATTERN - Plain Property with `[(zValue)]`:**
+
+For simple, non-dynamic cases where you only need state storage:
+
+```typescript
+// Component
+selectedStatus = '';
+selectedRole = '';
+```
+
+```html
+<!-- Static items only -->
+<z-select [(zValue)]="selectedStatus">
+  <z-select-item zValue="">All</z-select-item>
+  <z-select-item zValue="active">Active</z-select-item>
+</z-select>
+```
+
+**Limitations:**
+
+- ❌ No built-in validation
+- ❌ No valueChanges observable
+- ❌ Clearing requires manual property manipulation
+- ✅ Works best for simple, static cases
+
+---
+
+**CRITICAL - Dynamic Items MUST Use `@if` Wrapper:**
+
+According to ZARDUI documentation: "⚠️ **Dynamic items require conditional rendering** - Wrap z-select with `@for` loops"
+
+The wrapper condition must be data driven. Do not use a constant condition such as `@if (true)` for dynamic items, because the select will not remount when async data arrives and interaction can break.
+
+```html
+<!-- ❌ WRONG - No @if wrapper, won't work -->
+<z-select [(zValue)]="selectedRole">
+  @for (role of roles(); track role.id) {
+  <z-select-item [zValue]="role.name">{{ role.name }}</z-select-item>
+  }
+</z-select>
+
+<!-- ✅ CORRECT - Must wrap with @if -->
+@if (roles().length > 0) {
+<z-select [(zValue)]="selectedRole">
+  <z-select-item zValue="">None</z-select-item>
+  @for (role of roles(); track role.id) {
+  <z-select-item [zValue]="role.name">{{ role.name }}</z-select-item>
+  }
+</z-select>
+}
+```
+
+**Empty/Clearing Pattern (FormGroup Approach):**
+
+```html
+<z-select [formControl]="$any(filterForm.get('prompt'))">
+  <!-- Use a sentinel value for None because zValue requires a non-empty string in this setup -->
+  <z-select-item zValue="_empty_">None</z-select-item>
+  @for (prompt of prompts(); track prompt.id) {
+  <z-select-item [zValue]="prompt.name">{{ prompt.name }}</z-select-item>
+  }
+</z-select>
+```
+
+**Clearing in TypeScript:**
+
+```typescript
+// Clear specific control (use null when resetting state)
+this.filterForm.get('prompt')?.setValue(null);
+
+// Clear all form controls
+this.filterForm.reset();
+
+// Before API request: map sentinel to null so backend receives no prompt
+const selectedPrompt = this.filterForm.get('prompt')?.value;
+const promptForApi = selectedPrompt === '_empty_' ? null : selectedPrompt;
+```
+
+When prompt options come from an async array, render the prompt select only when the array has items (for example `@if (prompts().length > 0)`).
+
+**❌ PATTERNS THAT DON'T WORK:**
+
+```html
+<!-- ❌ NO @if wrapper with @for -->
+<z-select [(zValue)]="value">
+  @for (item of items(); track item.id) {
+  <!-- Missing @if causes selection to fail -->
+  }
+</z-select>
+
+<!-- ❌ Using [ngModel] instead of [(zValue)] or [formControl] -->
+<z-select [ngModel]="value" (ngModelChange)="value = $event">
+  <!-- Doesn't work reliably with z-select -->
+</z-select>
+```
+
+**Quick Reference Table:**
+
+| Pattern                                | Works | Use Case                                               |
+| -------------------------------------- | ----- | ------------------------------------------------------ |
+| `[formControl]` + FormGroup            | ✅    | **RECOMMENDED** - Dynamic items, validation, resetting |
+| `[(zValue)]` + plain property          | ✅    | Simple static items, no validation needed              |
+| `[(zValue)]` + `@if` wrapper (dynamic) | ✅    | **REQUIRED** for dynamic items with plain properties   |
+| `[ngModel]` + `(ngModelChange)`        | ❌    | Doesn't work reliably with z-select                    |
+| `model()` + `[(zValue)]`               | ❌    | Overcomplicated, not compatible                        |
+
+**Real-World Example (AI Chat Component):**
+
+See [ai-chat-dialog.component.ts](../../libs/shared/src/lib/components/ai-chat/ai-chat-dialog.component.ts) and [ai-chat-dialog.component.html](../../libs/shared/src/lib/components/ai-chat/ai-chat-dialog.component.html) for a complete implementation using the Reactive Forms pattern with:
+
+- FormGroup for toolbar controls (settings key, system prompt)
+- Dynamic items with `@if` wrapper
+- Clearing via `formControlName` binding
+- Value access via `form.get('control')?.value`
+
+---
+
 ### Dropdown Menu Component
 
 **Import:**

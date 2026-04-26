@@ -1,0 +1,274 @@
+<div class="chat-container">
+  <!-- ── Sessions Sidebar ───────────────────────────────────────────── -->
+  <div class="chat-sessions">
+    <div class="sessions-header">
+      <span class="sessions-title">{{
+        'aiChat.sessions.title' | translate
+      }}</span>
+      <z-button zType="ghost" zSize="sm" (click)="startNewChat()">
+        <z-icon zType="plus" />
+      </z-button>
+    </div>
+
+    <z-divider />
+
+    @if (sessionsLoading()) {
+    <div class="sessions-loading">
+      <z-loader zSize="sm" />
+    </div>
+    } @else if (sessions().length === 0) {
+    <div class="sessions-empty">
+      <z-icon zType="inbox" />
+      <p>{{ 'aiChat.sessions.empty' | translate }}</p>
+    </div>
+    } @else {
+    <div class="sessions-list">
+      @for (session of sessions(); track session.Id) {
+      <button
+        class="session-item"
+        [class.active]="activeSession()?.Id === session.Id"
+        [class.editing]="editingSessionId() === session.Id"
+        (click)="selectSession(session)"
+      >
+        <z-icon zType="inbox" class="session-icon" />
+        <div class="session-info">
+          @if (editingSessionId() === session.Id) {
+          <input
+            class="session-title-input"
+            [ngModel]="editingTitle()"
+            (ngModelChange)="editingTitle.set($event)"
+            (click)="$event.stopPropagation()"
+            (keydown.enter)="confirmEdit(session, $event)"
+            (keydown.escape)="cancelEdit($event)"
+          />
+          } @else {
+          <span class="session-title">
+            {{ session.Title || ('aiChat.sessions.noTitle' | translate) }}
+          </span>
+          <span class="session-date">
+            {{ session.CreatedAt | date : 'shortDate' }}
+          </span>
+          }
+        </div>
+
+        @if (editingSessionId() === session.Id) {
+        <div class="session-edit-actions">
+          <button
+            class="session-action-btn confirm-btn"
+            (click)="confirmEdit(session, $event)"
+            title="Save"
+          >
+            <z-icon zType="check" />
+          </button>
+          <button
+            class="session-action-btn cancel-btn"
+            (click)="cancelEdit($event)"
+            title="Cancel"
+          >
+            <z-icon zType="x" />
+          </button>
+        </div>
+        } @else {
+        <div class="session-item-actions">
+          <button
+            class="session-action-icon-btn"
+            (click)="startEditing(session, $event)"
+            title="Rename"
+          >
+            <z-icon zType="file-text" />
+          </button>
+          <button
+            class="session-action-icon-btn delete"
+            (click)="deleteSession(session, $event)"
+            [title]="'aiChat.sessions.delete' | translate"
+          >
+            <z-icon zType="trash" />
+          </button>
+        </div>
+        }
+      </button>
+      }
+    </div>
+    }
+  </div>
+
+  <!-- ── Chat Area ─────────────────────────────────────────────────── -->
+  <div class="chat-main">
+    <!-- Toolbar -->
+    <div class="chat-toolbar">
+      <div class="toolbar-left">
+        @if (hasActiveSession()) {
+        <z-badge zType="secondary">
+          {{ 'aiChat.toolbar.session' | translate }}:
+          {{ activeSession()!.Id | slice : 0 : 8 }}...
+        </z-badge>
+        } @else {
+        <z-badge zType="outline">
+          {{ 'aiChat.toolbar.newChat' | translate }}
+        </z-badge>
+        }
+      </div>
+
+      <div class="toolbar-right">
+        <!-- Stream toggle -->
+        <div class="stream-toggle">
+          <z-checkbox
+            [ngModel]="useStream()"
+            (checkChange)="onUseStreamChange($event)"
+          >
+            {{ 'aiChat.toolbar.useStream' | translate }}
+          </z-checkbox>
+        </div>
+
+        <div class="toolbar-selects">
+          <!-- Settings key selector -->
+          @if (settingsKeys().length > 0) {
+          <z-select
+            [formControl]="$any(toolbarForm.get('selectedSettingsKey'))"
+            [zPlaceholder]="'aiChat.toolbar.settingsKey' | translate"
+            class="settings-key-select"
+          >
+            @for (key of settingsKeys(); track key) {
+            <z-select-item [zValue]="key">{{ key }}</z-select-item>
+            }
+          </z-select>
+          } @else {
+          <input
+            z-input
+            [formControl]="$any(toolbarForm.get('selectedSettingsKey'))"
+            [placeholder]="'aiChat.toolbar.settingsKeyPlaceholder' | translate"
+            class="settings-key-input"
+          />
+          }
+
+          <!-- System prompt selector -->
+          @if (systemPrompts().length > 0) {
+          <z-select
+            [formControl]="$any(toolbarForm.get('selectedSystemPromptKey'))"
+            [zPlaceholder]="'aiChat.toolbar.systemPrompt' | translate"
+            class="system-prompt-select"
+          >
+            <z-select-item zValue="_empty_">
+              {{ 'aiChat.toolbar.noSystemPrompt' | translate }}
+            </z-select-item>
+            @for (prompt of systemPrompts(); track prompt.Name) {
+            <z-select-item [zValue]="prompt.Name">{{
+              prompt.Name
+            }}</z-select-item>
+            }
+          </z-select>
+          }
+        </div>
+      </div>
+    </div>
+
+    <z-divider />
+
+    <!-- Error banner -->
+    @if (errorMessage()) {
+    <z-alert
+      zType="destructive"
+      zIcon="circle-alert"
+      [zDescription]="errorMessage()!"
+      class="chat-error"
+    />
+    }
+
+    <!-- Messages -->
+    <div class="chat-messages" #messagesContainer>
+      @if (loading()) {
+      <div class="messages-loading">
+        <z-loader />
+        <span>{{ 'common.loading' | translate }}</span>
+      </div>
+      } @else if (messages().length === 0) {
+      <div class="messages-empty">
+        <z-icon zType="sparkles" class="empty-icon" />
+        <p>{{ 'aiChat.messages.empty' | translate }}</p>
+        <span>{{ 'aiChat.messages.emptyHint' | translate }}</span>
+      </div>
+      } @else { @for (msg of messages(); track $index) {
+      <div
+        class="message-row"
+        [class.user-row]="msg.role === 'user'"
+        [class.assistant-row]="msg.role === 'assistant'"
+      >
+        @if (msg.role === 'assistant') {
+        <div class="avatar assistant-avatar">
+          <z-icon zType="sparkles" />
+        </div>
+        }
+
+        <div
+          class="message-bubble"
+          [class.user-bubble]="msg.role === 'user'"
+          [class.assistant-bubble]="msg.role === 'assistant'"
+        >
+          <p class="message-content" [style.white-space]="'pre-wrap'">
+            {{ msg.content }}
+            @if(msg.streaming){
+            <span class="streaming-cursor"></span>
+            }
+          </p>
+        </div>
+
+        @if (msg.role === 'user') {
+        <div class="avatar user-avatar">
+          <z-icon zType="user" />
+        </div>
+        }
+      </div>
+      } }
+    </div>
+
+    <z-divider />
+
+    <!-- Input area -->
+    <div class="chat-input-area">
+      <div class="input-row">
+        <!-- File attachment + attached files preview -->
+        <div class="input-bottom-row">
+          <shared-file-selector
+            [maxFiles]="10"
+            selectionMode="multiple"
+            [group]="aiFileGroup"
+            label=""
+            buttonType="ghost"
+            viewMode="badge"
+            [allowSubmitEmpty]="true"
+            [files]="attachedFiles()"
+            (filesChanged)="onFilesChanged($event)"
+          />
+        </div>
+        <!-- Text input -->
+        <textarea
+          z-input
+          class="message-input"
+          [placeholder]="'aiChat.input.placeholder' | translate"
+          [ngModel]="inputText()"
+          (ngModelChange)="inputText.set($event)"
+          (keydown)="onInputKeydown($event)"
+          rows="1"
+        ></textarea>
+
+        <!-- Stop streaming button -->
+        @if (streaming()) {
+        <z-button zType="destructive" zSize="sm" (click)="stopStreaming()">
+          <z-icon zType="square" />
+        </z-button>
+        } @else {
+        <!-- Send button -->
+        <z-button
+          zType="default"
+          zSize="sm"
+          [zDisabled]="!canSend()"
+          (click)="sendMessage()"
+        >
+          <z-icon zType="arrow-right" />
+        </z-button>
+        }
+      </div>
+      <p class="input-hint">{{ 'aiChat.input.hint' | translate }}</p>
+    </div>
+  </div>
+</div>

@@ -45,6 +45,7 @@ export interface IFileManagerDialogData {
   viewMode?: 'list' | 'grid';
   selectionMode?: 'single' | 'multiple';
   canSubmit?: boolean;
+  allowSubmitEmpty?: boolean;
   selectedFiles?: IFileManagerResponse[];
   group?: FileGroup;
   type?: FileType;
@@ -103,6 +104,7 @@ export class FileManagerComponent implements OnInit {
   canSubmit = signal<boolean>(this._data?.canSubmit ?? true);
   group = signal<FileGroup | undefined>(this._data?.group);
   type = signal<FileType | undefined>(this._data?.type);
+  allowSubmitEmpty = signal<boolean>(this._data?.allowSubmitEmpty ?? false);
 
   // Filters
   filterForm = this._fb.group({
@@ -128,7 +130,9 @@ export class FileManagerComponent implements OnInit {
 
   // Computed
   isMultiple = computed(() => this.selectionMode() === 'multiple');
-  hasSelection = computed(() => this.selectedFiles().length > 0);
+  hasSelection = computed(
+    () => this.allowSubmitEmpty() || this.selectedFiles().length > 0
+  );
   totalPages = computed(() => Math.ceil(this.totalFiles() / this.pageSize()));
 
   // Enums for template

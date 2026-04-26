@@ -18,6 +18,7 @@ import {
   SidebarPageClass,
   SidebarUserClass,
   FileManagerComponent,
+  AiChatDialogComponent,
   SidebarPageType,
 } from '@ihsan/shared';
 
@@ -94,6 +95,14 @@ export class PagesComponent {
       roles: ['Admin', 'SuperAdmin'],
       route: '/translation',
       type: SidebarPageType.Management,
+    }),
+    new SidebarPageClass({
+      translationKey: 'sidebar.pages.aiChat',
+      icon: 'sparkles' as ZardIcon,
+      group: 'sidebar.groups.ai',
+      roles: ['Admin', 'SuperAdmin'],
+      action: () => this.openAiChatDialog(),
+      type: SidebarPageType.Both,
     }),
     new SidebarPageClass({
       translationKey: 'sidebar.pages.aiSettings',
@@ -238,6 +247,15 @@ export class PagesComponent {
       zOnOk: (files) => {
         console.log('Selected files:', files);
       },
+    });
+  }
+
+  openAiChatDialog(): void {
+    this._dialogService.create({
+      zContent: AiChatDialogComponent as any,
+      zWidth: '90vw',
+      zCustomClasses: 'z-dialog-max-width-100',
+      zHideFooter: true,
     });
   }
 }

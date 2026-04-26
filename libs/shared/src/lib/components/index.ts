@@ -4,3 +4,4 @@ export * from './register';
 export * from './forgot-password';
 export * from './file-manager';
 export * from './file-selector';
+export * from './ai-chat';

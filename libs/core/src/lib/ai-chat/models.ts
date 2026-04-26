@@ -1,4 +1,31 @@
 // ---------------------------------------------------------------------------
+// Chat Send Request / Response
+// ---------------------------------------------------------------------------
+
+export type ChatRole = 'system' | 'user' | 'assistant' | 'tool';
+
+export interface IChatMessagePayload {
+  role: ChatRole;
+  content: string;
+}
+
+export interface IChatSendRequest {
+  session_id?: string | null;
+  settings_key: string;
+  system_prompt_key?: string | null;
+  messages: IChatMessagePayload[];
+  file_ids?: number[];
+}
+
+export interface IChatSingleResponse {
+  session_id: string;
+  content: string;
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+}
+
+// ---------------------------------------------------------------------------
 // Chat Session
 // ---------------------------------------------------------------------------
 

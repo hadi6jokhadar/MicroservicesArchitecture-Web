@@ -1,5 +1,12 @@
 <div class="file-selector-wrapper">
-  @if (selectedFiles().length > 0) {
+  @if (selectedFilesCount() > 0) {
+  <div class="selection-summary">
+    <z-badge zShape="pill" zType="destructive" class="selection-count">
+      {{ selectedFilesCount() }}
+    </z-badge>
+  </div>
+
+  @if (viewMode() !== 'badge') {
   <div
     class="file-previews"
     cdkDropList
@@ -34,7 +41,7 @@
     </div>
     }
   </div>
-  }
+  } }
 
   <z-button
     [zType]="buttonType()"

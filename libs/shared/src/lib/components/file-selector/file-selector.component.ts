@@ -7,6 +7,7 @@ import {
   ChangeDetectionStrategy,
   input,
   effect,
+  computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -15,6 +16,7 @@ import {
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import {
+  ZardBadgeComponent,
   ZardButtonComponent,
   ZardIconComponent,
   ZardDialogService,
@@ -28,6 +30,7 @@ import { FileManagerComponent } from '../file-manager/file-manager.component';
   imports: [
     CommonModule,
     DragDropModule,
+    ZardBadgeComponent,
     ZardButtonComponent,
     ZardIconComponent,
   ],
@@ -41,10 +44,11 @@ export class FileSelectorComponent {
   allowedTypes = input(['*']);
   maxFiles = input(1);
   selectionMode = input<'single' | 'multiple'>('single');
-  viewMode = input<'list' | 'grid'>('grid');
+  viewMode = input<'list' | 'grid' | 'badge'>('grid');
   label = input('Select File');
   group = input<FileGroup | undefined>(undefined);
   type = input<FileType | undefined>(undefined);
+  allowSubmitEmpty = input(false);
   buttonType = input<
     'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
   >('default');
@@ -52,6 +56,11 @@ export class FileSelectorComponent {
   files = input<IFileManagerResponse[] | null | undefined>(undefined);
 
   selectedFiles = signal<IFileManagerResponse[]>([]);
+  selectedFilesCount = computed(() => this.selectedFiles().length);
+  fileManagerViewMode = computed<'list' | 'grid'>(() => {
+    const viewMode = this.viewMode();
+    return viewMode === 'badge' ? 'grid' : viewMode;
+  });
 
   @Output() filesChanged = new EventEmitter<IFileManagerResponse[]>();
 
@@ -71,31 +80,39 @@ export class FileSelectorComponent {
 
   openFileManagerDialog(): void {
     const dialogRef = this._dialogService.create({
-      zContent: FileManagerComponent as any,
+      zContent: FileManagerComponent,
       zData: {
         allowedTypes: this.allowedTypes(),
         maxFiles: this.maxFiles(),
         selectionMode: this.selectionMode(),
-        viewMode: this.viewMode(),
+        viewMode: this.fileManagerViewMode(),
         selectedFiles: this.selectedFiles(),
         group: this.group(),
         type: this.type(),
+        allowSubmitEmpty: this.allowSubmitEmpty(),
       },
       zWidth: '80vw',
       zCustomClasses: 'z-dialog-max-width-100',
       zHideFooter: true,
     });
 
-    dialogRef.afterClosed().subscribe((files: any) => {
-      if (files) {
-        this.handleSelection(files as IFileManagerResponse[]);
-      }
-    });
+    dialogRef
+      .afterClosed()
+      .subscribe((files: IFileManagerResponse[] | undefined) => {
+        if (files) {
+          this.handleSelection(files);
+        }
+      });
   }
 
   handleSelection(files: IFileManagerResponse[]): void {
     this.selectedFiles.set(files);
     this.filesChanged.emit(files);
+  }
+
+  clearFiles(): void {
+    this.selectedFiles.set([]);
+    this.filesChanged.emit([]);
   }
 
   removeFile(file: IFileManagerResponse, event: Event): void {
