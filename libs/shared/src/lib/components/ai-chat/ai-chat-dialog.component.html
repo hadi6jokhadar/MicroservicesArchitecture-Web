@@ -1,12 +1,12 @@
 <div class="chat-container">
-  <!-- ── Sessions Sidebar ───────────────────────────────────────────── -->
+  <!-- ── Sessions Sidebar ──────────────────────────────── -->
   <div class="chat-sessions">
     <div class="sessions-header">
       <span class="sessions-title">{{
         'aiChat.sessions.title' | translate
       }}</span>
       <z-button zType="ghost" zSize="sm" (click)="startNewChat()">
-        <z-icon zType="plus" />
+        <z-icon zType="plus" zSize="xl" />
       </z-button>
     </div>
 
@@ -18,7 +18,7 @@
     </div>
     } @else if (sessions().length === 0) {
     <div class="sessions-empty">
-      <z-icon zType="inbox" />
+      <z-icon zType="inbox" zSize="xl" />
       <p>{{ 'aiChat.sessions.empty' | translate }}</p>
     </div>
     } @else {
@@ -30,7 +30,7 @@
         [class.editing]="editingSessionId() === session.Id"
         (click)="selectSession(session)"
       >
-        <z-icon zType="inbox" class="session-icon" />
+        <z-icon zType="inbox" class="session-icon" zSize="lg" />
         <div class="session-info">
           @if (editingSessionId() === session.Id) {
           <input
@@ -58,14 +58,14 @@
             (click)="confirmEdit(session, $event)"
             title="Save"
           >
-            <z-icon zType="check" />
+            <z-icon zType="check" zSize="xl" />
           </button>
           <button
             class="session-action-btn cancel-btn"
             (click)="cancelEdit($event)"
             title="Cancel"
           >
-            <z-icon zType="x" />
+            <z-icon zType="x" zSize="xl" />
           </button>
         </div>
         } @else {
@@ -75,14 +75,14 @@
             (click)="startEditing(session, $event)"
             title="Rename"
           >
-            <z-icon zType="file-text" />
+            <z-icon zType="file-text" zSize="xl" />
           </button>
           <button
             class="session-action-icon-btn delete"
             (click)="deleteSession(session, $event)"
             [title]="'aiChat.sessions.delete' | translate"
           >
-            <z-icon zType="trash" />
+            <z-icon zType="trash" zSize="xl" />
           </button>
         </div>
         }
@@ -91,7 +91,6 @@
     </div>
     }
   </div>
-
   <!-- ── Chat Area ─────────────────────────────────────────────────── -->
   <div class="chat-main">
     <!-- Toolbar -->
@@ -129,7 +128,7 @@
             class="settings-key-select"
           >
             @for (key of settingsKeys(); track key) {
-            <z-select-item [zValue]="key">{{ key }}</z-select-item>
+            <z-select-item [zValue]="key" zSize="sm">{{ key }}</z-select-item>
             }
           </z-select>
           } @else {
@@ -148,11 +147,11 @@
             [zPlaceholder]="'aiChat.toolbar.systemPrompt' | translate"
             class="system-prompt-select"
           >
-            <z-select-item zValue="_empty_">
+            <z-select-item zValue="_empty_" zSize="sm">
               {{ 'aiChat.toolbar.noSystemPrompt' | translate }}
             </z-select-item>
             @for (prompt of systemPrompts(); track prompt.Name) {
-            <z-select-item [zValue]="prompt.Name">{{
+            <z-select-item [zValue]="prompt.Name" zSize="sm">{{
               prompt.Name
             }}</z-select-item>
             }
@@ -183,11 +182,11 @@
       </div>
       } @else if (messages().length === 0) {
       <div class="messages-empty">
-        <z-icon zType="sparkles" class="empty-icon" />
+        <z-icon zType="sparkles" class="empty-icon" zSize="xl" />
         <p>{{ 'aiChat.messages.empty' | translate }}</p>
         <span>{{ 'aiChat.messages.emptyHint' | translate }}</span>
       </div>
-      } @else { @for (msg of messages(); track $index) {
+      } @else { @for (msg of formattedMessages(); track $index) {
       <div
         class="message-row"
         [class.user-row]="msg.role === 'user'"
@@ -195,7 +194,7 @@
       >
         @if (msg.role === 'assistant') {
         <div class="avatar assistant-avatar">
-          <z-icon zType="sparkles" />
+          <z-icon zType="sparkles" zSize="xl" />
         </div>
         }
 
@@ -204,17 +203,25 @@
           [class.user-bubble]="msg.role === 'user'"
           [class.assistant-bubble]="msg.role === 'assistant'"
         >
+          @if(msg.isJson){
+          <pre
+            class="message-content json-view"
+            [style.white-space]="'pre-wrap'"
+            >{{ msg.displayContent }}</pre
+          >
+          } @if(!msg.isJson){
           <p class="message-content" [style.white-space]="'pre-wrap'">
-            {{ msg.content }}
+            {{ msg.displayContent }}
             @if(msg.streaming){
             <span class="streaming-cursor"></span>
             }
           </p>
+          }
         </div>
 
         @if (msg.role === 'user') {
         <div class="avatar user-avatar">
-          <z-icon zType="user" />
+          <z-icon zType="user" zSize="xl" />
         </div>
         }
       </div>
@@ -240,6 +247,7 @@
             (filesChanged)="onFilesChanged($event)"
           />
         </div>
+
         <!-- Text input -->
         <textarea
           z-input
@@ -254,7 +262,7 @@
         <!-- Stop streaming button -->
         @if (streaming()) {
         <z-button zType="destructive" zSize="sm" (click)="stopStreaming()">
-          <z-icon zType="square" />
+          <z-icon zType="square" zSize="xl" />
         </z-button>
         } @else {
         <!-- Send button -->
@@ -264,7 +272,7 @@
           [zDisabled]="!canSend()"
           (click)="sendMessage()"
         >
-          <z-icon zType="arrow-right" />
+          <z-icon zType="arrow-right" zSize="xl" />
         </z-button>
         }
       </div>

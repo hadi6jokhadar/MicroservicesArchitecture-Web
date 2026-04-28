@@ -17,6 +17,7 @@ import {
   FileGroup,
   FileType,
   TranslatePipe,
+  TenantService,
 } from '@ihsan/core';
 import {
   SKIP_ERROR_TOAST,
@@ -76,6 +77,7 @@ export interface IFileManagerDialogData {
 })
 export class FileManagerComponent implements OnInit {
   private _service = inject(FileManagerService);
+  private _tenantService = inject(TenantService);
   private _dialogRef = inject(ZardDialogRef);
   private _data = inject<IFileManagerDialogData>(Z_MODAL_DATA, {
     optional: true,
@@ -93,6 +95,8 @@ export class FileManagerComponent implements OnInit {
   loading = signal<boolean>(false);
   errorMessage = signal<string | null>(null);
   activeTab = signal<number>(0);
+  blobLoading = signal<boolean>(false);
+  blobConfigured = signal<boolean>(true);
 
   // Settings from data
   allowedTypes = signal<string[]>(this._data?.allowedTypes || ['*']);
@@ -164,6 +168,7 @@ export class FileManagerComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadFiles();
+    this.loadBlobConfigured();
 
     this.filterForm.valueChanges.subscribe(() => {
       this.pageIndex.set(1);
@@ -211,6 +216,15 @@ export class FileManagerComponent implements OnInit {
   onPageChange(page: number): void {
     this.pageIndex.set(page);
     this.loadFiles();
+  }
+
+  loadBlobConfigured(): void {
+    const tenantId = localStorage.getItem('tenantId');
+    if (!tenantId) return;
+    this._tenantService.getTenantById(tenantId).subscribe({
+      next: (tenant) => this.blobConfigured.set(tenant.blobConfigured ?? false),
+      error: () => this.blobConfigured.set(false),
+    });
   }
 
   onFileClick(file: IFileManagerResponse): void {
@@ -352,5 +366,53 @@ export class FileManagerComponent implements OnInit {
 
   onTabChange(event: { index: number }): void {
     this.activeTab.set(event.index);
+  }
+
+  uploadToBlob(file: IFileManagerResponse): void {
+    this.blobLoading.set(true);
+    this.errorMessage.set(null);
+    this._service.uploadToBlob(file.id).subscribe({
+      next: (updated) => {
+        this.blobLoading.set(false);
+        this.activeFile.set(updated);
+        this.files.update((list) =>
+          list.map((f) => (f.id === updated.id ? updated : f))
+        );
+        this.selectedFiles.update((list) =>
+          list.map((f) => (f.id === updated.id ? updated : f))
+        );
+      },
+      error: (err) => {
+        this.blobLoading.set(false);
+        this.errorMessage.set(extractErrorMessage(err));
+      },
+    });
+  }
+
+  removeFromBlob(file: IFileManagerResponse): void {
+    this.blobLoading.set(true);
+    this.errorMessage.set(null);
+    this._service.removeFromBlob(file.id).subscribe({
+      next: (updated) => {
+        this.blobLoading.set(false);
+        this.activeFile.set(updated);
+        this.files.update((list) =>
+          list.map((f) => (f.id === updated.id ? updated : f))
+        );
+        this.selectedFiles.update((list) =>
+          list.map((f) => (f.id === updated.id ? updated : f))
+        );
+      },
+      error: (err) => {
+        this.blobLoading.set(false);
+        this.errorMessage.set(extractErrorMessage(err));
+      },
+    });
+  }
+
+  openExternalUrl(url: string | null | undefined): void {
+    if (url) {
+      window.open(url, '_blank');
+    }
   }
 }

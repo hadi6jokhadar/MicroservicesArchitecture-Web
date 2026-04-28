@@ -141,6 +141,9 @@
               <th z-table-head class="col-scope">
                 {{ 'aiSystemPrompts.table.scope' | translate }}
               </th>
+              <th z-table-head class="col-format">
+                {{ 'aiSystemPrompts.table.responseFormat' | translate }}
+              </th>
               <th z-table-head class="col-actions">
                 {{ 'aiSystemPrompts.table.actions' | translate }}
               </th>
@@ -185,6 +188,25 @@
               </td>
               <td
                 z-table-cell
+                class="col-format"
+                [attr.data-label]="
+                  'aiSystemPrompts.table.responseFormat' | translate
+                "
+              >
+                @if (prompt.ResponseFormat) {
+                <z-badge zType="default" zShape="pill">
+                  <z-icon zType="check" class="mr-1" />
+                  {{ 'common.yes' | translate }}
+                </z-badge>
+                } @else {
+                <z-badge zType="secondary" zShape="pill">
+                  <z-icon zType="x" class="mr-1" />
+                  {{ 'common.no' | translate }}
+                </z-badge>
+                }
+              </td>
+              <td
+                z-table-cell
                 class="col-actions"
                 [attr.data-label]="'aiSystemPrompts.table.actions' | translate"
               >
@@ -205,6 +227,16 @@
                   >
                     <z-icon zType="file-text" />
                     {{ 'aiSystemPrompts.actions.edit' | translate }}
+                  </z-dropdown-menu-item>
+
+                  <z-dropdown-menu-item
+                    (click)="onEditResponseFormat(prompt)"
+                    [id]="'edit-response-format-' + prompt.Id"
+                  >
+                    <z-icon zType="code" />
+                    {{
+                      'aiSystemPrompts.actions.editResponseFormat' | translate
+                    }}
                   </z-dropdown-menu-item>
 
                   <z-dropdown-menu-item

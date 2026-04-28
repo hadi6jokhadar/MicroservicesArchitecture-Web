@@ -1,0 +1,42 @@
+<div class="response-format-sheet">
+  <div class="sheet-content">
+    <div class="edit-form-container">
+      <div class="edit-form">
+        <p class="sheet-hint">
+          {{ 'aiSystemPrompts.sheet.responseFormatHint' | translate }}
+        </p>
+        <div #editorContainer class="json-editor-container"></div>
+
+        @if (errorMessage()) {
+        <p class="error-message">{{ errorMessage() }}</p>
+        }
+
+        <div class="form-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            type="button"
+            (click)="onCancel()"
+            [disabled]="isSaving()"
+            id="cancel-response-format-btn"
+          >
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button
+            z-button
+            zType="default"
+            zSize="default"
+            type="button"
+            (click)="onSubmit()"
+            [disabled]="isSaving()"
+            [zLoading]="isSaving()"
+            id="save-response-format-btn"
+          >
+            {{ 'common.save' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

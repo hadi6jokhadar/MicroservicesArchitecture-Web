@@ -39,6 +39,7 @@ export interface ITenant {
   created: string;
   lastModified?: string;
   isArchived: boolean;
+  blobConfigured: boolean;
 }
 
 export class TenantClass implements ITenant {
@@ -53,6 +54,7 @@ export class TenantClass implements ITenant {
   created: string;
   lastModified?: string;
   isArchived: boolean;
+  blobConfigured: boolean;
 
   constructor(data: Partial<ITenant> = {}) {
     this.id = data.id || 0;
@@ -66,6 +68,7 @@ export class TenantClass implements ITenant {
     this.created = data.created || '';
     this.lastModified = data.lastModified;
     this.isArchived = data.isArchived ?? false;
+    this.blobConfigured = data.blobConfigured ?? false;
   }
 }
 

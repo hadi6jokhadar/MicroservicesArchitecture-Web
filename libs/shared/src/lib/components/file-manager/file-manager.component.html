@@ -76,7 +76,7 @@
               <div class="spinner"></div>
             </div>
             } @else if (files().length === 0) {
-            <z-icon zType="folder" />
+            <z-icon zType="folder" [zSize]="'xl'" />
             <p>{{ 'common.noData' | translate }}</p>
             } @else {
             <div class="fm-file-grid">
@@ -93,7 +93,7 @@
                   @if (isImage(file)) {
                   <img [src]="file.url" [alt]="file.name" loading="lazy" />
                   } @else {
-                  <z-icon [zType]="getFileIcon(file)" />
+                  <z-icon [zType]="getFileIcon(file)" [zSize]="'xl'" />
                   }
                 </div>
 
@@ -127,7 +127,7 @@
               @if (isImage(selected)) {
               <img [src]="selected.url" [alt]="selected.name" />
               } @else {
-              <z-icon [zType]="getFileIcon(selected)" />
+              <z-icon [zType]="getFileIcon(selected)" [zSize]="'xl'" />
               }
             </div>
 
@@ -167,6 +167,26 @@
                 <span class="value">{{
                   selected.created | date : 'shortDate'
                 }}</span>
+
+                @if (selected.externalUrl) {
+                <span class="label">{{
+                  'fileManager.externalUrl' | translate
+                }}</span>
+                <z-button
+                  zType="link"
+                  zSize="sm"
+                  style="
+                    padding: 0;
+                    height: auto;
+                    justify-content: flex-start;
+                    font-size: 0.875rem;
+                  "
+                  (click)="openExternalUrl(selected.externalUrl)"
+                >
+                  <z-icon zType="external-link" />
+                  {{ 'fileManager.openInNewPage' | translate }}
+                </z-button>
+                }
               </div>
 
               @if (selected.temp) {
@@ -174,6 +194,33 @@
                 {{ 'fileManager.temporaryFile' | translate }}
               </div>
               }
+            </div>
+
+            <!-- Blob Storage Actions -->
+            <div style="display: flex; flex-direction: column; gap: 0.5rem">
+              @if (blobConfigured()) { @if (!selected.externalUrl) {
+              <z-button
+                zType="outline"
+                zSize="sm"
+                [zFull]="true"
+                [zDisabled]="blobLoading()"
+                (click)="uploadToBlob(selected)"
+              >
+                <z-icon zType="cloud-upload" />
+                {{ 'fileManager.uploadToExternal' | translate }}
+              </z-button>
+              } @else {
+              <z-button
+                zType="destructive"
+                zSize="sm"
+                [zFull]="true"
+                [zDisabled]="blobLoading()"
+                (click)="removeFromBlob(selected)"
+              >
+                <z-icon zType="cloud-off" />
+                {{ 'fileManager.removeFromExternal' | translate }}
+              </z-button>
+              } }
             </div>
 
             <div style="margin-top: auto">
@@ -187,7 +234,7 @@
             </div>
             } @else {
             <div class="empty-details">
-              <z-icon zType="info" />
+              <z-icon zType="info" zSize="xl" />
               <p>{{ 'fileManager.selectFileDetails' | translate }}</p>
             </div>
             }

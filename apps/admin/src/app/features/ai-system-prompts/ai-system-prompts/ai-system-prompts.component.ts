@@ -25,11 +25,13 @@ import {
   ZardLoaderComponent,
   ZardPaginationImports,
   ZardSelectImports,
+  ZardSheetService,
   ZardTableImports,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
 import { AiSystemPromptsEventsService } from '../ai-system-prompts-events.service';
 import { AddEditAiSystemPromptDialogComponent } from './add-edit-ai-system-prompt-dialog/add-edit-ai-system-prompt-dialog.component';
+import { AiSystemPromptResponseFormatSheetComponent } from './ai-system-prompt-response-format-sheet/ai-system-prompt-response-format-sheet.component';
 
 interface IAiSystemPromptsFilterForm {
   searchTerm: FormControl<string>;
@@ -66,6 +68,7 @@ export class AiSystemPromptsComponent {
   private readonly _translationService = inject(TranslationService);
   private readonly _alertDialogService = inject(ZardAlertDialogService);
   private readonly _dialogService = inject(ZardDialogService);
+  private readonly _sheetService = inject(ZardSheetService);
   private readonly _eventsService = inject(AiSystemPromptsEventsService);
 
   readonly isLoading = signal(false);
@@ -198,6 +201,17 @@ export class AiSystemPromptsComponent {
       zHideFooter: true,
       zWidth: '600px',
       zClosable: true,
+    });
+  }
+
+  onEditResponseFormat(prompt: IAiSystemPrompt): void {
+    this._sheetService.create({
+      zContent: AiSystemPromptResponseFormatSheetComponent,
+      zData: { prompt },
+      zSide: 'bottom',
+      zClosable: false,
+      zHideFooter: true,
+      zHeight: '62vh',
     });
   }
 

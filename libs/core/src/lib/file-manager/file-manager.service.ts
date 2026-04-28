@@ -102,4 +102,17 @@ export class FileManagerService {
     );
     return this._http.delete(`${this._adminUrl}/files/temp/old`, { params });
   }
+
+  uploadToBlob(id: number): Observable<IFileManagerResponse> {
+    return this._http.post<IFileManagerResponse>(
+      `${this._baseUrl}/files/${id}/upload-to-blob`,
+      {}
+    );
+  }
+
+  removeFromBlob(id: number): Observable<IFileManagerResponse> {
+    return this._http.delete<IFileManagerResponse>(
+      `${this._baseUrl}/files/${id}/remove-from-blob`
+    );
+  }
 }

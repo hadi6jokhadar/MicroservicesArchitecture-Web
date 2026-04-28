@@ -19,6 +19,7 @@ import {
   ZardAlertComponent,
   ZardButtonComponent,
   ZardDialogRef,
+  ZardCheckboxComponent,
   ZardFormImports,
   ZardIdDirective,
   ZardInputDirective,
@@ -38,6 +39,13 @@ interface IAiSettingForm {
   ApiKey: FormControl<string>;
   ModelName: FormControl<string>;
   TenantId: FormControl<string>;
+  ApiBaseUrl: FormControl<string>;
+  Temperature: FormControl<string>;
+  Stream: FormControl<boolean | null>;
+  MaxCompletionTokens: FormControl<string>;
+  TopP: FormControl<string>;
+  FrequencyPenalty: FormControl<string>;
+  PresencePenalty: FormControl<string>;
 }
 
 @Component({
@@ -52,6 +60,7 @@ interface IAiSettingForm {
     ZardAlertComponent,
     ZardIdDirective,
     ZardButtonComponent,
+    ZardCheckboxComponent,
   ],
   templateUrl: './add-edit-ai-setting-dialog.component.html',
   styleUrls: ['./add-edit-ai-setting-dialog.component.scss'],
@@ -64,7 +73,9 @@ export class AddEditAiSettingDialogComponent {
   private readonly _aiSettingsService = inject(AiSettingsService);
   private readonly _eventsService = inject(AiSettingsEventsService);
 
-  readonly isEditMode = signal(!!this._data?.setting);
+  readonly isEditMode = signal(
+    !!(this._data?.setting && (this._data.setting as any).Id)
+  );
   readonly isLoading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly modelTypeOptions = MODEL_TYPE_OPTIONS;
@@ -97,6 +108,41 @@ export class AddEditAiSettingDialogComponent {
       nonNullable: true,
       validators: [Validators.maxLength(100)],
     }),
+    ApiBaseUrl: new FormControl<string>(this._data?.setting?.ApiBaseUrl || '', {
+      nonNullable: true,
+      validators: [Validators.maxLength(500)],
+    }),
+    Temperature: new FormControl<string>(
+      this._data?.setting?.Temperature != null
+        ? String(this._data.setting.Temperature)
+        : '',
+      { nonNullable: true, validators: [Validators.min(0), Validators.max(2)] }
+    ),
+    Stream: new FormControl<boolean | null>(
+      this._data?.setting?.Stream ?? null
+    ),
+    MaxCompletionTokens: new FormControl<string>(
+      this._data?.setting?.MaxCompletionTokens != null
+        ? String(this._data.setting.MaxCompletionTokens)
+        : '',
+      { nonNullable: true, validators: [Validators.min(1)] }
+    ),
+    TopP: new FormControl<string>(
+      this._data?.setting?.TopP != null ? String(this._data.setting.TopP) : '',
+      { nonNullable: true, validators: [Validators.min(0), Validators.max(1)] }
+    ),
+    FrequencyPenalty: new FormControl<string>(
+      this._data?.setting?.FrequencyPenalty != null
+        ? String(this._data.setting.FrequencyPenalty)
+        : '',
+      { nonNullable: true, validators: [Validators.min(-2), Validators.max(2)] }
+    ),
+    PresencePenalty: new FormControl<string>(
+      this._data?.setting?.PresencePenalty != null
+        ? String(this._data.setting.PresencePenalty)
+        : '',
+      { nonNullable: true, validators: [Validators.min(-2), Validators.max(2)] }
+    ),
   });
 
   onSubmit(): void {
@@ -117,6 +163,25 @@ export class AddEditAiSettingDialogComponent {
       ApiKey: formValue.ApiKey.trim(),
       ModelName: formValue.ModelName.trim(),
       TenantId: formValue.TenantId.trim() || undefined,
+      ApiBaseUrl: formValue.ApiBaseUrl.trim() || null,
+      Temperature:
+        formValue.Temperature.trim() !== ''
+          ? parseFloat(formValue.Temperature)
+          : null,
+      Stream: formValue.Stream,
+      MaxCompletionTokens:
+        formValue.MaxCompletionTokens.trim() !== ''
+          ? parseInt(formValue.MaxCompletionTokens, 10)
+          : null,
+      TopP: formValue.TopP.trim() !== '' ? parseFloat(formValue.TopP) : null,
+      FrequencyPenalty:
+        formValue.FrequencyPenalty.trim() !== ''
+          ? parseFloat(formValue.FrequencyPenalty)
+          : null,
+      PresencePenalty:
+        formValue.PresencePenalty.trim() !== ''
+          ? parseFloat(formValue.PresencePenalty)
+          : null,
     };
 
     if (this.isEditMode() && this._data?.setting?.Id) {

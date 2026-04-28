@@ -62,6 +62,9 @@ export class AddEditAiSystemPromptDialogComponent {
   readonly isLoading = signal(false);
   readonly errorMessage = signal<string | null>(null);
 
+  private readonly _storedResponseFormat: string | null =
+    (this._data?.prompt?.ResponseFormat as string | null | undefined) ?? null;
+
   readonly form = new FormGroup<IAiSystemPromptForm>({
     Name: new FormControl<string>(this._data?.prompt?.Name || '', {
       nonNullable: true,
@@ -77,6 +80,8 @@ export class AddEditAiSystemPromptDialogComponent {
     }),
   });
 
+  constructor() {}
+
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -88,10 +93,12 @@ export class AddEditAiSystemPromptDialogComponent {
 
     const formValue = this.form.getRawValue();
     const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
+
     const request: IUpsertAiSystemPromptRequest = {
       Name: formValue.Name.trim(),
       PromptText: formValue.PromptText.trim(),
       TenantId: formValue.TenantId.trim() || null,
+      ResponseFormat: this._storedResponseFormat,
     };
 
     if (this.isEditMode()) {

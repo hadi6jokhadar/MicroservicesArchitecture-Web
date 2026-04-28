@@ -27,6 +27,7 @@ export interface IFileManagerResponse {
   status: boolean;
   isArchived: boolean;
   userId?: number;
+  externalUrl?: string | null;
   created: string;
   lastModified?: string;
 }
@@ -44,6 +45,7 @@ export class FileManagerResponseClass implements IFileManagerResponse {
   status: boolean;
   isArchived: boolean;
   userId?: number;
+  externalUrl?: string | null;
   created: string;
   lastModified?: string;
 
@@ -60,6 +62,7 @@ export class FileManagerResponseClass implements IFileManagerResponse {
     this.status = data.status ?? true;
     this.isArchived = data.isArchived ?? false;
     this.userId = data.userId;
+    this.externalUrl = data.externalUrl;
     this.created = data.created || '';
     this.lastModified = data.lastModified;
   }

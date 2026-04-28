@@ -136,12 +136,17 @@
         }
 
         .col-scope {
-          width: 15%;
-          min-width: 100px;
+          width: 10%;
+          min-width: 90px;
+        }
+
+        .col-format {
+          width: 10%;
+          min-width: 90px;
         }
 
         .col-actions {
-          width: 15%;
+          width: 10%;
           min-width: 80px;
           text-align: center;
         }

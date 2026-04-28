@@ -19,6 +19,7 @@ import {
   FormBuilder,
   FormGroup,
 } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import {
   AiChatService,
   AiSettingsService,
@@ -29,6 +30,7 @@ import {
   IChatSendRequest,
   FileGroup,
   IAiSystemPrompt,
+  IAiProviderSetting,
   TranslatePipe,
 } from '@ihsan/core';
 import {
@@ -103,6 +105,7 @@ export class AiChatDialogComponent implements OnInit, OnDestroy {
   messages = signal<ILocalChatMessage[]>([]);
   persistedMessages = signal<IAiChatMessage[]>([]);
 
+  allSettings = signal<IAiProviderSetting[]>([]);
   settingsKeys = signal<string[]>([]);
   systemPrompts = signal<IAiSystemPrompt[]>([]);
 
@@ -126,6 +129,7 @@ export class AiChatDialogComponent implements OnInit, OnDestroy {
   aiFileGroup = FileGroup.AI;
 
   private _abortController: AbortController | null = null;
+  private _settingsKeySubscription: Subscription | null = null;
   private readonly _emptySystemPromptValue = '_empty_';
 
   // ── Computed ───────────────────────────────────────────────────────────
@@ -140,6 +144,36 @@ export class AiChatDialogComponent implements OnInit, OnDestroy {
         .length > 0
   );
 
+  // ── Formatted Messages ────────────────────────────────────────────────
+  formattedMessages = computed(() => {
+    return this.messages().map((msg) => {
+      let isJson = false;
+      let displayContent = msg.content;
+
+      if (msg.role === 'assistant') {
+        const trimmed = msg.content.trim();
+        if (
+          (trimmed.startsWith('{') && trimmed.endsWith('}')) ||
+          (trimmed.startsWith('[') && trimmed.endsWith(']'))
+        ) {
+          try {
+            const parsed = JSON.parse(trimmed);
+            displayContent = JSON.stringify(parsed, null, 2);
+            isJson = true;
+          } catch (e) {
+            // Not JSON
+          }
+        }
+      }
+
+      return {
+        ...msg,
+        displayContent,
+        isJson,
+      };
+    });
+  });
+
   // ── Lifecycle ──────────────────────────────────────────────────────────
 
   ngOnInit(): void {
@@ -149,6 +183,16 @@ export class AiChatDialogComponent implements OnInit, OnDestroy {
       selectedSystemPromptKey: [null],
     });
 
+    // Sync useStream with the selected AI setting
+    this._settingsKeySubscription = this.toolbarForm
+      .get('selectedSettingsKey')!
+      .valueChanges.subscribe((key: string) => {
+        const match = this.allSettings().find((s) => s.Key === key);
+        if (match && match.Stream !== null && match.Stream !== undefined) {
+          this.useStream.set(match.Stream);
+        }
+      });
+
     this._loadSettingsKeys();
     this._loadSystemPrompts();
     this._loadSessions();
@@ -156,6 +200,7 @@ export class AiChatDialogComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._abortController?.abort();
+    this._settingsKeySubscription?.unsubscribe();
   }
 
   // ── Private helpers ────────────────────────────────────────────────────
@@ -163,13 +208,22 @@ export class AiChatDialogComponent implements OnInit, OnDestroy {
   private _loadSettingsKeys(): void {
     this._settingsService.getSettings(this._getScopedFilter()).subscribe({
       next: (settings) => {
+        this.allSettings.set(settings);
         const keys = [...new Set(settings.map((s) => s.Key))];
         this.settingsKeys.set(keys);
         if (
           keys.length > 0 &&
           !this.toolbarForm?.get('selectedSettingsKey')?.value
         ) {
-          this.toolbarForm?.patchValue({ selectedSettingsKey: keys[0] });
+          const firstKey = keys[0];
+          this.toolbarForm?.patchValue({ selectedSettingsKey: firstKey });
+          const firstSetting = settings.find((s) => s.Key === firstKey);
+          if (
+            firstSetting?.Stream !== null &&
+            firstSetting?.Stream !== undefined
+          ) {
+            this.useStream.set(firstSetting.Stream);
+          }
         }
       },
     });

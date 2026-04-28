@@ -277,6 +277,14 @@
                   </z-dropdown-menu-item>
 
                   <z-dropdown-menu-item
+                    (click)="onDuplicateSetting(setting)"
+                    [id]="'duplicate-ai-setting-' + setting.Id"
+                  >
+                    <z-icon zType="copy" />
+                    {{ 'aiSettings.actions.duplicate' | translate }}
+                  </z-dropdown-menu-item>
+
+                  <z-dropdown-menu-item
                     (click)="onDeleteSetting(setting)"
                     [id]="'delete-ai-setting-' + setting.Id"
                     class="delete-action"

@@ -144,6 +144,163 @@
       }
     </z-form-field>
 
+    <!-- ── Advanced / optional model parameters ──────────────────────── -->
+    <z-form-field zardId="apiBaseUrl" #abu="zardId">
+      <label z-form-label [for]="abu.id()">{{
+        'aiSettings.dialog.apiBaseUrlLabel' | translate
+      }}</label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="abu.id()"
+          type="text"
+          formControlName="ApiBaseUrl"
+          [placeholder]="'aiSettings.dialog.apiBaseUrlPlaceholder' | translate"
+        />
+      </z-form-control>
+      @if (form.get('ApiBaseUrl')?.hasError('maxlength')) {
+      <span z-form-error>{{
+        'aiSettings.validation.apiBaseUrlMaxLength' | translate
+      }}</span>
+      }
+    </z-form-field>
+
+    <div class="form-row-2">
+      <z-form-field zardId="temperature" #temp="zardId">
+        <label z-form-label [for]="temp.id()">{{
+          'aiSettings.dialog.temperatureLabel' | translate
+        }}</label>
+        <z-form-control>
+          <input
+            z-input
+            [id]="temp.id()"
+            type="number"
+            min="0"
+            max="2"
+            step="0.1"
+            formControlName="Temperature"
+            [placeholder]="
+              'aiSettings.dialog.temperaturePlaceholder' | translate
+            "
+          />
+        </z-form-control>
+        @if (form.get('Temperature')?.hasError('min') ||
+        form.get('Temperature')?.hasError('max')) {
+        <span z-form-error>{{
+          'aiSettings.validation.temperatureRange' | translate
+        }}</span>
+        }
+      </z-form-field>
+
+      <z-form-field zardId="maxTokens" #mt2="zardId">
+        <label z-form-label [for]="mt2.id()">{{
+          'aiSettings.dialog.maxCompletionTokensLabel' | translate
+        }}</label>
+        <z-form-control>
+          <input
+            z-input
+            [id]="mt2.id()"
+            type="number"
+            min="1"
+            formControlName="MaxCompletionTokens"
+            [placeholder]="
+              'aiSettings.dialog.maxCompletionTokensPlaceholder' | translate
+            "
+          />
+        </z-form-control>
+        @if (form.get('MaxCompletionTokens')?.hasError('min')) {
+        <span z-form-error>{{
+          'aiSettings.validation.maxCompletionTokensMin' | translate
+        }}</span>
+        }
+      </z-form-field>
+    </div>
+
+    <div class="form-row-2">
+      <z-form-field zardId="topP" #tp="zardId">
+        <label z-form-label [for]="tp.id()">{{
+          'aiSettings.dialog.topPLabel' | translate
+        }}</label>
+        <z-form-control>
+          <input
+            z-input
+            [id]="tp.id()"
+            type="number"
+            min="0"
+            max="1"
+            step="0.05"
+            formControlName="TopP"
+            [placeholder]="'aiSettings.dialog.topPPlaceholder' | translate"
+          />
+        </z-form-control>
+        @if (form.get('TopP')?.hasError('min') ||
+        form.get('TopP')?.hasError('max')) {
+        <span z-form-error>{{
+          'aiSettings.validation.topPRange' | translate
+        }}</span>
+        }
+      </z-form-field>
+
+      <z-form-field zardId="freqPenalty" #fp="zardId">
+        <label z-form-label [for]="fp.id()">{{
+          'aiSettings.dialog.frequencyPenaltyLabel' | translate
+        }}</label>
+        <z-form-control>
+          <input
+            z-input
+            [id]="fp.id()"
+            type="number"
+            min="-2"
+            max="2"
+            step="0.1"
+            formControlName="FrequencyPenalty"
+            [placeholder]="'aiSettings.dialog.penaltyPlaceholder' | translate"
+          />
+        </z-form-control>
+        @if (form.get('FrequencyPenalty')?.hasError('min') ||
+        form.get('FrequencyPenalty')?.hasError('max')) {
+        <span z-form-error>{{
+          'aiSettings.validation.penaltyRange' | translate
+        }}</span>
+        }
+      </z-form-field>
+    </div>
+
+    <div class="form-row-2">
+      <z-form-field zardId="presPenalty" #pp="zardId">
+        <label z-form-label [for]="pp.id()">{{
+          'aiSettings.dialog.presencePenaltyLabel' | translate
+        }}</label>
+        <z-form-control>
+          <input
+            z-input
+            [id]="pp.id()"
+            type="number"
+            min="-2"
+            max="2"
+            step="0.1"
+            formControlName="PresencePenalty"
+            [placeholder]="'aiSettings.dialog.penaltyPlaceholder' | translate"
+          />
+        </z-form-control>
+        @if (form.get('PresencePenalty')?.hasError('min') ||
+        form.get('PresencePenalty')?.hasError('max')) {
+        <span z-form-error>{{
+          'aiSettings.validation.penaltyRange' | translate
+        }}</span>
+        }
+      </z-form-field>
+
+      <div class="stream-checkbox-field">
+        <label class="stream-label">{{
+          'aiSettings.dialog.streamLabel' | translate
+        }}</label>
+        <z-checkbox formControlName="Stream">
+          {{ 'aiSettings.dialog.streamCheckboxLabel' | translate }}
+        </z-checkbox>
+      </div>
+    </div>
+
     @if (errorMessage()) {
     <z-alert
       zType="destructive"

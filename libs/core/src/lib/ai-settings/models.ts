@@ -23,6 +23,13 @@ export interface IAiProviderSetting {
   ApiKey: string;
   ModelName: string;
   TenantId?: string | null;
+  ApiBaseUrl?: string | null;
+  Temperature?: number | null;
+  Stream?: boolean | null;
+  MaxCompletionTokens?: number | null;
+  TopP?: number | null;
+  FrequencyPenalty?: number | null;
+  PresencePenalty?: number | null;
 }
 
 export class AiProviderSettingClass implements IAiProviderSetting {
@@ -33,6 +40,13 @@ export class AiProviderSettingClass implements IAiProviderSetting {
   ApiKey: string;
   ModelName: string;
   TenantId?: string | null;
+  ApiBaseUrl?: string | null;
+  Temperature?: number | null;
+  Stream?: boolean | null;
+  MaxCompletionTokens?: number | null;
+  TopP?: number | null;
+  FrequencyPenalty?: number | null;
+  PresencePenalty?: number | null;
 
   constructor(data: Partial<IAiProviderSetting> = {}) {
     this.Id = data.Id || '';
@@ -42,6 +56,13 @@ export class AiProviderSettingClass implements IAiProviderSetting {
     this.ApiKey = data.ApiKey || '';
     this.ModelName = data.ModelName || '';
     this.TenantId = data.TenantId ?? null;
+    this.ApiBaseUrl = data.ApiBaseUrl ?? null;
+    this.Temperature = data.Temperature ?? null;
+    this.Stream = data.Stream ?? null;
+    this.MaxCompletionTokens = data.MaxCompletionTokens ?? null;
+    this.TopP = data.TopP ?? null;
+    this.FrequencyPenalty = data.FrequencyPenalty ?? null;
+    this.PresencePenalty = data.PresencePenalty ?? null;
   }
 }
 
@@ -52,4 +73,11 @@ export interface IUpsertAiProviderSettingRequest {
   ApiKey: string;
   ModelName: string;
   TenantId?: string;
+  ApiBaseUrl?: string | null;
+  Temperature?: number | null;
+  Stream?: boolean | null;
+  MaxCompletionTokens?: number | null;
+  TopP?: number | null;
+  FrequencyPenalty?: number | null;
+  PresencePenalty?: number | null;
 }

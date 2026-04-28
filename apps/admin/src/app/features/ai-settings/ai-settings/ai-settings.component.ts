@@ -195,7 +195,8 @@ export class AiSettingsComponent {
       ),
       zContent: AddEditAiSettingDialogComponent,
       zHideFooter: true,
-      zWidth: '560px',
+      zWidth: 'fit-content',
+      zCustomClasses: 'z-dialog-max-width-100',
       zClosable: false,
     });
   }
@@ -211,7 +212,27 @@ export class AiSettingsComponent {
       zContent: AddEditAiSettingDialogComponent,
       zData: { setting },
       zHideFooter: true,
-      zWidth: '560px',
+      zWidth: 'fit-content',
+      zCustomClasses: 'z-dialog-max-width-100',
+      zClosable: true,
+    });
+  }
+
+  onDuplicateSetting(setting: IAiProviderSetting): void {
+    // Clone setting and remove ID to indicate it's a new entry
+    const duplicateSetting = { ...setting, Id: undefined };
+    this._dialogService.create({
+      zTitle: this._translationService.getCachedTranslation(
+        'aiSettings.dialog.addTitle'
+      ),
+      zDescription: this._translationService.getCachedTranslation(
+        'aiSettings.dialog.addDescription'
+      ),
+      zContent: AddEditAiSettingDialogComponent,
+      zData: { setting: duplicateSetting },
+      zHideFooter: true,
+      zWidth: 'fit-content',
+      zCustomClasses: 'z-dialog-max-width-100',
       zClosable: true,
     });
   }

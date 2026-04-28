@@ -66,6 +66,12 @@ import { ZardButtonComponent } from '@ihsan/ui';
 <i z-icon zType="heart" [zStrokeWidth]="3"></i>
 ```
 
+> [!CAUTION] > **Check icon availability:** Before using an icon, ensure it is registered in `libs/ui/src/lib/zard/components/icon/icons.ts`. If it is missing, you MUST:
+>
+> 1. Import it from `lucide-angular` in that file.
+> 2. Register it in the `ZARD_ICONS` constant.
+> 3. Use the registered key in your template.
+
 **Component Import:**
 
 ```typescript

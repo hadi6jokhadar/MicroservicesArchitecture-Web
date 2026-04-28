@@ -27,12 +27,16 @@ import {
   CircleX,
   Clipboard,
   Clock,
+  Cloud,
+  CloudOff,
+  CloudUpload,
   Code,
   CodeXml,
   Copy,
   CreditCard,
   DollarSign,
   Ellipsis,
+  ExternalLink,
   Eye,
   File,
   FileText,
@@ -89,6 +93,7 @@ import {
   Users,
   X,
   Zap,
+  Mic,
 } from 'lucide-angular';
 
 const DarkMode: LucideIconData = [
@@ -136,6 +141,7 @@ export const ZARD_ICONS = {
   'arrow-right': ArrowRight,
   'arrow-up': ArrowUp,
   'arrow-up-right': ArrowUpRight,
+  'external-link': ExternalLink,
   folder: Folder,
   'folder-open': FolderOpen,
   'folder-plus': FolderPlus,
@@ -190,6 +196,10 @@ export const ZARD_ICONS = {
   'user-plus': UserPlus,
   'credit-card': CreditCard,
   activity: Activity,
+  cloud: Cloud,
+  'cloud-upload': CloudUpload,
+  'cloud-off': CloudOff,
+  mic: Mic,
 } as const satisfies Record<string, LucideIconData>;
 
 export declare type ZardIcon = keyof typeof ZARD_ICONS | LucideIconData;

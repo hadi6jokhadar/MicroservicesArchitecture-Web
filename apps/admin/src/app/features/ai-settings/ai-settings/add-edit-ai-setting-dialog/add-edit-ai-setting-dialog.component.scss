@@ -1,5 +1,6 @@
 :host {
   display: block;
+  min-width: 560px;
 
   .dialog-container {
     display: flex;
@@ -18,5 +19,23 @@
     justify-content: end;
     gap: 0.5rem;
     padding-block-start: 0.5rem;
+  }
+
+  .form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .stream-checkbox-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-block-start: 0.25rem;
+
+    .stream-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
   }
 }
