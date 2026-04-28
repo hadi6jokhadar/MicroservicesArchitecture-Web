@@ -46,6 +46,7 @@ interface IAiSettingForm {
   TopP: FormControl<string>;
   FrequencyPenalty: FormControl<string>;
   PresencePenalty: FormControl<string>;
+  Description: FormControl<string>;
 }
 
 @Component({
@@ -143,6 +144,13 @@ export class AddEditAiSettingDialogComponent {
         : '',
       { nonNullable: true, validators: [Validators.min(-2), Validators.max(2)] }
     ),
+    Description: new FormControl<string>(
+      this._data?.setting?.Description || '',
+      {
+        nonNullable: true,
+        validators: [Validators.maxLength(500)],
+      }
+    ),
   });
 
   onSubmit(): void {
@@ -182,6 +190,7 @@ export class AddEditAiSettingDialogComponent {
         formValue.PresencePenalty.trim() !== ''
           ? parseFloat(formValue.PresencePenalty)
           : null,
+      Description: formValue.Description.trim() || null,
     };
 
     if (this.isEditMode() && this._data?.setting?.Id) {

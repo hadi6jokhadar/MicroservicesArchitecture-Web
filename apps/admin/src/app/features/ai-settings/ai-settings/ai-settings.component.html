@@ -183,6 +183,9 @@
               <th z-table-head class="col-model-name">
                 {{ 'aiSettings.table.modelName' | translate }}
               </th>
+              <th z-table-head class="col-description">
+                {{ 'aiSettings.table.description' | translate }}
+              </th>
               <th z-table-head class="col-api-key">
                 {{ 'aiSettings.table.apiKey' | translate }}
               </th>
@@ -226,6 +229,18 @@
                 [attr.data-label]="'aiSettings.table.modelName' | translate"
               >
                 <span class="model-name-text">{{ setting.ModelName }}</span>
+              </td>
+              <td
+                z-table-cell
+                class="col-description"
+                [attr.data-label]="'aiSettings.table.description' | translate"
+              >
+                <span
+                  class="description-text truncate block max-w-[200px]"
+                  [title]="setting.Description || ''"
+                >
+                  {{ setting.Description || '-' }}
+                </span>
               </td>
               <td
                 z-table-cell

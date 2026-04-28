@@ -104,7 +104,8 @@ export class AiSettingsComponent {
         setting.Provider.toLowerCase().includes(searchTerm) ||
         setting.ModelName.toLowerCase().includes(searchTerm) ||
         setting.ModelType.toLowerCase().includes(searchTerm) ||
-        (setting.TenantId || '').toLowerCase().includes(searchTerm);
+        (setting.TenantId || '').toLowerCase().includes(searchTerm) ||
+        (setting.Description || '').toLowerCase().includes(searchTerm);
 
       const matchesProvider =
         !providerFilter ||

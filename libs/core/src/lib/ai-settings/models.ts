@@ -30,6 +30,7 @@ export interface IAiProviderSetting {
   TopP?: number | null;
   FrequencyPenalty?: number | null;
   PresencePenalty?: number | null;
+  Description?: string | null;
 }
 
 export class AiProviderSettingClass implements IAiProviderSetting {
@@ -47,6 +48,7 @@ export class AiProviderSettingClass implements IAiProviderSetting {
   TopP?: number | null;
   FrequencyPenalty?: number | null;
   PresencePenalty?: number | null;
+  Description?: string | null;
 
   constructor(data: Partial<IAiProviderSetting> = {}) {
     this.Id = data.Id || '';
@@ -63,6 +65,7 @@ export class AiProviderSettingClass implements IAiProviderSetting {
     this.TopP = data.TopP ?? null;
     this.FrequencyPenalty = data.FrequencyPenalty ?? null;
     this.PresencePenalty = data.PresencePenalty ?? null;
+    this.Description = data.Description ?? null;
   }
 }
 
@@ -80,4 +83,5 @@ export interface IUpsertAiProviderSettingRequest {
   TopP?: number | null;
   FrequencyPenalty?: number | null;
   PresencePenalty?: number | null;
+  Description?: string | null;
 }

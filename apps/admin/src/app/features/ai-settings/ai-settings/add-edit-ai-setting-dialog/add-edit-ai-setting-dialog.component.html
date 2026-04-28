@@ -301,6 +301,26 @@
       </div>
     </div>
 
+    <z-form-field zardId="description" #dsc="zardId">
+      <label z-form-label [for]="dsc.id()">{{
+        'aiSettings.dialog.descriptionLabel' | translate
+      }}</label>
+      <z-form-control>
+        <textarea
+          z-input
+          [id]="dsc.id()"
+          formControlName="Description"
+          [placeholder]="'aiSettings.dialog.descriptionPlaceholder' | translate"
+          rows="2"
+        ></textarea>
+      </z-form-control>
+      @if (form.get('Description')?.hasError('maxlength')) {
+      <span z-form-error>{{
+        'aiSettings.validation.descriptionMaxLength' | translate
+      }}</span>
+      }
+    </z-form-field>
+
     @if (errorMessage()) {
     <z-alert
       zType="destructive"
