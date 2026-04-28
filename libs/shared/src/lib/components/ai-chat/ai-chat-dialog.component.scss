@@ -246,7 +246,6 @@
 .settings-key-select {
   min-width: 0;
   width: 100%;
-  max-width: 200px;
   overflow: hidden;
 }
 
@@ -260,7 +259,6 @@
 .settings-key-input {
   min-width: 0;
   width: 100%;
-  max-width: 200px;
   overflow: hidden;
 }
 
@@ -272,6 +270,7 @@
 
 // ── Error ────────────────────────────────────────────────────────────────────
 .chat-error {
+  max-width: -webkit-fill-available;
   margin: 0.5rem 1rem;
 }
 

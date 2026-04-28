@@ -8,6 +8,8 @@ import {
 } from '@angular/forms';
 import {
   AiSettingsService,
+  AudioDataModeEnum,
+  AUDIO_DATA_MODE_OPTIONS,
   IAiProviderSetting,
   IUpsertAiProviderSettingRequest,
   MODEL_TYPE_OPTIONS,
@@ -47,6 +49,7 @@ interface IAiSettingForm {
   FrequencyPenalty: FormControl<string>;
   PresencePenalty: FormControl<string>;
   Description: FormControl<string>;
+  AudioDataMode: FormControl<AudioDataModeEnum | null>;
 }
 
 @Component({
@@ -80,6 +83,7 @@ export class AddEditAiSettingDialogComponent {
   readonly isLoading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly modelTypeOptions = MODEL_TYPE_OPTIONS;
+  readonly audioDataModeOptions = AUDIO_DATA_MODE_OPTIONS;
 
   readonly form = new FormGroup<IAiSettingForm>({
     Key: new FormControl<string>(this._data?.setting?.Key || '', {
@@ -151,6 +155,9 @@ export class AddEditAiSettingDialogComponent {
         validators: [Validators.maxLength(500)],
       }
     ),
+    AudioDataMode: new FormControl<AudioDataModeEnum | null>(
+      this._data?.setting?.AudioDataMode ?? null
+    ),
   });
 
   onSubmit(): void {
@@ -191,6 +198,7 @@ export class AddEditAiSettingDialogComponent {
           ? parseFloat(formValue.PresencePenalty)
           : null,
       Description: formValue.Description.trim() || null,
+      AudioDataMode: formValue.AudioDataMode ?? null,
     };
 
     if (this.isEditMode() && this._data?.setting?.Id) {

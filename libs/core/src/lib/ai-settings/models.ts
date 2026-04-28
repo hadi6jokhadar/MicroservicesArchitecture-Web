@@ -13,6 +13,20 @@ export const MODEL_TYPE_OPTIONS: ModelTypeEnum[] = [
   'ImageGeneration',
 ];
 
+/**
+ * Controls how audio file bytes are delivered to the model API.
+ * - Auto   — provider auto-detection (default); no column value needed.
+ * - Url    — pass a real HTTP URL in an audio_url block (required for Qwen omni).
+ * - Base64 — download bytes and Base64-encode in an input_audio block (required for OpenAI/Gemini).
+ */
+export type AudioDataModeEnum = 'Auto' | 'Url' | 'Base64';
+
+export const AUDIO_DATA_MODE_OPTIONS: AudioDataModeEnum[] = [
+  'Auto',
+  'Url',
+  'Base64',
+];
+
 export type AiSettingsScopeFilter = 'all' | 'tenant' | 'global';
 
 export interface IAiProviderSetting {
@@ -31,6 +45,7 @@ export interface IAiProviderSetting {
   FrequencyPenalty?: number | null;
   PresencePenalty?: number | null;
   Description?: string | null;
+  AudioDataMode?: AudioDataModeEnum | null;
 }
 
 export class AiProviderSettingClass implements IAiProviderSetting {
@@ -49,6 +64,7 @@ export class AiProviderSettingClass implements IAiProviderSetting {
   FrequencyPenalty?: number | null;
   PresencePenalty?: number | null;
   Description?: string | null;
+  AudioDataMode?: AudioDataModeEnum | null;
 
   constructor(data: Partial<IAiProviderSetting> = {}) {
     this.Id = data.Id || '';
@@ -66,6 +82,7 @@ export class AiProviderSettingClass implements IAiProviderSetting {
     this.FrequencyPenalty = data.FrequencyPenalty ?? null;
     this.PresencePenalty = data.PresencePenalty ?? null;
     this.Description = data.Description ?? null;
+    this.AudioDataMode = data.AudioDataMode ?? null;
   }
 }
 
@@ -84,4 +101,5 @@ export interface IUpsertAiProviderSettingRequest {
   FrequencyPenalty?: number | null;
   PresencePenalty?: number | null;
   Description?: string | null;
+  AudioDataMode?: AudioDataModeEnum | null;
 }

@@ -418,12 +418,12 @@ export class AiChatDialogComponent implements OnInit, OnDestroy {
 
     this.errorMessage.set(null);
 
+    const request = this._buildRequest(content);
+
     // Add user message optimistically
     this.messages.update((msgs) => [...msgs, { role: 'user', content }]);
     this.inputText.set('');
     this._scrollToBottom();
-
-    const request = this._buildRequest(content);
 
     if (this.useStream()) {
       this._sendStream(request);
