@@ -126,6 +126,7 @@
             [formControl]="$any(toolbarForm.get('selectedSettingsKey'))"
             [zPlaceholder]="'aiChat.toolbar.settingsKey' | translate"
             class="settings-key-select"
+            zSize="sm"
           >
             @for (key of settingsKeys(); track key) {
             <z-select-item [zValue]="key" zSize="sm">{{ key }}</z-select-item>
@@ -137,6 +138,7 @@
             [formControl]="$any(toolbarForm.get('selectedSettingsKey'))"
             [placeholder]="'aiChat.toolbar.settingsKeyPlaceholder' | translate"
             class="settings-key-input"
+            zSize="sm"
           />
           }
 
@@ -146,6 +148,7 @@
             [formControl]="$any(toolbarForm.get('selectedSystemPromptKey'))"
             [zPlaceholder]="'aiChat.toolbar.systemPrompt' | translate"
             class="system-prompt-select"
+            zSize="sm"
           >
             <z-select-item zValue="_empty_" zSize="sm">
               {{ 'aiChat.toolbar.noSystemPrompt' | translate }}

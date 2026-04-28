@@ -19,6 +19,7 @@
     "@angular/router": "^21.1.0",
     "@microsoft/signalr": "^10.0.0",
     "@ngzard/ui": "^1.0.0-beta.26",
+    "chart.js": "^4.5.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "embla-carousel-angular": "^20.0.0",

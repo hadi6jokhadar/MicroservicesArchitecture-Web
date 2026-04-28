@@ -1,6 +1,6 @@
 # Frontend Documentation Index
 
-**Last Updated:** February 3, 2026  
+**Last Updated:** April 28, 2026  
 **Purpose:** Central entry point for all Angular frontend documentation
 
 ---

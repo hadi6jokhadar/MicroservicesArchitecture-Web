@@ -1,0 +1,84 @@
+<div class="stats-container">
+  @if (isLoading()) {
+  <div class="loading-container">
+    <z-loader zSize="lg" />
+    <p>{{ 'tokenUsageLogs.stats.loading' | translate }}</p>
+  </div>
+  } @else if (!stats()) {
+  <div class="empty-container">
+    <z-icon zType="activity" class="empty-icon" />
+    <p>{{ 'tokenUsageLogs.stats.noData' | translate }}</p>
+  </div>
+  } @else {
+
+  <!-- Summary Cards -->
+  <div class="summary-grid">
+    @for (card of summaryCards(); track card.labelKey) {
+    <z-card class="summary-card">
+      <div class="summary-card-inner">
+        <z-icon [zType]="card.icon" class="summary-icon" zSize="xl" />
+        <div class="summary-text">
+          <span class="summary-value">{{ card.value }}</span>
+          <span class="summary-label">{{ card.labelKey | translate }}</span>
+        </div>
+      </div>
+    </z-card>
+    }
+  </div>
+
+  <!-- Charts Row 1: Tokens over time -->
+  <z-card class="chart-card">
+    <div class="chart-title">
+      <z-icon zType="arrow-up-right" />
+      <h3>{{ 'tokenUsageLogs.stats.charts.tokensOverTime' | translate }}</h3>
+    </div>
+    @if (stats()!.tokens_over_time.length === 0) {
+    <div class="chart-empty">
+      {{ 'tokenUsageLogs.stats.noData' | translate }}
+    </div>
+    } @else {
+    <div class="chart-wrapper">
+      <canvas #tokensOverTimeCanvas></canvas>
+    </div>
+    }
+  </z-card>
+
+  <!-- Charts Row 2: By model + by endpoint -->
+  <div class="charts-row">
+    <z-card class="chart-card">
+      <div class="chart-title">
+        <z-icon zType="sparkles" />
+        <h3>{{ 'tokenUsageLogs.stats.charts.tokensByModel' | translate }}</h3>
+      </div>
+      @if (stats()!.tokens_by_model.length === 0) {
+      <div class="chart-empty">
+        {{ 'tokenUsageLogs.stats.noData' | translate }}
+      </div>
+      } @else {
+      <div class="chart-wrapper chart-wrapper--horizontal">
+        <canvas #tokensByModelCanvas></canvas>
+      </div>
+      }
+    </z-card>
+
+    <z-card class="chart-card">
+      <div class="chart-title">
+        <z-icon zType="layers" />
+        <h3>
+          {{ 'tokenUsageLogs.stats.charts.tokensByEndpoint' | translate }}
+        </h3>
+      </div>
+      @if (stats()!.tokens_by_endpoint.length === 0) {
+      <div class="chart-empty">
+        {{ 'tokenUsageLogs.stats.noData' | translate }}
+      </div>
+      } @else {
+      <div class="chart-wrapper">
+        <canvas #tokensByEndpointCanvas></canvas>
+      </div>
+      }
+    </z-card>
+  </div>
+
+  }
+</div>

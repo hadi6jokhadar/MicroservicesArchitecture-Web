@@ -1,57 +1,56 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  ElementRef,
-  ViewChild,
-  PLATFORM_ID,
-} from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HttpContext } from '@angular/common/http';
 import {
-  FormsModule,
-  ReactiveFormsModule,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+  ViewChild,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import {
   FormBuilder,
   FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
 } from '@angular/forms';
-import { Subscription } from 'rxjs';
 import {
   AiChatService,
   AiSettingsService,
   AiSystemPromptsService,
-  IAiChatSession,
+  FileGroup,
   IAiChatMessage,
+  IAiChatSession,
+  IAiProviderSetting,
+  IAiSystemPrompt,
   IChatMessagePayload,
   IChatSendRequest,
-  FileGroup,
-  IAiSystemPrompt,
-  IAiProviderSetting,
+  IFileManagerResponse,
   TranslatePipe,
 } from '@ihsan/core';
+import {
+  ZardAlertComponent,
+  ZardBadgeComponent,
+  ZardButtonComponent,
+  ZardCheckboxComponent,
+  ZardDialogRef,
+  ZardDividerComponent,
+  ZardIconComponent,
+  ZardInputDirective,
+  ZardLoaderComponent,
+  ZardSelectComponent,
+  ZardSelectItemComponent,
+} from '@ihsan/ui';
+import { Subscription } from 'rxjs';
 import {
   SKIP_ERROR_TOAST,
   extractErrorMessage,
 } from '../../interceptors/error.interceptor';
-import {
-  ZardButtonComponent,
-  ZardIconComponent,
-  ZardInputDirective,
-  ZardCheckboxComponent,
-  ZardSelectComponent,
-  ZardSelectItemComponent,
-  ZardDialogRef,
-  ZardAlertComponent,
-  ZardBadgeComponent,
-  ZardLoaderComponent,
-  ZardDividerComponent,
-} from '@ihsan/ui';
 import { FileSelectorComponent } from '../file-selector/file-selector.component';
-import { IFileManagerResponse } from '@ihsan/core';
 
 export interface IAiChatDialogData {
   defaultSettingsKey?: string;

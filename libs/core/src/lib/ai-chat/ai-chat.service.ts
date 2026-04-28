@@ -11,6 +11,8 @@ import {
   IAiChatSessionFilter,
   IAiTokenUsageLog,
   IAiTokenUsageLogFilter,
+  IAiTokenUsageStats,
+  IAiTokenUsageStatsFilter,
   IChatSendRequest,
   IChatSingleResponse,
 } from './models';
@@ -94,6 +96,16 @@ export class AiChatService {
     const params = buildParams(filter);
     return this._http.get<IAiTokenUsageLog[]>(
       `${this._base}/token-usage-logs/`,
+      { params }
+    );
+  }
+
+  getTokenUsageStats(
+    filter: IAiTokenUsageStatsFilter = {}
+  ): Observable<IAiTokenUsageStats> {
+    const params = buildParams(filter);
+    return this._http.get<IAiTokenUsageStats>(
+      `${this._base}/token-usage-logs/stats`,
       { params }
     );
   }

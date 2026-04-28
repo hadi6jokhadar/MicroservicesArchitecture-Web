@@ -575,7 +575,104 @@ export class FeatureService {
 - **Angular Instructions**: See [.github/instructions/Angular.instructions.md](.github/instructions/Angular.instructions.md)
 - **Component Usage**: See [COMPONENT_USAGE_GUIDE.md](./COMPONENT_USAGE_GUIDE.md)
 
+## Chart.js Integration
+
+Chart.js is installed as `chart.js` in `package.json`. Always use tree-shaken imports — never import the full bundle.
+
+### Setup (one-time at module level)
+
+```typescript
+import {
+  Chart,
+  BarController,
+  BarElement,
+  LineController,
+  LineElement,
+  DoughnutController,
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip,
+  Legend,
+  Filler,
+} from 'chart.js';
+
+// Register only what you use — place at top of component file, outside the class
+Chart.register(
+  BarController,
+  BarElement,
+  LineController,
+  LineElement,
+  DoughnutController,
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip,
+  Legend,
+  Filler
+);
+```
+
+### Canvas access with `@ViewChild`
+
+```typescript
+@ViewChild('myCanvas') myCanvas!: ElementRef<HTMLCanvasElement>;
+private _chart: Chart | null = null;
+```
+
+### Critical: `@ViewChild` inside `@if` blocks
+
+When a `<canvas>` is inside an `@if` / `@else` block the element is not yet in the DOM immediately after setting the signal that triggers rendering. Always call `detectChanges()` before building the chart:
+
+```typescript
+export class StatsComponent implements AfterViewInit, OnDestroy {
+  private readonly _cdr = inject(ChangeDetectorRef);
+  private _initialized = false;
+
+  ngAfterViewInit(): void {
+    this._initialized = true;
+    const s = this.stats();
+    if (s) this._buildCharts(s); // already rendered — safe to access @ViewChild
+  }
+
+  loadData(): void {
+    this._service.getData().subscribe({
+      next: (data) => {
+        this.stats.set(data); // triggers re-render inside @if
+        this.isLoading.set(false);
+        if (this._initialized) {
+          this._cdr.detectChanges(); // ← flush Angular CD so <canvas> enters DOM
+          this._buildCharts(data); // now @ViewChild refs are valid
+        }
+      },
+    });
+  }
+
+  ngOnDestroy(): void {
+    this._chart?.destroy();
+    this._chart = null;
+  }
+
+  private _buildCharts(data: IStats): void {
+    // Destroy previous instance before recreating
+    this._chart?.destroy();
+    this._chart = new Chart(this.myCanvas.nativeElement, {
+      /* config */
+    });
+  }
+}
+```
+
+### Key rules
+
+- **Always destroy before recreate** — call `chart.destroy()` before creating a new `Chart` instance on the same canvas.
+- **Register once** — `Chart.register(...)` at module level (outside the class), not inside `ngOnInit` or a method.
+- **`_initialized` flag** — gate chart building on `AfterViewInit` so you never access a `@ViewChild` before the view is ready.
+- **`ChangeDetectorRef.detectChanges()`** — required any time chart data arrives via HTTP and the canvas is inside a conditional block.
+
 ---
 
-**Last Updated:** January 25, 2026  
-**Version:** 1.1
+**Last Updated:** April 28, 2026  
+**Version:** 1.2

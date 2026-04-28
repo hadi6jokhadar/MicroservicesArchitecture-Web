@@ -6,6 +6,30 @@
         <h1>{{ 'page.title.tokenUsageLogs' | translate }}</h1>
         <p>{{ 'page.subtitle.tokenUsageLogs' | translate }}</p>
       </div>
+
+      <!-- View Switcher -->
+      <div class="view-switcher">
+        <button
+          z-button
+          [zType]="activeView() === 'table' ? 'default' : 'outline'"
+          zSize="default"
+          (click)="setView('table')"
+          type="button"
+        >
+          <z-icon zType="layers-2" />
+          {{ 'tokenUsageLogs.view.table' | translate }}
+        </button>
+        <button
+          z-button
+          [zType]="activeView() === 'charts' ? 'default' : 'outline'"
+          zSize="default"
+          (click)="setView('charts')"
+          type="button"
+        >
+          <z-icon zType="activity" />
+          {{ 'tokenUsageLogs.view.charts' | translate }}
+        </button>
+      </div>
     </div>
   </div>
 
@@ -98,6 +122,8 @@
     </form>
   </z-card>
 
+  <!-- Table View -->
+  @if (activeView() === 'table') {
   <!-- Table -->
   <z-card class="table-card">
     @if (isLoading()) {
@@ -225,4 +251,10 @@
     </div>
     }
   </z-card>
+  }
+
+  <!-- Statistics / Charts View -->
+  @if (activeView() === 'charts') {
+  <app-token-usage-stats [filter]="statsFilter()" />
+  }
 </div>

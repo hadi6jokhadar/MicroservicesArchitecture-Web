@@ -112,3 +112,41 @@ export interface IAiTokenUsageLogFilter {
   skip?: number;
   limit?: number;
 }
+
+export interface IAiTokenUsageStatsFilter {
+  model_name?: string;
+  endpoint?: string;
+  created_from?: string;
+  created_to?: string;
+}
+
+export interface ITokensByModelItem {
+  model_name: string;
+  total_tokens: number;
+  prompt_tokens: number;
+  completion_tokens: number;
+  request_count: number;
+}
+
+export interface ITokensByEndpointItem {
+  endpoint: string;
+  total_tokens: number;
+  request_count: number;
+}
+
+export interface ITokensOverTimeItem {
+  date: string;
+  total_tokens: number;
+  request_count: number;
+}
+
+export interface IAiTokenUsageStats {
+  total_tokens: number;
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_requests: number;
+  avg_tokens_per_request: number;
+  tokens_by_model: ITokensByModelItem[];
+  tokens_by_endpoint: ITokensByEndpointItem[];
+  tokens_over_time: ITokensOverTimeItem[];
+}

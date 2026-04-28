@@ -302,3 +302,9 @@
 [dir='rtl'] z-icon {
   transform: scaleX(-1);
 }
+
+z-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

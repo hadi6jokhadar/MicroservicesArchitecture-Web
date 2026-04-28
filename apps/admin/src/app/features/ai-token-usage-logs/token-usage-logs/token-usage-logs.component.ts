@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import {
   AiChatService,
   IAiTokenUsageLog,
+  IAiTokenUsageStatsFilter,
   TranslatePipe,
   TranslationService,
 } from '@ihsan/core';
@@ -23,6 +24,7 @@ import {
   ZardTableImports,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
+import { TokenUsageStatsComponent } from '../token-usage-stats/token-usage-stats.component';
 
 interface ITokenLogsFilterForm {
   searchTerm: FormControl<string>;
@@ -49,6 +51,7 @@ interface ITokenLogsFilterForm {
     ZardLoaderComponent,
     ZardEmptyComponent,
     ZardIdDirective,
+    TokenUsageStatsComponent,
   ],
   templateUrl: './token-usage-logs.component.html',
   styleUrls: ['./token-usage-logs.component.scss'],
@@ -58,6 +61,7 @@ export class TokenUsageLogsComponent {
   private readonly _aiChatService = inject(AiChatService);
   private readonly _translationService = inject(TranslationService);
 
+  readonly activeView = signal<'table' | 'charts'>('table');
   readonly isLoading = signal(false);
   readonly logs = signal<IAiTokenUsageLog[]>(
     (this._route.snapshot.data['logs'] as IAiTokenUsageLog[] | undefined) || []
@@ -73,6 +77,14 @@ export class TokenUsageLogsComponent {
   });
 
   readonly filterValues = signal(this.filterForm.getRawValue());
+
+  readonly statsFilter = computed<IAiTokenUsageStatsFilter>(() => {
+    const { modelName, endpoint } = this.filterValues();
+    return {
+      model_name: modelName.trim() || undefined,
+      endpoint: endpoint.trim() || undefined,
+    };
+  });
 
   readonly filteredLogs = computed(() => {
     const { searchTerm, modelName, endpoint } = this.filterValues();
@@ -151,5 +163,9 @@ export class TokenUsageLogsComponent {
     this.filterForm.reset({ searchTerm: '', modelName: '', endpoint: '' });
     this.loadData();
     this.currentPage.set(1);
+  }
+
+  setView(view: 'table' | 'charts'): void {
+    this.activeView.set(view);
   }
 }
