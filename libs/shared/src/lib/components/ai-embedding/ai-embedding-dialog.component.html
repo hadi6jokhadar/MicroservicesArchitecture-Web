@@ -1,0 +1,104 @@
+<div class="embedding-container">
+  <!-- Header -->
+  <div class="embedding-header">
+    <div class="header-icon">
+      <z-icon zType="layers" zSize="xl" />
+    </div>
+    <div class="header-text">
+      <h3>{{ 'aiEmbedding.dialog.title' | translate }}</h3>
+      <p>{{ 'aiEmbedding.dialog.description' | translate }}</p>
+    </div>
+  </div>
+
+  <z-divider />
+
+  <!-- Settings Key selector -->
+  <div class="form-field">
+    <label class="field-label">
+      {{ 'aiEmbedding.dialog.settingsKeyLabel' | translate }}
+    </label>
+    @if (loadingSettings()) {
+    <div class="settings-loading">
+      <z-loader zSize="sm" />
+    </div>
+    } @else if (settingsKeys().length > 0) {
+    <z-select
+      [formControl]="$any(form.get('selectedSettingsKey'))"
+      [zPlaceholder]="'aiEmbedding.dialog.settingsKeyPlaceholder' | translate"
+    >
+      @for (key of settingsKeys(); track key) {
+      <z-select-item [zValue]="key">{{ key }}</z-select-item>
+      }
+    </z-select>
+    } @else {
+    <input
+      z-input
+      [formControl]="$any(form.get('selectedSettingsKey'))"
+      [placeholder]="'aiEmbedding.dialog.settingsKeyPlaceholder' | translate"
+    />
+    }
+  </div>
+
+  <!-- Text input -->
+  <div class="form-field">
+    <label class="field-label">
+      {{ 'aiEmbedding.dialog.textLabel' | translate }}
+    </label>
+    <textarea
+      z-input
+      class="text-input"
+      [formControl]="$any(form.get('text'))"
+      [placeholder]="'aiEmbedding.dialog.textPlaceholder' | translate"
+      rows="4"
+    ></textarea>
+  </div>
+
+  <!-- Error -->
+  @if (errorMessage()) {
+  <z-alert
+    zType="destructive"
+    zIcon="circle-alert"
+    [zDescription]="errorMessage()!"
+  />
+  }
+
+  <!-- Result -->
+  @if (result(); as res) {
+  <div class="result-section">
+    <z-divider />
+    <div class="result-meta">
+      <span class="result-label"
+        >{{ 'aiEmbedding.result.model' | translate }}:</span
+      >
+      <span class="result-value">{{ res.model }}</span>
+      <span class="result-label"
+        >{{ 'aiEmbedding.result.dimensions' | translate }}:</span
+      >
+      <span class="result-value">{{ res.embedding.length }}</span>
+    </div>
+    <div class="result-vector-label">
+      {{ 'aiEmbedding.result.vector' | translate }}
+    </div>
+    <div class="result-vector">
+      <code>{{ res.embedding | json }}</code>
+    </div>
+  </div>
+  }
+
+  <!-- Actions -->
+  <div class="embedding-actions">
+    <button z-button zType="outline" (click)="close()">
+      {{ 'common.close' | translate }}
+    </button>
+    <button
+      z-button
+      zType="default"
+      [zLoading]="loading()"
+      [zDisabled]="!canSubmit()"
+      (click)="submit()"
+    >
+      <z-icon zType="sparkles" zSize="xl" />
+      {{ 'aiEmbedding.dialog.submitButton' | translate }}
+    </button>
+  </div>
+</div>

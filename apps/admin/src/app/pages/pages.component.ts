@@ -19,6 +19,7 @@ import {
   SidebarUserClass,
   FileManagerComponent,
   AiChatDialogComponent,
+  AiEmbeddingDialogComponent,
   SidebarPageType,
 } from '@ihsan/shared';
 
@@ -102,6 +103,14 @@ export class PagesComponent {
       group: 'sidebar.groups.ai',
       roles: ['Admin', 'SuperAdmin'],
       action: () => this.openAiChatDialog(),
+      type: SidebarPageType.Both,
+    }),
+    new SidebarPageClass({
+      translationKey: 'sidebar.pages.aiEmbedding',
+      icon: 'layers' as ZardIcon,
+      group: 'sidebar.groups.ai',
+      roles: ['Admin', 'SuperAdmin'],
+      action: () => this.openAiEmbeddingDialog(),
       type: SidebarPageType.Both,
     }),
     new SidebarPageClass({
@@ -255,6 +264,14 @@ export class PagesComponent {
       zContent: AiChatDialogComponent as any,
       zWidth: '90vw',
       zCustomClasses: 'z-dialog-max-width-100',
+      zHideFooter: true,
+    });
+  }
+
+  openAiEmbeddingDialog(): void {
+    this._dialogService.create({
+      zContent: AiEmbeddingDialogComponent as any,
+      zWidth: '560px',
       zHideFooter: true,
     });
   }

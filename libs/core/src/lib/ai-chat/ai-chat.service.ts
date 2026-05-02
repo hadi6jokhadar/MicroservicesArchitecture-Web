@@ -15,6 +15,8 @@ import {
   IAiTokenUsageStatsFilter,
   IChatSendRequest,
   IChatSingleResponse,
+  IEmbeddingRequest,
+  IEmbeddingResponse,
 } from './models';
 
 @Injectable({
@@ -120,6 +122,21 @@ export class AiChatService {
   ): Observable<IChatSingleResponse> {
     return this._http.post<IChatSingleResponse>(
       `${this._base}/chat/single`,
+      request,
+      { context }
+    );
+  }
+
+  // -------------------------------------------------------------------------
+  // Embedding
+  // -------------------------------------------------------------------------
+
+  createEmbedding(
+    request: IEmbeddingRequest,
+    context?: HttpContext
+  ): Observable<IEmbeddingResponse> {
+    return this._http.post<IEmbeddingResponse>(
+      `${this._base}/embedding`,
       request,
       { context }
     );

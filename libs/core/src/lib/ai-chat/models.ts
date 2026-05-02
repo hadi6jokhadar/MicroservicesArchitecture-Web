@@ -150,3 +150,17 @@ export interface IAiTokenUsageStats {
   tokens_by_endpoint: ITokensByEndpointItem[];
   tokens_over_time: ITokensOverTimeItem[];
 }
+
+// ---------------------------------------------------------------------------
+// Embedding
+// ---------------------------------------------------------------------------
+
+export interface IEmbeddingRequest {
+  settingsKey: string;
+  text: string;
+}
+
+export interface IEmbeddingResponse {
+  embedding: number[];
+  model: string;
+}
