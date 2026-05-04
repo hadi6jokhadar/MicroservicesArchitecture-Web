@@ -2,6 +2,7 @@ import { InjectionToken } from '@angular/core';
 
 export interface Environment {
   production: boolean;
+  tenantId?: string;
   apiUrls: {
     identity: string;
     tenant: string;

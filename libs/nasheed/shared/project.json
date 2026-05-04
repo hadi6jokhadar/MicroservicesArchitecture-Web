@@ -1,0 +1,13 @@
+{
+  "name": "nasheed-shared",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/nasheed/shared/src",
+  "prefix": "nasheed",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

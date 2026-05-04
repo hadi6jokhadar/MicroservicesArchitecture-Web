@@ -1,0 +1,37 @@
+:host {
+  .claim-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .checkbox-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+
+        span {
+          font-weight: 500;
+        }
+      }
+
+      .checkbox-hint {
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--color-muted-foreground);
+        margin-inline-start: 1.75rem;
+      }
+    }
+  }
+}

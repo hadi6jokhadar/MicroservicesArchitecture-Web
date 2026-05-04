@@ -1,0 +1,391 @@
+<div class="users-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>{{ 'users.title' | translate }}</h1>
+        <p>{{ 'users.subtitle' | translate }}</p>
+      </div>
+      <button
+        z-button
+        zType="default"
+        zSize="lg"
+        (click)="onAddUser()"
+        id="add-user-btn"
+      >
+        <z-icon zType="user-plus" />
+        {{ 'users.addUser' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Form Card -->
+  <z-card zPadding="lg">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <!-- Search Input -->
+        <z-form-field
+          class="filter-field search-field"
+          zardId="searchTerm"
+          #s="zardId"
+        >
+          <label z-form-label [for]="s.id()">
+            {{ 'users.search' | translate }}
+          </label>
+          <z-form-control>
+            <div class="search-input-wrapper">
+              <z-icon zType="search" class="search-icon" />
+              <input
+                z-input
+                [id]="s.id()"
+                type="text"
+                formControlName="searchTerm"
+                [placeholder]="'users.searchPlaceholder' | translate"
+                (keyup.enter)="onSearch()"
+              />
+            </div>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Role Filter -->
+        <z-form-field class="filter-field" zardId="roleName" #f="zardId">
+          <label z-form-label [for]="f.id()">
+            {{ 'users.role' | translate }}
+          </label>
+          <z-form-control>
+            @if (rolesLoaded()) {
+            <z-select
+              [id]="f.id()"
+              [zPlaceholder]="'users.allRoles' | translate"
+              formControlName="roleName"
+            >
+              <z-select-item zValue="__all__">
+                {{ 'users.allRoles' | translate }}
+              </z-select-item>
+              @for (role of roles(); track role.id) {
+              <z-select-item [zValue]="role.name">
+                {{ role.name }}
+              </z-select-item>
+              }
+            </z-select>
+            } @else {
+            <z-loader zSize="sm" />
+            }
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Status Filter -->
+        <z-form-field class="filter-field" zardId="status" #st="zardId">
+          <label z-form-label [for]="st.id()">
+            {{ 'users.status' | translate }}
+          </label>
+          <z-form-control>
+            <z-select
+              [id]="st.id()"
+              [zPlaceholder]="'users.allStatus' | translate"
+              formControlName="status"
+            >
+              <z-select-item zValue="__all__">
+                {{ 'users.allStatus' | translate }}
+              </z-select-item>
+              <z-select-item zValue="true">
+                {{ 'users.active' | translate }}
+              </z-select-item>
+              <z-select-item zValue="false">
+                {{ 'users.inactive' | translate }}
+              </z-select-item>
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Archived Filter (SuperAdmin Only) -->
+        @if (isSuperAdmin) {
+        <div class="filter-field switch-field">
+          <label z-form-label for="isArchived">
+            {{ 'users.archived' | translate }}
+          </label>
+          <z-switch formControlName="isArchived" id="isArchived" />
+        </div>
+        }
+
+        <!-- Action Buttons -->
+        <div class="filter-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            (click)="onClearFilters()"
+            type="button"
+            id="clear-filters-btn"
+          >
+            <z-icon zType="x" />
+            {{ 'common.clear' | translate }}
+          </button>
+          <button
+            z-button
+            zType="default"
+            zSize="default"
+            (click)="onSearch()"
+            type="button"
+            id="search-btn"
+          >
+            <z-icon zType="search" />
+            {{ 'common.search' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </z-card>
+
+  <!-- Users Table Card -->
+  <z-card class="table-card">
+    @if (isLoading()) {
+    <div class="loading-container">
+      <z-loader zSize="lg" />
+      <p>{{ 'users.loadingUsers' | translate }}</p>
+    </div>
+    } @else if (users().length === 0) {
+    <div class="empty-container">
+      <z-empty
+        zIcon="users"
+        [zTitle]="'users.noUsersFound' | translate"
+        [zDescription]="'users.noUsersFoundDesc' | translate"
+      />
+    </div>
+    } @else {
+    <div class="table-container">
+      <!-- Results Info -->
+      <div class="table-header">
+        <div class="results-info">
+          <z-icon zType="users" />
+          <span>
+            {{ 'users.showingResults' | translate }} {{ users().length }}
+            {{ 'common.of' | translate }} {{ totalCount() }}
+            {{ 'users.users' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table class="users-table" z-table>
+          <thead z-table-header>
+            <tr z-table-row>
+              <th z-table-head class="col-avatar">
+                {{ 'users.table.avatar' | translate }}
+              </th>
+              <th z-table-head class="col-name">
+                {{ 'users.table.name' | translate }}
+              </th>
+              <th z-table-head class="col-email">
+                {{ 'users.table.email' | translate }}
+              </th>
+              <th z-table-head class="col-phone">
+                {{ 'users.table.phone' | translate }}
+              </th>
+              <th z-table-head class="col-roles">
+                {{ 'users.table.roles' | translate }}
+              </th>
+              <th z-table-head class="col-status">
+                {{ 'users.table.status' | translate }}
+              </th>
+              <th z-table-head class="col-created">
+                {{ 'users.table.created' | translate }}
+              </th>
+              <th z-table-head class="col-actions">
+                {{ 'users.table.actions' | translate }}
+              </th>
+            </tr>
+          </thead>
+          <tbody z-table-body>
+            @for (user of users(); track user.id) {
+            <tr z-table-row class="user-row">
+              <!-- Avatar -->
+              <td
+                z-table-cell
+                class="col-avatar"
+                [attr.data-label]="'users.table.avatar' | translate"
+              >
+                <z-avatar
+                  zSize="sm"
+                  zShape="circle"
+                  [zSrc]="getProfilePictureUrl(user)"
+                  [zFallback]="getUserInitials(user)"
+                  [zAlt]="user.firstName + ' ' + user.lastName"
+                />
+              </td>
+
+              <!-- Name -->
+              <td
+                z-table-cell
+                class="col-name"
+                [attr.data-label]="'users.table.name' | translate"
+              >
+                <div class="name-cell">
+                  <span class="name-text"
+                    >{{ user.firstName }} {{ user.lastName }}</span
+                  >
+                  @if (user.emailConfirmed) {
+                  <z-icon
+                    zType="badge-check"
+                    class="verified-icon"
+                    [title]="'users.emailVerified' | translate"
+                  />
+                  }
+                </div>
+              </td>
+
+              <!-- Email -->
+              <td
+                z-table-cell
+                class="col-email"
+                [attr.data-label]="'users.table.email' | translate"
+              >
+                <span class="email-text">
+                  {{ user.email || ('users.na' | translate) }}
+                </span>
+              </td>
+
+              <!-- Phone -->
+              <td
+                z-table-cell
+                class="col-phone"
+                [attr.data-label]="'users.table.phone' | translate"
+              >
+                <span class="phone-text">
+                  {{ user.phoneNumber || ('users.na' | translate) }}
+                </span>
+              </td>
+
+              <!-- Roles -->
+              <td
+                z-table-cell
+                class="col-roles"
+                [attr.data-label]="'users.table.roles' | translate"
+              >
+                <div class="roles-badges">
+                  @for (role of user.roles; track role.id) {
+                  <z-badge [zType]="getRoleBadgeType(role)" zShape="pill">
+                    {{ role.name }}
+                  </z-badge>
+                  } @empty {
+                  <span class="no-roles">{{
+                    'users.noRoles' | translate
+                  }}</span>
+                  }
+                </div>
+              </td>
+
+              <!-- Status -->
+              <td
+                z-table-cell
+                class="col-status"
+                [attr.data-label]="'users.table.status' | translate"
+              >
+                <z-badge
+                  [zType]="getStatusBadgeType(user.status)"
+                  zShape="pill"
+                >
+                  {{
+                    user.status
+                      ? ('users.active' | translate)
+                      : ('users.inactive' | translate)
+                  }}
+                </z-badge>
+              </td>
+
+              <!-- Created Date -->
+              <td
+                z-table-cell
+                class="col-created"
+                [attr.data-label]="'users.table.created' | translate"
+              >
+                <span class="date-text">{{
+                  user.created | date : 'mediumDate'
+                }}</span>
+              </td>
+
+              <!-- Actions Dropdown -->
+              <td
+                z-table-cell
+                class="col-actions"
+                [attr.data-label]="'users.table.actions' | translate"
+              >
+                <button
+                  z-button
+                  zType="outline"
+                  zSize="sm"
+                  z-dropdown
+                  [zDropdownMenu]="actionsMenu"
+                  [id]="'user-actions-' + user.id"
+                >
+                  <z-icon zType="ellipsis" />
+                </button>
+                <z-dropdown-menu-content #actionsMenu="zDropdownMenuContent">
+                  <z-dropdown-menu-item
+                    (click)="onEditUser(user)"
+                    [id]="'edit-user-' + user.id"
+                  >
+                    <z-icon zType="file-text" />
+                    {{ 'users.actions.editUser' | translate }}
+                  </z-dropdown-menu-item>
+
+                  @if (isSuperAdmin && user.id !==
+                  _authService.currentUser()?.id) {
+                  <z-dropdown-menu-item
+                    (click)="onToggleArchive(user)"
+                    [id]="'toggle-archive-' + user.id"
+                  >
+                    <z-icon
+                      [zType]="user.isArchived ? 'folder-open' : 'archive'"
+                    />
+                    {{
+                      user.isArchived
+                        ? ('users.actions.unarchive' | translate)
+                        : ('users.actions.archive' | translate)
+                    }}
+                  </z-dropdown-menu-item>
+                  } @if (user.id !== _authService.currentUser()?.id) {
+                  <z-dropdown-menu-item
+                    (click)="onToggleStatus(user)"
+                    [id]="'toggle-status-' + user.id"
+                  >
+                    <z-icon [zType]="user.status ? 'ban' : 'check'" />
+                    {{
+                      user.status
+                        ? ('users.actions.deactivate' | translate)
+                        : ('users.actions.activate' | translate)
+                    }}
+                  </z-dropdown-menu-item>
+
+                  <z-dropdown-menu-item
+                    (click)="onDeleteUser(user)"
+                    [id]="'delete-user-' + user.id"
+                    class="delete-action"
+                  >
+                    <z-icon zType="trash" />
+                    {{ 'users.actions.deleteUser' | translate }}
+                  </z-dropdown-menu-item>
+                  }
+                </z-dropdown-menu-content>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      @if (totalPages() > 1) {
+      <div class="pagination-container">
+        <z-pagination
+          zSize="sm"
+          [zTotal]="totalPages()"
+          [(zPageIndex)]="currentPage"
+        />
+      </div>
+      }
+    </div>
+    }
+  </z-card>
+</div>

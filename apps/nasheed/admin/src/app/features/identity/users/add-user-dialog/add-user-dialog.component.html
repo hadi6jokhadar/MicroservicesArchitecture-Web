@@ -1,0 +1,210 @@
+@if (data.roles && data.roles.length > 0) {
+<div class="dialog-container">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+    <!-- Email -->
+    <z-form-field zardId="email" #e="zardId">
+      <label z-form-label [for]="e.id()">
+        {{ 'users.dialog.emailLabel' | translate }}
+      </label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="e.id()"
+          type="email"
+          formControlName="email"
+          [placeholder]="'users.dialog.emailPlaceholder' | translate"
+        />
+      </z-form-control>
+      @if (form.controls.email.touched &&
+      form.controls.email.hasError('required')) {
+      <span z-form-error>{{
+        'users.dialog.validation.emailRequired' | translate
+      }}</span>
+      } @else if (form.controls.email.touched &&
+      form.controls.email.hasError('email')) {
+      <span z-form-error>{{
+        'users.dialog.validation.emailInvalid' | translate
+      }}</span>
+      }
+    </z-form-field>
+
+    <!-- Profile Picture -->
+    <div class="mb-4">
+      <shared-file-selector
+        [label]="'users.dialog.uploadProfilePicture' | translate"
+        [maxFiles]="1"
+        selectionMode="single"
+        [type]="FileType.Image"
+        [group]="FileGroup.Personal"
+        (filesChanged)="onFileSelected($event)"
+      ></shared-file-selector>
+    </div>
+
+    <!-- Password -->
+    <z-form-field zardId="password" #p="zardId">
+      <label z-form-label [for]="p.id()">
+        {{ 'users.dialog.passwordLabel' | translate }}
+      </label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="p.id()"
+          type="password"
+          formControlName="password"
+          [placeholder]="'users.dialog.passwordPlaceholder' | translate"
+        />
+      </z-form-control>
+      @if (form.controls.password.touched &&
+      form.controls.password.hasError('required')) {
+      <span z-form-error>{{
+        'users.dialog.validation.passwordRequired' | translate
+      }}</span>
+      } @else if (form.controls.password.touched &&
+      form.controls.password.hasError('minlength')) {
+      <span z-form-error>{{
+        'users.dialog.validation.passwordMinLength' | translate
+      }}</span>
+      }
+    </z-form-field>
+
+    <!-- First Name -->
+    <z-form-field zardId="firstName" #fn="zardId">
+      <label z-form-label [for]="fn.id()">
+        {{ 'users.dialog.firstNameLabel' | translate }}
+      </label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="fn.id()"
+          type="text"
+          formControlName="firstName"
+          [placeholder]="'users.dialog.firstNamePlaceholder' | translate"
+        />
+      </z-form-control>
+      @if (form.controls.firstName.touched &&
+      form.controls.firstName.hasError('required')) {
+      <span z-form-error>{{
+        'users.dialog.validation.firstNameRequired' | translate
+      }}</span>
+      } @else if (form.controls.firstName.touched &&
+      form.controls.firstName.hasError('pattern')) {
+      <span z-form-error>{{
+        'users.dialog.validation.firstNameInvalid' | translate
+      }}</span>
+      }
+    </z-form-field>
+
+    <!-- Last Name -->
+    <z-form-field zardId="lastName" #ln="zardId">
+      <label z-form-label [for]="ln.id()">
+        {{ 'users.dialog.lastNameLabel' | translate }}
+      </label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="ln.id()"
+          type="text"
+          formControlName="lastName"
+          [placeholder]="'users.dialog.lastNamePlaceholder' | translate"
+        />
+      </z-form-control>
+      @if (form.controls.lastName.touched &&
+      form.controls.lastName.hasError('required')) {
+      <span z-form-error>{{
+        'users.dialog.validation.lastNameRequired' | translate
+      }}</span>
+      } @else if (form.controls.lastName.touched &&
+      form.controls.lastName.hasError('pattern')) {
+      <span z-form-error>{{
+        'users.dialog.validation.lastNameInvalid' | translate
+      }}</span>
+      }
+    </z-form-field>
+
+    <!-- Phone Number -->
+    <z-form-field zardId="phoneNumber" #pn="zardId">
+      <label z-form-label [for]="pn.id()">
+        {{ 'users.dialog.phoneNumberLabel' | translate }}
+      </label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="pn.id()"
+          type="tel"
+          formControlName="phoneNumber"
+          [placeholder]="'users.dialog.phoneNumberPlaceholder' | translate"
+        />
+      </z-form-control>
+      <p z-form-description>
+        {{ 'users.dialog.phoneNumberDescription' | translate }}
+      </p>
+    </z-form-field>
+
+    <!-- Roles -->
+    <z-form-field zardId="roles" #r="zardId">
+      <label z-form-label [for]="r.id()">
+        {{ 'users.dialog.rolesLabel' | translate }}
+      </label>
+      <z-form-control>
+        <z-select
+          [id]="r.id()"
+          [zPlaceholder]="'users.dialog.rolesPlaceholder' | translate"
+          formControlName="roleIds"
+          [zValue]="form.controls.roleIds.value"
+          (zSelectionChange)="form.controls.roleIds.setValue($any($event))"
+          [zMultiple]="true"
+        >
+          @for (role of data.roles; track role.id) { @if (role.status) {
+          <z-select-item [zValue]="role.id.toString()">
+            {{ role.name }}
+          </z-select-item>
+          } }
+        </z-select>
+      </z-form-control>
+      @if (form.controls.roleIds.touched &&
+      form.controls.roleIds.hasError('required')) {
+      <span z-form-error>{{
+        'users.dialog.validation.rolesRequired' | translate
+      }}</span>
+      }
+    </z-form-field>
+
+    <!-- Error Messages -->
+    @if (errorMessage()) {
+    <z-alert
+      zType="destructive"
+      zIcon="circle-alert"
+      [zDescription]="errorMessage()!"
+    />
+    }
+
+    <div class="dialog-actions">
+      <button
+        z-button
+        zType="outline"
+        type="button"
+        (click)="onCancel()"
+        [zDisabled]="isLoading()"
+        id="cancel-button"
+      >
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        z-button
+        zType="default"
+        type="submit"
+        [zLoading]="isLoading()"
+        [zDisabled]="isLoading()"
+        id="save-button"
+      >
+        {{ 'common.create' | translate }}
+      </button>
+    </div>
+  </form>
+</div>
+} @else {
+<div class="loading-container">
+  <z-loader zSize="lg" />
+  <p>{{ 'common.loading' | translate }}</p>
+</div>
+}

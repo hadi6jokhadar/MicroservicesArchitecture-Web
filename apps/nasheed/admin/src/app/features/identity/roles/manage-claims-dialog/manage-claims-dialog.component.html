@@ -1,0 +1,91 @@
+<div class="manage-claims-dialog">
+  @if (isLoading()) {
+  <div class="loading-container">
+    <z-loader zSize="lg" />
+  </div>
+  } @else if (availableClaims().length === 0) {
+  <z-empty
+    zIcon="shield"
+    [zTitle]="'roles.dialog.noClaims' | translate"
+    [zDescription]="'roles.dialog.noClaimsDescription' | translate"
+  />
+  } @else {
+  <div class="claims-list">
+    <p class="instructions">
+      {{ 'roles.dialog.claimsInstructions' | translate }}
+    </p>
+
+    <div class="claims-grid">
+      @for (claim of availableClaims(); track claim.id) {
+      <div
+        class="claim-item"
+        [class.selected]="isClaimSelected(claim.id)"
+        (click)="toggleClaim(claim.id)"
+        (keyup.enter)="toggleClaim(claim.id)"
+        (keyup.space)="toggleClaim(claim.id)"
+        tabindex="0"
+        role="checkbox"
+        [attr.aria-checked]="isClaimSelected(claim.id)"
+      >
+        <div class="claim-header">
+          <div class="claim-name">
+            <input
+              type="checkbox"
+              [checked]="isClaimSelected(claim.id)"
+              (click)="$event.stopPropagation()"
+              [id]="'claim-' + claim.id"
+            />
+            <label [for]="'claim-' + claim.id">{{ claim.name }}</label>
+          </div>
+          @if (claim.isSuperAdminOnly) {
+          <z-badge zType="destructive" zSize="sm">{{
+            'roles.dialog.superAdminOnly' | translate
+          }}</z-badge>
+          }
+        </div>
+
+        @if (claim.description) {
+        <p class="claim-description">{{ claim.description }}</p>
+        }
+
+        <div class="claim-details">
+          <span class="claim-type">{{ claim.claimType }}</span>
+          <span class="claim-separator">:</span>
+          <span class="claim-value">{{ claim.claimValue }}</span>
+        </div>
+      </div>
+      }
+    </div>
+
+    <div class="selection-summary">
+      {{ 'roles.dialog.selectedClaims' | translate }}:
+      <strong>{{ selectedClaimIds().size }}</strong>
+      {{ 'roles.dialog.outOf' | translate }}
+      <strong>{{ availableClaims().length }}</strong>
+    </div>
+
+    @if (errorMessage()) {
+    <z-alert
+      zType="destructive"
+      zIcon="circle-alert"
+      [zDescription]="errorMessage()!"
+    />
+    }
+
+    <div class="dialog-actions">
+      <button z-button zType="outline" type="button" (click)="onCancel()">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        z-button
+        zType="default"
+        type="button"
+        (click)="onSave()"
+        [zLoading]="isSaving()"
+      >
+        {{ 'common.save' | translate }}
+      </button>
+    </div>
+  </div>
+  }
+</div>

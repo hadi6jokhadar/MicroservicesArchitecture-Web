@@ -12,7 +12,8 @@
       "@ihsan/shared": ["libs/shared/src/index.ts"],
       "@ihsan/shared/*": ["libs/shared/src/*"],
       "@ihsan/ui": ["libs/ui/src/index.ts"],
-      "@ihsan/ui/*": ["libs/ui/src/*"]
+      "@ihsan/ui/*": ["libs/ui/src/*"],
+      "@web-app/nasheed-shared": ["libs/nasheed/shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
