@@ -30,7 +30,7 @@
           #s="zardId"
         >
           <label z-form-label [for]="s.id()">
-            {{ 'tenants.search' | translate }}
+            {{ 'common.search' | translate }}
           </label>
           <z-form-control>
             <div class="search-input-wrapper">
@@ -50,7 +50,7 @@
         <!-- Status Filter -->
         <z-form-field class="filter-field" zardId="isActive" #st="zardId">
           <label z-form-label [for]="st.id()">
-            {{ 'tenants.status' | translate }}
+            {{ 'common.status' | translate }}
           </label>
           <z-form-control>
             <z-select
@@ -62,10 +62,10 @@
                 {{ 'tenants.allStatus' | translate }}
               </z-select-item>
               <z-select-item zValue="true">
-                {{ 'tenants.active' | translate }}
+                {{ 'common.active' | translate }}
               </z-select-item>
               <z-select-item zValue="false">
-                {{ 'tenants.inactive' | translate }}
+                {{ 'common.inactive' | translate }}
               </z-select-item>
             </z-select>
           </z-form-control>
@@ -74,7 +74,7 @@
         <!-- Archived Filter -->
         <div class="filter-field switch-field">
           <label z-form-label for="isArchived">
-            {{ 'tenants.archived' | translate }}
+            {{ 'common.archived' | translate }}
           </label>
           <z-switch formControlName="isArchived" id="isArchived" />
         </div>
@@ -130,7 +130,7 @@
         <div class="results-info">
           <z-icon zType="layout-dashboard" />
           <span>
-            {{ 'tenants.showingResults' | translate }}
+            {{ 'common.showing' | translate }}
             {{ tenants().length }} {{ 'common.of' | translate }}
             {{ totalCount() }}
             {{ 'tenants.tenants' | translate }}
@@ -144,19 +144,19 @@
           <thead z-table-header>
             <tr z-table-row>
               <th z-table-head class="col-id">
-                {{ 'tenants.table.id' | translate }}
+                {{ 'common.tenantId' | translate }}
               </th>
               <th z-table-head class="col-name">
-                {{ 'tenants.table.name' | translate }}
+                {{ 'common.name' | translate }}
               </th>
               <th z-table-head class="col-dates">
                 {{ 'tenants.table.dates' | translate }}
               </th>
               <th z-table-head class="col-status">
-                {{ 'tenants.table.status' | translate }}
+                {{ 'common.status' | translate }}
               </th>
               <th z-table-head class="col-actions">
-                {{ 'tenants.table.actions' | translate }}
+                {{ 'common.actions' | translate }}
               </th>
             </tr>
           </thead>
@@ -171,7 +171,7 @@
               <td
                 z-table-cell
                 class="col-id"
-                [attr.data-label]="'tenants.table.id' | translate"
+                [attr.data-label]="'common.tenantId' | translate"
               >
                 <span class="id-text">{{ tenant.tenantId }}</span>
               </td>
@@ -180,7 +180,7 @@
               <td
                 z-table-cell
                 class="col-name"
-                [attr.data-label]="'tenants.table.name' | translate"
+                [attr.data-label]="'common.name' | translate"
               >
                 <span class="name-text">{{ tenant.tenantName }}</span>
               </td>
@@ -207,7 +207,7 @@
               <td
                 z-table-cell
                 class="col-status"
-                [attr.data-label]="'tenants.table.status' | translate"
+                [attr.data-label]="'common.status' | translate"
               >
                 <div class="status-wrapper">
                   <z-badge

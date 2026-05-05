@@ -1,0 +1,42 @@
+:host {
+  display: block;
+
+  .dialog-container {
+    .dialog-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+
+      .generated-result {
+        padding: 1rem;
+        border-radius: var(--radius);
+        border: 1px solid var(--color-border);
+        background: var(--color-muted);
+
+        h4 {
+          margin: 0 0 0.75rem;
+          font-weight: 600;
+          color: var(--color-foreground);
+        }
+
+        .lyrics-output {
+          margin: 0;
+          white-space: pre-wrap;
+          font-family: inherit;
+          font-size: 0.9375rem;
+          line-height: 1.6;
+          color: var(--color-foreground);
+        }
+      }
+
+      .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        margin-block-start: 0.5rem;
+        padding-block-start: 1rem;
+        border-block-start: 1px solid var(--color-border);
+      }
+    }
+  }
+}

@@ -128,6 +128,32 @@ import { ZardIconComponent } from '@ihsan/ui';
 </z-select>
 ```
 
+### Select All-Option Rule (Critical)
+
+- Never use empty string for `z-select-item` value.
+- For the all option, always use a non-empty sentinel like `all`.
+- In TypeScript, map `all` to `undefined` or `null` before building API query objects so backend returns unfiltered data.
+
+```html
+<!-- Correct all option pattern -->
+<z-select formControlName="status">
+  <z-select-item zValue="all">{{ 'common.all' | translate }}</z-select-item>
+  @for (item of statusOptions; track item.value) {
+  <z-select-item [zValue]="item.value"
+    >{{ item.label | translate }}</z-select-item
+  >
+  }
+</z-select>
+```
+
+```typescript
+// Convert all to no filter before request
+const status = this.filterForm.controls.status.value;
+const request = {
+  status: status !== 'all' ? status : undefined,
+};
+```
+
 ### Dialogs & Overlays
 
 ```html

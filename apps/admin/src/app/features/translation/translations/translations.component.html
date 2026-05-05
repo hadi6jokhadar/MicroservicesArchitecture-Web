@@ -15,7 +15,7 @@
           id="export-translations-btn"
         >
           <z-icon zType="archive" />
-          {{ 'translations.exportTranslations' | translate }}
+          {{ 'common.export' | translate }}
         </button>
         <button
           z-button
@@ -25,7 +25,7 @@
           id="import-translations-btn"
         >
           <z-icon zType="arrow-up" />
-          {{ 'translations.importTranslations' | translate }}
+          {{ 'common.import' | translate }}
         </button>
         <button
           z-button
@@ -72,7 +72,7 @@
         <!-- Category Filter -->
         <z-form-field class="filter-field" zardId="category" #c="zardId">
           <label z-form-label [for]="c.id()">{{
-            'translations.category' | translate
+            'common.category' | translate
           }}</label>
           <z-form-control>
             <input
@@ -85,10 +85,26 @@
           </z-form-control>
         </z-form-field>
 
+        <!-- Tenant Filter -->
+        <z-form-field class="filter-field" zardId="tenantId" #t="zardId">
+          <label z-form-label [for]="t.id()">{{
+            'common.tenant' | translate
+          }}</label>
+          <z-form-control>
+            <input
+              z-input
+              [id]="t.id()"
+              type="text"
+              formControlName="tenantId"
+              [placeholder]="'translations.filterByTenant' | translate"
+            />
+          </z-form-control>
+        </z-form-field>
+
         <!-- Archived Filter -->
         <div class="filter-field switch-field">
           <z-switch formControlName="isArchived">
-            {{ 'translations.archived' | translate }}
+            {{ 'common.archived' | translate }}
           </z-switch>
         </div>
 
@@ -144,7 +160,7 @@
         <div class="results-info">
           <z-icon zType="book-open-text" />
           <span
-            >{{ 'translations.showingKeys' | translate }}
+            >{{ 'common.showing' | translate }}
             {{ translationKeys().length }}
             {{ 'common.of' | translate }}
             {{ totalCount() }}
@@ -159,13 +175,13 @@
           <thead z-table-header>
             <tr>
               <th z-table-head class="col-key">
-                {{ 'translations.table.key' | translate }}
+                {{ 'common.key' | translate }}
               </th>
               <th z-table-head class="col-category">
-                {{ 'translations.table.category' | translate }}
+                {{ 'common.category' | translate }}
               </th>
               <th z-table-head class="col-description">
-                {{ 'translations.table.description' | translate }}
+                {{ 'common.description' | translate }}
               </th>
               <th z-table-head class="col-languages">
                 {{ 'translations.table.languages' | translate }}
@@ -174,10 +190,10 @@
                 {{ 'translations.table.values' | translate }}
               </th>
               <th z-table-head class="col-created">
-                {{ 'translations.table.created' | translate }}
+                {{ 'common.created' | translate }}
               </th>
               <th z-table-head class="col-actions">
-                {{ 'translations.table.actions' | translate }}
+                {{ 'common.actions' | translate }}
               </th>
             </tr>
           </thead>
@@ -188,11 +204,16 @@
               <td
                 z-table-cell
                 class="col-key"
-                [attr.data-label]="'translations.table.key' | translate"
+                [attr.data-label]="'common.key' | translate"
               >
                 <div class="key-cell">
                   <z-icon zType="code" class="key-icon" />
                   <span class="key-text">{{ key.key }}</span>
+                  @if (key.tenantId) {
+                  <z-badge zType="secondary" zShape="pill" class="tenant-badge">
+                    {{ key.tenantId }}
+                  </z-badge>
+                  }
                 </div>
               </td>
 
@@ -200,7 +221,7 @@
               <td
                 z-table-cell
                 class="col-category"
-                [attr.data-label]="'translations.table.category' | translate"
+                [attr.data-label]="'common.category' | translate"
               >
                 @if (key.category) {
                 <z-badge zType="outline" zShape="pill">
@@ -217,7 +238,7 @@
               <td
                 z-table-cell
                 class="col-description"
-                [attr.data-label]="'translations.table.description' | translate"
+                [attr.data-label]="'common.description' | translate"
               >
                 <span class="description-text">{{
                   key.description || '-'
@@ -263,7 +284,7 @@
               <td
                 z-table-cell
                 class="col-created"
-                [attr.data-label]="'translations.table.created' | translate"
+                [attr.data-label]="'common.created' | translate"
               >
                 <span class="date-text">{{
                   key.created | date : 'mediumDate'

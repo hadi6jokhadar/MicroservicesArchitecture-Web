@@ -19,6 +19,33 @@ export const pagesRoutes: Routes = [
         data: { roles: ['Admin', 'SuperAdmin'] },
       },
       {
+        path: 'artists',
+        loadChildren: () =>
+          import('../features/artists/artists.routes').then((m) => m.artistsRoutes),
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['Admin', 'SuperAdmin'] },
+      },
+      {
+        path: 'songs',
+        loadChildren: () =>
+          import('../features/songs/songs.routes').then((m) => m.SONGS_ROUTES),
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['Admin', 'SuperAdmin'] },
+      },
+      {
+        path: 'ingestion',
+        loadChildren: () =>
+          import('../features/ingestion/ingestion.routes').then((m) => m.INGESTION_ROUTES),
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['Admin', 'SuperAdmin'] },
+      },
+      {
+        path: 'search',
+        loadChildren: () =>
+          import('../features/search/search.routes').then((m) => m.SEARCH_ROUTES),
+        canActivate: [authGuard],
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

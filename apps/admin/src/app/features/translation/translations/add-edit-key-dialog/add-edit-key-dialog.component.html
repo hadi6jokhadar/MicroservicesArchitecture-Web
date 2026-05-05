@@ -3,7 +3,7 @@
     <!-- Key Input -->
     <z-form-field zardId="key" #k="zardId">
       <label z-form-label [for]="k.id()"
-        >{{ 'translations.dialog.keyLabel' | translate }} *</label
+        >{{ 'common.key' | translate }} *</label
       >
       <z-form-control>
         <input
@@ -30,7 +30,7 @@
     <!-- Category Input -->
     <z-form-field zardId="category" #c="zardId">
       <label z-form-label [for]="c.id()"
-        >{{ 'translations.dialog.categoryLabel' | translate }} *</label
+        >{{ 'common.category' | translate }} *</label
       >
       <z-form-control>
         <input
@@ -57,7 +57,7 @@
     <!-- Description Input -->
     <z-form-field zardId="description" #d="zardId">
       <label z-form-label [for]="d.id()">{{
-        'translations.dialog.descriptionLabel' | translate
+        'common.description' | translate
       }}</label>
       <z-form-control>
         <textarea

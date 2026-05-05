@@ -5,7 +5,7 @@
       <p class="page-subtitle">{{ 'notifications.subtitle' | translate }}</p>
     </div>
     <div class="actions">
-      <button z-button variant="primary" (click)="onSendNotification()">
+      <button z-button zType="default" zSize="lg" (click)="onSendNotification()">
         <z-icon zType="bell"></z-icon>
         <span>{{ 'notifications.actions.send' | translate }}</span>
       </button>
@@ -81,7 +81,7 @@
   <z-card class="table-card">
     @if (isLoading()) {
     <div class="loader-container">
-      <z-loader size="lg" color="primary"></z-loader>
+      <z-loader zSize="lg" />
       <p>{{ 'common.loading' | translate }}</p>
     </div>
     } @else if (queueItems().length === 0) {
@@ -91,7 +91,7 @@
         [zDescription]="'notifications.empty.description' | translate"
         zIcon="bell"
       >
-        <button z-button variant="outline" (click)="onSendNotification()">
+        <button z-button zType="outline" (click)="onSendNotification()">
           {{ 'notifications.actions.send' | translate }}
         </button>
       </z-empty>
@@ -113,7 +113,7 @@
           <thead z-table-header>
             <tr z-table-row>
               <th z-table-head>
-                {{ 'notifications.table.title' | translate }}
+                {{ 'common.title' | translate }}
               </th>
               <th z-table-head>
                 {{ 'notifications.table.priority' | translate }}
@@ -122,12 +122,12 @@
                 {{ 'notifications.table.deliveryType' | translate }}
               </th>
               <th z-table-head>
-                {{ 'notifications.table.status' | translate }}
+                {{ 'common.status' | translate }}
               </th>
               <th z-table-head>
-                {{ 'notifications.table.createdAt' | translate }}
+                {{ 'common.createdAt' | translate }}
               </th>
-              <th z-table-head class="col-actions w-[80px]"></th>
+              <th z-table-head class="col-actions"></th>
             </tr>
           </thead>
           <tbody z-table-body>
@@ -135,8 +135,7 @@
             <tr z-table-row class="standard-row">
               <td
                 z-table-cell
-                [attr.data-label]="'notifications.table.title' | translate"
-                class="font-medium whitespace-nowrap"
+                [attr.data-label]="'common.title' | translate"
               >
                 {{ item.title }}
               </td>
@@ -162,7 +161,7 @@
               </td>
               <td
                 z-table-cell
-                [attr.data-label]="'notifications.table.status' | translate"
+                [attr.data-label]="'common.status' | translate"
               >
                 <z-badge
                   [zType]="
@@ -178,60 +177,55 @@
               </td>
               <td
                 z-table-cell
-                [attr.data-label]="'notifications.table.createdAt' | translate"
-                class="text-muted-foreground whitespace-nowrap"
+                [attr.data-label]="'common.createdAt' | translate"
               >
                 {{ item.created | date : 'short' }}
               </td>
               <td z-table-cell class="col-actions">
-                <div class="flex justify-end pr-4">
-                  <button
-                    z-button
-                    zType="outline"
-                    zSize="sm"
-                    z-dropdown
-                    [zDropdownMenu]="menu"
+                <button
+                  z-button
+                  zType="outline"
+                  zSize="sm"
+                  z-dropdown
+                  [zDropdownMenu]="menu"
+                >
+                  <z-icon zType="ellipsis"></z-icon>
+                </button>
+                <z-dropdown-menu-content #menu="zDropdownMenuContent">
+                  <z-dropdown-menu-item (click)="onViewItem(item)">
+                    <z-icon zType="eye"></z-icon>
+                    <span>{{
+                      'notifications.actions.view' | translate
+                    }}</span>
+                  </z-dropdown-menu-item>
+                  <z-dropdown-menu-item
+                    (click)="onToggleArchive(item)"
+                    [class.archive-action]="!item.isArchived"
                   >
-                    <z-icon zType="ellipsis"></z-icon>
-                  </button>
-                  <z-dropdown-menu-content #menu="zDropdownMenuContent">
-                    <z-dropdown-menu-item (click)="onViewItem(item)">
-                      <z-icon zType="eye" class="mr-2 h-4 w-4"></z-icon>
-                      <span>{{
-                        'notifications.actions.view' | translate
-                      }}</span>
-                    </z-dropdown-menu-item>
-                    <z-dropdown-menu-item
-                      (click)="onToggleArchive(item)"
-                      [class.text-destructive]="!item.isArchived"
-                    >
-                      <z-icon
-                        [zType]="item.isArchived ? 'folder-open' : 'archive'"
-                        class="mr-2 h-4 w-4"
-                      ></z-icon>
-                      <span>
-                        {{
-                          item.isArchived
-                            ? ('notifications.actions.unarchive' | translate)
-                            : ('notifications.actions.archive' | translate)
-                        }}
-                      </span>
-                    </z-dropdown-menu-item>
-                  </z-dropdown-menu-content>
-                </div>
+                    <z-icon
+                      [zType]="item.isArchived ? 'folder-open' : 'archive'"
+                    ></z-icon>
+                    <span>
+                      {{
+                        item.isArchived
+                          ? ('notifications.actions.unarchive' | translate)
+                          : ('notifications.actions.archive' | translate)
+                      }}
+                    </span>
+                  </z-dropdown-menu-item>
+                </z-dropdown-menu-content>
               </td>
             </tr>
             }
           </tbody>
         </table>
       </div>
-    </div>
-
-    <div class="pagination-container p-4 border-t border-border">
-      <z-pagination
-        [zTotal]="totalPages()"
-        [(zPageIndex)]="currentPage"
-      ></z-pagination>
+      <div class="pagination-container">
+        <z-pagination
+          [zTotal]="totalPages()"
+          [(zPageIndex)]="currentPage"
+        ></z-pagination>
+      </div>
     </div>
     }
   </z-card>

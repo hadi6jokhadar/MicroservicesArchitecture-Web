@@ -167,8 +167,6 @@
               text-align: start;
               font-weight: 600;
               color: var(--color-foreground);
-              text-transform: uppercase;
-              letter-spacing: 0.05em;
               white-space: nowrap;
 
               &.col-id {
@@ -276,21 +274,6 @@
 
                 &.col-actions {
                   text-align: center;
-
-                  .delete-action {
-                    color: var(--color-destructive);
-
-                    &:hover {
-                      background: var(--color-destructive);
-                      color: white;
-                      z-icon {
-                        color: white;
-                      }
-                    }
-                    z-icon {
-                      color: var(--color-destructive);
-                    }
-                  }
                 }
               }
             }
@@ -301,8 +284,8 @@
       .pagination-container {
         display: flex;
         justify-content: center;
-        padding-block: 1.5rem;
-        padding-inline: 1.5rem;
+        padding-block-start: 1.5rem;
+        margin-block-start: 1.5rem;
         border-block-start: 1px solid var(--color-border);
       }
     }
@@ -381,6 +364,25 @@
             }
           }
         }
+      }
+    }
+  }
+}
+
+z-dropdown-menu-content {
+  .delete-action {
+    color: var(--color-destructive);
+
+    z-icon {
+      color: var(--color-destructive);
+    }
+
+    &:hover {
+      background: var(--color-destructive);
+      color: white;
+
+      z-icon {
+        color: white;
       }
     }
   }

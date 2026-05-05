@@ -1,0 +1,218 @@
+<div class="dialog-container">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+    <!-- Title -->
+    <z-form-field zardId="songTitle" #f1="zardId">
+      <label z-form-label [for]="f1.id()">{{
+        'common.title' | translate
+      }}</label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="f1.id()"
+          formControlName="title"
+          [placeholder]="'#anashid#.songs.form.titlePlaceholder' | translate"
+        />
+      </z-form-control>
+      @if (
+        form.controls.title.touched && form.controls.title.hasError('required')
+      ) {
+        <span z-form-error>{{ 'validation.required' | translate }}</span>
+      }
+    </z-form-field>
+
+    <!-- Artist -->
+    @if (artists() && artists().length > 0) {
+      <z-form-field zardId="artistId" #f2="zardId">
+        <label z-form-label [for]="f2.id()">{{
+          'common.artist' | translate
+        }}</label>
+        <z-form-control>
+          <z-select
+            formControlName="artistId"
+            [zPlaceholder]="
+              '#anashid#.songs.form.artistPlaceholder' | translate
+            "
+          >
+            @for (artist of artists(); track artist.id) {
+              <z-select-item [zValue]="artist.id.toString()">{{
+                artist.name
+              }}</z-select-item>
+            }
+          </z-select>
+        </z-form-control>
+        @if (
+          form.controls.artistId.touched &&
+          form.controls.artistId.hasError('required')
+        ) {
+          <span z-form-error>{{ 'validation.required' | translate }}</span>
+        }
+      </z-form-field>
+    } @else {
+      artists table is empty !
+    }
+
+    <!-- Audio File Upload -->
+    <z-form-field zardId="audioFile" #f3="zardId">
+      <label z-form-label [for]="f3.id()">{{
+        '#anashid#.songs.form.audioFile' | translate
+      }}</label>
+      <z-form-control>
+        <shared-file-selector
+          [label]="'#anashid#.songs.form.audioFileLabel' | translate"
+          [maxFiles]="1"
+          selectionMode="single"
+          [type]="FileType.Music"
+          [group]="FileGroup.Project"
+          (filesChanged)="onAudioSelected($event)"
+        />
+      </z-form-control>
+    </z-form-field>
+
+    <!-- Copyright Risk Level -->
+    <z-form-field zardId="copyrightRiskLevel" #f7="zardId">
+      <label z-form-label [for]="f7.id()">{{
+        '#anashid#.songs.form.copyrightRiskLevel' | translate
+      }}</label>
+      <z-form-control>
+        <z-select
+          [id]="f7.id()"
+          formControlName="copyrightRiskLevel"
+          [zPlaceholder]="
+            '#anashid#.songs.form.copyrightRiskLevelPlaceholder' | translate
+          "
+        >
+          <z-select-item zValue="all">{{
+            'common.all' | translate
+          }}</z-select-item>
+          @for (risk of copyrightRiskLevels; track risk.value) {
+            <z-select-item [zValue]="risk.value">{{
+              risk.label | translate
+            }}</z-select-item>
+          }
+        </z-select>
+      </z-form-control>
+    </z-form-field>
+
+    <!-- Content Safety Flag -->
+    <z-form-field zardId="contentSafetyFlag" #f8="zardId">
+      <label z-form-label [for]="f8.id()">{{
+        '#anashid#.songs.form.contentSafetyFlag' | translate
+      }}</label>
+      <z-form-control>
+        <z-select
+          [id]="f8.id()"
+          formControlName="contentSafetyFlag"
+          [zPlaceholder]="
+            '#anashid#.songs.form.contentSafetyFlagPlaceholder' | translate
+          "
+        >
+          <z-select-item zValue="all">{{
+            'common.all' | translate
+          }}</z-select-item>
+          @for (flag of contentSafetyFlags; track flag.value) {
+            <z-select-item [zValue]="flag.value">{{
+              flag.label | translate
+            }}</z-select-item>
+          }
+        </z-select>
+      </z-form-control>
+    </z-form-field>
+
+    <!-- Risk Reason -->
+    <z-form-field zardId="riskReason" #f9="zardId">
+      <label z-form-label [for]="f9.id()">{{
+        '#anashid#.songs.form.riskReason' | translate
+      }}</label>
+      <z-form-control>
+        <textarea
+          z-input
+          [id]="f9.id()"
+          formControlName="riskReason"
+          rows="3"
+          [placeholder]="
+            '#anashid#.songs.form.riskReasonPlaceholder' | translate
+          "
+        ></textarea>
+      </z-form-control>
+    </z-form-field>
+
+    <!-- Language Code -->
+    <z-form-field zardId="langCode" #f4="zardId">
+      <label z-form-label [for]="f4.id()">{{
+        '#anashid#.songs.form.languageCode' | translate
+      }}</label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="f4.id()"
+          formControlName="languageCode"
+          [placeholder]="
+            '#anashid#.songs.form.languageCodePlaceholder' | translate
+          "
+        />
+      </z-form-control>
+    </z-form-field>
+
+    <!-- Duration -->
+    <z-form-field zardId="duration" #f5="zardId">
+      <label z-form-label [for]="f5.id()">{{
+        '#anashid#.songs.form.duration' | translate
+      }}</label>
+      <z-form-control>
+        <input
+          z-input
+          type="number"
+          [id]="f5.id()"
+          formControlName="durationSeconds"
+          [placeholder]="'#anashid#.songs.form.durationPlaceholder' | translate"
+        />
+      </z-form-control>
+    </z-form-field>
+
+    <!-- Lyrics Raw -->
+    <z-form-field zardId="lyricsRaw" #f6="zardId">
+      <label z-form-label [for]="f6.id()">{{
+        '#anashid#.songs.form.lyricsRaw' | translate
+      }}</label>
+      <z-form-control>
+        <textarea
+          z-input
+          [id]="f6.id()"
+          formControlName="lyricsRaw"
+          rows="4"
+          [placeholder]="
+            '#anashid#.songs.form.lyricsRawPlaceholder' | translate
+          "
+        ></textarea>
+      </z-form-control>
+    </z-form-field>
+
+    @if (errorMessage()) {
+      <z-alert zType="destructive" [zDescription]="errorMessage()!" />
+    }
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <button
+        z-button
+        zType="outline"
+        type="button"
+        (click)="onCancel()"
+        [disabled]="isLoading()"
+        id="cancel-song-button"
+      >
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        z-button
+        zType="default"
+        type="submit"
+        [disabled]="isLoading()"
+        [zLoading]="isLoading()"
+        id="submit-song-button"
+      >
+        {{ (isEditMode ? 'common.save' : 'common.create') | translate }}
+      </button>
+    </div>
+  </form>
+</div>

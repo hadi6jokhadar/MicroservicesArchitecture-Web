@@ -30,7 +30,7 @@
           #s="zardId"
         >
           <label z-form-label [for]="s.id()">
-            {{ 'users.search' | translate }}
+            {{ 'common.search' | translate }}
           </label>
           <z-form-control>
             <div class="search-input-wrapper">
@@ -77,7 +77,7 @@
         <!-- Status Filter -->
         <z-form-field class="filter-field" zardId="status" #st="zardId">
           <label z-form-label [for]="st.id()">
-            {{ 'users.status' | translate }}
+            {{ 'common.status' | translate }}
           </label>
           <z-form-control>
             <z-select
@@ -89,10 +89,10 @@
                 {{ 'users.allStatus' | translate }}
               </z-select-item>
               <z-select-item zValue="true">
-                {{ 'users.active' | translate }}
+                {{ 'common.active' | translate }}
               </z-select-item>
               <z-select-item zValue="false">
-                {{ 'users.inactive' | translate }}
+                {{ 'common.inactive' | translate }}
               </z-select-item>
             </z-select>
           </z-form-control>
@@ -102,7 +102,7 @@
         @if (isSuperAdmin) {
         <div class="filter-field switch-field">
           <label z-form-label for="isArchived">
-            {{ 'users.archived' | translate }}
+            {{ 'common.archived' | translate }}
           </label>
           <z-switch formControlName="isArchived" id="isArchived" />
         </div>
@@ -159,7 +159,7 @@
         <div class="results-info">
           <z-icon zType="users" />
           <span>
-            {{ 'users.showingResults' | translate }} {{ users().length }}
+            {{ 'common.showing' | translate }} {{ users().length }}
             {{ 'common.of' | translate }} {{ totalCount() }}
             {{ 'users.users' | translate }}
           </span>
@@ -175,25 +175,25 @@
                 {{ 'users.table.avatar' | translate }}
               </th>
               <th z-table-head class="col-name">
-                {{ 'users.table.name' | translate }}
+                {{ 'common.name' | translate }}
               </th>
               <th z-table-head class="col-email">
-                {{ 'users.table.email' | translate }}
+                {{ 'common.email' | translate }}
               </th>
               <th z-table-head class="col-phone">
-                {{ 'users.table.phone' | translate }}
+                {{ 'common.phone' | translate }}
               </th>
               <th z-table-head class="col-roles">
                 {{ 'users.table.roles' | translate }}
               </th>
               <th z-table-head class="col-status">
-                {{ 'users.table.status' | translate }}
+                {{ 'common.status' | translate }}
               </th>
               <th z-table-head class="col-created">
-                {{ 'users.table.created' | translate }}
+                {{ 'common.created' | translate }}
               </th>
               <th z-table-head class="col-actions">
-                {{ 'users.table.actions' | translate }}
+                {{ 'common.actions' | translate }}
               </th>
             </tr>
           </thead>
@@ -219,7 +219,7 @@
               <td
                 z-table-cell
                 class="col-name"
-                [attr.data-label]="'users.table.name' | translate"
+                [attr.data-label]="'common.name' | translate"
               >
                 <div class="name-cell">
                   <span class="name-text"
@@ -239,7 +239,7 @@
               <td
                 z-table-cell
                 class="col-email"
-                [attr.data-label]="'users.table.email' | translate"
+                [attr.data-label]="'common.email' | translate"
               >
                 <span class="email-text">
                   {{ user.email || ('users.na' | translate) }}
@@ -250,7 +250,7 @@
               <td
                 z-table-cell
                 class="col-phone"
-                [attr.data-label]="'users.table.phone' | translate"
+                [attr.data-label]="'common.phone' | translate"
               >
                 <span class="phone-text">
                   {{ user.phoneNumber || ('users.na' | translate) }}
@@ -280,7 +280,7 @@
               <td
                 z-table-cell
                 class="col-status"
-                [attr.data-label]="'users.table.status' | translate"
+                [attr.data-label]="'common.status' | translate"
               >
                 <z-badge
                   [zType]="getStatusBadgeType(user.status)"
@@ -298,7 +298,7 @@
               <td
                 z-table-cell
                 class="col-created"
-                [attr.data-label]="'users.table.created' | translate"
+                [attr.data-label]="'common.created' | translate"
               >
                 <span class="date-text">{{
                   user.created | date : 'mediumDate'

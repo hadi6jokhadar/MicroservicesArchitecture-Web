@@ -98,7 +98,7 @@
       <div class="toolbar-left">
         @if (hasActiveSession()) {
         <z-badge zType="secondary">
-          {{ 'aiChat.toolbar.session' | translate }}:
+          {{ 'common.session' | translate }}:
           {{ activeSession()!.Id | slice : 0 : 8 }}...
         </z-badge>
         } @else {
@@ -115,7 +115,7 @@
             [ngModel]="useStream()"
             (checkChange)="onUseStreamChange($event)"
           >
-            {{ 'aiChat.toolbar.useStream' | translate }}
+            {{ 'common.streaming' | translate }}
           </z-checkbox>
         </div>
 

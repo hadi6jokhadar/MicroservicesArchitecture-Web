@@ -49,7 +49,7 @@
         <!-- Language Input -->
         <z-form-field zardId="language" #l="zardId">
           <label z-form-label [for]="l.id()"
-            >{{ 'translations.values.languageLabel' | translate }} *</label
+            >{{ 'common.language' | translate }} *</label
           >
           <z-form-control>
             <z-select
@@ -100,7 +100,7 @@
         <!-- Tenant ID Input -->
         <z-form-field zardId="tenantId" #t="zardId">
           <label z-form-label [for]="t.id()">{{
-            'translations.values.tenantIdLabel' | translate
+            'common.tenantIdOptional' | translate
           }}</label>
           <z-form-control>
             <input
@@ -241,7 +241,7 @@
             <div class="value-meta">
               <span class="meta-item">
                 <z-icon zType="calendar" />
-                {{ 'translations.values.created' | translate }}:
+                {{ 'common.created' | translate }}:
                 {{ value.created | date : 'medium' }}
               </span>
               <span class="meta-item">

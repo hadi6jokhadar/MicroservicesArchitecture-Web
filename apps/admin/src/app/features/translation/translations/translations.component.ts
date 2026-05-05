@@ -38,6 +38,7 @@ import { TranslationEventsService } from '../translation-events.service';
 interface ITranslationFilterForm {
   searchTerm: FormControl<string>;
   category: FormControl<string>;
+  tenantId: FormControl<string>;
   isArchived: FormControl<boolean>;
 }
 
@@ -85,6 +86,7 @@ export class TranslationsComponent implements OnInit {
   readonly filterForm = new FormGroup<ITranslationFilterForm>({
     searchTerm: new FormControl<string>('', { nonNullable: true }),
     category: new FormControl<string>('', { nonNullable: true }),
+    tenantId: new FormControl<string>('', { nonNullable: true }),
     isArchived: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
@@ -97,8 +99,8 @@ export class TranslationsComponent implements OnInit {
       }
     });
 
-    // Watch for category and isArchived filter changes
-    const controls = ['category', 'isArchived'];
+    // Watch for category, tenantId and isArchived filter changes
+    const controls = ['category', 'tenantId', 'isArchived'];
     controls.forEach((control) => {
       this.filterForm
         .get(control)
@@ -133,6 +135,7 @@ export class TranslationsComponent implements OnInit {
       category: formValue.category
         ? this.capitalizeFirstLetter(formValue.category)
         : undefined,
+      tenantId: formValue.tenantId || undefined,
       isArchived: formValue.isArchived ?? false,
     };
 
@@ -160,6 +163,7 @@ export class TranslationsComponent implements OnInit {
     this.filterForm.reset({
       searchTerm: '',
       category: '',
+      tenantId: '',
       isArchived: false,
     });
     this.currentPage.set(1);

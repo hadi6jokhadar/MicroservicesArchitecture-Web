@@ -3,7 +3,7 @@
     <!-- Language Selection -->
     <z-form-field zardId="language" #lang="zardId">
       <label z-form-label [for]="lang.id()">
-        {{ 'export.language' | translate }} *
+        {{ 'common.language' | translate }} *
       </label>
       <z-form-control>
         <z-select
@@ -20,14 +20,14 @@
       </z-form-control>
       @if (exportForm.get('language')?.touched &&
       exportForm.get('language')?.hasError('required')) {
-      <span z-form-error>{{ 'export.languageRequired' | translate }}</span>
+      <span z-form-error>{{ 'common.languageRequired' | translate }}</span>
       }
     </z-form-field>
 
     <!-- Category Filter (Optional) -->
     <z-form-field zardId="category" #cat="zardId">
       <label z-form-label [for]="cat.id()">
-        {{ 'export.category' | translate }}
+        {{ 'common.category' | translate }}
       </label>
       <z-form-control>
         <input
@@ -63,7 +63,7 @@
         [zDisabled]="exportForm.invalid"
         id="submit-export-btn"
       >
-        {{ 'export.export' | translate }}
+        {{ 'common.export' | translate }}
       </button>
     </div>
   </form>

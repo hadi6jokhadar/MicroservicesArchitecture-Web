@@ -23,7 +23,7 @@
       } @else if (form.controls.email.touched &&
       form.controls.email.hasError('email')) {
       <span z-form-error>{{
-        'users.dialog.validation.emailInvalid' | translate
+        'login.validation.emailInvalid' | translate
       }}</span>
       }
     </z-form-field>
@@ -43,7 +43,7 @@
     <!-- Password -->
     <z-form-field zardId="password" #p="zardId">
       <label z-form-label [for]="p.id()">
-        {{ 'users.dialog.passwordLabel' | translate }}
+        {{ 'common.password' | translate }}
       </label>
       <z-form-control>
         <input
@@ -57,12 +57,12 @@
       @if (form.controls.password.touched &&
       form.controls.password.hasError('required')) {
       <span z-form-error>{{
-        'users.dialog.validation.passwordRequired' | translate
+        'login.validation.passwordRequired' | translate
       }}</span>
       } @else if (form.controls.password.touched &&
       form.controls.password.hasError('minlength')) {
       <span z-form-error>{{
-        'users.dialog.validation.passwordMinLength' | translate
+        'login.validation.passwordMinLength' | translate
       }}</span>
       }
     </z-form-field>

@@ -43,7 +43,7 @@
 
           <z-select
             formControlName="type"
-            [zPlaceholder]="'fileManager.type' | translate"
+            [zPlaceholder]="'common.type' | translate"
             class="filter-select"
             [zDisabled]="!!type()"
           >
@@ -156,13 +156,13 @@
                   getGroupLabel(selected.group) | translate
                 }}</span>
 
-                <span class="label">{{ 'fileManager.type' | translate }}</span>
+                <span class="label">{{ 'common.type' | translate }}</span>
                 <span class="value">{{
                   getTypeLabel(selected.type) | translate
                 }}</span>
 
                 <span class="label">{{
-                  'fileManager.created' | translate
+                  'common.created' | translate
                 }}</span>
                 <span class="value">{{
                   selected.created | date : 'shortDate'

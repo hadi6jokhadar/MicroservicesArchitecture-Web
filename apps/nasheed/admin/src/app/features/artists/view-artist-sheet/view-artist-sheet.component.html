@@ -1,0 +1,46 @@
+<div class="sheet-container">
+  <div class="sheet-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h2>{{ '#anashid#.artists.sheet.title' | translate }}</h2>
+      </div>
+      <button
+        z-button
+        zType="outline"
+        zSize="sm"
+        (click)="onClose()"
+        id="close-sheet-button"
+      >
+        <z-icon zType="x" />
+      </button>
+    </div>
+  </div>
+
+  <div class="sheet-content">
+    <div class="details-card">
+      <div class="detail-group">
+        <span class="detail-label">{{ 'common.name' | translate }}</span>
+        <span class="detail-value">{{ artist.name }}</span>
+      </div>
+
+      <div class="detail-group">
+        <span class="detail-label">{{ 'common.status' | translate }}</span>
+        <z-badge [zType]="artist.status ? 'default' : 'secondary'">
+          {{
+            (artist.status ? 'common.active' : 'common.inactive') | translate
+          }}
+        </z-badge>
+      </div>
+
+      <div class="detail-group">
+        <span class="detail-label">{{ 'common.songs' | translate }}</span>
+        <span class="detail-value">{{ artist.songCount }}</span>
+      </div>
+
+      <div class="detail-group detail-group-last">
+        <span class="detail-label">{{ 'common.created' | translate }}</span>
+        <span class="detail-value">{{ artist.created }}</span>
+      </div>
+    </div>
+  </div>
+</div>

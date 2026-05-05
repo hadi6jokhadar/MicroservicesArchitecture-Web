@@ -1,0 +1,50 @@
+<div class="sheet-container">
+  <div class="sheet-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h2>{{ '#anashid#.songs.sheet.similarTitle' | translate }}</h2>
+      </div>
+      <button
+        z-button
+        zType="outline"
+        zSize="sm"
+        (click)="onClose()"
+        id="close-sheet-button"
+      >
+        <z-icon zType="x" />
+      </button>
+    </div>
+  </div>
+
+  <div class="sheet-content">
+    <div class="section-card">
+      <h3>{{ 'common.currentSong' | translate }}</h3>
+      <div class="song-item song-item-featured">
+        <div class="song-meta">
+          <span class="song-title">{{ song.title }}</span>
+          <span class="song-artist">{{ song.artistName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <h3>{{ '#anashid#.songs.similarSongs' | translate }}</h3>
+      @if (similarSongs.length > 0) {
+        <div class="songs-list">
+          @for (similarSong of similarSongs; track similarSong.id) {
+            <div class="song-item">
+              <div class="song-meta">
+                <span class="song-title">{{ similarSong.title }}</span>
+                <span class="song-artist">{{ similarSong.artistName }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="no-songs">
+          {{ 'common.noSimilarSongs' | translate }}
+        </div>
+      }
+    </div>
+  </div>
+</div>

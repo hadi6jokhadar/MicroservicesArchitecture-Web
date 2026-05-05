@@ -2,7 +2,7 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
     <z-form-field zardId="name" #n="zardId">
       <label z-form-label [for]="n.id()"
-        >{{ 'aiSystemPrompts.dialog.nameLabel' | translate }} *</label
+        >{{ 'common.name' | translate }} *</label
       >
       <z-form-control>
         <input
@@ -54,7 +54,7 @@
 
     <z-form-field zardId="tenantId" #t="zardId">
       <label z-form-label [for]="t.id()">{{
-        'aiSystemPrompts.dialog.tenantIdLabel' | translate
+        'common.tenantIdOptional' | translate
       }}</label>
       <z-form-control>
         <input
@@ -101,9 +101,9 @@
         id="submit-ai-system-prompt-btn"
       >
         @if (isEditMode()) {
-        {{ 'aiSystemPrompts.actions.update' | translate }}
+        {{ 'common.update' | translate }}
         } @else {
-        {{ 'aiSystemPrompts.actions.create' | translate }}
+        {{ 'common.create' | translate }}
         }
       </button>
     </div>

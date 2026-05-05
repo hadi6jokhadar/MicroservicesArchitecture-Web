@@ -1,0 +1,362 @@
+<div class="songs-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>{{ 'common.songs' | translate }}</h1>
+        <p>{{ '#anashid#.songs.subtitle' | translate }}</p>
+      </div>
+      <button
+        z-button
+        zType="default"
+        zSize="lg"
+        (click)="onAddSong()"
+        id="add-song-button"
+      >
+        <z-icon zType="plus" />
+        {{ '#anashid#.songs.actions.add' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Form Card -->
+  <z-card zPadding="lg">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <!-- Search Input -->
+        <z-form-field
+          class="filter-field search-field"
+          zardId="searchTerm"
+          #s="zardId"
+        >
+          <label z-form-label [for]="s.id()">
+            {{ 'common.title' | translate }}
+          </label>
+          <z-form-control>
+            <div class="search-input-wrapper">
+              <z-icon zType="search" class="search-icon" />
+              <input
+                z-input
+                [id]="s.id()"
+                type="text"
+                formControlName="searchTerm"
+                [placeholder]="
+                  '#anashid#.songs.filter.titlePlaceholder' | translate
+                "
+                (keyup.enter)="onSearch()"
+              />
+            </div>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Artist Filter -->
+        <z-form-field class="filter-field" zardId="artistId" #art="zardId">
+          <label z-form-label [for]="art.id()">
+            {{ 'common.artist' | translate }}
+          </label>
+          <z-form-control>
+            <z-select
+              [id]="art.id()"
+              formControlName="artistId"
+              [zPlaceholder]="
+                '#anashid#.songs.filter.artistPlaceholder' | translate
+              "
+            >
+              <z-select-item zValue="all">{{
+                'common.all' | translate
+              }}</z-select-item>
+              @for (artist of artists(); track artist.id) {
+                <z-select-item [zValue]="artist.id.toString()">{{
+                  artist.name
+                }}</z-select-item>
+              }
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- State Filter -->
+        <z-form-field class="filter-field" zardId="songState" #st="zardId">
+          <label z-form-label [for]="st.id()">
+            {{ 'common.state' | translate }}
+          </label>
+          <z-form-control>
+            <z-select
+              [id]="st.id()"
+              formControlName="songState"
+              [zPlaceholder]="
+                '#anashid#.songs.filter.statePlaceholder' | translate
+              "
+            >
+              <z-select-item zValue="all">{{
+                'common.all' | translate
+              }}</z-select-item>
+              @for (s of songStates; track s.value) {
+                <z-select-item [zValue]="s.value.toString()">{{
+                  s.label | translate
+                }}</z-select-item>
+              }
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Copyright Risk Level Filter -->
+        <z-form-field
+          class="filter-field"
+          zardId="copyrightRiskLevel"
+          #crl="zardId"
+        >
+          <label z-form-label [for]="crl.id()">
+            {{ '#anashid#.songs.filter.copyrightRiskLevel' | translate }}
+          </label>
+          <z-form-control>
+            <z-select
+              [id]="crl.id()"
+              formControlName="copyrightRiskLevel"
+              [zPlaceholder]="
+                '#anashid#.songs.filter.copyrightRiskLevelPlaceholder'
+                  | translate
+              "
+            >
+              <z-select-item zValue="all">{{
+                'common.all' | translate
+              }}</z-select-item>
+              @for (risk of copyrightRiskLevels; track risk.value) {
+                <z-select-item [zValue]="risk.value">{{
+                  risk.label | translate
+                }}</z-select-item>
+              }
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Content Safety Filter -->
+        <z-form-field
+          class="filter-field"
+          zardId="contentSafetyFlag"
+          #csf="zardId"
+        >
+          <label z-form-label [for]="csf.id()">
+            {{ '#anashid#.songs.filter.contentSafetyFlag' | translate }}
+          </label>
+          <z-form-control>
+            <z-select
+              [id]="csf.id()"
+              formControlName="contentSafetyFlag"
+              [zPlaceholder]="
+                '#anashid#.songs.filter.contentSafetyFlagPlaceholder'
+                  | translate
+              "
+            >
+              <z-select-item zValue="all">{{
+                'common.all' | translate
+              }}</z-select-item>
+              @for (flag of contentSafetyFlags; track flag.value) {
+                <z-select-item [zValue]="flag.value">{{
+                  flag.label | translate
+                }}</z-select-item>
+              }
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Action Buttons -->
+        <div class="filter-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            (click)="onClearFilters()"
+            type="button"
+            id="clear-filters-button"
+          >
+            <z-icon zType="x" />
+            {{ 'common.clear' | translate }}
+          </button>
+          <button
+            z-button
+            zType="default"
+            zSize="default"
+            (click)="onSearch()"
+            type="button"
+            id="search-btn"
+          >
+            <z-icon zType="search" />
+            {{ 'common.search' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </z-card>
+
+  <!-- Songs Table Card -->
+  <z-card class="table-card">
+    @if (isLoading()) {
+      <div class="loading-container">
+        <z-loader zSize="lg" />
+        <p>{{ '#anashid#.songs.messages.loading' | translate }}</p>
+      </div>
+    } @else if (data().length === 0) {
+      <div class="empty-container">
+        <z-empty
+          zIcon="mic"
+          [zTitle]="'#anashid#.songs.messages.emptyTitle' | translate"
+          [zDescription]="
+            '#anashid#.songs.messages.emptyDescription' | translate
+          "
+        />
+      </div>
+    } @else {
+      <div class="table-container">
+        <!-- Results Info -->
+        <div class="table-header">
+          <div class="results-info">
+            <z-icon zType="music" />
+            <span>
+              {{
+                '#anashid#.songs.showingResults'
+                  | translate: { count: data().length, total: totalCount() }
+              }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+          <table z-table class="standard-table">
+            <thead z-table-header>
+              <tr z-table-row>
+                <th z-table-head class="col-title">
+                  {{ 'common.title' | translate }}
+                </th>
+                <th z-table-head class="col-artist">
+                  {{ 'common.artist' | translate }}
+                </th>
+                <th z-table-head class="col-state">
+                  {{ 'common.state' | translate }}
+                </th>
+                <th z-table-head class="col-language">
+                  {{ 'common.language' | translate }}
+                </th>
+                <th z-table-head class="col-duration">
+                  {{ 'common.duration' | translate }}
+                </th>
+                <th z-table-head class="col-actions">
+                  {{ 'common.actions' | translate }}
+                </th>
+              </tr>
+            </thead>
+            <tbody z-table-body>
+              @for (song of data(); track song.id) {
+                <tr z-table-row class="standard-row">
+                  <!-- Title -->
+                  <td
+                    z-table-cell
+                    class="col-title"
+                    [attr.data-label]="'common.title' | translate"
+                  >
+                    <span class="name-text">{{ song.title }}</span>
+                  </td>
+
+                  <!-- Artist -->
+                  <td
+                    z-table-cell
+                    class="col-artist"
+                    [attr.data-label]="'common.artist' | translate"
+                  >
+                    <span>{{ getArtistName(song.artistId) }}</span>
+                  </td>
+
+                  <!-- State -->
+                  <td
+                    z-table-cell
+                    class="col-state"
+                    [attr.data-label]="'common.state' | translate"
+                  >
+                    <z-badge
+                      [zType]="getSongStateBadgeType(song.songState)"
+                      zShape="pill"
+                    >
+                      {{ getSongStateKey(song.songState) | translate }}
+                    </z-badge>
+                  </td>
+
+                  <!-- Language -->
+                  <td
+                    z-table-cell
+                    class="col-language"
+                    [attr.data-label]="'common.language' | translate"
+                  >
+                    <span>{{ song.languageCode ?? '-' }}</span>
+                  </td>
+
+                  <!-- Duration -->
+                  <td
+                    z-table-cell
+                    class="col-duration"
+                    [attr.data-label]="'common.duration' | translate"
+                  >
+                    <span>{{
+                      song.durationSeconds ? song.durationSeconds + 's' : '-'
+                    }}</span>
+                  </td>
+
+                  <!-- Actions Dropdown -->
+                  <td z-table-cell class="col-actions">
+                    <button
+                      z-button
+                      zType="outline"
+                      zSize="sm"
+                      z-dropdown
+                      [zDropdownMenu]="songActionsMenu"
+                      [id]="'song-actions-' + song.id"
+                    >
+                      <z-icon zType="ellipsis" />
+                    </button>
+                    <z-dropdown-menu-content
+                      #songActionsMenu="zDropdownMenuContent"
+                    >
+                      <z-dropdown-menu-item
+                        (click)="onViewSong(song)"
+                        [id]="'view-song-' + song.id"
+                      >
+                        <z-icon zType="eye" />
+                        {{ 'common.view' | translate }}
+                      </z-dropdown-menu-item>
+                      <z-dropdown-menu-item
+                        (click)="onEditSong(song)"
+                        [id]="'edit-song-' + song.id"
+                      >
+                        <z-icon zType="file-text" />
+                        {{ '#anashid#.songs.actions.edit' | translate }}
+                      </z-dropdown-menu-item>
+                      <z-dropdown-menu-item
+                        (click)="onDeleteSong(song)"
+                        [id]="'delete-song-' + song.id"
+                        class="delete-action"
+                      >
+                        <z-icon zType="trash" />
+                        {{ 'common.delete' | translate }}
+                      </z-dropdown-menu-item>
+                    </z-dropdown-menu-content>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages() > 1) {
+          <div class="pagination-container">
+            <z-pagination
+              zSize="sm"
+              [zTotal]="totalPages()"
+              [zPageIndex]="currentPage()"
+              (zPageIndexChange)="onPageChange($event)"
+            />
+          </div>
+        }
+      </div>
+    }
+  </z-card>
+</div>

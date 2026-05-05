@@ -80,6 +80,12 @@
         "staticFilePath": "dist/apps/nasheed/admin/browser",
         "spa": true
       }
+    },
+    "start-backend": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "start cmd /k node ..\\MicroservicesArchitecture\\src\\Apps\\Nasheed\\Nasheed.API\\run-development-instance.mjs"
+      }
     }
   }
 }

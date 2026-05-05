@@ -48,7 +48,7 @@
 
         <z-form-field class="filter-field" zardId="provider" #p="zardId">
           <label z-form-label [for]="p.id()">{{
-            'aiSettings.table.provider' | translate
+            'common.provider' | translate
           }}</label>
           <z-form-control>
             <input
@@ -65,7 +65,7 @@
 
         <z-form-field class="filter-field" zardId="modelType" #m="zardId">
           <label z-form-label [for]="m.id()">{{
-            'aiSettings.table.modelType' | translate
+            'common.modelType' | translate
           }}</label>
           <z-form-control>
             <z-select
@@ -89,7 +89,7 @@
 
         <z-form-field class="filter-field" zardId="scope" #sc="zardId">
           <label z-form-label [for]="sc.id()">{{
-            'aiSettings.filters.scopeLabel' | translate
+            'common.scopeLabel' | translate
           }}</label>
           <z-form-control>
             <z-select
@@ -98,13 +98,13 @@
               [zPlaceholder]="'aiSettings.filters.scopePlaceholder' | translate"
             >
               <z-select-item zValue="all">{{
-                'aiSettings.filters.scopeAll' | translate
+                'common.scopeAll' | translate
               }}</z-select-item>
               <z-select-item zValue="tenant">{{
-                'aiSettings.filters.scopeTenant' | translate
+                'common.scopeTenant' | translate
               }}</z-select-item>
               <z-select-item zValue="global">{{
-                'aiSettings.filters.scopeGlobal' | translate
+                'common.scopeGlobal' | translate
               }}</z-select-item>
             </z-select>
           </z-form-control>
@@ -158,11 +158,11 @@
         <div class="results-info">
           <z-icon zType="settings" />
           <span>
-            {{ 'aiSettings.showingResults' | translate }}
+            {{ 'common.showing' | translate }}
             {{ pagedSettings().length }}
             {{ 'common.of' | translate }}
             {{ totalCount() }}
-            {{ 'aiSettings.items' | translate }}
+            {{ 'common.settings' | translate }}
           </span>
         </div>
       </div>
@@ -172,28 +172,28 @@
           <thead z-table-header>
             <tr z-table-row>
               <th z-table-head class="col-key">
-                {{ 'aiSettings.table.key' | translate }}
+                {{ 'common.key' | translate }}
               </th>
               <th z-table-head class="col-provider">
-                {{ 'aiSettings.table.provider' | translate }}
+                {{ 'common.provider' | translate }}
               </th>
               <th z-table-head class="col-model-type">
-                {{ 'aiSettings.table.modelType' | translate }}
+                {{ 'common.modelType' | translate }}
               </th>
               <th z-table-head class="col-model-name">
-                {{ 'aiSettings.table.modelName' | translate }}
+                {{ 'common.modelName' | translate }}
               </th>
               <!-- <th z-table-head class="col-description">
-                {{ 'aiSettings.table.description' | translate }}
+                {{ 'common.description' | translate }}
               </th> -->
               <th z-table-head class="col-api-key">
-                {{ 'aiSettings.table.apiKey' | translate }}
+                {{ 'common.apiKey' | translate }}
               </th>
               <th z-table-head class="col-tenant">
-                {{ 'aiSettings.table.scope' | translate }}
+                {{ 'common.scope' | translate }}
               </th>
               <th z-table-head class="col-actions">
-                {{ 'aiSettings.table.actions' | translate }}
+                {{ 'common.actions' | translate }}
               </th>
             </tr>
           </thead>
@@ -203,21 +203,21 @@
               <td
                 z-table-cell
                 class="col-key"
-                [attr.data-label]="'aiSettings.table.key' | translate"
+                [attr.data-label]="'common.key' | translate"
               >
                 <span class="key-text">{{ setting.Key }}</span>
               </td>
               <td
                 z-table-cell
                 class="col-provider"
-                [attr.data-label]="'aiSettings.table.provider' | translate"
+                [attr.data-label]="'common.provider' | translate"
               >
                 <span class="provider-text">{{ setting.Provider }}</span>
               </td>
               <td
                 z-table-cell
                 class="col-model-type"
-                [attr.data-label]="'aiSettings.table.modelType' | translate"
+                [attr.data-label]="'common.modelType' | translate"
               >
                 <z-badge zType="secondary" zShape="pill">
                   {{ 'aiSettings.modelTypes.' + setting.ModelType | translate }}
@@ -226,14 +226,14 @@
               <td
                 z-table-cell
                 class="col-model-name"
-                [attr.data-label]="'aiSettings.table.modelName' | translate"
+                [attr.data-label]="'common.modelName' | translate"
               >
                 <span class="model-name-text">{{ setting.ModelName }}</span>
               </td>
               <!-- <td
                 z-table-cell
                 class="col-description"
-                [attr.data-label]="'aiSettings.table.description' | translate"
+                [attr.data-label]="'common.description' | translate"
               >
                 <span
                   class="description-text truncate block max-w-[200px]"
@@ -245,7 +245,7 @@
               <td
                 z-table-cell
                 class="col-api-key"
-                [attr.data-label]="'aiSettings.table.apiKey' | translate"
+                [attr.data-label]="'common.apiKey' | translate"
               >
                 <span class="api-key-text">{{
                   getMaskedApiKey(setting.ApiKey)
@@ -254,7 +254,7 @@
               <td
                 z-table-cell
                 class="col-tenant"
-                [attr.data-label]="'aiSettings.table.scope' | translate"
+                [attr.data-label]="'common.scope' | translate"
               >
                 <z-badge
                   [zType]="getTenantBadgeType(setting.TenantId)"
@@ -263,7 +263,7 @@
                   @if (setting.TenantId) {
                   {{ setting.TenantId }}
                   } @else {
-                  {{ 'aiSettings.scope.global' | translate }}
+                  {{ 'common.global' | translate }}
                   }
                 </z-badge>
               </td>
@@ -288,7 +288,7 @@
                     [id]="'edit-ai-setting-' + setting.Id"
                   >
                     <z-icon zType="file-text" />
-                    {{ 'aiSettings.actions.edit' | translate }}
+                    {{ 'common.edit' | translate }}
                   </z-dropdown-menu-item>
 
                   <z-dropdown-menu-item
@@ -296,7 +296,7 @@
                     [id]="'duplicate-ai-setting-' + setting.Id"
                   >
                     <z-icon zType="copy" />
-                    {{ 'aiSettings.actions.duplicate' | translate }}
+                    {{ 'common.duplicate' | translate }}
                   </z-dropdown-menu-item>
 
                   <z-dropdown-menu-item
@@ -305,7 +305,7 @@
                     class="delete-action"
                   >
                     <z-icon zType="trash" />
-                    {{ 'aiSettings.actions.delete' | translate }}
+                    {{ 'common.delete' | translate }}
                   </z-dropdown-menu-item>
                 </z-dropdown-menu-content>
               </td>

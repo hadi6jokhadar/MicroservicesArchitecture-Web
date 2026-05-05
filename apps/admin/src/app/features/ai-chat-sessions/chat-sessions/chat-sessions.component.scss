@@ -77,6 +77,10 @@
       gap: 0.5rem;
       align-items: end;
 
+      @media (max-width: 1024px) {
+        width: 100%;
+      }
+
       @media (max-width: 768px) {
         width: 100%;
 
@@ -220,7 +224,7 @@
         justify-content: center;
         padding-block-start: 1.5rem;
         border-block-start: 1px solid var(--color-border);
-        margin-block-start: 1rem;
+        margin-block-start: 1.5rem;
       }
     }
   }

@@ -1,0 +1,63 @@
+<div class="sheet-container">
+  <div class="sheet-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h2>{{ '#anashid#.ingestion.sheet.title' | translate }}</h2>
+      </div>
+      <button
+        z-button
+        zType="outline"
+        zSize="sm"
+        (click)="onClose()"
+        id="close-job-sheet-button"
+      >
+        <z-icon zType="x" />
+      </button>
+    </div>
+  </div>
+
+  <div class="sheet-content">
+    <div class="details-card">
+      <div class="detail-group">
+        <span class="detail-label">{{
+          '#anashid#.ingestion.table.id' | translate
+        }}</span>
+        <span class="detail-value">{{ job.id }}</span>
+      </div>
+
+      <div class="detail-group">
+        <span class="detail-label">{{ 'common.status' | translate }}</span>
+        <z-badge [zType]="getStatusBadgeType(job.status)">
+          {{
+            '#anashid#.ingestion.statuses.' +
+              IngestionJobStatus[job.status].toLowerCase() | translate
+          }}
+        </z-badge>
+      </div>
+
+      <div class="detail-group">
+        <span class="detail-label">{{ 'common.created' | translate }}</span>
+        <span class="detail-value">{{ job.createdAt }}</span>
+      </div>
+
+      @if (job.completedAt) {
+        <div class="detail-group">
+          <span class="detail-label">{{ 'common.completed' | translate }}</span>
+          <span class="detail-value">{{ job.completedAt }}</span>
+        </div>
+      }
+
+      @if (job.errorMessage) {
+        <div class="detail-group detail-group-last error-group">
+          <span class="detail-label">{{ 'common.error' | translate }}</span>
+          <pre class="error-message">{{ job.errorMessage }}</pre>
+        </div>
+      } @else {
+        <div class="detail-group detail-group-last">
+          <span class="detail-label">{{ 'common.error' | translate }}</span>
+          <span class="detail-value">-</span>
+        </div>
+      }
+    </div>
+  </div>
+</div>

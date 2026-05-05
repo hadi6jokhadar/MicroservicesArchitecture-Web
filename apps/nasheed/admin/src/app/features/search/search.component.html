@@ -1,0 +1,161 @@
+<div class="search-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>{{ 'common.search' | translate }}</h1>
+        <p>{{ '#anashid#.search.subtitle' | translate }}</p>
+      </div>
+      <button
+        z-button
+        zType="default"
+        zSize="lg"
+        (click)="onGenerateLyrics()"
+        id="generate-lyrics-button"
+      >
+        <z-icon zType="sparkles" />
+        {{ '#anashid#.search.actions.generateLyrics' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Form Card -->
+  <z-card zPadding="lg">
+    <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="search-form">
+      <div class="filter-row">
+        <!-- Query Input -->
+        <z-form-field
+          class="filter-field query-field"
+          zardId="searchQuery"
+          #sq="zardId"
+        >
+          <label z-form-label [for]="sq.id()">
+            {{ 'common.query' | translate }}
+          </label>
+          <z-form-control>
+            <div class="search-input-wrapper">
+              <z-icon zType="search" class="search-icon" />
+              <input
+                z-input
+                [id]="sq.id()"
+                type="text"
+                formControlName="query"
+                [placeholder]="
+                  '#anashid#.search.form.queryPlaceholder' | translate
+                "
+              />
+            </div>
+          </z-form-control>
+          @if (
+            searchForm.controls.query.touched &&
+            searchForm.controls.query.hasError('required')
+          ) {
+            <span z-form-error>{{ 'validation.required' | translate }}</span>
+          }
+        </z-form-field>
+
+        <!-- Top N -->
+        <z-form-field
+          class="filter-field topn-field"
+          zardId="topN"
+          #tn="zardId"
+        >
+          <label z-form-label [for]="tn.id()">
+            {{ 'common.maxResults' | translate }}
+          </label>
+          <z-form-control>
+            <input
+              z-input
+              type="number"
+              [id]="tn.id()"
+              formControlName="topN"
+              min="1"
+              max="50"
+            />
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Action Buttons -->
+        <div class="filter-actions">
+          <button
+            type="button"
+            z-button
+            zType="outline"
+            zSize="default"
+            (click)="onClear()"
+            id="clear-search-button"
+          >
+            <z-icon zType="x" />
+            {{ 'common.clear' | translate }}
+          </button>
+          <button
+            type="submit"
+            z-button
+            zType="default"
+            zSize="default"
+            [disabled]="searchForm.invalid || isLoading()"
+            [zLoading]="isLoading()"
+            id="submit-search-button"
+          >
+            <z-icon zType="search" />
+            {{ 'common.search' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </z-card>
+
+  <!-- Results Card -->
+  @if (hasSearched()) {
+    <z-card class="results-card">
+      @if (isLoading()) {
+        <div class="loading-container">
+          <z-loader zSize="lg" />
+          <p>{{ '#anashid#.search.messages.searching' | translate }}</p>
+        </div>
+      } @else if (results().length === 0) {
+        <div class="empty-container">
+          <z-empty
+            zIcon="search"
+            [zTitle]="'#anashid#.search.messages.noResults' | translate"
+            [zDescription]="
+              '#anashid#.search.messages.noResultsDescription' | translate
+            "
+          />
+        </div>
+      } @else {
+        <div class="table-container">
+          <!-- Results Header -->
+          <div class="table-header">
+            <div class="results-info">
+              <z-icon zType="search" />
+              <span>{{
+                'common.resultsFound' | translate: { count: results().length }
+              }}</span>
+            </div>
+          </div>
+
+          <!-- Results List -->
+          <div class="results-list">
+            @for (result of results(); track result.songId) {
+              <div class="result-item">
+                <div class="result-main">
+                  <span class="result-title">{{ result.title }}</span>
+                  <span class="result-artist">{{ result.artistName }}</span>
+                </div>
+                <div class="result-meta">
+                  <z-badge zType="secondary" zShape="pill"
+                    >{{ (result.score * 100).toFixed(1) }}%</z-badge
+                  >
+                  @if (result.languageCode) {
+                    <span class="result-lang">{{ result.languageCode }}</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </z-card>
+  }
+</div>

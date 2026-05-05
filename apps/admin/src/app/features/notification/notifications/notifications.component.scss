@@ -161,7 +161,7 @@
               color: var(--color-foreground);
               padding-block: 0.75rem;
               padding-inline: 1rem;
-              text-align: left;
+              text-align: start;
 
               &.col-actions {
                 width: 8%;
@@ -276,6 +276,16 @@
           }
         }
       }
+    }
+  }
+}
+
+z-dropdown-menu-content {
+  .archive-action {
+    color: var(--color-destructive);
+
+    z-icon {
+      color: var(--color-destructive);
     }
   }
 }

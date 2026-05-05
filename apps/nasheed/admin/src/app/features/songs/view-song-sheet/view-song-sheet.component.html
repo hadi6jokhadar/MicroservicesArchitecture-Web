@@ -1,0 +1,193 @@
+<div class="sheet-container">
+  <div class="sheet-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h2>{{ '#anashid#.songs.sheet.title' | translate }}</h2>
+      </div>
+      <button
+        z-button
+        zType="outline"
+        zSize="sm"
+        (click)="onClose()"
+        id="close-sheet-button"
+      >
+        <z-icon zType="x" />
+      </button>
+    </div>
+  </div>
+
+  <div class="sheet-content">
+    <div class="details-card">
+      <div class="detail-group">
+        <span class="detail-label">{{ 'common.title' | translate }}</span>
+        <span class="detail-value">{{ song.title }}</span>
+      </div>
+
+      @if (song.artistName) {
+        <div class="detail-group">
+          <span class="detail-label">{{
+            '#anashid#.songs.form.artist' | translate
+          }}</span>
+          <span class="detail-value">{{ song.artistName }}</span>
+        </div>
+      }
+
+      <div class="detail-group">
+        <span class="detail-label">{{ 'common.state' | translate }}</span>
+        <z-badge [zType]="getSongStateBadgeType(song.songState)">
+          {{
+            '#anashid#.songs.states.' + SongState[song.songState].toLowerCase()
+              | translate
+          }}
+        </z-badge>
+      </div>
+
+      <div class="detail-group">
+        <span class="detail-label">{{ 'common.language' | translate }}</span>
+        <span class="detail-value">{{ song.languageCode ?? '-' }}</span>
+      </div>
+
+      <div class="detail-group">
+        <span class="detail-label">{{
+          '#anashid#.songs.form.duration' | translate
+        }}</span>
+        <span class="detail-value">{{
+          song.durationSeconds ? song.durationSeconds + 's' : '-'
+        }}</span>
+      </div>
+
+      <div class="detail-group">
+        <span class="detail-label">{{
+          '#anashid#.songs.form.copyrightRiskLevel' | translate
+        }}</span>
+        <span class="detail-value">
+          {{
+            song.legalCompliance?.copyrightRiskLevel
+              ? ('#anashid#.songs.legal.riskLevels.' +
+                  song.legalCompliance?.copyrightRiskLevel | translate)
+              : '-'
+          }}
+        </span>
+      </div>
+
+      <div class="detail-group">
+        <span class="detail-label">{{
+          '#anashid#.songs.form.contentSafetyFlag' | translate
+        }}</span>
+        <span class="detail-value">
+          {{
+            song.legalCompliance?.contentSafetyFlag
+              ? ('#anashid#.songs.legal.safetyFlags.' +
+                  song.legalCompliance?.contentSafetyFlag | translate)
+              : '-'
+          }}
+        </span>
+      </div>
+
+      <div class="detail-group">
+        <span class="detail-label">{{
+          '#anashid#.songs.form.riskReason' | translate
+        }}</span>
+        <span class="detail-value">{{
+          song.legalCompliance?.riskReason ?? '-'
+        }}</span>
+      </div>
+
+      @if (song.summary) {
+        <div class="detail-group lyrics-group">
+          <span class="detail-label">{{
+            '#anashid#.songs.sheet.summary' | translate
+          }}</span>
+          <p class="lyrics">{{ song.summary }}</p>
+        </div>
+      }
+
+      @if (song.vocalStyle) {
+        <div class="detail-group">
+          <span class="detail-label">{{
+            '#anashid#.songs.sheet.vocalStyle' | translate
+          }}</span>
+          <span class="detail-value">{{ song.vocalStyle }}</span>
+        </div>
+      }
+
+      @if (song.moodTags.length) {
+        <div class="detail-group">
+          <span class="detail-label">{{
+            '#anashid#.songs.sheet.moodTags' | translate
+          }}</span>
+          <div class="tags-list">
+            @for (tag of song.moodTags; track tag) {
+              <z-badge zType="outline">{{ tag }}</z-badge>
+            }
+          </div>
+        </div>
+      }
+
+      <div class="detail-group">
+        <span class="detail-label">{{
+          '#anashid#.songs.sheet.searchIndexStatus' | translate
+        }}</span>
+        <z-badge
+          [zType]="getSearchIndexStatusBadgeType(song.searchIndexStatus)"
+        >
+          {{ SearchIndexStatus[song.searchIndexStatus] }}
+        </z-badge>
+      </div>
+
+      @if (song.publishedAt) {
+        <div class="detail-group">
+          <span class="detail-label">{{
+            '#anashid#.songs.sheet.publishedAt' | translate
+          }}</span>
+          <span class="detail-value">{{ song.publishedAt }}</span>
+        </div>
+      }
+
+      <div class="detail-group">
+        <span class="detail-label">{{
+          '#anashid#.songs.sheet.isArchived' | translate
+        }}</span>
+        <z-badge [zType]="song.isArchived ? 'destructive' : 'outline'">
+          {{
+            song.isArchived
+              ? ('common.yes' | translate)
+              : ('common.no' | translate)
+          }}
+        </z-badge>
+      </div>
+
+      @if (song.lyricsPlainText) {
+        <div class="detail-group lyrics-group">
+          <span class="detail-label">{{
+            '#anashid#.songs.form.lyricsRaw' | translate
+          }}</span>
+          <p class="lyrics">{{ formatLyrics(song.lyricsPlainText) }}</p>
+        </div>
+      }
+
+      @if (song.lyricsVerifiedLrc) {
+        <div class="detail-group lyrics-group">
+          <span class="detail-label">{{
+            '#anashid#.songs.sheet.lyricsLrc' | translate
+          }}</span>
+          <p class="lyrics lrc">{{ formatLyrics(song.lyricsVerifiedLrc) }}</p>
+        </div>
+      }
+
+      <div class="detail-group">
+        <span class="detail-label">{{ 'common.created' | translate }}</span>
+        <span class="detail-value">{{ song.created }}</span>
+      </div>
+
+      @if (song.lastModified) {
+        <div class="detail-group detail-group-last">
+          <span class="detail-label">{{
+            'common.lastModified' | translate
+          }}</span>
+          <span class="detail-value">{{ song.lastModified }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</div>

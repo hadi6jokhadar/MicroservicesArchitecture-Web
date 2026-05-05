@@ -48,7 +48,7 @@
 
         <z-form-field class="filter-field" zardId="scope" #sc="zardId">
           <label z-form-label [for]="sc.id()">{{
-            'aiSystemPrompts.filters.scopeLabel' | translate
+            'common.scopeLabel' | translate
           }}</label>
           <z-form-control>
             <z-select
@@ -59,13 +59,13 @@
               "
             >
               <z-select-item zValue="all">{{
-                'aiSystemPrompts.filters.scopeAll' | translate
+                'common.scopeAll' | translate
               }}</z-select-item>
               <z-select-item zValue="tenant">{{
-                'aiSystemPrompts.filters.scopeTenant' | translate
+                'common.scopeTenant' | translate
               }}</z-select-item>
               <z-select-item zValue="global">{{
-                'aiSystemPrompts.filters.scopeGlobal' | translate
+                'common.scopeGlobal' | translate
               }}</z-select-item>
             </z-select>
           </z-form-control>
@@ -119,11 +119,11 @@
         <div class="results-info">
           <z-icon zType="settings" />
           <span>
-            {{ 'aiSystemPrompts.showingResults' | translate }}
+            {{ 'common.showing' | translate }}
             {{ pagedPrompts().length }}
             {{ 'common.of' | translate }}
             {{ totalCount() }}
-            {{ 'aiSystemPrompts.items' | translate }}
+            {{ 'common.prompts' | translate }}
           </span>
         </div>
       </div>
@@ -133,19 +133,19 @@
           <thead z-table-header>
             <tr z-table-row>
               <th z-table-head class="col-name">
-                {{ 'aiSystemPrompts.table.name' | translate }}
+                {{ 'common.name' | translate }}
               </th>
               <th z-table-head class="col-prompt">
                 {{ 'aiSystemPrompts.table.promptText' | translate }}
               </th>
               <th z-table-head class="col-scope">
-                {{ 'aiSystemPrompts.table.scope' | translate }}
+                {{ 'common.scope' | translate }}
               </th>
               <th z-table-head class="col-format">
-                {{ 'aiSystemPrompts.table.responseFormat' | translate }}
+                {{ 'common.format' | translate }}
               </th>
               <th z-table-head class="col-actions">
-                {{ 'aiSystemPrompts.table.actions' | translate }}
+                {{ 'common.actions' | translate }}
               </th>
             </tr>
           </thead>
@@ -155,7 +155,7 @@
               <td
                 z-table-cell
                 class="col-name"
-                [attr.data-label]="'aiSystemPrompts.table.name' | translate"
+                [attr.data-label]="'common.name' | translate"
               >
                 <span class="prompt-name">{{ prompt.Name }}</span>
               </td>
@@ -173,7 +173,7 @@
               <td
                 z-table-cell
                 class="col-scope"
-                [attr.data-label]="'aiSystemPrompts.table.scope' | translate"
+                [attr.data-label]="'common.scope' | translate"
               >
                 <z-badge
                   [zType]="getTenantBadgeType(prompt.TenantId)"
@@ -182,7 +182,7 @@
                   @if (prompt.TenantId) {
                   {{ prompt.TenantId }}
                   } @else {
-                  {{ 'aiSystemPrompts.scope.global' | translate }}
+                  {{ 'common.global' | translate }}
                   }
                 </z-badge>
               </td>
@@ -190,7 +190,7 @@
                 z-table-cell
                 class="col-format"
                 [attr.data-label]="
-                  'aiSystemPrompts.table.responseFormat' | translate
+                  'common.format' | translate
                 "
               >
                 @if (prompt.ResponseFormat) {
@@ -226,7 +226,7 @@
                     [id]="'edit-ai-system-prompt-' + prompt.Id"
                   >
                     <z-icon zType="file-text" />
-                    {{ 'aiSystemPrompts.actions.edit' | translate }}
+                    {{ 'common.edit' | translate }}
                   </z-dropdown-menu-item>
 
                   <z-dropdown-menu-item
@@ -245,7 +245,7 @@
                     class="delete-action"
                   >
                     <z-icon zType="trash" />
-                    {{ 'aiSystemPrompts.actions.delete' | translate }}
+                    {{ 'common.delete' | translate }}
                   </z-dropdown-menu-item>
                 </z-dropdown-menu-content>
               </td>

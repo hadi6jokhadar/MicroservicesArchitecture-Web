@@ -53,6 +53,7 @@ export class ImportDialogComponent {
   readonly isImporting = signal(false);
   readonly selectedFileName = signal<string | null>(null);
   readonly errorMessage = signal<string | null>(null);
+  readonly detectedTenants = signal<string[]>([]);
 
   readonly importForm = new FormGroup<IImportForm>({
     language: new FormControl<string>('', {
@@ -87,11 +88,32 @@ export class ImportDialogComponent {
   private _handleFile(file: File): void {
     this.importForm.patchValue({ file });
     this.selectedFileName.set(file.name);
+    this.detectedTenants.set([]);
 
     const languageCode = file.name.split('.')[0];
     if (languageCode) {
       this.importForm.patchValue({ language: languageCode });
     }
+
+    // Preview: scan JSON for #tenantId# key patterns
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const json = JSON.parse(e.target?.result as string) as Record<string, string>;
+        const tenants = new Set<string>();
+        const tenantPattern = /^#([^#]+)#/;
+        for (const key of Object.keys(json)) {
+          const match = tenantPattern.exec(key);
+          if (match) {
+            tenants.add(match[1]);
+          }
+        }
+        this.detectedTenants.set(Array.from(tenants));
+      } catch {
+        // ignore preview errors — the actual import will surface the error
+      }
+    };
+    reader.readAsText(file);
   }
 
   onBrowseFile(): void {

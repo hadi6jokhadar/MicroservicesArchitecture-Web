@@ -1,0 +1,245 @@
+<div class="artists-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>{{ 'common.artists' | translate }}</h1>
+        <p>{{ '#anashid#.artists.subtitle' | translate }}</p>
+      </div>
+      <button
+        z-button
+        zType="default"
+        zSize="lg"
+        (click)="onAddArtist()"
+        id="add-artist-button"
+      >
+        <z-icon zType="plus" />
+        {{ '#anashid#.artists.actions.add' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Form Card -->
+  <z-card zPadding="lg">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <!-- Search Input -->
+        <z-form-field
+          class="filter-field search-field"
+          zardId="searchTerm"
+          #s="zardId"
+        >
+          <label z-form-label [for]="s.id()">
+            {{ 'common.search' | translate }}
+          </label>
+          <z-form-control>
+            <div class="search-input-wrapper">
+              <z-icon zType="search" class="search-icon" />
+              <input
+                z-input
+                [id]="s.id()"
+                type="text"
+                formControlName="searchTerm"
+                [placeholder]="
+                  '#anashid#.artists.filter.searchPlaceholder' | translate
+                "
+                (keyup.enter)="onSearch()"
+              />
+            </div>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Action Buttons -->
+        <div class="filter-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            (click)="onClearFilters()"
+            type="button"
+            id="clear-filters-btn"
+          >
+            <z-icon zType="x" />
+            {{ 'common.clear' | translate }}
+          </button>
+          <button
+            z-button
+            zType="default"
+            zSize="default"
+            (click)="onSearch()"
+            type="button"
+            id="search-btn"
+          >
+            <z-icon zType="search" />
+            {{ 'common.search' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </z-card>
+
+  <!-- Artists Table Card -->
+  <z-card class="table-card">
+    @if (isLoading()) {
+      <div class="loading-container">
+        <z-loader zSize="lg" />
+        <p>{{ '#anashid#.artists.messages.loading' | translate }}</p>
+      </div>
+    } @else if (data().length === 0) {
+      <div class="empty-container">
+        <z-empty
+          zIcon="users"
+          [zTitle]="'#anashid#.artists.messages.emptyTitle' | translate"
+          [zDescription]="
+            '#anashid#.artists.messages.emptyDescription' | translate
+          "
+        />
+      </div>
+    } @else {
+      <div class="table-container">
+        <!-- Results Info -->
+        <div class="table-header">
+          <div class="results-info">
+            <z-icon zType="users" />
+            <span>
+              {{
+                '#anashid#.artists.showingResults'
+                  | translate: { count: data().length, total: totalCount() }
+              }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+          <table z-table class="standard-table">
+            <thead z-table-header>
+              <tr z-table-row>
+                <th z-table-head class="col-name">
+                  {{ 'common.name' | translate }}
+                </th>
+                <th z-table-head class="col-songs">
+                  {{ 'common.songs' | translate }}
+                </th>
+                <th z-table-head class="col-status">
+                  {{ 'common.status' | translate }}
+                </th>
+                <th z-table-head class="col-created">
+                  {{ 'common.created' | translate }}
+                </th>
+                <th z-table-head class="col-actions">
+                  {{ 'common.actions' | translate }}
+                </th>
+              </tr>
+            </thead>
+            <tbody z-table-body>
+              @for (artist of data(); track artist.id) {
+                <tr z-table-row class="standard-row">
+                  <!-- Name -->
+                  <td
+                    z-table-cell
+                    class="col-name"
+                    [attr.data-label]="'common.name' | translate"
+                  >
+                    <span class="name-text">{{ artist.name }}</span>
+                  </td>
+
+                  <!-- Song Count -->
+                  <td
+                    z-table-cell
+                    class="col-songs"
+                    [attr.data-label]="'common.songs' | translate"
+                  >
+                    <span>{{ artist.songCount }}</span>
+                  </td>
+
+                  <!-- Status -->
+                  <td
+                    z-table-cell
+                    class="col-status"
+                    [attr.data-label]="'common.status' | translate"
+                  >
+                    <z-badge
+                      [zType]="artist.status ? 'default' : 'destructive'"
+                      zShape="pill"
+                    >
+                      {{
+                        (artist.status ? 'common.active' : 'common.inactive')
+                          | translate
+                      }}
+                    </z-badge>
+                  </td>
+
+                  <!-- Created -->
+                  <td
+                    z-table-cell
+                    class="col-created"
+                    [attr.data-label]="'common.created' | translate"
+                  >
+                    <span class="date-text">{{
+                      artist.created | date: 'mediumDate'
+                    }}</span>
+                  </td>
+
+                  <!-- Actions Dropdown -->
+                  <td z-table-cell class="col-actions">
+                    <button
+                      z-button
+                      zType="outline"
+                      zSize="sm"
+                      z-dropdown
+                      [zDropdownMenu]="actionsMenu"
+                      [id]="'artist-actions-' + artist.id"
+                    >
+                      <z-icon zType="ellipsis" />
+                    </button>
+                    <z-dropdown-menu-content
+                      #actionsMenu="zDropdownMenuContent"
+                    >
+                      <z-dropdown-menu-item
+                        (click)="onViewArtist(artist)"
+                        [id]="'view-artist-' + artist.id"
+                      >
+                        <z-icon zType="eye" />
+                        {{ 'common.view' | translate }}
+                      </z-dropdown-menu-item>
+
+                      <z-dropdown-menu-item
+                        (click)="onEditArtist(artist)"
+                        [id]="'edit-artist-' + artist.id"
+                      >
+                        <z-icon zType="file-text" />
+                        {{ '#anashid#.artists.actions.edit' | translate }}
+                      </z-dropdown-menu-item>
+
+                      <z-dropdown-menu-item
+                        (click)="onDeleteArtist(artist)"
+                        [id]="'delete-artist-' + artist.id"
+                        class="delete-action"
+                      >
+                        <z-icon zType="trash" />
+                        {{ 'common.delete' | translate }}
+                      </z-dropdown-menu-item>
+                    </z-dropdown-menu-content>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages() > 1) {
+          <div class="pagination-container">
+            <z-pagination
+              zSize="sm"
+              [zTotal]="totalPages()"
+              [zPageIndex]="currentPage()"
+              (zPageIndexChange)="onPageChange($event)"
+            />
+          </div>
+        }
+      </div>
+    }
+  </z-card>
+</div>

@@ -40,7 +40,7 @@
 
         <z-form-field class="filter-field" zardId="userId" #u="zardId">
           <label z-form-label [for]="u.id()">{{
-            'chatSessions.filters.userIdLabel' | translate
+            'common.userId' | translate
           }}</label>
           <z-form-control>
             <input
@@ -102,11 +102,11 @@
         <div class="results-info">
           <z-icon zType="inbox" />
           <span>
-            {{ 'chatSessions.showingResults' | translate }}
+            {{ 'common.showing' | translate }}
             {{ pagedSessions().length }}
             {{ 'common.of' | translate }}
             {{ totalCount() }}
-            {{ 'chatSessions.items' | translate }}
+            {{ 'common.sessions' | translate }}
           </span>
         </div>
       </div>
@@ -115,18 +115,18 @@
         <table z-table class="sessions-table">
           <thead z-table-header>
             <tr z-table-row>
-              <th z-table-head>{{ 'chatSessions.table.title' | translate }}</th>
+              <th z-table-head>{{ 'common.title' | translate }}</th>
               <th z-table-head>
-                {{ 'chatSessions.table.userId' | translate }}
+                {{ 'common.userId' | translate }}
               </th>
               <th z-table-head>
-                {{ 'chatSessions.table.tenantId' | translate }}
+                {{ 'common.tenant' | translate }}
               </th>
               <th z-table-head>
-                {{ 'chatSessions.table.createdAt' | translate }}
+                {{ 'common.createdAt' | translate }}
               </th>
               <th z-table-head class="col-actions">
-                {{ 'chatSessions.table.actions' | translate }}
+                {{ 'common.actions' | translate }}
               </th>
             </tr>
           </thead>
@@ -135,19 +135,19 @@
             <tr z-table-row class="session-row">
               <td
                 z-table-cell
-                [attr.data-label]="'chatSessions.table.title' | translate"
+                [attr.data-label]="'common.title' | translate"
               >
                 {{ session.Title || ('chatSessions.noTitle' | translate) }}
               </td>
               <td
                 z-table-cell
-                [attr.data-label]="'chatSessions.table.userId' | translate"
+                [attr.data-label]="'common.userId' | translate"
               >
                 <span class="mono-text">{{ session.UserId }}</span>
               </td>
               <td
                 z-table-cell
-                [attr.data-label]="'chatSessions.table.tenantId' | translate"
+                [attr.data-label]="'common.tenant' | translate"
               >
                 <z-badge zType="secondary" zShape="pill">{{
                   session.TenantId
@@ -155,7 +155,7 @@
               </td>
               <td
                 z-table-cell
-                [attr.data-label]="'chatSessions.table.createdAt' | translate"
+                [attr.data-label]="'common.createdAt' | translate"
               >
                 {{ session.CreatedAt | date : 'medium' }}
               </td>

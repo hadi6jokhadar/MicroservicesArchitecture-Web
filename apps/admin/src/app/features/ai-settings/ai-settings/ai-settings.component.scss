@@ -224,6 +224,76 @@
     }
   }
 
+  // Responsive Design
+  @media (max-width: 768px) {
+    padding-block: 1rem;
+    padding-inline: 1rem;
+
+    .header {
+      .header-text {
+        h1 {
+          font-size: 1.5rem;
+        }
+      }
+    }
+
+    .table-card .table-container {
+      .table-wrapper {
+        border: none;
+        overflow: visible;
+
+        .ai-settings-table {
+          thead {
+            display: none;
+          }
+
+          tbody {
+            .setting-row {
+              display: grid;
+              grid-template-columns: 1fr;
+              gap: 0.75rem;
+              padding: 1rem;
+              margin-bottom: 1rem;
+              border: 1px solid var(--color-border);
+              border-radius: var(--radius);
+              background: var(--color-card);
+
+              &:hover {
+                background: var(--color-card);
+              }
+
+              td {
+                padding: 0 !important;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border: none;
+
+                &::before {
+                  content: attr(data-label);
+                  font-weight: 600;
+                  color: var(--color-muted-foreground);
+                  font-size: 0.875rem;
+                }
+
+                &.col-actions {
+                  justify-content: flex-end;
+                  padding-top: 0.5rem !important;
+                  border-top: 1px solid var(--color-border);
+                  margin-top: 0.5rem;
+
+                  &::before {
+                    content: none;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   z-dropdown-menu-content {
     .delete-action {
       color: var(--color-destructive);
@@ -234,10 +304,10 @@
 
       &:hover {
         background: var(--color-destructive);
-        color: var(--color-destructive-foreground);
+        color: white;
 
         z-icon {
-          color: var(--color-destructive-foreground);
+          color: white;
         }
       }
     }

@@ -23,8 +23,7 @@
   <z-card>
     <form [formGroup]="filterForm" class="filter-form">
       <div z-form-field class="search-field">
-        <label z-label for="search">{{
-          'roles.filter.search' | translate
+        <label z-label for="search">{{ 'common.search' | translate
         }}</label>
         <input
           z-input
@@ -69,7 +68,7 @@
         <div class="results-info">
           <z-icon zType="shield" />
           <span>
-            {{ 'users.showingResults' | translate }}
+            {{ 'common.showing' | translate }}
             {{ filteredRoles().length }}
             {{ 'roles.results' | translate }}
           </span>
@@ -82,22 +81,22 @@
           <thead z-table-header>
             <tr z-table-row>
               <th z-table-head class="col-name">
-                {{ 'roles.table.name' | translate }}
+                {{ 'common.name' | translate }}
               </th>
               <th z-table-head class="col-description">
-                {{ 'roles.table.description' | translate }}
+                {{ 'common.description' | translate }}
               </th>
               <th z-table-head class="col-claims">
                 {{ 'roles.table.claims' | translate }}
               </th>
               <th z-table-head class="col-status">
-                {{ 'roles.table.status' | translate }}
+                {{ 'common.status' | translate }}
               </th>
               <th z-table-head class="col-type">
-                {{ 'roles.table.type' | translate }}
+                {{ 'common.type' | translate }}
               </th>
               <th z-table-head class="col-actions">
-                {{ 'roles.table.actions' | translate }}
+                {{ 'common.actions' | translate }}
               </th>
             </tr>
           </thead>
@@ -107,7 +106,7 @@
               <td
                 z-table-cell
                 class="col-name"
-                [attr.data-label]="'roles.table.name' | translate"
+                [attr.data-label]="'common.name' | translate"
               >
                 <div class="role-name">
                   <z-avatar
@@ -121,7 +120,7 @@
               <td
                 z-table-cell
                 class="col-description"
-                [attr.data-label]="'roles.table.description' | translate"
+                [attr.data-label]="'common.description' | translate"
               >
                 <span class="description">{{ role.description || '-' }}</span>
               </td>
@@ -146,7 +145,7 @@
               <td
                 z-table-cell
                 class="col-status"
-                [attr.data-label]="'roles.table.status' | translate"
+                [attr.data-label]="'common.status' | translate"
               >
                 @if (role.status) {
                 <z-badge zType="default">{{
@@ -161,7 +160,7 @@
               <td
                 z-table-cell
                 class="col-type"
-                [attr.data-label]="'roles.table.type' | translate"
+                [attr.data-label]="'common.type' | translate"
               >
                 @if (role.isSystemRole) {
                 <z-badge zType="secondary">{{

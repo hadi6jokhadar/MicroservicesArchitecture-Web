@@ -23,8 +23,7 @@
   <z-card>
     <form [formGroup]="filterForm" class="filter-form">
       <div z-form-field class="search-field">
-        <label z-label for="search">{{
-          'claims.filter.search' | translate
+        <label z-label for="search">{{ 'common.search' | translate
         }}</label>
         <input
           z-input
@@ -69,9 +68,9 @@
         <div class="results-info">
           <z-icon zType="shield" />
           <span>
-            {{ 'users.showingResults' | translate }}
+            {{ 'common.showing' | translate }}
             {{ filteredClaims().length }}
-            {{ 'claims.results' | translate }}
+            {{ 'common.claims' | translate }}
           </span>
         </div>
       </div>
@@ -82,25 +81,25 @@
           <thead z-table-header>
             <tr z-table-row>
               <th z-table-head class="col-name">
-                {{ 'claims.table.name' | translate }}
+                {{ 'common.name' | translate }}
               </th>
               <th z-table-head class="col-type">
-                {{ 'claims.table.type' | translate }}
+                {{ 'common.claimType' | translate }}
               </th>
               <th z-table-head class="col-value">
-                {{ 'claims.table.value' | translate }}
+                {{ 'common.claimValue' | translate }}
               </th>
               <th z-table-head class="col-description">
-                {{ 'claims.table.description' | translate }}
+                {{ 'common.description' | translate }}
               </th>
               <th z-table-head class="col-super-admin">
-                {{ 'claims.table.superAdmin' | translate }}
+                {{ 'common.superAdminOnly' | translate }}
               </th>
               <th z-table-head class="col-status">
-                {{ 'claims.table.status' | translate }}
+                {{ 'common.status' | translate }}
               </th>
               <th z-table-head class="col-actions">
-                {{ 'claims.table.actions' | translate }}
+                {{ 'common.actions' | translate }}
               </th>
             </tr>
           </thead>
@@ -110,7 +109,7 @@
               <td
                 z-table-cell
                 class="col-name"
-                [attr.data-label]="'claims.table.name' | translate"
+                [attr.data-label]="'common.name' | translate"
               >
                 <div class="claim-name">
                   <z-avatar
@@ -124,7 +123,7 @@
               <td
                 z-table-cell
                 class="col-type"
-                [attr.data-label]="'claims.table.type' | translate"
+                [attr.data-label]="'common.claimType' | translate"
               >
                 <z-badge zType="secondary" zShape="pill">{{
                   claim.claimType
@@ -133,7 +132,7 @@
               <td
                 z-table-cell
                 class="col-value"
-                [attr.data-label]="'claims.table.value' | translate"
+                [attr.data-label]="'common.claimValue' | translate"
               >
                 <z-badge zType="outline" zShape="pill">{{
                   claim.claimValue
@@ -142,14 +141,14 @@
               <td
                 z-table-cell
                 class="col-description"
-                [attr.data-label]="'claims.table.description' | translate"
+                [attr.data-label]="'common.description' | translate"
               >
                 <span class="description">{{ claim.description || '-' }}</span>
               </td>
               <td
                 z-table-cell
                 class="col-super-admin"
-                [attr.data-label]="'claims.table.superAdmin' | translate"
+                [attr.data-label]="'common.superAdminOnly' | translate"
               >
                 @if (claim.isSuperAdminOnly) {
                 <z-badge zType="destructive" zSize="sm">{{
@@ -162,7 +161,7 @@
               <td
                 z-table-cell
                 class="col-status"
-                [attr.data-label]="'claims.table.status' | translate"
+                [attr.data-label]="'common.status' | translate"
               >
                 @if (claim.status) {
                 <z-badge zType="default">{{

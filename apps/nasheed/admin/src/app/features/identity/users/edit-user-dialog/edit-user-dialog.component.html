@@ -162,7 +162,7 @@
     <!-- Status -->
     <z-form-field zardId="status" #s="zardId">
       <label z-form-label [for]="s.id()">
-        {{ 'users.dialog.statusLabel' | translate }}
+        {{ 'common.status' | translate }}
       </label>
       <z-form-control>
         <z-select
@@ -172,10 +172,10 @@
           [zDisabled]="form.controls.status.disabled"
         >
           <z-select-item zValue="true">
-            {{ 'users.active' | translate }}
+            {{ 'common.active' | translate }}
           </z-select-item>
           <z-select-item zValue="false">
-            {{ 'users.inactive' | translate }}
+            {{ 'common.inactive' | translate }}
           </z-select-item>
         </z-select>
       </z-form-control>

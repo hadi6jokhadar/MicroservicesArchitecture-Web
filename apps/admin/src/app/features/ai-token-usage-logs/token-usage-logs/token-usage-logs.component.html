@@ -145,7 +145,7 @@
         <div class="results-info">
           <z-icon zType="activity" />
           <span>
-            {{ 'tokenUsageLogs.showingResults' | translate }}
+            {{ 'common.showing' | translate }}
             {{ pagedLogs().length }}
             {{ 'common.of' | translate }}
             {{ totalCount() }}
@@ -159,13 +159,13 @@
           <thead z-table-header>
             <tr z-table-row>
               <th z-table-head>
-                {{ 'tokenUsageLogs.table.modelName' | translate }}
+                {{ 'common.model' | translate }}
               </th>
               <th z-table-head>
                 {{ 'tokenUsageLogs.table.endpoint' | translate }}
               </th>
               <th z-table-head>
-                {{ 'tokenUsageLogs.table.tenantId' | translate }}
+                {{ 'common.tenant' | translate }}
               </th>
               <th z-table-head>
                 {{ 'tokenUsageLogs.table.promptTokens' | translate }}
@@ -177,7 +177,7 @@
                 {{ 'tokenUsageLogs.table.totalTokens' | translate }}
               </th>
               <th z-table-head>
-                {{ 'tokenUsageLogs.table.createdAt' | translate }}
+                {{ 'common.createdAt' | translate }}
               </th>
             </tr>
           </thead>
@@ -186,7 +186,7 @@
             <tr z-table-row class="log-row">
               <td
                 z-table-cell
-                [attr.data-label]="'tokenUsageLogs.table.modelName' | translate"
+                [attr.data-label]="'common.model' | translate"
               >
                 <z-badge zType="secondary" zShape="pill">{{
                   log.ModelName
@@ -200,7 +200,7 @@
               </td>
               <td
                 z-table-cell
-                [attr.data-label]="'tokenUsageLogs.table.tenantId' | translate"
+                [attr.data-label]="'common.tenant' | translate"
               >
                 {{ log.TenantId || '-' }}
               </td>
@@ -233,7 +233,7 @@
               </td>
               <td
                 z-table-cell
-                [attr.data-label]="'tokenUsageLogs.table.createdAt' | translate"
+                [attr.data-label]="'common.createdAt' | translate"
               >
                 {{ log.CreatedAt | date : 'medium' }}
               </td>

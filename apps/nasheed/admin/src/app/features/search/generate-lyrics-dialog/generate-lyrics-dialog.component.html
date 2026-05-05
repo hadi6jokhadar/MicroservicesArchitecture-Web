@@ -1,0 +1,107 @@
+<div class="dialog-container">
+  <form [formGroup]="form" (ngSubmit)="onGenerate()" class="dialog-form">
+    @if (errorMessage()) {
+      <z-alert zType="destructive" [zDescription]="errorMessage()!" />
+    }
+
+    <z-form-field zardId="genPrompt" #f1="zardId">
+      <label z-form-label [for]="f1.id()">{{
+        'common.prompt' | translate
+      }}</label>
+      <z-form-control>
+        <textarea
+          z-input
+          [id]="f1.id()"
+          formControlName="prompt"
+          rows="3"
+          [placeholder]="
+            '#anashid#.search.generateLyrics.promptPlaceholder' | translate
+          "
+        ></textarea>
+      </z-form-control>
+      @if (
+        form.controls.prompt.touched &&
+        form.controls.prompt.hasError('required')
+      ) {
+        <span z-form-error>{{ 'validation.required' | translate }}</span>
+      }
+    </z-form-field>
+
+    <z-form-field zardId="genLang" #f2="zardId">
+      <label z-form-label [for]="f2.id()">{{
+        'common.language' | translate
+      }}</label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="f2.id()"
+          formControlName="language"
+          [placeholder]="
+            '#anashid#.search.generateLyrics.languagePlaceholder' | translate
+          "
+        />
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field zardId="genStyle" #f3="zardId">
+      <label z-form-label [for]="f3.id()">{{
+        'common.style' | translate
+      }}</label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="f3.id()"
+          formControlName="style"
+          [placeholder]="
+            '#anashid#.search.generateLyrics.stylePlaceholder' | translate
+          "
+        />
+      </z-form-control>
+    </z-form-field>
+
+    <z-form-field zardId="genVerses" #f4="zardId">
+      <label z-form-label [for]="f4.id()">{{
+        '#anashid#.search.generateLyrics.numberOfVerses' | translate
+      }}</label>
+      <z-form-control>
+        <input
+          z-input
+          type="number"
+          [id]="f4.id()"
+          formControlName="numberOfVerses"
+          min="1"
+          max="20"
+        />
+      </z-form-control>
+    </z-form-field>
+
+    @if (generatedLyrics()) {
+      <div class="generated-result">
+        <h4>{{ '#anashid#.search.generateLyrics.result' | translate }}</h4>
+        <pre class="lyrics-output">{{ generatedLyrics() }}</pre>
+      </div>
+    }
+
+    <div class="dialog-actions">
+      <button
+        type="button"
+        z-button
+        zType="outline"
+        (click)="onClose()"
+        id="close-gen-button"
+      >
+        {{ 'common.close' | translate }}
+      </button>
+      <button
+        type="submit"
+        z-button
+        zType="default"
+        [disabled]="form.invalid || isLoading()"
+        [zLoading]="isLoading()"
+        id="generate-button"
+      >
+        {{ 'common.generate' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

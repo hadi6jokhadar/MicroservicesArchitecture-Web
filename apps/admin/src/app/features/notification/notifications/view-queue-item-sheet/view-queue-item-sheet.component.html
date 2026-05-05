@@ -17,7 +17,7 @@
     <!-- Info Section -->
     <div class="info-group">
       <span class="text-sm font-medium text-muted-foreground block">{{
-        'notifications.table.title' | translate
+        'common.title' | translate
       }}</span>
       <p class="text-base text-foreground mt-1">{{ queueItem.title }}</p>
     </div>
@@ -50,7 +50,7 @@
       </div>
       <div class="info-group">
         <span class="text-sm font-medium text-muted-foreground block">{{
-          'notifications.table.status' | translate
+          'common.status' | translate
         }}</span>
         <p class="text-base text-foreground mt-1">
           {{ getQueueStatusName(queueItem.queueStatus) }}
@@ -58,7 +58,7 @@
       </div>
       <div class="info-group">
         <span class="text-sm font-medium text-muted-foreground block">{{
-          'notifications.table.createdAt' | translate
+          'common.createdAt' | translate
         }}</span>
         <p class="text-base text-foreground mt-1">
           {{ queueItem.created | date : 'medium' }}

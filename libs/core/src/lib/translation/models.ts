@@ -21,6 +21,7 @@ export interface ITranslationKeyDto {
   key: string;
   category?: string;
   description?: string;
+  tenantId?: string;
   values: ITranslationValueDto[];
   created: string;
   isArchived: boolean;

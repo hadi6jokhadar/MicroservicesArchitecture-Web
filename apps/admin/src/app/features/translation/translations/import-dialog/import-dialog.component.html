@@ -39,7 +39,7 @@
     <!-- Language Selection -->
     <z-form-field zardId="language" #lang="zardId">
       <label z-form-label [for]="lang.id()">
-        {{ 'import.language' | translate }} <span class="required">*</span>
+        {{ 'common.language' | translate }} <span class="required">*</span>
       </label>
       <z-form-control>
         <z-select
@@ -56,7 +56,7 @@
       </z-form-control>
       @if (importForm.get('language')?.touched &&
       importForm.get('language')?.hasError('required')) {
-      <span z-form-error>{{ 'import.languageRequired' | translate }}</span>
+      <span z-form-error>{{ 'common.languageRequired' | translate }}</span>
       }
     </z-form-field>
 
@@ -81,6 +81,16 @@
         'import.categoryDescription2' | translate
       }}</span>
     </z-form-field>
+
+    <!-- Tenant Detection Preview -->
+    @if (detectedTenants().length > 0) {
+    <z-alert
+      zType="default"
+      zIcon="info"
+      [zTitle]="'import.tenantKeysDetected' | translate"
+      [zDescription]="('import.tenantKeysDescription' | translate) + ' ' + detectedTenants().join(', ')"
+    />
+    }
 
     <!-- Error Display -->
     @if (errorMessage()) {
@@ -111,7 +121,7 @@
         [zDisabled]="importForm.invalid"
         id="submit-import-btn"
       >
-        {{ 'import.import' | translate }}
+        {{ 'common.import' | translate }}
       </button>
     </div>
   </form>

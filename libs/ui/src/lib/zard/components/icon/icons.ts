@@ -94,6 +94,9 @@ import {
   X,
   Zap,
   Mic,
+  Music,
+  ListCheck,
+  SquareUser,
 } from 'lucide-angular';
 
 const DarkMode: LucideIconData = [
@@ -200,6 +203,9 @@ export const ZARD_ICONS = {
   'cloud-upload': CloudUpload,
   'cloud-off': CloudOff,
   mic: Mic,
+  music: Music,
+  'list-checks': ListCheck,
+  'square-user': SquareUser,
 } as const satisfies Record<string, LucideIconData>;
 
 export declare type ZardIcon = keyof typeof ZARD_ICONS | LucideIconData;

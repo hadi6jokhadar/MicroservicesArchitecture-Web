@@ -74,6 +74,38 @@ export class PagesComponent {
       ],
     }),
     new SidebarPageClass({
+      translationKey: 'sidebar.pages.artists',
+      icon: 'square-user' as ZardIcon,
+      route: '/artists',
+      group: 'sidebar.groups.nasheed',
+      roles: ['Admin', 'SuperAdmin'],
+      type: SidebarPageType.Both,
+    }),
+    new SidebarPageClass({
+      translationKey: 'sidebar.pages.songs',
+      icon: 'music' as ZardIcon,
+      route: '/songs',
+      group: 'sidebar.groups.nasheed',
+      roles: ['Admin', 'SuperAdmin'],
+      type: SidebarPageType.Both,
+    }),
+    new SidebarPageClass({
+      translationKey: 'sidebar.pages.ingestion',
+      icon: 'list-checks' as ZardIcon,
+      route: '/ingestion',
+      group: 'sidebar.groups.nasheed',
+      roles: ['Admin', 'SuperAdmin'],
+      type: SidebarPageType.Both,
+    }),
+    new SidebarPageClass({
+      translationKey: 'sidebar.pages.search',
+      icon: 'search' as ZardIcon,
+      route: '/search',
+      group: 'sidebar.groups.nasheed',
+      roles: ['Admin', 'SuperAdmin'],
+      type: SidebarPageType.Both,
+    }),
+    new SidebarPageClass({
       translationKey: 'sidebar.pages.fileManager',
       icon: 'folder' as ZardIcon,
       group: 'sidebar.groups.system',
@@ -112,7 +144,7 @@ export class PagesComponent {
     if (isPlatformBrowser(this._platformId)) {
       const savedTheme = localStorage.getItem(this.DARK_MODE_KEY);
       const prefersDark = window.matchMedia(
-        '(prefers-color-scheme: dark)'
+        '(prefers-color-scheme: dark)',
       ).matches;
       const shouldBeDark =
         savedTheme === 'dark' || (!savedTheme && prefersDark);

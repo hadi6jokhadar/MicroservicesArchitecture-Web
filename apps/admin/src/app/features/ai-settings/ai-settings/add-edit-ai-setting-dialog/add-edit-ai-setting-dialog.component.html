@@ -2,7 +2,7 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
     <z-form-field zardId="key" #k="zardId">
       <label z-form-label [for]="k.id()"
-        >{{ 'aiSettings.dialog.keyLabel' | translate }} *</label
+        >{{ 'common.key' | translate }} *</label
       >
       <z-form-control>
         <input
@@ -26,7 +26,7 @@
 
     <z-form-field zardId="modelType" #mt="zardId">
       <label z-form-label [for]="mt.id()"
-        >{{ 'aiSettings.dialog.modelTypeLabel' | translate }} *</label
+        >{{ 'common.modelType' | translate }} *</label
       >
       <z-form-control>
         <z-select
@@ -51,7 +51,7 @@
 
     <z-form-field zardId="provider" #p="zardId">
       <label z-form-label [for]="p.id()"
-        >{{ 'aiSettings.dialog.providerLabel' | translate }} *</label
+        >{{ 'common.provider' | translate }} *</label
       >
       <z-form-control>
         <input
@@ -76,7 +76,7 @@
 
     <z-form-field zardId="modelName" #mn="zardId">
       <label z-form-label [for]="mn.id()"
-        >{{ 'aiSettings.dialog.modelNameLabel' | translate }} *</label
+        >{{ 'common.modelName' | translate }} *</label
       >
       <z-form-control>
         <input
@@ -101,7 +101,7 @@
 
     <z-form-field zardId="apiKey" #ak="zardId">
       <label z-form-label [for]="ak.id()"
-        >{{ 'aiSettings.dialog.apiKeyLabel' | translate }} *</label
+        >{{ 'common.apiKey' | translate }} *</label
       >
       <z-form-control>
         <input
@@ -126,7 +126,7 @@
 
     <z-form-field zardId="tenantId" #t="zardId">
       <label z-form-label [for]="t.id()">{{
-        'aiSettings.dialog.tenantIdLabel' | translate
+        'common.tenantIdOptional' | translate
       }}</label>
       <z-form-control>
         <input
@@ -293,7 +293,7 @@
 
       <div class="stream-checkbox-field">
         <label class="stream-label">{{
-          'aiSettings.dialog.streamLabel' | translate
+          'common.streaming' | translate
         }}</label>
         <z-checkbox formControlName="Stream">
           {{ 'aiSettings.dialog.streamCheckboxLabel' | translate }}
@@ -303,7 +303,7 @@
 
     <z-form-field zardId="description" #dsc="zardId">
       <label z-form-label [for]="dsc.id()">{{
-        'aiSettings.dialog.descriptionLabel' | translate
+        'common.description' | translate
       }}</label>
       <z-form-control>
         <textarea
@@ -372,9 +372,9 @@
         id="submit-ai-setting-btn"
       >
         @if (isEditMode()) {
-        {{ 'aiSettings.actions.update' | translate }}
+        {{ 'common.update' | translate }}
         } @else {
-        {{ 'aiSettings.actions.create' | translate }}
+        {{ 'common.create' | translate }}
         }
       </button>
     </div>
