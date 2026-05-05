@@ -143,11 +143,17 @@ export class AddEditSongDialogComponent {
     ),
   });
 
+  existingFiles: IFileManagerResponse[] = [];
+
   constructor() {
     this._artistService.getAll({ pageNumber: 1, pageSize: 1000 }).subscribe({
       next: (response: PaginatedList<ArtistModel>) =>
         this.artists.set(response.items),
     });
+
+    if (this.data?.song?.file) {
+      this.existingFiles = [this.data.song.file];
+    }
   }
 
   onAudioSelected(files: IFileManagerResponse[]): void {

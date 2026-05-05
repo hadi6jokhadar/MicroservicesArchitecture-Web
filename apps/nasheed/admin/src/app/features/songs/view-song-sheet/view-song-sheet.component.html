@@ -56,6 +56,35 @@
         }}</span>
       </div>
 
+      @if (song.file) {
+        <div class="detail-group">
+          <span class="detail-label">{{
+            '#anashid#.songs.form.audioFile' | translate
+          }}</span>
+          <div class="detail-value file-detail">
+            <a
+              [href]="song.file.externalUrl ?? song.file.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="file-link"
+            >
+              {{ song.file.name }}{{ song.file.extension }}
+            </a>
+            @if (song.file.size) {
+              <span class="file-size"
+                >{{ (song.file.size / 1048576).toFixed(2) }} MB</span
+              >
+            }
+          </div>
+        </div>
+
+        <div class="detail-group">
+          <audio controls class="audio-player">
+            <source [src]="song.file.externalUrl ?? song.file.url" />
+          </audio>
+        </div>
+      }
+
       <div class="detail-group">
         <span class="detail-label">{{
           '#anashid#.songs.form.copyrightRiskLevel' | translate
@@ -95,10 +124,8 @@
 
       @if (song.summary) {
         <div class="detail-group lyrics-group">
-          <span class="detail-label">{{
-            '#anashid#.songs.sheet.summary' | translate
-          }}</span>
-          <p class="lyrics">{{ song.summary }}</p>
+          <span class="detail-label">{{ 'common.summary' | translate }}</span>
+          <p class="lyrics" [dir]="songLyrics">{{ song.summary }}</p>
         </div>
       }
 
@@ -140,14 +167,12 @@
           <span class="detail-label">{{
             '#anashid#.songs.sheet.publishedAt' | translate
           }}</span>
-          <span class="detail-value">{{ song.publishedAt }}</span>
+          <span class="detail-value">{{ song.publishedAt | date }}</span>
         </div>
       }
 
       <div class="detail-group">
-        <span class="detail-label">{{
-          '#anashid#.songs.sheet.isArchived' | translate
-        }}</span>
+        <span class="detail-label">{{ 'common.isArchived' | translate }}</span>
         <z-badge [zType]="song.isArchived ? 'destructive' : 'outline'">
           {{
             song.isArchived
@@ -157,12 +182,32 @@
         </z-badge>
       </div>
 
+      @if (song.lyricsRaw) {
+        <div class="detail-group lyrics-group">
+          <span class="detail-label">{{
+            '#anashid#.songs.form.lyricsRaw' | translate
+          }}</span>
+          <div class="lyrics" [dir]="songLyrics">
+            @for (line of formatLyricsLines(song.lyricsRaw); track $index) {
+              <span class="lyrics-line">{{ line }}</span>
+            }
+          </div>
+        </div>
+      }
+
       @if (song.lyricsPlainText) {
         <div class="detail-group lyrics-group">
           <span class="detail-label">{{
             '#anashid#.songs.form.lyricsRaw' | translate
           }}</span>
-          <p class="lyrics">{{ formatLyrics(song.lyricsPlainText) }}</p>
+          <div class="lyrics" [dir]="songLyrics">
+            @for (
+              line of formatLyricsLines(song.lyricsPlainText);
+              track $index
+            ) {
+              <span class="lyrics-line">{{ line }}</span>
+            }
+          </div>
         </div>
       }
 
@@ -171,13 +216,27 @@
           <span class="detail-label">{{
             '#anashid#.songs.sheet.lyricsLrc' | translate
           }}</span>
-          <p class="lyrics lrc">{{ formatLyrics(song.lyricsVerifiedLrc) }}</p>
+          <div class="lyrics lrc">
+            @for (
+              line of formatLyricsLines(song.lyricsVerifiedLrc);
+              track $index
+            ) {
+              <span class="lyrics-line">
+                @if (parseLrcLine(line).timestamp) {
+                  <span class="lrc-timestamp">{{
+                    parseLrcLine(line).timestamp
+                  }}</span>
+                }
+                <span [dir]="songLyrics">{{ parseLrcLine(line).text }}</span>
+              </span>
+            }
+          </div>
         </div>
       }
 
       <div class="detail-group">
         <span class="detail-label">{{ 'common.created' | translate }}</span>
-        <span class="detail-value">{{ song.created }}</span>
+        <span class="detail-value">{{ song.created | date }}</span>
       </div>
 
       @if (song.lastModified) {
@@ -185,7 +244,7 @@
           <span class="detail-label">{{
             'common.lastModified' | translate
           }}</span>
-          <span class="detail-value">{{ song.lastModified }}</span>
+          <span class="detail-value">{{ song.lastModified | date }}</span>
         </div>
       }
     </div>

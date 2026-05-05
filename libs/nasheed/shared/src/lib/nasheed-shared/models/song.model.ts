@@ -1,5 +1,6 @@
 import { SongState } from '../enums/song-state.enum';
 import { SearchIndexStatus } from '../enums/search-index-status.enum';
+import { IFileManagerResponse } from '@ihsan/core';
 
 export interface SongLegalComplianceModel {
   copyrightRiskLevel: string;
@@ -13,6 +14,7 @@ export interface SongModel {
   artistName?: string;
   title: string;
   fileId: number;
+  file?: IFileManagerResponse | null;
   durationSeconds?: number;
   languageCode?: string;
   lyricsRaw?: string;

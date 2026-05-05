@@ -37,13 +37,13 @@
 
       <div class="detail-group">
         <span class="detail-label">{{ 'common.created' | translate }}</span>
-        <span class="detail-value">{{ job.createdAt }}</span>
+        <span class="detail-value">{{ job.createdAt | date }}</span>
       </div>
 
       @if (job.completedAt) {
         <div class="detail-group">
           <span class="detail-label">{{ 'common.completed' | translate }}</span>
-          <span class="detail-value">{{ job.completedAt }}</span>
+          <span class="detail-value">{{ job.completedAt | date }}</span>
         </div>
       }
 

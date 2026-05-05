@@ -61,6 +61,7 @@
           [label]="'#anashid#.songs.form.audioFileLabel' | translate"
           [maxFiles]="1"
           selectionMode="single"
+          [files]="existingFiles"
           [type]="FileType.Music"
           [group]="FileGroup.Project"
           (filesChanged)="onAudioSelected($event)"

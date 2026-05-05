@@ -157,6 +157,9 @@
               color: var(--color-foreground);
               white-space: nowrap;
 
+              &.col-image {
+                width: 60px;
+              }
               &.col-name {
                 width: 30%;
               }
@@ -193,6 +196,12 @@
                 padding-block: 1rem;
                 padding-inline: 1rem;
                 vertical-align: middle;
+
+                &.col-image {
+                  z-avatar {
+                    border: 2px solid var(--color-border);
+                  }
+                }
 
                 &.col-name {
                   .name-text {

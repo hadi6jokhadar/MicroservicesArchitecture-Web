@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { TranslatePipe, TranslationService } from '@ihsan/core';
+import { RtlService, TranslatePipe, TranslationService } from '@ihsan/core';
 import {
   ZardButtonComponent,
   ZardBadgeComponent,
@@ -14,11 +14,13 @@ import {
   SearchIndexStatus,
 } from '@web-app/nasheed-shared';
 import { AddEditSongDialogComponent } from '../add-edit-song-dialog/add-edit-song-dialog.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-view-song-sheet',
   standalone: true,
   imports: [
+    CommonModule,
     TranslatePipe,
     ZardButtonComponent,
     ZardBadgeComponent,
@@ -36,6 +38,10 @@ export class ViewSongSheetComponent {
 
   get song(): SongModel {
     return this.data.song;
+  }
+
+  get songLyrics(): 'ltr' | 'rtl' {
+    return this.song.languageCode === 'ar' ? 'rtl' : 'ltr';
   }
 
   readonly SongState = SongState;
@@ -77,6 +83,22 @@ export class ViewSongSheetComponent {
   formatLyrics(text: string | undefined): string {
     if (!text) return '';
     return text.replace(/\\n/g, '\n');
+  }
+
+  formatLyricsLines(text: string | undefined): string[] {
+    if (!text) return [];
+    return text
+      .replace(/\\n/g, '\n')
+      .split('\n')
+      .filter((line) => line.trim() !== '');
+  }
+
+  parseLrcLine(line: string): { timestamp: string | null; text: string } {
+    const match = line.match(/^(\[\d{2}:\d{2}\.\d{2,3}\])(.*)$/);
+    if (match) {
+      return { timestamp: match[1], text: match[2].trim() };
+    }
+    return { timestamp: null, text: line.trim() };
   }
 
   getSearchIndexStatusBadgeType(

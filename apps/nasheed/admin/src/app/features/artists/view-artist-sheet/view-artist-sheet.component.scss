@@ -68,6 +68,19 @@
         border-block-end: 0;
         padding-block-end: 0;
       }
+
+      .artist-image-group {
+        justify-content: center;
+        border-block-end: 1px solid var(--color-border);
+
+        .artist-image {
+          width: 120px;
+          height: 120px;
+          object-fit: cover;
+          border-radius: var(--radius);
+          border: 1px solid var(--color-border);
+        }
+      }
     }
   }
 

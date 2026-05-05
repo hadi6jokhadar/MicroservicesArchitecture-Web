@@ -115,6 +115,9 @@
           <table z-table class="standard-table">
             <thead z-table-header>
               <tr z-table-row>
+                <th z-table-head class="col-image">
+                  {{ 'users.table.avatar' | translate }}
+                </th>
                 <th z-table-head class="col-name">
                   {{ 'common.name' | translate }}
                 </th>
@@ -135,6 +138,21 @@
             <tbody z-table-body>
               @for (artist of data(); track artist.id) {
                 <tr z-table-row class="standard-row">
+                  <!-- Image -->
+                  <td
+                    z-table-cell
+                    class="col-image"
+                    [attr.data-label]="'users.table.avatar' | translate"
+                  >
+                    <z-avatar
+                      zSize="sm"
+                      zShape="circle"
+                      [zSrc]="getArtistImageUrl(artist)"
+                      [zFallback]="getArtistInitials(artist)"
+                      [zAlt]="artist.name"
+                    />
+                  </td>
+
                   <!-- Name -->
                   <td
                     z-table-cell

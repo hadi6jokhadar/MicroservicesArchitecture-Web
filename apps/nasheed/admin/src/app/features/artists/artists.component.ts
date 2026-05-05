@@ -24,6 +24,7 @@ import {
   ZardIdDirective,
   ZardSheetService,
   ZardPaginationImports,
+  ZardAvatarComponent,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
 import {
@@ -63,6 +64,7 @@ interface IArtistFilterForm {
     ZardTableRowComponent,
     ZardTableHeadComponent,
     ZardTableCellComponent,
+    ZardAvatarComponent,
     ...ZardPaginationImports,
   ],
   templateUrl: './artists.component.html',
@@ -214,5 +216,13 @@ export class ArtistsComponent {
 
   onClearFilters(): void {
     this.filterForm.reset({ searchTerm: '' });
+  }
+
+  getArtistImageUrl(artist: ArtistModel): string | undefined {
+    return artist.imageFile?.externalUrl ?? artist.imageFile?.url ?? undefined;
+  }
+
+  getArtistInitials(artist: ArtistModel): string {
+    return (artist.name?.charAt(0) ?? '').toUpperCase();
   }
 }

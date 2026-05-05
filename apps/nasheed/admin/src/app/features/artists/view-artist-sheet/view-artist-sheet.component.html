@@ -18,6 +18,16 @@
 
   <div class="sheet-content">
     <div class="details-card">
+      @if (artist.imageFile?.externalUrl || artist.imageFile?.url) {
+        <div class="detail-group artist-image-group">
+          <img
+            [src]="artist.imageFile!.externalUrl ?? artist.imageFile!.url"
+            [alt]="artist.name"
+            class="artist-image"
+          />
+        </div>
+      }
+
       <div class="detail-group">
         <span class="detail-label">{{ 'common.name' | translate }}</span>
         <span class="detail-value">{{ artist.name }}</span>
@@ -39,7 +49,7 @@
 
       <div class="detail-group detail-group-last">
         <span class="detail-label">{{ 'common.created' | translate }}</span>
-        <span class="detail-value">{{ artist.created }}</span>
+        <span class="detail-value">{{ artist.created | date }}</span>
       </div>
     </div>
   </div>

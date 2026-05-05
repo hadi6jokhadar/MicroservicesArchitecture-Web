@@ -10,11 +10,13 @@ import {
 } from '@ihsan/ui';
 import { ArtistEventsService, ArtistModel } from '@web-app/nasheed-shared';
 import { AddEditArtistDialogComponent } from '../add-edit-artist-dialog/add-edit-artist-dialog.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-view-artist-sheet',
   standalone: true,
   imports: [
+    CommonModule,
     TranslatePipe,
     ZardButtonComponent,
     ZardBadgeComponent,
@@ -39,8 +41,12 @@ export class ViewArtistSheetComponent {
     this._sheetRef.close();
     this._dialogService
       .create({
-        zTitle: this._translationService.getCachedTranslation('#anashid#.artists.dialog.editTitle'),
-        zDescription: this._translationService.getCachedTranslation('#anashid#.artists.dialog.editDescription'),
+        zTitle: this._translationService.getCachedTranslation(
+          '#anashid#.artists.dialog.editTitle',
+        ),
+        zDescription: this._translationService.getCachedTranslation(
+          '#anashid#.artists.dialog.editDescription',
+        ),
         zContent: AddEditArtistDialogComponent,
         zData: { artist: this.artist },
         zWidth: '550px',
