@@ -66,12 +66,6 @@ import { ZardButtonComponent } from '@ihsan/ui';
 <i z-icon zType="heart" [zStrokeWidth]="3"></i>
 ```
 
-> [!CAUTION] > **Check icon availability:** Before using an icon, ensure it is registered in `libs/ui/src/lib/zard/components/icon/icons.ts`. If it is missing, you MUST:
->
-> 1. Import it from `lucide-angular` in that file.
-> 2. Register it in the `ZARD_ICONS` constant.
-> 3. Use the registered key in your template.
-
 **Component Import:**
 
 ```typescript
@@ -83,6 +77,61 @@ import { ZardIconComponent } from '@ihsan/ui';
 ```
 
 **Available Icons:** All Lucide icons - see [Lucide Icons](https://lucide.dev/icons/)
+
+---
+
+### 🚨 MANDATORY: Icon Registration Rule
+
+**BEFORE using any `zType` value on `<i z-icon>`, you MUST verify the icon is registered.**
+
+#### Step-by-step process (no exceptions):
+
+1. **Read** `libs/ui/src/lib/zard/components/icon/icons.ts` and check if the icon key exists in `ZARD_ICONS`.
+2. **If it exists** → use it directly in the template.
+3. **If it does NOT exist** → you MUST register it before using it:
+
+```typescript
+// 1. Add the named import at the top of icons.ts
+import { RefreshCw } from 'lucide-angular';
+
+// 2. Add the key/value entry inside the ZARD_ICONS constant
+export const ZARD_ICONS = {
+  // ...existing icons...
+  'refresh-cw': RefreshCw,
+} as const satisfies Record<string, LucideIconData>;
+```
+
+4. **Then** use the newly registered key in your template:
+
+```html
+<i z-icon zType="refresh-cw"></i>
+```
+
+#### Why this matters
+
+`ZardIcon` is a strict TypeScript type derived from `keyof typeof ZARD_ICONS`. Using an unregistered key causes a compile-time type error (`Type '"icon-name"' is not assignable to type 'ZardIcon'`). The icon will also fail to render at runtime.
+
+#### ❌ NEVER do this
+
+```html
+<!-- Using a key that is not in ZARD_ICONS -->
+<i z-icon zType="refresh-cw"></i>  <!-- compile error if not registered -->
+```
+
+#### ✅ ALWAYS do this
+
+```typescript
+// icons.ts — register first
+import { RefreshCw } from 'lucide-angular';
+export const ZARD_ICONS = { ..., 'refresh-cw': RefreshCw } as const ...;
+```
+
+```html
+<!-- template — use only after registering -->
+<i z-icon zType="refresh-cw"></i>
+```
+
+---
 
 ### Cards
 

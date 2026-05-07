@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { forkJoin, of, switchMap, map } from 'rxjs';
 import { TranslatePipe, TranslationService, RtlService } from '@ihsan/core';
 import {
   ZardButtonComponent,
@@ -143,10 +144,16 @@ export class SongsComponent {
   }
 
   private loadArtists(): void {
-    this._artistService.getAll({ pageNumber: 1, pageSize: 1000 }).subscribe({
-      next: (response: PaginatedList<ArtistModel>) =>
-        this.artists.set(response.items),
-    });
+    this._artistService.getAll({ pageNumber: 1, pageSize: 100 }).pipe(
+      switchMap((first) => {
+        if (first.totalPages <= 1) return of(first.items);
+        return forkJoin(
+          Array.from({ length: first.totalPages - 1 }, (_, i) =>
+            this._artistService.getAll({ pageNumber: i + 2, pageSize: 100 })
+          )
+        ).pipe(map((pages) => [...first.items, ...pages.flatMap((p) => p.items)]));
+      })
+    ).subscribe({ next: (items) => this.artists.set(items) });
   }
 
   loadData(): void {

@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { HttpContext } from '@angular/common/http';
+import { forkJoin, of, switchMap, map } from 'rxjs';
 import { TranslatePipe } from '@ihsan/core';
 import {
   ZardButtonComponent,
@@ -37,7 +38,6 @@ import {
   ArtistModel,
   CreateSongCommand,
   UpdateSongCommand,
-  PaginatedList,
 } from '@web-app/nasheed-shared';
 
 interface ISongForm {
@@ -146,10 +146,16 @@ export class AddEditSongDialogComponent {
   existingFiles: IFileManagerResponse[] = [];
 
   constructor() {
-    this._artistService.getAll({ pageNumber: 1, pageSize: 1000 }).subscribe({
-      next: (response: PaginatedList<ArtistModel>) =>
-        this.artists.set(response.items),
-    });
+    this._artistService.getAll({ pageNumber: 1, pageSize: 100 }).pipe(
+      switchMap((first) => {
+        if (first.totalPages <= 1) return of(first.items);
+        return forkJoin(
+          Array.from({ length: first.totalPages - 1 }, (_, i) =>
+            this._artistService.getAll({ pageNumber: i + 2, pageSize: 100 })
+          )
+        ).pipe(map((pages) => [...first.items, ...pages.flatMap((p) => p.items)]));
+      })
+    ).subscribe({ next: (items) => this.artists.set(items) });
 
     if (this.data?.song?.file) {
       this.existingFiles = [this.data.song.file];

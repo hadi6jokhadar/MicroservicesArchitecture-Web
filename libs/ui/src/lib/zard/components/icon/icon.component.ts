@@ -41,8 +41,8 @@ export class ZardIconComponent {
     mergeClasses(
       iconVariants({ zSize: this.zSize() }),
       this.class(),
-      this.zStrokeWidth() === 0 ? 'stroke-none' : ''
-    )
+      this.zStrokeWidth() === 0 ? 'stroke-none' : '',
+    ),
   );
 
   protected readonly icon = computed(() => {

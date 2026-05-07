@@ -8,6 +8,7 @@ import {
   IngestionJobModel,
   mapIngestionJobFromApi,
   PaginatedList,
+  SongModel,
 } from '../models';
 import { IIngestionJobQuery } from '../interfaces';
 
@@ -19,6 +20,9 @@ export class IngestionJobService {
   private readonly _env = inject(ENVIRONMENT);
   private get baseUrl(): string {
     return `${this._env.apiUrls['nasheed']}/api/ingestion`;
+  }
+  private get songsUrl(): string {
+    return `${this._env.apiUrls['nasheed']}/api/songs`;
   }
 
   getAll(
@@ -65,5 +69,9 @@ export class IngestionJobService {
     return this._http
       .post<IngestionJobApiModel>(`${this.baseUrl}/songs/${songId}/reindex`, {})
       .pipe(map(mapIngestionJobFromApi));
+  }
+
+  getAnalysisStatus(songId: number): Observable<SongModel> {
+    return this._http.get<SongModel>(`${this.songsUrl}/${songId}/analysis`);
   }
 }

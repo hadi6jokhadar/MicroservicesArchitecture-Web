@@ -8,7 +8,11 @@ import {
   ZardSheetRef,
   Z_SHEET_DATA,
 } from '@ihsan/ui';
-import { IngestionJobModel, IngestionJobStatus } from '@web-app/nasheed-shared';
+import {
+  IngestionJobModel,
+  IngestionJobStatus,
+  IngestionJobType,
+} from '@web-app/nasheed-shared';
 
 @Component({
   selector: 'app-view-job-sheet',
@@ -30,7 +34,9 @@ export class ViewJobSheetComponent {
   get job(): IngestionJobModel {
     return this.data.job;
   }
+
   readonly IngestionJobStatus = IngestionJobStatus;
+  readonly IngestionJobType = IngestionJobType;
 
   getStatusBadgeType(
     status: IngestionJobStatus,
@@ -42,6 +48,40 @@ export class ViewJobSheetComponent {
         return 'destructive';
       default:
         return 'secondary';
+    }
+  }
+
+  getStatusKey(status: IngestionJobStatus): string {
+    switch (status) {
+      case IngestionJobStatus.Pending:
+        return '#anashid#.ingestion.statuses.pending';
+      case IngestionJobStatus.Running:
+        return '#anashid#.ingestion.statuses.running';
+      case IngestionJobStatus.Completed:
+        return '#anashid#.ingestion.statuses.completed';
+      case IngestionJobStatus.Failed:
+        return '#anashid#.ingestion.statuses.failed';
+      case IngestionJobStatus.Removed:
+        return '#anashid#.ingestion.statuses.removed';
+      case IngestionJobStatus.Cancelled:
+        return '#anashid#.ingestion.statuses.cancelled';
+      default:
+        return '#anashid#.ingestion.statuses.pending';
+    }
+  }
+
+  getTypeKey(type: IngestionJobType): string {
+    switch (type) {
+      case IngestionJobType.FullPipeline:
+        return '#anashid#.ingestion.types.fullPipeline';
+      case IngestionJobType.Transcription:
+        return '#anashid#.ingestion.types.transcription';
+      case IngestionJobType.LyricsAlignment:
+        return '#anashid#.ingestion.types.lyricsAlignment';
+      case IngestionJobType.Embedding:
+        return '#anashid#.ingestion.types.embedding';
+      default:
+        return '#anashid#.ingestion.types.fullPipeline';
     }
   }
 

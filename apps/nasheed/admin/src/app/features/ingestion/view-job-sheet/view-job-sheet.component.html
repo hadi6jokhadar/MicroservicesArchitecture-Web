@@ -1,8 +1,12 @@
 <div class="sheet-container">
+  <!-- Header -->
   <div class="sheet-header">
     <div class="header-content">
-      <div class="header-text">
+      <div class="header-info">
         <h2>{{ '#anashid#.ingestion.sheet.title' | translate }}</h2>
+        <z-badge [zType]="getStatusBadgeType(job.status)" zShape="pill">
+          {{ getStatusKey(job.status) | translate }}
+        </z-badge>
       </div>
       <button
         z-button
@@ -16,48 +20,123 @@
     </div>
   </div>
 
+  <!-- Content -->
   <div class="sheet-content">
-    <div class="details-card">
-      <div class="detail-group">
-        <span class="detail-label">{{
-          '#anashid#.ingestion.table.id' | translate
-        }}</span>
-        <span class="detail-value">{{ job.id }}</span>
-      </div>
 
-      <div class="detail-group">
-        <span class="detail-label">{{ 'common.status' | translate }}</span>
-        <z-badge [zType]="getStatusBadgeType(job.status)">
-          {{
-            '#anashid#.ingestion.statuses.' +
-              IngestionJobStatus[job.status].toLowerCase() | translate
-          }}
-        </z-badge>
-      </div>
+    <!-- Identity Section -->
+    <div class="section">
+      <div class="details-card">
 
-      <div class="detail-group">
-        <span class="detail-label">{{ 'common.created' | translate }}</span>
-        <span class="detail-value">{{ job.createdAt | date }}</span>
-      </div>
-
-      @if (job.completedAt) {
         <div class="detail-group">
-          <span class="detail-label">{{ 'common.completed' | translate }}</span>
-          <span class="detail-value">{{ job.completedAt | date }}</span>
+          <span class="detail-label">
+            <z-icon zType="layers" class="label-icon" />
+            {{ '#anashid#.ingestion.table.id' | translate }}
+          </span>
+          <span class="detail-value mono">{{ job.id }}</span>
         </div>
-      }
 
-      @if (job.errorMessage) {
-        <div class="detail-group detail-group-last error-group">
-          <span class="detail-label">{{ 'common.error' | translate }}</span>
-          <pre class="error-message">{{ job.errorMessage }}</pre>
+        <div class="detail-group">
+          <span class="detail-label">
+            <z-icon zType="music" class="label-icon" />
+            {{ '#anashid#.ingestion.sheet.songId' | translate }}
+          </span>
+          <span class="detail-value mono">{{ job.songId }}</span>
         </div>
-      } @else {
-        <div class="detail-group detail-group-last">
-          <span class="detail-label">{{ 'common.error' | translate }}</span>
-          <span class="detail-value">-</span>
+
+        <div class="detail-group">
+          <span class="detail-label">
+            <z-icon zType="file" class="label-icon" />
+            {{ '#anashid#.ingestion.sheet.fileId' | translate }}
+          </span>
+          <span class="detail-value mono">{{ job.fileId }}</span>
         </div>
-      }
+
+        <div class="detail-group">
+          <span class="detail-label">
+            <z-icon zType="tag" class="label-icon" />
+            {{ 'common.type' | translate }}
+          </span>
+          <span class="detail-value">{{ getTypeKey(job.type) | translate }}</span>
+        </div>
+
+      </div>
     </div>
+
+    <!-- Timeline Section -->
+    <div class="section">
+      <div class="details-card">
+
+        <div class="detail-group">
+          <span class="detail-label">
+            <z-icon zType="calendar" class="label-icon" />
+            {{ 'common.created' | translate }}
+          </span>
+          <span class="detail-value">{{ job.createdAt | date: 'medium' }}</span>
+        </div>
+
+        @if (job.startedAt) {
+          <div class="detail-group">
+            <span class="detail-label">
+              <z-icon zType="loader-circle" class="label-icon" />
+              {{ '#anashid#.ingestion.sheet.startedAt' | translate }}
+            </span>
+            <span class="detail-value">{{ job.startedAt | date: 'medium' }}</span>
+          </div>
+        }
+
+        @if (job.completedAt) {
+          <div class="detail-group">
+            <span class="detail-label">
+              <z-icon zType="circle-check" class="label-icon" />
+              {{ 'common.completed' | translate }}
+            </span>
+            <span class="detail-value">{{ job.completedAt | date: 'medium' }}</span>
+          </div>
+        }
+
+      </div>
+    </div>
+
+    <!-- Retry Section -->
+    <div class="section">
+      <div class="details-card">
+
+        <div class="detail-group">
+          <span class="detail-label">
+            <z-icon zType="refresh-cw" class="label-icon" />
+            {{ '#anashid#.ingestion.sheet.retries' | translate }}
+          </span>
+          <div class="retries-value">
+            <span class="mono">{{ job.retryCount }} / {{ job.maxRetries }}</span>
+            @if (job.maxRetries > 0) {
+              <div class="retry-bar">
+                <div
+                  class="retry-bar-fill"
+                  [style.width.%]="(job.retryCount / job.maxRetries) * 100"
+                  [class.retry-bar-fill--warning]="job.retryCount >= job.maxRetries"
+                ></div>
+              </div>
+            }
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Error Section -->
+    @if (job.errorMessage) {
+      <div class="section">
+        <div class="details-card error-card">
+          <div class="detail-group error-group">
+            <span class="detail-label error-label">
+              <z-icon zType="circle-alert" class="label-icon" />
+              {{ 'common.error' | translate }}
+            </span>
+            <pre class="error-message">{{ job.errorMessage }}</pre>
+          </div>
+        </div>
+      </div>
+    }
+
   </div>
 </div>

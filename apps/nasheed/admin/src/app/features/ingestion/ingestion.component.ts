@@ -34,6 +34,9 @@ import {
   PaginatedList,
   IngestionJobStatus,
   IngestionJobType,
+  SongModel,
+  SongState,
+  SearchIndexStatus,
 } from '@web-app/nasheed-shared';
 import { ViewJobSheetComponent } from './view-job-sheet/view-job-sheet.component';
 
@@ -88,6 +91,8 @@ export class IngestionComponent {
 
   readonly IngestionJobStatus = IngestionJobStatus;
   readonly IngestionJobType = IngestionJobType;
+  readonly SongState = SongState;
+  readonly SearchIndexStatus = SearchIndexStatus;
 
   readonly jobStatuses = [
     {
@@ -183,12 +188,25 @@ export class IngestionComponent {
   }
 
   onViewJob(job: IngestionJobModel): void {
-    this._sheetService.create({
-      zContent: ViewJobSheetComponent,
-      zData: { job },
-      zSide: this._rtlService.getSheetSide('right'),
-      zClosable: false,
-      zHideFooter: true,
+    this._ingestionService.getById(job.id).subscribe({
+      next: (freshJob) => {
+        this._sheetService.create({
+          zContent: ViewJobSheetComponent,
+          zData: { job: freshJob },
+          zSide: this._rtlService.getSheetSide('right'),
+          zClosable: false,
+          zHideFooter: true,
+        });
+      },
+      error: () => {
+        this._sheetService.create({
+          zContent: ViewJobSheetComponent,
+          zData: { job },
+          zSide: this._rtlService.getSheetSide('right'),
+          zClosable: false,
+          zHideFooter: true,
+        });
+      },
     });
   }
 
@@ -214,6 +232,53 @@ export class IngestionComponent {
             this.loadData();
           },
         });
+      },
+    });
+  }
+
+  onReindexJob(job: IngestionJobModel): void {
+    this._alertDialogService.confirm({
+      zTitle: this._translationService.getCachedTranslation(
+        '#anashid#.ingestion.dialog.reindexTitle',
+      ),
+      zDescription: this._translationService.getCachedTranslation(
+        '#anashid#.ingestion.dialog.reindexDescription',
+      ),
+      zOkText: this._translationService.getCachedTranslation(
+        '#anashid#.ingestion.actions.reindex',
+      ),
+      zCancelText:
+        this._translationService.getCachedTranslation('common.cancel'),
+      zOnOk: () => {
+        this._ingestionService.reindex(job.songId).subscribe({
+          next: () => {
+            toast.success(
+              this._translationService.getCachedTranslation(
+                '#anashid#.ingestion.messages.reindexed',
+              ),
+            );
+            this.loadData();
+          },
+        });
+      },
+    });
+  }
+
+  onCheckAnalysisStatus(job: IngestionJobModel): void {
+    this._ingestionService.getAnalysisStatus(job.songId).subscribe({
+      next: (song: SongModel) => {
+        const songStateKey = this.getSongStateKey(song.songState);
+        const searchIndexKey = this.getSearchIndexStatusKey(
+          song.searchIndexStatus,
+        );
+        toast.message(
+          this._translationService.getCachedTranslation(
+            '#anashid#.ingestion.analysisStatus.title',
+          ),
+          {
+            description: `${this._translationService.getCachedTranslation('#anashid#.ingestion.analysisStatus.songState')}: ${this._translationService.getCachedTranslation(songStateKey)} | ${this._translationService.getCachedTranslation('#anashid#.ingestion.analysisStatus.searchIndex')}: ${this._translationService.getCachedTranslation(searchIndexKey)}`,
+          },
+        );
       },
     });
   }
@@ -294,5 +359,37 @@ export class IngestionComponent {
 
   onClearFilters(): void {
     this.filterForm.reset({ status: 'all', type: 'all' });
+  }
+
+  getSongStateKey(state: SongState): string {
+    switch (state) {
+      case SongState.Uploaded:
+        return '#anashid#.ingestion.analysisStatus.state.uploaded';
+      case SongState.InQueue:
+        return '#anashid#.ingestion.analysisStatus.state.inQueue';
+      case SongState.Pending:
+        return '#anashid#.ingestion.analysisStatus.state.pending';
+      case SongState.Done:
+        return '#anashid#.ingestion.analysisStatus.state.done';
+      case SongState.Failed:
+        return '#anashid#.ingestion.analysisStatus.state.failed';
+      default:
+        return '#anashid#.ingestion.analysisStatus.state.uploaded';
+    }
+  }
+
+  getSearchIndexStatusKey(status: SearchIndexStatus): string {
+    switch (status) {
+      case SearchIndexStatus.NotIndexed:
+        return '#anashid#.ingestion.analysisStatus.index.notIndexed';
+      case SearchIndexStatus.Indexing:
+        return '#anashid#.ingestion.analysisStatus.index.indexing';
+      case SearchIndexStatus.Indexed:
+        return '#anashid#.ingestion.analysisStatus.index.indexed';
+      case SearchIndexStatus.Failed:
+        return '#anashid#.ingestion.analysisStatus.index.failed';
+      default:
+        return '#anashid#.ingestion.analysisStatus.index.notIndexed';
+    }
   }
 }

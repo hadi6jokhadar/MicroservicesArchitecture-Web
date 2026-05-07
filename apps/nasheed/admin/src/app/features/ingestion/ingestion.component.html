@@ -240,6 +240,22 @@
                           {{ 'common.retry' | translate }}
                         </z-dropdown-menu-item>
                       }
+                      @if (job.songId) {
+                        <z-dropdown-menu-item
+                          (click)="onReindexJob(job)"
+                          [id]="'reindex-job-' + job.id"
+                        >
+                          <z-icon zType="refresh-cw" />
+                          {{ '#anashid#.ingestion.actions.reindex' | translate }}
+                        </z-dropdown-menu-item>
+                        <z-dropdown-menu-item
+                          (click)="onCheckAnalysisStatus(job)"
+                          [id]="'analysis-status-' + job.id"
+                        >
+                          <z-icon zType="activity" />
+                          {{ '#anashid#.ingestion.actions.checkAnalysis' | translate }}
+                        </z-dropdown-menu-item>
+                      }
                       <z-dropdown-menu-item
                         (click)="onRemoveJob(job)"
                         [id]="'remove-job-' + job.id"
