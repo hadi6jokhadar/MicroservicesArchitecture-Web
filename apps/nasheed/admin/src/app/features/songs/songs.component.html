@@ -234,11 +234,11 @@
                 <th z-table-head class="col-state">
                   {{ 'common.state' | translate }}
                 </th>
-                <th z-table-head class="col-language">
-                  {{ 'common.language' | translate }}
+                <th z-table-head class="col-index-status">
+                  {{ '#anashid#.songs.filter.indexStatus' | translate }}
                 </th>
-                <th z-table-head class="col-duration">
-                  {{ 'common.duration' | translate }}
+                <th z-table-head class="col-content-safety">
+                  {{ '#anashid#.songs.filter.contentSafetyFlag' | translate }}
                 </th>
                 <th z-table-head class="col-actions">
                   {{ 'common.actions' | translate }}
@@ -280,24 +280,46 @@
                     </z-badge>
                   </td>
 
-                  <!-- Language -->
+                  <!-- Index Status -->
                   <td
                     z-table-cell
-                    class="col-language"
-                    [attr.data-label]="'common.language' | translate"
+                    class="col-index-status"
+                    [attr.data-label]="
+                      '#anashid#.songs.filter.indexStatus' | translate
+                    "
                   >
-                    <span>{{ song.languageCode ?? '-' }}</span>
+                    <z-badge
+                      [zType]="getIndexStatusBadgeType(song.searchIndexStatus)"
+                      zShape="pill"
+                    >
+                      {{
+                        getIndexStatusKey(song.searchIndexStatus) | translate
+                      }}
+                    </z-badge>
                   </td>
 
-                  <!-- Duration -->
+                  <!-- Content Safety Flag -->
                   <td
                     z-table-cell
-                    class="col-duration"
-                    [attr.data-label]="'common.duration' | translate"
+                    class="col-content-safety"
+                    [attr.data-label]="
+                      '#anashid#.songs.filter.contentSafetyFlag' | translate
+                    "
                   >
-                    <span>{{
-                      song.durationSeconds ? song.durationSeconds + 's' : '-'
-                    }}</span>
+                    @if (song.legalCompliance?.contentSafetyFlag) {
+                      <z-badge
+                        [zType]="
+                          getContentSafetyBadgeType(
+                            song.legalCompliance!.contentSafetyFlag
+                          )
+                        "
+                        zShape="pill"
+                      >
+                        {{ song.legalCompliance!.contentSafetyFlag }}
+                      </z-badge>
+                    } @else {
+                      <span>-</span>
+                    }
                   </td>
 
                   <!-- Actions Dropdown -->
@@ -328,6 +350,13 @@
                       >
                         <z-icon zType="file-text" />
                         {{ '#anashid#.songs.actions.edit' | translate }}
+                      </z-dropdown-menu-item>
+                      <z-dropdown-menu-item
+                        (click)="onReindexSong(song)"
+                        [id]="'reindex-song-' + song.id"
+                      >
+                        <z-icon zType="refresh-cw" />
+                        {{ '#anashid#.songs.actions.reindex' | translate }}
                       </z-dropdown-menu-item>
                       <z-dropdown-menu-item
                         (click)="onDeleteSong(song)"

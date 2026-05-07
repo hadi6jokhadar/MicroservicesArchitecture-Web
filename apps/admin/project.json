@@ -87,7 +87,49 @@
     "start-backend": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node ..\\MicroservicesArchitecture\\src\\Services\\start-all-services.mjs"
+        "command": "start cmd /k node ..\\MicroservicesArchitecture\\src\\Services\\start-all-services.mjs"
+      }
+    },
+    "start-identity": {
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "start cmd /k node ..\\MicroservicesArchitecture\\src\\Services\\Identity\\Identity.API\\run-development-instance.mjs"
+      }
+    },
+    "start-tenant": {
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "start cmd /k node ..\\MicroservicesArchitecture\\src\\Services\\Tenant\\Tenant.API\\run-development-instance.mjs"
+      }
+    },
+    "start-notification": {
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "start cmd /k node ..\\MicroservicesArchitecture\\src\\Services\\Notification\\Notification.API\\run-development-instance.mjs"
+      }
+    },
+    "start-filemanager": {
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "start cmd /k node ..\\MicroservicesArchitecture\\src\\Services\\FileManager\\FileManager.API\\run-development-instance.mjs"
+      }
+    },
+    "start-translation": {
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "start cmd /k node ..\\MicroservicesArchitecture\\src\\Services\\Translation\\Translation.API\\run-development-instance.mjs"
+      }
+    },
+    "start-ai": {
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "start cmd /k node ..\\MicroservicesArchitecture\\src\\Services\\AI\\AI.API\\run-development-instance.mjs"
       }
     }
   }

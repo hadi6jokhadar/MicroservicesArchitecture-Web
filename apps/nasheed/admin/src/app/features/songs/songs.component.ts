@@ -31,6 +31,7 @@ import {
 import { toast } from 'ngx-sonner';
 import {
   SongService,
+  IngestionJobService,
   SongEventsService,
   ArtistService,
   SongModel,
@@ -83,6 +84,7 @@ interface ISongFilterForm {
 })
 export class SongsComponent {
   private readonly _songService = inject(SongService);
+  private readonly _ingestionService = inject(IngestionJobService);
   private readonly _songEventsService = inject(SongEventsService);
   private readonly _artistService = inject(ArtistService);
   private readonly _dialogService = inject(ZardDialogService);
@@ -144,16 +146,21 @@ export class SongsComponent {
   }
 
   private loadArtists(): void {
-    this._artistService.getAll({ pageNumber: 1, pageSize: 100 }).pipe(
-      switchMap((first) => {
-        if (first.totalPages <= 1) return of(first.items);
-        return forkJoin(
-          Array.from({ length: first.totalPages - 1 }, (_, i) =>
-            this._artistService.getAll({ pageNumber: i + 2, pageSize: 100 })
-          )
-        ).pipe(map((pages) => [...first.items, ...pages.flatMap((p) => p.items)]));
-      })
-    ).subscribe({ next: (items) => this.artists.set(items) });
+    this._artistService
+      .getAll({ pageNumber: 1, pageSize: 100 })
+      .pipe(
+        switchMap((first) => {
+          if (first.totalPages <= 1) return of(first.items);
+          return forkJoin(
+            Array.from({ length: first.totalPages - 1 }, (_, i) =>
+              this._artistService.getAll({ pageNumber: i + 2, pageSize: 100 }),
+            ),
+          ).pipe(
+            map((pages) => [...first.items, ...pages.flatMap((p) => p.items)]),
+          );
+        }),
+      )
+      .subscribe({ next: (items) => this.artists.set(items) });
   }
 
   loadData(): void {
@@ -273,6 +280,76 @@ export class SongsComponent {
         });
       },
     });
+  }
+
+  onReindexSong(song: SongModel): void {
+    this._alertDialogService.confirm({
+      zTitle: this._translationService.getCachedTranslation(
+        '#anashid#.ingestion.dialog.reindexTitle',
+      ),
+      zDescription: this._translationService.getCachedTranslation(
+        '#anashid#.ingestion.dialog.reindexDescription',
+      ),
+      zOkText: this._translationService.getCachedTranslation(
+        '#anashid#.songs.actions.reindex',
+      ),
+      zCancelText:
+        this._translationService.getCachedTranslation('common.cancel'),
+      zOnOk: () => {
+        this._ingestionService.reindex(song.id).subscribe({
+          next: () => {
+            toast.success(
+              this._translationService.getCachedTranslation(
+                '#anashid#.ingestion.messages.reindexed',
+              ),
+            );
+          },
+        });
+      },
+    });
+  }
+
+  getIndexStatusBadgeType(
+    status: SearchIndexStatus,
+  ): 'default' | 'secondary' | 'destructive' | 'outline' {
+    switch (status) {
+      case SearchIndexStatus.Indexed:
+        return 'default';
+      case SearchIndexStatus.Failed:
+        return 'destructive';
+      case SearchIndexStatus.Indexing:
+        return 'secondary';
+      default:
+        return 'outline';
+    }
+  }
+
+  getIndexStatusKey(status: SearchIndexStatus): string {
+    switch (status) {
+      case SearchIndexStatus.NotIndexed:
+        return '#anashid#.songs.indexStatus.notIndexed';
+      case SearchIndexStatus.Indexing:
+        return '#anashid#.songs.indexStatus.indexing';
+      case SearchIndexStatus.Indexed:
+        return '#anashid#.songs.indexStatus.indexed';
+      case SearchIndexStatus.Failed:
+        return '#anashid#.songs.indexStatus.failed';
+      default:
+        return '#anashid#.songs.indexStatus.notIndexed';
+    }
+  }
+
+  getContentSafetyBadgeType(
+    flag: string,
+  ): 'default' | 'secondary' | 'destructive' | 'outline' {
+    switch (flag.toLowerCase()) {
+      case 'safe':
+        return 'default';
+      case 'flagged':
+        return 'destructive';
+      default:
+        return 'outline';
+    }
   }
 
   getSongStateBadgeType(
