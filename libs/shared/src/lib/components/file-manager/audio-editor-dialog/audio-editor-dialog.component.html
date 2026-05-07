@@ -1,0 +1,195 @@
+<div class="audio-editor-container">
+  <div class="audio-file-name" [title]="sourceFile.name">
+    {{ sourceFile.name }}
+  </div>
+
+  <!-- Original waveform -->
+  <div class="waveform-section">
+    <span class="waveform-label">{{
+      'fileManager.audioEditor.original' | translate
+    }}</span>
+    <div #waveformHost class="waveform-host"></div>
+    @if (loadingWave()) {
+      <p class="helper-text">
+        {{ 'fileManager.audioEditor.messages.loadingWaveform' | translate }}
+      </p>
+    }
+    <div class="waveform-actions">
+      <button
+        id="audio-editor-play-pause"
+        z-button
+        zType="secondary"
+        zShape="circle"
+        zSize="sm"
+        type="button"
+        [zDisabled]="loadingWave()"
+        (click)="togglePlayPause()"
+      >
+        <z-icon [zType]="isPlaying() ? 'pause' : 'play'" />
+      </button>
+
+      <button
+        id="audio-editor-clear-selection"
+        z-button
+        zType="outline"
+        zSize="sm"
+        type="button"
+        [zDisabled]="loadingWave() || !hasSelection()"
+        (click)="clearSelection()"
+      >
+        {{ 'fileManager.audioEditor.clearSelection' | translate }}
+      </button>
+
+      <button
+        id="audio-editor-reset-zoom"
+        z-button
+        zType="outline"
+        zSize="sm"
+        type="button"
+        [zDisabled]="loadingWave()"
+        (click)="resetZoom()"
+      >
+        <z-icon zType="refresh-cw" />
+        {{ 'fileManager.audioEditor.resetZoom' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Enhanced waveform (shown when enhancement is ON) -->
+  <div
+    class="waveform-section enhanced-section"
+    [style.display]="enhanceAudio() ? 'flex' : 'none'"
+  >
+    <span class="waveform-label enhanced">{{
+      'fileManager.audioEditor.enhancedPreview' | translate
+    }}</span>
+    <div #waveformEnhancedHost class="waveform-host enhanced-host"></div>
+    @if (loadingEnhanced()) {
+      <p class="helper-text">
+        {{ 'fileManager.audioEditor.messages.loadingEnhanced' | translate }}
+      </p>
+    }
+    <div class="waveform-actions">
+      <button
+        id="audio-editor-play-enhanced"
+        z-button
+        zType="secondary"
+        zShape="circle"
+        zSize="sm"
+        type="button"
+        [zDisabled]="loadingEnhanced()"
+        (click)="togglePlayPauseEnhanced()"
+      >
+        <z-icon [zType]="isPlayingEnhanced() ? 'pause' : 'play'" />
+      </button>
+
+      <button
+        id="audio-editor-reset-zoom-enhanced"
+        z-button
+        zType="outline"
+        zSize="sm"
+        type="button"
+        [zDisabled]="loadingEnhanced()"
+        (click)="resetZoomEnhanced()"
+      >
+        <z-icon zType="refresh-cw" />
+        {{ 'fileManager.audioEditor.resetZoom' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Enhancement toggle -->
+  <p class="helper-text">
+    {{ 'fileManager.audioEditor.selectionHint' | translate }}
+  </p>
+
+  <div class="enhancement-row">
+    <span>{{ 'fileManager.audioEditor.enhancement' | translate }}</span>
+    <button
+      id="audio-editor-enhancement-toggle"
+      z-button
+      zType="outline"
+      type="button"
+      (click)="toggleEnhance()"
+    >
+      {{
+        enhanceAudio()
+          ? ('fileManager.audioEditor.enabled' | translate)
+          : ('fileManager.audioEditor.disabled' | translate)
+      }}
+    </button>
+  </div>
+
+  @if (errorMessage()) {
+    <z-alert
+      zType="destructive"
+      zIcon="circle-alert"
+      [zDescription]="errorMessage()! | translate"
+    />
+  }
+
+  @if (isProcessing() && progressStep()) {
+    <div class="submit-progress">
+      <div class="submit-progress-bar">
+        <div class="submit-progress-bar-inner"></div>
+      </div>
+      <p class="submit-progress-label">{{ progressStep()! | translate }}</p>
+    </div>
+  }
+
+  <!-- Selection info (start / end / length / estimated size) -->
+  <div class="selection-meta">
+    <div>
+      <span class="label">{{
+        'fileManager.audioEditor.start' | translate
+      }}</span>
+      <span class="value">{{ formatSeconds(regionStart()) }}</span>
+    </div>
+    <div>
+      <span class="label">{{ 'fileManager.audioEditor.end' | translate }}</span>
+      <span class="value">{{ formatSeconds(regionEnd()) }}</span>
+    </div>
+    <div>
+      <span class="label">{{
+        'fileManager.audioEditor.length' | translate
+      }}</span>
+      <span class="value">{{
+        formatSeconds(regionEnd() - regionStart())
+      }}</span>
+    </div>
+    <div>
+      <span class="label">{{
+        'fileManager.audioEditor.fileSize' | translate
+      }}</span>
+      <span
+        class="value"
+        [class.size-warning]="isOutputTooLarge()"
+      >{{ estimatedFileSize() }}</span>
+    </div>
+  </div>
+
+  <!-- Dialog actions -->
+  <div class="dialog-actions">
+    <button
+      id="audio-editor-cancel"
+      z-button
+      zType="outline"
+      type="button"
+      (click)="cancel()"
+    >
+      {{ 'common.cancel' | translate }}
+    </button>
+
+    <button
+      id="audio-editor-submit"
+      z-button
+      zType="default"
+      type="button"
+      [zLoading]="isProcessing()"
+      [zDisabled]="loadingWave()"
+      (click)="submit()"
+    >
+      {{ 'common.submit' | translate }}
+    </button>
+  </div>
+</div>

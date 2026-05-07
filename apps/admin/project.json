@@ -19,7 +19,7 @@
           {
             "glob": "**/*",
             "input": "apps/admin/public"
-          }
+          },
         ],
         "styles": ["apps/admin/src/styles.css"]
       },

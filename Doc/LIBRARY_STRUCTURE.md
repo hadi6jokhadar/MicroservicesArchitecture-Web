@@ -57,10 +57,11 @@ export class LoginComponent {
   - `ai-chat/` — AI chat UI component
   - `ai-embedding/` — AI embedding component
   - `login/` — Login form component
-  - `register/` — Registration form component
-  - `file-manager/` — File manager UI
+  - `file-manager/` — File manager UI with upload, inline audio preview for music files, and direct file removal
+    - `audio-editor-dialog/` — Pre-upload dialog: waveform trimming, audio enhancement, WebM/Opus encoding via Web Codecs API
   - `file-selector/` — File selection component
   - `forgot-password/` — Password recovery component
+  - `register/` — Registration form component
   - `sidebar/` — Sidebar navigation component
 - `directives/` — Custom Angular directives
 - `pipes/` — Custom Angular pipes
@@ -102,6 +103,107 @@ export class AuthModule {}
 - Design system components
 
 **Note:** This is a separate library layer for highly reusable UI elements that don't depend on business logic.
+
+---
+
+## Shared Component Reference
+
+### AudioEditorDialogComponent
+
+**Path:** `libs/shared/src/lib/components/file-manager/audio-editor-dialog/`  
+**Selector:** `shared-audio-editor-dialog`  
+**Opened by:** `FileManagerComponent` automatically when a user uploads an audio file.
+
+#### Purpose
+
+Pre-upload dialog that lets users trim an audio region and optionally apply audio enhancement before the file is sent to the backend.
+
+#### Features
+
+| Feature                    | Description                                                                                         |
+| -------------------------- | --------------------------------------------------------------------------------------------------- |
+| **Waveform visualization** | Uses WaveSurfer.js to render an interactive waveform of the source file                             |
+| **Region trimming**        | Drag on the waveform to select start/end region; only the selected portion is exported              |
+| **Mouse wheel zoom**       | Scroll on either waveform to zoom in/out; Reset Zoom button restores the default view               |
+| **Audio enhancement**      | Optional toggle — applies +1.2x gain and −18 dB compression via Tone.js                             |
+| **Enhanced preview**       | When enhancement is on, a second waveform shows the processed audio for A/B comparison              |
+| **Progress steps**         | Submit shows labelled progress: Preparing → Decoding → Trimming → Enhancing → Encoding → Finalizing |
+| **Selection metadata**     | Displays From / To / Length / estimated file size in real time                                      |
+| **WebM/Opus encoding**     | Encodes via Web Codecs API + `webm-muxer`; timestamps are integer-arithmetic (no clock drift)       |
+
+#### Encoding Details
+
+- Output format: **WebM/Opus** (`audio/webm`)
+- Sample rate: resampled to **48 000 Hz** if needed (Opus optimal rate)
+- Bitrate: **192 kbps**
+- Frame size: **960 samples** (20 ms standard Opus frame)
+- Duration is exact — computed from `(frameOffset / sampleRate)` in microseconds, not from a wall clock
+- No edits (no trim + no enhancement) → original `File` is returned unchanged, zero re-encoding cost
+
+#### External Libraries
+
+| Library                                     | Purpose                                                             |
+| ------------------------------------------- | ------------------------------------------------------------------- |
+| `wavesurfer.js`                             | Waveform rendering and playback                                     |
+| `wavesurfer.js/dist/plugins/regions.esm.js` | Drag-to-select region plugin                                        |
+| `tone`                                      | Audio enhancement (Gain + Compressor nodes via OfflineAudioContext) |
+| `webm-muxer`                                | Mux encoded Opus packets into a WebM container in memory            |
+
+#### Interfaces
+
+```typescript
+// Input — pass via zData when opening the dialog
+export interface IAudioEditorDialogData {
+  file: File;
+}
+
+// Output — received from dialogRef.afterClosed()
+export interface IAudioEditorDialogResult {
+  success: boolean;
+  file?: File; // WebM/Opus file, or the original file if no edits were made
+}
+```
+
+#### How FileManagerComponent Opens It
+
+```typescript
+// Triggered automatically for audio file uploads
+private async openAudioEditorDialog(file: File): Promise<File | null> {
+  const dialogRef = this._dialogService.create({
+    zTitle: this._translationService.getCachedTranslation('fileManager.audioEditor.title'),
+    zDescription: this._translationService.getCachedTranslation('fileManager.audioEditor.description'),
+    zContent: AudioEditorDialogComponent,
+    zData: { file } satisfies IAudioEditorDialogData,
+    zHideFooter: true,
+    zClosable: true,
+    zWidth: '760px',
+    zCustomClasses: 'z-dialog-max-width-100',
+  });
+
+  const result = await firstValueFrom(dialogRef.afterClosed()) as IAudioEditorDialogResult | undefined;
+  return result?.success && result.file ? result.file : null;
+}
+```
+
+#### Translation Keys
+
+All keys are under the `fileManager.audioEditor.*` namespace:
+
+| Key                                                                | Default Value                                               |
+| ------------------------------------------------------------------ | ----------------------------------------------------------- |
+| `fileManager.audioEditor.title`                                    | Audio Editor                                                |
+| `fileManager.audioEditor.description`                              | Select the audio region and apply enhancement before upload |
+| `fileManager.audioEditor.original`                                 | Original                                                    |
+| `fileManager.audioEditor.enhancedPreview`                          | Enhanced Preview                                            |
+| `fileManager.audioEditor.enhancement`                              | Audio Enhancement                                           |
+| `fileManager.audioEditor.enabled` / `.disabled`                    | Enabled / Disabled                                          |
+| `fileManager.audioEditor.clearSelection`                           | Clear Selection                                             |
+| `fileManager.audioEditor.resetZoom`                                | Reset Zoom                                                  |
+| `fileManager.audioEditor.selectionHint`                            | Drag on the waveform to define region from and to.          |
+| `fileManager.audioEditor.start` / `.end` / `.length` / `.fileSize` | From / To / Length / File Size                              |
+| `fileManager.audioEditor.progress.preparing` … `.finishing`        | Step labels during submit                                   |
+| `fileManager.audioEditor.messages.loadFailed`                      | Failed to load waveform…                                    |
+| `fileManager.audioEditor.messages.processFailed`                   | Failed to process audio…                                    |
 
 ---
 

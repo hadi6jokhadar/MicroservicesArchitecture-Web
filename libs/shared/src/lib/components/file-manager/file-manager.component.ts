@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpContext } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import {
   FileManagerService,
@@ -17,6 +18,7 @@ import {
   FileGroup,
   FileType,
   TranslatePipe,
+  TranslationService,
   TenantService,
 } from '@ihsan/core';
 import {
@@ -35,10 +37,15 @@ import {
   ZardSelectItemComponent,
   ZardCheckboxComponent,
   ZardDialogRef,
+  ZardDialogService,
   Z_MODAL_DATA,
   ZardIcon,
   ZardAlertComponent,
 } from '@ihsan/ui';
+import {
+  AudioEditorDialogComponent,
+  IAudioEditorDialogResult,
+} from './audio-editor-dialog/audio-editor-dialog.component';
 
 export interface IFileManagerDialogData {
   allowedTypes?: string[];
@@ -78,7 +85,9 @@ export interface IFileManagerDialogData {
 export class FileManagerComponent implements OnInit {
   private _service = inject(FileManagerService);
   private _tenantService = inject(TenantService);
+  private _translationService = inject(TranslationService);
   private _dialogRef = inject(ZardDialogRef);
+  private _dialogService = inject(ZardDialogService);
   private _data = inject<IFileManagerDialogData>(Z_MODAL_DATA, {
     optional: true,
   });
@@ -89,7 +98,7 @@ export class FileManagerComponent implements OnInit {
   // Signals
   files = signal<IFileManagerResponse[]>([]);
   selectedFiles = signal<IFileManagerResponse[]>(
-    this._data?.selectedFiles || []
+    this._data?.selectedFiles || [],
   );
   totalFiles = signal<number>(0);
   loading = signal<boolean>(false);
@@ -97,13 +106,14 @@ export class FileManagerComponent implements OnInit {
   activeTab = signal<number>(0);
   blobLoading = signal<boolean>(false);
   blobConfigured = signal<boolean>(true);
+  deleteLoading = signal<boolean>(false);
 
   // Settings from data
   allowedTypes = signal<string[]>(this._data?.allowedTypes || ['*']);
   maxFiles = signal<number>(this._data?.maxFiles || 1);
   viewMode = signal<'list' | 'grid'>(this._data?.viewMode || 'grid');
   selectionMode = signal<'single' | 'multiple'>(
-    this._data?.selectionMode || 'single'
+    this._data?.selectionMode || 'single',
   );
   canSubmit = signal<boolean>(this._data?.canSubmit ?? true);
   group = signal<FileGroup | undefined>(this._data?.group);
@@ -135,7 +145,7 @@ export class FileManagerComponent implements OnInit {
   // Computed
   isMultiple = computed(() => this.selectionMode() === 'multiple');
   hasSelection = computed(
-    () => this.allowSubmitEmpty() || this.selectedFiles().length > 0
+    () => this.allowSubmitEmpty() || this.selectedFiles().length > 0,
   );
   totalPages = computed(() => Math.ceil(this.totalFiles() / this.pageSize()));
 
@@ -234,12 +244,12 @@ export class FileManagerComponent implements OnInit {
     } else {
       if (this.isSelected(file)) {
         this.selectedFiles.update((curr) =>
-          curr.filter((f) => f.id !== file.id)
+          curr.filter((f) => f.id !== file.id),
         );
         if (this.activeFile()?.id === file.id) {
           const remaining = this.selectedFiles();
           this.activeFile.set(
-            remaining.length > 0 ? remaining[remaining.length - 1] : null
+            remaining.length > 0 ? remaining[remaining.length - 1] : null,
           );
         }
       } else {
@@ -270,39 +280,114 @@ export class FileManagerComponent implements OnInit {
   }
 
   uploadFiles(fileList: FileList): void {
+    void this.processAndUploadFiles(Array.from(fileList));
+  }
+
+  private async processAndUploadFiles(files: File[]): Promise<void> {
     this.loading.set(true);
     this.errorMessage.set(null);
-    const files = Array.from(fileList);
-    let completed = 0;
-    let failed = 0;
 
-    if (files.length === 0) {
+    const preparedFiles = await this.prepareFilesForUpload(files);
+    if (!preparedFiles || preparedFiles.length === 0) {
       this.loading.set(false);
       return;
     }
 
-    files.forEach((file) => {
+    let completed = 0;
+    let failed = 0;
+
+    preparedFiles.forEach((file) => {
       const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
       this._service
         .uploadFile(file, this.group(), this.type(), context)
         .subscribe({
           next: () => {
             completed++;
-            this.checkUploadCompletion(completed, files.length, failed);
+            this.checkUploadCompletion(completed, preparedFiles.length, failed);
           },
           error: () => {
             completed++;
             failed++;
-            this.checkUploadCompletion(completed, files.length, failed);
+            this.checkUploadCompletion(completed, preparedFiles.length, failed);
           },
         });
     });
   }
 
+  private async prepareFilesForUpload(files: File[]): Promise<File[] | null> {
+    if (files.length === 0) {
+      return [];
+    }
+
+    const processedFiles: File[] = [];
+
+    for (const file of files) {
+      if (!this.isAudioFile(file)) {
+        processedFiles.push(file);
+        continue;
+      }
+
+      const editedFile = await this.openAudioEditorDialog(file);
+      if (!editedFile) {
+        return null;
+      }
+
+      processedFiles.push(editedFile);
+    }
+
+    return processedFiles;
+  }
+
+  private isAudioFile(file: File): boolean {
+    if (file.type.toLowerCase().startsWith('audio/')) {
+      return true;
+    }
+
+    const audioExtensions = [
+      '.mp3',
+      '.wav',
+      '.flac',
+      '.aac',
+      '.ogg',
+      '.m4a',
+      '.wma',
+      '.opus',
+    ];
+
+    const lowerName = file.name.toLowerCase();
+    return audioExtensions.some((extension) => lowerName.endsWith(extension));
+  }
+
+  private async openAudioEditorDialog(file: File): Promise<File | null> {
+    const dialogRef = this._dialogService.create({
+      zTitle: this._translationService.getCachedTranslation(
+        'fileManager.audioEditor.title',
+      ),
+      zDescription: this._translationService.getCachedTranslation(
+        'fileManager.audioEditor.description',
+      ),
+      zContent: AudioEditorDialogComponent,
+      zData: { file },
+      zHideFooter: true,
+      zClosable: true,
+      zWidth: '760px',
+      zCustomClasses: 'z-dialog-max-width-100',
+    });
+
+    const result = await firstValueFrom(dialogRef.afterClosed());
+
+    const typedResult = result as IAudioEditorDialogResult | undefined;
+    if (!typedResult?.success || !typedResult.file) {
+      return null;
+    }
+
+    return typedResult.file;
+  }
+
   checkUploadCompletion(
     completed: number,
     total: number,
-    failed: number
+    failed: number,
   ): void {
     if (completed === total) {
       this.finishUpload(failed);
@@ -317,7 +402,7 @@ export class FileManagerComponent implements OnInit {
       this.loadFiles();
     } else {
       this.errorMessage.set(
-        `${failed} file(s) failed to upload. Please try again.`
+        `${failed} file(s) failed to upload. Please try again.`,
       );
     }
   }
@@ -351,7 +436,7 @@ export class FileManagerComponent implements OnInit {
       case FileType.Video:
         return 'popcorn'; // Using popcorn for video
       case FileType.Music:
-        return 'file'; // No music icon
+        return 'music';
       default:
         return 'file';
     }
@@ -362,6 +447,26 @@ export class FileManagerComponent implements OnInit {
       file.type === FileType.Image ||
       ['.jpg', '.jpeg', '.png', '.webp'].includes(file.extension?.toLowerCase())
     );
+  }
+
+  isMusic(file: IFileManagerResponse): boolean {
+    return (
+      file.type === FileType.Music ||
+      [
+        '.mp3',
+        '.wav',
+        '.flac',
+        '.aac',
+        '.ogg',
+        '.m4a',
+        '.wma',
+        '.opus',
+      ].includes(file.extension?.toLowerCase() || '')
+    );
+  }
+
+  getPreviewUrl(file: IFileManagerResponse): string | null {
+    return file.externalUrl || file.url || null;
   }
 
   onTabChange(event: { index: number }): void {
@@ -376,10 +481,10 @@ export class FileManagerComponent implements OnInit {
         this.blobLoading.set(false);
         this.activeFile.set(updated);
         this.files.update((list) =>
-          list.map((f) => (f.id === updated.id ? updated : f))
+          list.map((f) => (f.id === updated.id ? updated : f)),
         );
         this.selectedFiles.update((list) =>
-          list.map((f) => (f.id === updated.id ? updated : f))
+          list.map((f) => (f.id === updated.id ? updated : f)),
         );
       },
       error: (err) => {
@@ -397,14 +502,48 @@ export class FileManagerComponent implements OnInit {
         this.blobLoading.set(false);
         this.activeFile.set(updated);
         this.files.update((list) =>
-          list.map((f) => (f.id === updated.id ? updated : f))
+          list.map((f) => (f.id === updated.id ? updated : f)),
         );
         this.selectedFiles.update((list) =>
-          list.map((f) => (f.id === updated.id ? updated : f))
+          list.map((f) => (f.id === updated.id ? updated : f)),
         );
       },
       error: (err) => {
         this.blobLoading.set(false);
+        this.errorMessage.set(extractErrorMessage(err));
+      },
+    });
+  }
+
+  removeFile(file: IFileManagerResponse): void {
+    this.deleteLoading.set(true);
+    this.errorMessage.set(null);
+
+    const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
+
+    this._service.deleteFile(file.id, context).subscribe({
+      next: () => {
+        this.deleteLoading.set(false);
+
+        const updatedSelection = this.selectedFiles().filter(
+          (selectedFile) => selectedFile.id !== file.id,
+        );
+
+        this.selectedFiles.set(updatedSelection);
+        this.activeFile.set(
+          updatedSelection.length > 0
+            ? updatedSelection[updatedSelection.length - 1]
+            : null,
+        );
+
+        if (this.files().length === 1 && this.pageIndex() > 1) {
+          this.pageIndex.update((page) => page - 1);
+        }
+
+        this.loadFiles();
+      },
+      error: (err) => {
+        this.deleteLoading.set(false);
         this.errorMessage.set(extractErrorMessage(err));
       },
     });

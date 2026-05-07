@@ -19,6 +19,7 @@ export default [
             '@ihsan/ui',
             'vanilla-jsoneditor',
             '@microsoft/signalr',
+            'webm-muxer',
           ],
           depConstraints: [
             {

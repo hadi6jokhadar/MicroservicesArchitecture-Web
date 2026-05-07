@@ -14,7 +14,10 @@ import {
   TranslationService,
   FileGroup,
 } from '@ihsan/core';
-import { extractErrorMessage, SKIP_ERROR_TOAST } from '@ihsan/shared';
+import {
+  extractErrorMessage,
+  SKIP_ERROR_TOAST,
+} from '../../../../../../interceptors/error.interceptor';
 import {
   ZardDialogRef,
   Z_MODAL_DATA,
@@ -27,9 +30,13 @@ import {
   ZardIdDirective,
   ZardButtonComponent,
 } from '@ihsan/ui';
-import { FileSelectorComponent } from '@ihsan/shared';
+import { FileSelectorComponent } from '../../../file-manager/file-selector/file-selector.component';
 import { IFileManagerResponse, FileType } from '@ihsan/core';
 import { toast } from 'ngx-sonner';
+
+interface IAddUserDialogData {
+  roles: IRole[];
+}
 
 interface IAddUserForm {
   email: FormControl<string>;
@@ -41,12 +48,8 @@ interface IAddUserForm {
   roleIds: FormControl<string[]>;
 }
 
-interface IAddUserData {
-  roles: IRole[];
-}
-
 @Component({
-  selector: 'app-add-user-dialog',
+  selector: 'shared-add-user-dialog',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -62,13 +65,14 @@ interface IAddUserData {
     FileSelectorComponent,
   ],
   templateUrl: './add-user-dialog.component.html',
-  styleUrls: ['./add-user-dialog.component.scss'],
+  styleUrl: './add-user-dialog.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddUserDialogComponent {
   private readonly _dialogRef = inject(ZardDialogRef);
   private readonly _adminService = inject(IdentityAdminService);
   private readonly _translationService = inject(TranslationService);
-  protected readonly data = inject<IAddUserData>(Z_MODAL_DATA);
+  protected readonly data = inject<IAddUserDialogData>(Z_MODAL_DATA);
 
   readonly errorMessage = signal<string | null>(null);
   readonly isLoading = signal(false);
@@ -137,8 +141,8 @@ export class AddUserDialogComponent {
         this.isLoading.set(false);
         toast.success(
           this._translationService.getCachedTranslation(
-            'users.success.userCreated'
-          )
+            'users.success.userCreated',
+          ),
         );
         this._dialogRef.close({ success: true, user });
       },

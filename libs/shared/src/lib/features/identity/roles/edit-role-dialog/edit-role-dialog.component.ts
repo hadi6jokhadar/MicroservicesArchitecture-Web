@@ -7,7 +7,10 @@ import {
 } from '@angular/forms';
 import { HttpContext } from '@angular/common/http';
 import { RoleService, TranslatePipe, TranslationService } from '@ihsan/core';
-import { extractErrorMessage, SKIP_ERROR_TOAST } from '@ihsan/shared';
+import {
+  extractErrorMessage,
+  SKIP_ERROR_TOAST,
+} from '../../../../../../interceptors/error.interceptor';
 import {
   ZardDialogRef,
   ZardFormImports,
@@ -29,7 +32,7 @@ interface IRoleForm {
 }
 
 @Component({
-  selector: 'app-edit-role-dialog',
+  selector: 'shared-edit-role-dialog',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -85,8 +88,8 @@ export class EditRoleDialogComponent {
           this.isLoading.set(false);
           toast.success(
             this._translationService.getCachedTranslation(
-              'roles.success.updated'
-            )
+              'roles.success.updated',
+            ),
           );
           this._dialogRef.close({ success: true });
         },

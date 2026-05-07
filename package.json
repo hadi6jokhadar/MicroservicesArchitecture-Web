@@ -30,7 +30,10 @@
     "ngx-sonner": "^3.1.0",
     "rxjs": "~7.8.0",
     "tailwind-merge": "^3.4.0",
+    "tone": "^15.1.22",
     "vanilla-jsoneditor": "^3.11.0",
+    "wavesurfer.js": "^7.12.6",
+    "webm-muxer": "^5.1.4",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {

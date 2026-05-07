@@ -12,27 +12,29 @@
           (click)="onBrowseFile()"
           (keyup.enter)="onBrowseFile()"
           tabindex="0"
-          appDragDropFiles
+          sharedDragDropFiles
           accept=".json"
           (filesDropped)="onFileDropped($event)"
         >
           @if (selectedFileName()) {
-          <div class="file-selected">
-            <z-icon zType="file-text" />
-            <span>{{ selectedFileName() }}</span>
-          </div>
+            <div class="file-selected">
+              <z-icon zType="file-text" />
+              <span>{{ selectedFileName() }}</span>
+            </div>
           } @else {
-          <div class="file-placeholder">
-            <z-icon zType="arrow-up" />
-            <span>{{ 'import.browseOrDrop' | translate }}</span>
-            <small>{{ 'import.jsonFilesOnly' | translate }}</small>
-          </div>
+            <div class="file-placeholder">
+              <z-icon zType="arrow-up" />
+              <span>{{ 'import.browseOrDrop' | translate }}</span>
+              <small>{{ 'import.jsonFilesOnly' | translate }}</small>
+            </div>
           }
         </div>
       </z-form-control>
-      @if (importForm.get('file')?.touched &&
-      importForm.get('file')?.hasError('required')) {
-      <span z-form-error>{{ 'import.jsonFileRequired' | translate }}</span>
+      @if (
+        importForm.get('file')?.touched &&
+        importForm.get('file')?.hasError('required')
+      ) {
+        <span z-form-error>{{ 'import.jsonFileRequired' | translate }}</span>
       }
     </z-form-field>
 
@@ -48,15 +50,17 @@
           [zPlaceholder]="'import.selectLanguage' | translate"
         >
           @for (language of availableLanguages; track language.code) {
-          <z-select-item [zValue]="language.code">
-            {{ language.name }} ({{ language.code }})
-          </z-select-item>
+            <z-select-item [zValue]="language.code">
+              {{ language.name }} ({{ language.code }})
+            </z-select-item>
           }
         </z-select>
       </z-form-control>
-      @if (importForm.get('language')?.touched &&
-      importForm.get('language')?.hasError('required')) {
-      <span z-form-error>{{ 'common.languageRequired' | translate }}</span>
+      @if (
+        importForm.get('language')?.touched &&
+        importForm.get('language')?.hasError('required')
+      ) {
+        <span z-form-error>{{ 'common.languageRequired' | translate }}</span>
       }
     </z-form-field>
 
@@ -84,21 +88,25 @@
 
     <!-- Tenant Detection Preview -->
     @if (detectedTenants().length > 0) {
-    <z-alert
-      zType="default"
-      zIcon="info"
-      [zTitle]="'import.tenantKeysDetected' | translate"
-      [zDescription]="('import.tenantKeysDescription' | translate) + ' ' + detectedTenants().join(', ')"
-    />
+      <z-alert
+        zType="default"
+        zIcon="info"
+        [zTitle]="'import.tenantKeysDetected' | translate"
+        [zDescription]="
+          ('import.tenantKeysDescription' | translate) +
+          ' ' +
+          detectedTenants().join(', ')
+        "
+      />
     }
 
     <!-- Error Display -->
     @if (errorMessage()) {
-    <z-alert
-      zType="destructive"
-      zIcon="circle-alert"
-      [zDescription]="errorMessage()!"
-    />
+      <z-alert
+        zType="destructive"
+        zIcon="circle-alert"
+        [zDescription]="errorMessage()!"
+      />
     }
 
     <!-- Form Actions -->

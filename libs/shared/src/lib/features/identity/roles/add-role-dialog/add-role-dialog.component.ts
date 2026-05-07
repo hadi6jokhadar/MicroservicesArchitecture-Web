@@ -7,7 +7,10 @@ import {
 } from '@angular/forms';
 import { HttpContext } from '@angular/common/http';
 import { RoleService, TranslatePipe, TranslationService } from '@ihsan/core';
-import { extractErrorMessage, SKIP_ERROR_TOAST } from '@ihsan/shared';
+import {
+  extractErrorMessage,
+  SKIP_ERROR_TOAST,
+} from '../../../../../../interceptors/error.interceptor';
 import {
   ZardDialogRef,
   ZardFormImports,
@@ -24,7 +27,7 @@ interface IRoleForm {
 }
 
 @Component({
-  selector: 'app-add-role-dialog',
+  selector: 'shared-add-role-dialog',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -76,7 +79,9 @@ export class AddRoleDialogComponent {
       next: () => {
         this.isLoading.set(false);
         toast.success(
-          this._translationService.getCachedTranslation('roles.success.created')
+          this._translationService.getCachedTranslation(
+            'roles.success.created',
+          ),
         );
         this._dialogRef.close({ success: true });
       },

@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[appDragDropFiles]',
+  selector: '[sharedDragDropFiles]',
   standalone: true,
   host: {
     '[style.transition]': '"all 0.3s ease"',

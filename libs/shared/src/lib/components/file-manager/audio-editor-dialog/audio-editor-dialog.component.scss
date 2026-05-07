@@ -1,0 +1,153 @@
+:host {
+  display: block;
+}
+
+.audio-editor-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.submit-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.submit-progress-bar {
+  block-size: 4px;
+  border-radius: 2px;
+  background-color: var(--muted);
+  overflow: hidden;
+}
+
+.submit-progress-bar-inner {
+  block-size: 100%;
+  inline-size: 100%;
+  background-color: var(--primary);
+  border-radius: 2px;
+  animation: progress-indeterminate 1.4s ease-in-out infinite;
+  transform-origin: left center;
+}
+
+@keyframes progress-indeterminate {
+  0% {
+    transform: translateX(-100%) scaleX(0.4);
+  }
+  50% {
+    transform: translateX(30%) scaleX(0.5);
+  }
+  100% {
+    transform: translateX(100%) scaleX(0.4);
+  }
+}
+
+.submit-progress-label {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.audio-file-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.waveform-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &.enhanced-section {
+    padding-block-start: 0.5rem;
+    border-block-start: 1px dashed var(--border);
+  }
+}
+
+.waveform-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.waveform-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  &.enhanced {
+    color: #1a9650;
+  }
+}
+
+.waveform-host {
+  inline-size: 100%;
+  min-block-size: 140px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding-block: 0.5rem;
+  padding-inline: 0.5rem;
+  background: color-mix(in srgb, var(--secondary), transparent 75%);
+
+  &.enhanced-host {
+    min-block-size: 80px;
+    border-color: color-mix(in srgb, #1a9650, transparent 65%);
+    background: color-mix(in srgb, #1a9650, transparent 93%);
+  }
+}
+
+.selection-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+
+  .label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    margin-block-end: 0.25rem;
+  }
+
+  .value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--foreground);
+
+    &.size-warning {
+      color: var(--destructive);
+    }
+  }
+}
+
+.helper-text {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+}
+
+.enhancement-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+}
+
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .selection-meta {
+    grid-template-columns: 1fr;
+  }
+}

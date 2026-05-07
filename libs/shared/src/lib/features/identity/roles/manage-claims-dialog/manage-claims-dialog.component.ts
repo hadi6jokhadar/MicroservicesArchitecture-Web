@@ -1,6 +1,9 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { HttpContext } from '@angular/common/http';
-import { extractErrorMessage, SKIP_ERROR_TOAST } from '@ihsan/shared';
+import {
+  extractErrorMessage,
+  SKIP_ERROR_TOAST,
+} from '../../../../../../interceptors/error.interceptor';
 import { toast } from 'ngx-sonner';
 import {
   TranslatePipe,
@@ -25,7 +28,7 @@ interface IClaimsDialogData {
 }
 
 @Component({
-  selector: 'app-manage-claims-dialog',
+  selector: 'shared-manage-claims-dialog',
   standalone: true,
   imports: [
     TranslatePipe,
@@ -63,7 +66,7 @@ export class ManageClaimsDialogComponent implements OnInit {
 
         // Pre-select claims that are already assigned to this role
         const currentClaimIds = new Set(
-          this.data.role.claims?.map((c) => c.id) || []
+          this.data.role.claims?.map((c) => c.id) || [],
         );
         this.selectedClaimIds.set(currentClaimIds);
 
@@ -108,8 +111,8 @@ export class ManageClaimsDialogComponent implements OnInit {
           this.isSaving.set(false);
           toast.success(
             this._translationService.getCachedTranslation(
-              'roles.success.claimsUpdated'
-            ) || 'Claims updated successfully'
+              'roles.success.claimsUpdated',
+            ) || 'Claims updated successfully',
           );
           this._dialogRef.close({ success: true });
         },

@@ -1,11 +1,11 @@
 <div class="fm-container">
   @if (errorMessage()) {
-  <z-alert
-    zType="destructive"
-    zIcon="circle-alert"
-    [zDescription]="errorMessage()!"
-    class="mb-4"
-  />
+    <z-alert
+      zType="destructive"
+      zIcon="circle-alert"
+      [zDescription]="errorMessage()!"
+      class="mb-4"
+    />
   }
   <z-tab-group class="m-tafbs" (zTabChange)="onTabChange($event)">
     <!-- View Files Tab -->
@@ -35,9 +35,9 @@
               'fileManager.allGroups' | translate
             }}</z-select-item>
             @for (group of fileGroups; track group.value) {
-            <z-select-item [zValue]="group.value">{{
-              group.label | translate
-            }}</z-select-item>
+              <z-select-item [zValue]="group.value">{{
+                group.label | translate
+              }}</z-select-item>
             }
           </z-select>
 
@@ -51,9 +51,9 @@
               'fileManager.allTypes' | translate
             }}</z-select-item>
             @for (type of fileTypes; track type.value) {
-            <z-select-item [zValue]="type.value">{{
-              type.label | translate
-            }}</z-select-item>
+              <z-select-item [zValue]="type.value">{{
+                type.label | translate
+              }}</z-select-item>
             }
           </z-select>
 
@@ -72,50 +72,54 @@
             [class.empty]="files().length === 0 && !loading()"
           >
             @if (loading()) {
-            <div class="loading-spinner">
-              <div class="spinner"></div>
-            </div>
+              <div class="loading-spinner">
+                <div class="spinner"></div>
+              </div>
             } @else if (files().length === 0) {
-            <z-icon zType="folder" [zSize]="'xl'" />
-            <p>{{ 'common.noData' | translate }}</p>
+              <z-icon zType="folder" [zSize]="'xl'" />
+              <p>{{ 'common.noData' | translate }}</p>
             } @else {
-            <div class="fm-file-grid">
-              @for (file of files(); track file.id) {
-              <div
-                class="fm-file-card"
-                [class.selected]="isSelected(file)"
-                (click)="onFileClick(file)"
-                (keydown.enter)="onFileClick(file)"
-                tabindex="0"
-              >
-                <!-- Preview/Icon -->
-                <div class="preview">
-                  @if (isImage(file)) {
-                  <img [src]="file.url" [alt]="file.name" loading="lazy" />
-                  } @else {
-                  <z-icon [zType]="getFileIcon(file)" [zSize]="'xl'" />
-                  }
-                </div>
+              <div class="fm-file-grid">
+                @for (file of files(); track file.id) {
+                  <div
+                    class="fm-file-card"
+                    [class.selected]="isSelected(file)"
+                    (click)="onFileClick(file)"
+                    (keydown.enter)="onFileClick(file)"
+                    tabindex="0"
+                  >
+                    <!-- Preview/Icon -->
+                    <div class="preview">
+                      @if (isImage(file)) {
+                        <img
+                          [src]="file.url"
+                          [alt]="file.name"
+                          loading="lazy"
+                        />
+                      } @else {
+                        <z-icon [zType]="getFileIcon(file)" [zSize]="'xl'" />
+                      }
+                    </div>
 
-                <!-- Info -->
-                <div class="info">
-                  <p class="name" [title]="file.name">
-                    {{ file.name }}
-                  </p>
-                  <p class="size">
-                    {{ formatBytes(file.size) }}
-                  </p>
-                </div>
+                    <!-- Info -->
+                    <div class="info">
+                      <p class="name" [title]="file.name">
+                        {{ file.name }}
+                      </p>
+                      <p class="size">
+                        {{ formatBytes(file.size) }}
+                      </p>
+                    </div>
 
-                <!-- Selection Indicator -->
-                @if (isSelected(file)) {
-                <div class="check-circle">
-                  <z-icon zType="check" />
-                </div>
+                    <!-- Selection Indicator -->
+                    @if (isSelected(file)) {
+                      <div class="check-circle">
+                        <z-icon zType="check" />
+                      </div>
+                    }
+                  </div>
                 }
               </div>
-              }
-            </div>
             }
           </div>
 
@@ -123,120 +127,152 @@
           <!-- Details Panel -->
           <div class="fm-details-panel">
             @if (activeFile(); as selected) {
-            <div class="preview-large">
-              @if (isImage(selected)) {
-              <img [src]="selected.url" [alt]="selected.name" />
-              } @else {
-              <z-icon [zType]="getFileIcon(selected)" [zSize]="'xl'" />
-              }
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 1rem">
-              <div>
-                <h3
-                  style="
-                    font-weight: 500;
-                    font-size: 1.125rem;
-                    word-break: break-all;
-                  "
-                >
-                  {{ selected.name }}
-                </h3>
-                <p style="font-size: 0.875rem; color: var(--muted-foreground)">
-                  {{ selected.extension }}
-                </p>
-              </div>
-
-              <div class="meta-grid">
-                <span class="label">{{ 'fileManager.size' | translate }}</span>
-                <span class="value">{{ formatBytes(selected.size) }}</span>
-
-                <span class="label">{{ 'fileManager.group' | translate }}</span>
-                <span class="value">{{
-                  getGroupLabel(selected.group) | translate
-                }}</span>
-
-                <span class="label">{{ 'common.type' | translate }}</span>
-                <span class="value">{{
-                  getTypeLabel(selected.type) | translate
-                }}</span>
-
-                <span class="label">{{
-                  'common.created' | translate
-                }}</span>
-                <span class="value">{{
-                  selected.created | date : 'shortDate'
-                }}</span>
-
-                @if (selected.externalUrl) {
-                <span class="label">{{
-                  'fileManager.externalUrl' | translate
-                }}</span>
-                <z-button
-                  zType="link"
-                  zSize="sm"
-                  style="
-                    padding: 0;
-                    height: auto;
-                    justify-content: flex-start;
-                    font-size: 0.875rem;
-                  "
-                  (click)="openExternalUrl(selected.externalUrl)"
-                >
-                  <z-icon zType="external-link" />
-                  {{ 'fileManager.openInNewPage' | translate }}
-                </z-button>
+              <div class="preview-large">
+                @if (isImage(selected)) {
+                  <img [src]="selected.url" [alt]="selected.name" />
+                } @else if (
+                  isMusic(selected) && getPreviewUrl(selected);
+                  as previewUrl
+                ) {
+                  <div class="audio-preview">
+                    <z-icon zType="music" [zSize]="'xl'" />
+                    <span class="audio-preview-title">{{
+                      'fileManager.audioPreview' | translate
+                    }}</span>
+                    <audio
+                      controls
+                      [src]="previewUrl"
+                      (error)="$any($event.target).src = selected.url"
+                    ></audio>
+                  </div>
+                } @else {
+                  <z-icon [zType]="getFileIcon(selected)" [zSize]="'xl'" />
                 }
               </div>
 
-              @if (selected.temp) {
-              <div class="temp-badge">
-                {{ 'fileManager.temporaryFile' | translate }}
+              <div style="display: flex; flex-direction: column; gap: 1rem">
+                <div>
+                  <h3
+                    style="
+                      font-weight: 500;
+                      font-size: 1.125rem;
+                      word-break: break-all;
+                    "
+                  >
+                    {{ selected.name }}
+                  </h3>
+                  <p
+                    style="font-size: 0.875rem; color: var(--muted-foreground)"
+                  >
+                    {{ selected.extension }}
+                  </p>
+                </div>
+
+                <div class="meta-grid">
+                  <span class="label">{{
+                    'fileManager.size' | translate
+                  }}</span>
+                  <span class="value">{{ formatBytes(selected.size) }}</span>
+
+                  <span class="label">{{
+                    'fileManager.group' | translate
+                  }}</span>
+                  <span class="value">{{
+                    getGroupLabel(selected.group) | translate
+                  }}</span>
+
+                  <span class="label">{{ 'common.type' | translate }}</span>
+                  <span class="value">{{
+                    getTypeLabel(selected.type) | translate
+                  }}</span>
+
+                  <span class="label">{{ 'common.created' | translate }}</span>
+                  <span class="value">{{
+                    selected.created | date: 'shortDate'
+                  }}</span>
+
+                  @if (selected.externalUrl) {
+                    <span class="label">{{
+                      'fileManager.externalUrl' | translate
+                    }}</span>
+                    <z-button
+                      zType="link"
+                      zSize="sm"
+                      style="
+                        padding: 0;
+                        height: auto;
+                        justify-content: flex-start;
+                        font-size: 0.875rem;
+                      "
+                      (click)="openExternalUrl(selected.externalUrl)"
+                    >
+                      <z-icon zType="external-link" />
+                      {{ 'fileManager.openInNewPage' | translate }}
+                    </z-button>
+                  }
+                </div>
+
+                @if (selected.temp) {
+                  <div class="temp-badge">
+                    {{ 'fileManager.temporaryFile' | translate }}
+                  </div>
+                }
               </div>
-              }
-            </div>
 
-            <!-- Blob Storage Actions -->
-            <div style="display: flex; flex-direction: column; gap: 0.5rem">
-              @if (blobConfigured()) { @if (!selected.externalUrl) {
-              <z-button
-                zType="outline"
-                zSize="sm"
-                [zFull]="true"
-                [zDisabled]="blobLoading()"
-                (click)="uploadToBlob(selected)"
-              >
-                <z-icon zType="cloud-upload" />
-                {{ 'fileManager.uploadToExternal' | translate }}
-              </z-button>
-              } @else {
-              <z-button
-                zType="destructive"
-                zSize="sm"
-                [zFull]="true"
-                [zDisabled]="blobLoading()"
-                (click)="removeFromBlob(selected)"
-              >
-                <z-icon zType="cloud-off" />
-                {{ 'fileManager.removeFromExternal' | translate }}
-              </z-button>
-              } }
-            </div>
+              <!-- Blob Storage Actions -->
+              <div style="display: flex; flex-direction: column; gap: 0.5rem">
+                @if (blobConfigured()) {
+                  @if (!selected.externalUrl) {
+                    <z-button
+                      zType="outline"
+                      zSize="sm"
+                      [zFull]="true"
+                      [zDisabled]="blobLoading()"
+                      (click)="uploadToBlob(selected)"
+                    >
+                      <z-icon zType="cloud-upload" />
+                      {{ 'fileManager.uploadToExternal' | translate }}
+                    </z-button>
+                  } @else {
+                    <z-button
+                      zType="destructive"
+                      zSize="sm"
+                      [zFull]="true"
+                      [zDisabled]="blobLoading()"
+                      (click)="removeFromBlob(selected)"
+                    >
+                      <z-icon zType="cloud-off" />
+                      {{ 'fileManager.removeFromExternal' | translate }}
+                    </z-button>
+                  }
+                }
 
-            <div style="margin-top: auto">
-              <z-button
-                zType="outline"
-                zSize="sm"
-                [zFull]="true"
-                (click)="deselectAll()"
-                >{{ 'common.cancel' | translate }}</z-button
-              >
-            </div>
+                <z-button
+                  zType="destructive"
+                  zSize="sm"
+                  [zFull]="true"
+                  [zDisabled]="deleteLoading()"
+                  (click)="removeFile(selected)"
+                >
+                  <z-icon zType="trash" />
+                  {{ 'fileManager.removeFile' | translate }}
+                </z-button>
+              </div>
+
+              <div style="margin-top: auto">
+                <z-button
+                  zType="outline"
+                  zSize="sm"
+                  [zFull]="true"
+                  (click)="deselectAll()"
+                  >{{ 'common.cancel' | translate }}</z-button
+                >
+              </div>
             } @else {
-            <div class="empty-details">
-              <z-icon zType="info" zSize="xl" />
-              <p>{{ 'fileManager.selectFileDetails' | translate }}</p>
-            </div>
+              <div class="empty-details">
+                <z-icon zType="info" zSize="xl" />
+                <p>{{ 'fileManager.selectFileDetails' | translate }}</p>
+              </div>
             }
           </div>
         </div>
@@ -245,12 +281,14 @@
         <div class="fm-footer">
           <div class="selection-count">
             @if (selectedFiles().length > 0) {
-            {{
-              'fileManager.selected'
-                | translate : { count: selectedFiles().length }
-            }}
+              {{
+                'fileManager.selected'
+                  | translate: { count: selectedFiles().length }
+              }}
             } @else {
-            {{ 'fileManager.totalFiles' | translate : { count: totalFiles() } }}
+              {{
+                'fileManager.totalFiles' | translate: { count: totalFiles() }
+              }}
             }
           </div>
           <z-pagination
@@ -262,11 +300,11 @@
 
         <!-- Actions -->
         @if (canSubmit() && hasSelection()) {
-        <div class="fm-actions">
-          <z-button zType="default" (click)="confirmSelection()">
-            {{ 'common.submit' | translate }} ({{ selectedFiles().length }})
-          </z-button>
-        </div>
+          <div class="fm-actions">
+            <z-button zType="default" (click)="confirmSelection()">
+              {{ 'common.submit' | translate }} ({{ selectedFiles().length }})
+            </z-button>
+          </div>
         }
       </div>
     </z-tab>
@@ -275,7 +313,7 @@
     <z-tab [label]="'fileManager.uploadFiles' | translate">
       <div class="fm-upload-container">
         <div
-          appDragDropFiles
+          sharedDragDropFiles
           [multiple]="true"
           [accept]="allowedTypes().join(',')"
           [maxFiles]="10"
@@ -306,18 +344,18 @@
         </div>
 
         @if (loading()) {
-        <div
-          style="
-            margin-top: 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--muted-foreground);
-          "
-        >
-          <!-- Reuse spinner or similar -->
-          <p>{{ 'fileManager.uploading' | translate }}</p>
-        </div>
+          <div
+            style="
+              margin-top: 2rem;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              color: var(--muted-foreground);
+            "
+          >
+            <!-- Reuse spinner or similar -->
+            <p>{{ 'fileManager.uploading' | translate }}</p>
+          </div>
         }
       </div>
     </z-tab>

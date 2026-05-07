@@ -1,6 +1,6 @@
 # Frontend Documentation Index
 
-**Last Updated:** April 28, 2026  
+**Last Updated:** May 7, 2026  
 **Purpose:** Central entry point for all Angular frontend documentation
 
 ---
@@ -309,18 +309,20 @@ Each documentation file should have:
 
 ## 🔍 Quick Lookup Table
 
-| I want to...      | Read this file                                               |
-| ----------------- | ------------------------------------------------------------ |
-| Add a button      | COMPONENT_USAGE_GUIDE.md → Button                            |
-| Create a dialog   | DIALOG_DESIGN_GUIDE.md                                       |
-| Add translation   | TRANSLATION_SYSTEM_GUIDE.md                                  |
-| Handle RTL        | TRANSLATION_SYSTEM_GUIDE.md → RTL Section                    |
-| Use an icon       | ZARD_ICON_REFERENCE.md                                       |
-| Create a form     | COMPONENT_USAGE_GUIDE.md → Form Components                   |
-| Handle errors     | FRONTEND_ERROR_INTERCEPTOR_GUIDE.md                          |
-| Implement login   | MULTI_MODE_AUTHENTICATION_GUIDE.md                           |
-| Create a page     | ANGULAR_DESIGN_PATTERN.md + PAGE_CONTAINER_DESIGN_PATTERN.md |
-| Use AI for coding | ZARDUI_AI_REFERENCE.md                                       |
+| I want to...                     | Read this file                                               |
+| -------------------------------- | ------------------------------------------------------------ |
+| Add a button                     | COMPONENT_USAGE_GUIDE.md → Button                            |
+| Create a dialog                  | DIALOG_DESIGN_GUIDE.md                                       |
+| Add translation                  | TRANSLATION_SYSTEM_GUIDE.md                                  |
+| Handle RTL                       | TRANSLATION_SYSTEM_GUIDE.md → RTL Section                    |
+| Use an icon                      | ZARD_ICON_REFERENCE.md                                       |
+| Create a form                    | COMPONENT_USAGE_GUIDE.md → Form Components                   |
+| Handle errors                    | FRONTEND_ERROR_INTERCEPTOR_GUIDE.md                          |
+| Implement login                  | MULTI_MODE_AUTHENTICATION_GUIDE.md                           |
+| Create a page                    | ANGULAR_DESIGN_PATTERN.md + PAGE_CONTAINER_DESIGN_PATTERN.md |
+| Use AI for coding                | ZARDUI_AI_REFERENCE.md                                       |
+| Use the audio editor dialog      | LIBRARY_STRUCTURE.md → Shared Component Reference            |
+| Add audio editing to file upload | LIBRARY_STRUCTURE.md → AudioEditorDialogComponent            |
 
 ---
 

@@ -7,7 +7,10 @@ import {
 } from '@angular/forms';
 import { HttpContext } from '@angular/common/http';
 import { ClaimService, TranslatePipe, TranslationService } from '@ihsan/core';
-import { extractErrorMessage, SKIP_ERROR_TOAST } from '@ihsan/shared';
+import {
+  extractErrorMessage,
+  SKIP_ERROR_TOAST,
+} from '../../../../../../interceptors/error.interceptor';
 import {
   ZardDialogRef,
   ZardFormImports,
@@ -28,7 +31,7 @@ interface IClaimForm {
 }
 
 @Component({
-  selector: 'app-add-claim-dialog',
+  selector: 'shared-add-claim-dialog',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -96,8 +99,8 @@ export class AddClaimDialogComponent {
         this.isLoading.set(false);
         toast.success(
           this._translationService.getCachedTranslation(
-            'claims.success.created'
-          )
+            'claims.success.created',
+          ),
         );
         this._dialogRef.close({ success: true });
       },

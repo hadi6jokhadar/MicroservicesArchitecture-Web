@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-identity',
+  selector: 'shared-identity',
   standalone: true,
   imports: [RouterOutlet],
   templateUrl: './identity.component.html',

@@ -98,6 +98,8 @@ import {
   ListCheck,
   SquareUser,
   RefreshCw,
+  Play,
+  Pause,
 } from 'lucide-angular';
 
 const DarkMode: LucideIconData = [
@@ -208,6 +210,8 @@ export const ZARD_ICONS = {
   'list-checks': ListCheck,
   'square-user': SquareUser,
   'refresh-cw': RefreshCw,
+  play: Play,
+  pause: Pause,
 } as const satisfies Record<string, LucideIconData>;
 
 export declare type ZardIcon = keyof typeof ZARD_ICONS | LucideIconData;

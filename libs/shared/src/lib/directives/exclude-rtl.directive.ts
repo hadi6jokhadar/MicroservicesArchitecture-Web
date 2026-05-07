@@ -28,7 +28,7 @@ import {
  * ```
  */
 @Directive({
-  selector: '[appExcludeRtl]',
+  selector: '[sharedExcludeRtl]',
   standalone: true,
 })
 export class ExcludeRtlDirective implements OnInit {

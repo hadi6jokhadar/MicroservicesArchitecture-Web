@@ -36,7 +36,7 @@ interface IClaimFilterForm {
 }
 
 @Component({
-  selector: 'app-claims',
+  selector: 'shared-claims',
   standalone: true,
   imports: [
     TranslatePipe,
@@ -98,7 +98,7 @@ export class ClaimsComponent {
           claim.name.toLowerCase().includes(searchTerm) ||
           claim.claimType.toLowerCase().includes(searchTerm) ||
           claim.claimValue.toLowerCase().includes(searchTerm) ||
-          claim.description?.toLowerCase().includes(searchTerm)
+          claim.description?.toLowerCase().includes(searchTerm),
       );
       this.filteredClaims.set(filtered);
     }
@@ -122,10 +122,10 @@ export class ClaimsComponent {
     this._dialogService
       .create({
         zTitle: this._translationService.getCachedTranslation(
-          'claims.dialog.addTitle'
+          'claims.dialog.addTitle',
         ),
         zDescription: this._translationService.getCachedTranslation(
-          'claims.dialog.addDescription'
+          'claims.dialog.addDescription',
         ),
         zContent: AddClaimDialogComponent,
         zWidth: '550px',
@@ -143,10 +143,10 @@ export class ClaimsComponent {
     this._dialogService
       .create({
         zTitle: this._translationService.getCachedTranslation(
-          'claims.dialog.editTitle'
+          'claims.dialog.editTitle',
         ),
         zDescription: this._translationService.getCachedTranslation(
-          'claims.dialog.editDescription'
+          'claims.dialog.editDescription',
         ),
         zContent: EditClaimDialogComponent,
         zData: { claim },
@@ -164,11 +164,11 @@ export class ClaimsComponent {
   onDeleteClaim(claim: IClaim): void {
     this._alertDialogService.confirm({
       zTitle: this._translationService.getCachedTranslation(
-        'claims.dialog.deleteTitle'
+        'claims.dialog.deleteTitle',
       ),
       zDescription: this._translationService.getCachedTranslation(
         'claims.dialog.deleteDescription',
-        `Are you sure you want to delete the claim "${claim.name}"?`
+        `Are you sure you want to delete the claim "${claim.name}"?`,
       ),
       zOkText: this._translationService.getCachedTranslation('common.delete'),
       zCancelText:
@@ -179,8 +179,8 @@ export class ClaimsComponent {
           next: () => {
             toast.success(
               this._translationService.getCachedTranslation(
-                'claims.success.deleted'
-              )
+                'claims.success.deleted',
+              ),
             );
             this.loadClaims();
           },

@@ -38,7 +38,7 @@ interface IRoleFilterForm {
 }
 
 @Component({
-  selector: 'app-roles',
+  selector: 'shared-roles',
   standalone: true,
   imports: [
     TranslatePipe,
@@ -99,7 +99,7 @@ export class RolesComponent {
       const filtered = allRoles.filter(
         (role) =>
           role.name.toLowerCase().includes(searchTerm) ||
-          role.description?.toLowerCase().includes(searchTerm)
+          role.description?.toLowerCase().includes(searchTerm),
       );
       this.filteredRoles.set(filtered);
     }
@@ -123,10 +123,10 @@ export class RolesComponent {
     this._dialogService
       .create({
         zTitle: this._translationService.getCachedTranslation(
-          'roles.dialog.addTitle'
+          'roles.dialog.addTitle',
         ),
         zDescription: this._translationService.getCachedTranslation(
-          'roles.dialog.addDescription'
+          'roles.dialog.addDescription',
         ),
         zContent: AddRoleDialogComponent,
         zWidth: '550px',
@@ -144,10 +144,10 @@ export class RolesComponent {
     this._dialogService
       .create({
         zTitle: this._translationService.getCachedTranslation(
-          'roles.dialog.editTitle'
+          'roles.dialog.editTitle',
         ),
         zDescription: this._translationService.getCachedTranslation(
-          'roles.dialog.editDescription'
+          'roles.dialog.editDescription',
         ),
         zContent: EditRoleDialogComponent,
         zData: { role },
@@ -166,10 +166,10 @@ export class RolesComponent {
     this._dialogService
       .create({
         zTitle: this._translationService.getCachedTranslation(
-          'roles.dialog.manageClaimsTitle'
+          'roles.dialog.manageClaimsTitle',
         ),
         zDescription: this._translationService.getCachedTranslation(
-          'roles.dialog.manageClaimsDescription'
+          'roles.dialog.manageClaimsDescription',
         ),
         zContent: ManageClaimsDialogComponent,
         zData: { role },
@@ -181,8 +181,8 @@ export class RolesComponent {
         if (result?.success) {
           toast.success(
             this._translationService.getCachedTranslation(
-              'roles.success.claimsUpdated'
-            )
+              'roles.success.claimsUpdated',
+            ),
           );
           this.loadRoles();
         }
@@ -192,11 +192,11 @@ export class RolesComponent {
   onDeleteRole(role: IRole): void {
     this._alertDialogService.confirm({
       zTitle: this._translationService.getCachedTranslation(
-        'roles.dialog.deleteTitle'
+        'roles.dialog.deleteTitle',
       ),
       zDescription: this._translationService.getCachedTranslation(
         'roles.dialog.deleteDescription',
-        `Are you sure you want to delete the role "${role.name}"?`
+        `Are you sure you want to delete the role "${role.name}"?`,
       ),
       zOkText: this._translationService.getCachedTranslation('common.delete'),
       zCancelText:
@@ -207,8 +207,8 @@ export class RolesComponent {
           next: () => {
             toast.success(
               this._translationService.getCachedTranslation(
-                'roles.success.deleted'
-              )
+                'roles.success.deleted',
+              ),
             );
             this.loadRoles();
           },

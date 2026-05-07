@@ -51,7 +51,7 @@ interface IUserFilterForm {
 }
 
 @Component({
-  selector: 'app-users',
+  selector: 'shared-users',
   standalone: true,
   imports: [
     CommonModule,
@@ -155,8 +155,8 @@ export class UsersComponent implements OnInit {
         console.error('Error loading roles:', error);
         toast.error(
           this._translationService.getCachedTranslation(
-            'users.error.loadRolesFailed'
-          )
+            'users.error.loadRolesFailed',
+          ),
         );
         this.rolesLoaded.set(true);
       },
@@ -184,8 +184,8 @@ export class UsersComponent implements OnInit {
         formValue.status === '__all__'
           ? undefined
           : formValue.status === 'true'
-          ? true
-          : false,
+            ? true
+            : false,
       isArchived: formValue.isArchived,
     };
 
@@ -200,8 +200,8 @@ export class UsersComponent implements OnInit {
         console.error('Error loading users:', error);
         toast.error(
           this._translationService.getCachedTranslation(
-            'users.error.loadUsersFailed'
-          )
+            'users.error.loadUsersFailed',
+          ),
         );
         this.isLoading.set(false);
       },
@@ -228,10 +228,10 @@ export class UsersComponent implements OnInit {
     this._dialogService
       .create({
         zTitle: this._translationService.getCachedTranslation(
-          'users.dialog.addTitle'
+          'users.dialog.addTitle',
         ),
         zDescription: this._translationService.getCachedTranslation(
-          'users.dialog.addDescription'
+          'users.dialog.addDescription',
         ),
         zContent: AddUserDialogComponent,
         zData: { roles: this.roles() },
@@ -251,10 +251,10 @@ export class UsersComponent implements OnInit {
     this._dialogService
       .create({
         zTitle: this._translationService.getCachedTranslation(
-          'users.dialog.editTitle'
+          'users.dialog.editTitle',
         ),
         zDescription: this._translationService.getCachedTranslation(
-          'users.dialog.editDescription'
+          'users.dialog.editDescription',
         ),
         zContent: EditUserDialogComponent,
         zData: { user, roles: this.roles() },
@@ -266,7 +266,7 @@ export class UsersComponent implements OnInit {
       .subscribe((result: { success: boolean; user: IUser }) => {
         if (result?.success && result.user) {
           this.users.update((users) =>
-            users.map((u) => (u.id === result.user.id ? result.user : u))
+            users.map((u) => (u.id === result.user.id ? result.user : u)),
           );
         }
       });
@@ -279,18 +279,18 @@ export class UsersComponent implements OnInit {
 
     const title = user.isArchived
       ? this._translationService.getCachedTranslation(
-          'users.dialog.unarchiveTitle'
+          'users.dialog.unarchiveTitle',
         )
       : this._translationService.getCachedTranslation(
-          'users.dialog.archiveTitle'
+          'users.dialog.archiveTitle',
         );
 
     const description = user.isArchived
       ? this._translationService.getCachedTranslation(
-          'users.dialog.unarchiveDescription'
+          'users.dialog.unarchiveDescription',
         )
       : this._translationService.getCachedTranslation(
-          'users.dialog.archiveDescription'
+          'users.dialog.archiveDescription',
         );
 
     this._alertDialogService.confirm({
@@ -305,10 +305,10 @@ export class UsersComponent implements OnInit {
           next: () => {
             const successMsg = user.isArchived
               ? this._translationService.getCachedTranslation(
-                  'users.success.userUnarchived'
+                  'users.success.userUnarchived',
                 )
               : this._translationService.getCachedTranslation(
-                  'users.success.userArchived'
+                  'users.success.userArchived',
                 );
             toast.success(successMsg);
             this.loadUsers();
@@ -317,8 +317,8 @@ export class UsersComponent implements OnInit {
             console.error('Error toggling user archive status:', error);
             toast.error(
               this._translationService.getCachedTranslation(
-                'users.error.toggleArchiveFailed'
-              )
+                'users.error.toggleArchiveFailed',
+              ),
             );
           },
         });
@@ -329,31 +329,31 @@ export class UsersComponent implements OnInit {
   onToggleStatus(user: IUser): void {
     const action = user.status
       ? this._translationService.getCachedTranslation(
-          'users.actions.deactivate'
+          'users.actions.deactivate',
         )
       : this._translationService.getCachedTranslation('users.actions.activate');
 
     const title = user.status
       ? this._translationService.getCachedTranslation(
-          'users.dialog.deactivateTitle'
+          'users.dialog.deactivateTitle',
         )
       : this._translationService.getCachedTranslation(
-          'users.dialog.activateTitle'
+          'users.dialog.activateTitle',
         );
 
     const description = user.status
       ? this._translationService.getCachedTranslation(
-          'users.dialog.deactivateDescription'
+          'users.dialog.deactivateDescription',
         )
       : this._translationService.getCachedTranslation(
-          'users.dialog.activateDescription'
+          'users.dialog.activateDescription',
         );
 
     this._alertDialogService.confirm({
       zTitle: title.replace('{name}', `${user.firstName} ${user.lastName}`),
       zDescription: description.replace(
         '{name}',
-        `${user.firstName} ${user.lastName}`
+        `${user.firstName} ${user.lastName}`,
       ),
       zOkText: action,
       zCancelText:
@@ -364,10 +364,10 @@ export class UsersComponent implements OnInit {
           next: () => {
             const successMsg = user.status
               ? this._translationService.getCachedTranslation(
-                  'users.success.userDeactivated'
+                  'users.success.userDeactivated',
                 )
               : this._translationService.getCachedTranslation(
-                  'users.success.userActivated'
+                  'users.success.userActivated',
                 );
             toast.success(successMsg);
             this.loadUsers();
@@ -376,8 +376,8 @@ export class UsersComponent implements OnInit {
             console.error('Error toggling user status:', error);
             toast.error(
               this._translationService.getCachedTranslation(
-                'users.error.toggleStatusFailed'
-              )
+                'users.error.toggleStatusFailed',
+              ),
             );
           },
         });
@@ -387,17 +387,17 @@ export class UsersComponent implements OnInit {
 
   onDeleteUser(user: IUser): void {
     const title = this._translationService.getCachedTranslation(
-      'users.dialog.deleteTitle'
+      'users.dialog.deleteTitle',
     );
     const description = this._translationService.getCachedTranslation(
-      'users.dialog.deleteDescription'
+      'users.dialog.deleteDescription',
     );
 
     this._alertDialogService.confirm({
       zTitle: title,
       zDescription: description.replace(
         '{name}',
-        `${user.firstName} ${user.lastName}`
+        `${user.firstName} ${user.lastName}`,
       ),
       zOkText: this._translationService.getCachedTranslation('common.delete'),
       zCancelText:
@@ -408,8 +408,8 @@ export class UsersComponent implements OnInit {
           next: () => {
             toast.success(
               this._translationService.getCachedTranslation(
-                'users.success.userDeleted'
-              )
+                'users.success.userDeleted',
+              ),
             );
             this.loadUsers();
           },
@@ -417,8 +417,8 @@ export class UsersComponent implements OnInit {
             console.error('Error deleting user:', error);
             toast.error(
               this._translationService.getCachedTranslation(
-                'users.error.deleteFailed'
-              )
+                'users.error.deleteFailed',
+              ),
             );
           },
         });
@@ -440,7 +440,7 @@ export class UsersComponent implements OnInit {
   }
 
   getRoleBadgeType(
-    role: IRole
+    role: IRole,
   ): 'default' | 'secondary' | 'destructive' | 'outline' {
     const roleName = role.name.toLowerCase();
     if (roleName.includes('superadmin')) return 'default';

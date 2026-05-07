@@ -14,34 +14,36 @@
 
   <!-- Settings Key selector -->
   <div class="form-field">
-    <label class="field-label">
+    <label class="field-label" [for]="'settings-key-input'">
       {{ 'aiEmbedding.dialog.settingsKeyLabel' | translate }}
     </label>
     @if (loadingSettings()) {
-    <div class="settings-loading">
-      <z-loader zSize="sm" />
-    </div>
+      <div class="settings-loading">
+        <z-loader zSize="sm" />
+      </div>
     } @else if (settingsKeys().length > 0) {
-    <z-select
-      [formControl]="$any(form.get('selectedSettingsKey'))"
-      [zPlaceholder]="'aiEmbedding.dialog.settingsKeyPlaceholder' | translate"
-    >
-      @for (key of settingsKeys(); track key) {
-      <z-select-item [zValue]="key">{{ key }}</z-select-item>
-      }
-    </z-select>
+      <z-select
+        id="settings-key-input"
+        [formControl]="$any(form.get('selectedSettingsKey'))"
+        [zPlaceholder]="'aiEmbedding.dialog.settingsKeyPlaceholder' | translate"
+      >
+        @for (key of settingsKeys(); track key) {
+          <z-select-item [zValue]="key">{{ key }}</z-select-item>
+        }
+      </z-select>
     } @else {
-    <input
-      z-input
-      [formControl]="$any(form.get('selectedSettingsKey'))"
-      [placeholder]="'aiEmbedding.dialog.settingsKeyPlaceholder' | translate"
-    />
+      <input
+        id="settings-key-input"
+        z-input
+        [formControl]="$any(form.get('selectedSettingsKey'))"
+        [placeholder]="'aiEmbedding.dialog.settingsKeyPlaceholder' | translate"
+      />
     }
   </div>
 
   <!-- Text input -->
   <div class="form-field">
-    <label class="field-label">
+    <label class="field-label" [for]="'text-input'">
       {{ 'aiEmbedding.dialog.textLabel' | translate }}
     </label>
     <textarea
@@ -55,34 +57,30 @@
 
   <!-- Error -->
   @if (errorMessage()) {
-  <z-alert
-    zType="destructive"
-    zIcon="circle-alert"
-    [zDescription]="errorMessage()!"
-  />
+    <z-alert
+      zType="destructive"
+      zIcon="circle-alert"
+      [zDescription]="errorMessage()!"
+    />
   }
 
   <!-- Result -->
   @if (result(); as res) {
-  <div class="result-section">
-    <z-divider />
-    <div class="result-meta">
-      <span class="result-label"
-        >{{ 'common.model' | translate }}:</span
-      >
-      <span class="result-value">{{ res.model }}</span>
-      <span class="result-label"
-        >{{ 'common.dimensions' | translate }}:</span
-      >
-      <span class="result-value">{{ res.embedding.length }}</span>
+    <div class="result-section">
+      <z-divider />
+      <div class="result-meta">
+        <span class="result-label">{{ 'common.model' | translate }}:</span>
+        <span class="result-value">{{ res.model }}</span>
+        <span class="result-label">{{ 'common.dimensions' | translate }}:</span>
+        <span class="result-value">{{ res.embedding.length }}</span>
+      </div>
+      <div class="result-vector-label">
+        {{ 'aiEmbedding.result.vector' | translate }}
+      </div>
+      <div class="result-vector">
+        <code>{{ res.embedding | json }}</code>
+      </div>
     </div>
-    <div class="result-vector-label">
-      {{ 'aiEmbedding.result.vector' | translate }}
-    </div>
-    <div class="result-vector">
-      <code>{{ res.embedding | json }}</code>
-    </div>
-  </div>
   }
 
   <!-- Actions -->

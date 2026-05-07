@@ -72,8 +72,8 @@ export class FileManagerService {
     );
   }
 
-  deleteFile(id: number): Observable<object> {
-    return this._http.delete(`${this._baseUrl}/files/${id}`);
+  deleteFile(id: number, context?: HttpContext): Observable<object> {
+    return this._http.delete(`${this._baseUrl}/files/${id}`, { context });
   }
 
   downloadFile(id: number): Observable<Blob> {
@@ -84,11 +84,18 @@ export class FileManagerService {
 
   // Admin Endpoints (Global)
 
-  deleteFileAdmin(id: number, tenantId?: string): Observable<object> {
+  deleteFileAdmin(
+    id: number,
+    tenantId?: string,
+    context?: HttpContext
+  ): Observable<object> {
     let params = new HttpParams();
     if (tenantId) params = params.append('tenantId', tenantId);
 
-    return this._http.delete(`${this._adminUrl}/files/${id}`, { params });
+    return this._http.delete(`${this._adminUrl}/files/${id}`, {
+      params,
+      context,
+    });
   }
 
   deleteAllTempFiles(): Observable<object> {

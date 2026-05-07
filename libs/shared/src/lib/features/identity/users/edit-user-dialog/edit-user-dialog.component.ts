@@ -16,7 +16,10 @@ import {
   AuthService,
   FileGroup,
 } from '@ihsan/core';
-import { extractErrorMessage, SKIP_ERROR_TOAST } from '@ihsan/shared';
+import {
+  extractErrorMessage,
+  SKIP_ERROR_TOAST,
+} from '../../../../../../interceptors/error.interceptor';
 import {
   ZardDialogRef,
   Z_MODAL_DATA,
@@ -30,8 +33,13 @@ import {
   ZardButtonComponent,
 } from '@ihsan/ui';
 import { IFileManagerResponse, FileType } from '@ihsan/core';
-import { FileSelectorComponent } from '@ihsan/shared';
+import { FileSelectorComponent } from '../../../file-manager/file-selector/file-selector.component';
 import { toast } from 'ngx-sonner';
+
+interface IEditUserDialogData {
+  user: IUser;
+  roles: IRole[];
+}
 
 interface IEditUserForm {
   firstName: FormControl<string>;
@@ -43,13 +51,8 @@ interface IEditUserForm {
   profilePictureId: FormControl<number | null>;
 }
 
-interface IEditUserData {
-  user: IUser;
-  roles: IRole[];
-}
-
 @Component({
-  selector: 'app-edit-user-dialog',
+  selector: 'shared-edit-user-dialog',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -65,14 +68,15 @@ interface IEditUserData {
     FileSelectorComponent,
   ],
   templateUrl: './edit-user-dialog.component.html',
-  styleUrls: ['./edit-user-dialog.component.scss'],
+  styleUrl: './edit-user-dialog.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditUserDialogComponent {
   private readonly _dialogRef = inject(ZardDialogRef);
   private readonly _adminService = inject(IdentityAdminService);
   private readonly _translationService = inject(TranslationService);
   private readonly _authService = inject(AuthService);
-  protected readonly data = inject<IEditUserData>(Z_MODAL_DATA);
+  protected readonly data = inject<IEditUserDialogData>(Z_MODAL_DATA);
 
   readonly errorMessage = signal<string | null>(null);
   readonly isLoading = signal(false);
@@ -97,24 +101,24 @@ export class EditUserDialogComponent {
       ],
     }),
     phoneNumber: new FormControl<string | null>(
-      this.data.user.phoneNumber || null
+      this.data.user.phoneNumber || null,
     ),
     roleIds: new FormControl<string[]>(
       this.data.user.roles.map((r) => r.id.toString()),
       {
         nonNullable: true,
         validators: [Validators.required],
-      }
+      },
     ),
     emailConfirmed: new FormControl<string>(
       this.data.user.emailConfirmed ? 'true' : 'false',
-      { nonNullable: true }
+      { nonNullable: true },
     ),
     status: new FormControl<string>(this.data.user.status ? 'true' : 'false', {
       nonNullable: true,
     }),
     profilePictureId: new FormControl<number | null>(
-      this.data.user.profilePictureId || null
+      this.data.user.profilePictureId || null,
     ),
   });
 
@@ -165,8 +169,8 @@ export class EditUserDialogComponent {
           this.isLoading.set(false);
           toast.success(
             this._translationService.getCachedTranslation(
-              'users.success.userUpdated'
-            )
+              'users.success.userUpdated',
+            ),
           );
           this._dialogRef.close({ success: true, user });
         },
