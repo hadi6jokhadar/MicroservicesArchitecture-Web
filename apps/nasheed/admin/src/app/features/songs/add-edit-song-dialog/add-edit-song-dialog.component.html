@@ -33,6 +33,9 @@
               '#anashid#.songs.form.artistPlaceholder' | translate
             "
           >
+            <z-select-item zValue="none">{{
+              'common.unassigned' | translate
+            }}</z-select-item>
             @for (artist of artists(); track artist.id) {
               <z-select-item [zValue]="artist.id.toString()">{{
                 artist.name
@@ -40,12 +43,6 @@
             }
           </z-select>
         </z-form-control>
-        @if (
-          form.controls.artistId.touched &&
-          form.controls.artistId.hasError('required')
-        ) {
-          <span z-form-error>{{ 'validation.required' | translate }}</span>
-        }
       </z-form-field>
     } @else {
       artists table is empty !

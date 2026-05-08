@@ -10,7 +10,7 @@ export interface SongLegalComplianceModel {
 
 export interface SongModel {
   id: number;
-  artistId: number;
+  artistId?: number | null;
   artistName?: string;
   title: string;
   fileId: number;
@@ -34,7 +34,7 @@ export interface SongModel {
 }
 
 export interface CreateSongCommand {
-  artistId: number;
+  artistId?: number | null;
   title: string;
   fileId?: number;
   copyrightRiskLevel?: string;
@@ -52,7 +52,7 @@ export interface CreateSongCommand {
 }
 
 export interface UpdateSongCommand {
-  artistId?: number;
+  artistId?: number | null;
   title?: string;
   copyrightRiskLevel?: string;
   contentSafetyFlag?: string;

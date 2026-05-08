@@ -73,6 +73,7 @@ interface ISongForm {
   styleUrl: './add-edit-song-dialog.component.scss',
 })
 export class AddEditSongDialogComponent {
+  private static readonly NO_ARTIST_VALUE = 'none';
   private readonly _songService = inject(SongService);
   private readonly _artistService = inject(ArtistService);
   private readonly _dialogRef = inject(ZardDialogRef);
@@ -104,10 +105,10 @@ export class AddEditSongDialogComponent {
       validators: [Validators.required, Validators.maxLength(300)],
     }),
     artistId: new FormControl<string>(
-      this.data?.song?.artistId?.toString() ?? '',
+      this.data?.song?.artistId?.toString() ??
+        AddEditSongDialogComponent.NO_ARTIST_VALUE,
       {
         nonNullable: true,
-        validators: [Validators.required],
       },
     ),
     fileId: new FormControl<number | null>(this.data?.song?.fileId ?? null),
@@ -146,16 +147,21 @@ export class AddEditSongDialogComponent {
   existingFiles: IFileManagerResponse[] = [];
 
   constructor() {
-    this._artistService.getAll({ pageNumber: 1, pageSize: 100 }).pipe(
-      switchMap((first) => {
-        if (first.totalPages <= 1) return of(first.items);
-        return forkJoin(
-          Array.from({ length: first.totalPages - 1 }, (_, i) =>
-            this._artistService.getAll({ pageNumber: i + 2, pageSize: 100 })
-          )
-        ).pipe(map((pages) => [...first.items, ...pages.flatMap((p) => p.items)]));
-      })
-    ).subscribe({ next: (items) => this.artists.set(items) });
+    this._artistService
+      .getAll({ pageNumber: 1, pageSize: 100 })
+      .pipe(
+        switchMap((first) => {
+          if (first.totalPages <= 1) return of(first.items);
+          return forkJoin(
+            Array.from({ length: first.totalPages - 1 }, (_, i) =>
+              this._artistService.getAll({ pageNumber: i + 2, pageSize: 100 }),
+            ),
+          ).pipe(
+            map((pages) => [...first.items, ...pages.flatMap((p) => p.items)]),
+          );
+        }),
+      )
+      .subscribe({ next: (items) => this.artists.set(items) });
 
     if (this.data?.song?.file) {
       this.existingFiles = [this.data.song.file];
@@ -172,10 +178,14 @@ export class AddEditSongDialogComponent {
     this.errorMessage.set(null);
     const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
 
+    const parsedArtistId = this.parseArtistId(
+      this.form.controls.artistId.value,
+    );
+
     if (this.isEditMode && this.data.song) {
       const cmd: UpdateSongCommand = {
         title: this.form.controls.title.value,
-        artistId: Number(this.form.controls.artistId.value),
+        artistId: parsedArtistId,
         fileId: this.form.controls.fileId.value ?? undefined,
         copyrightRiskLevel:
           this.form.controls.copyrightRiskLevel.value !== 'all'
@@ -210,7 +220,7 @@ export class AddEditSongDialogComponent {
     } else {
       const cmd: CreateSongCommand = {
         title: this.form.controls.title.value,
-        artistId: Number(this.form.controls.artistId.value),
+        artistId: parsedArtistId,
         fileId: this.form.controls.fileId.value ?? undefined,
         copyrightRiskLevel:
           this.form.controls.copyrightRiskLevel.value !== 'all'
@@ -247,5 +257,16 @@ export class AddEditSongDialogComponent {
 
   onCancel(): void {
     this._dialogRef.close();
+  }
+
+  private parseArtistId(value: string): number | undefined {
+    if (value === AddEditSongDialogComponent.NO_ARTIST_VALUE) {
+      return undefined;
+    }
+
+    const parsedValue = Number(value);
+    return Number.isFinite(parsedValue) && parsedValue > 0
+      ? parsedValue
+      : undefined;
   }
 }

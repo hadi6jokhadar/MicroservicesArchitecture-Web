@@ -84,6 +84,7 @@
   "common.tenantIdOptional": "معرف المستأجر (اختياري)",
   "common.title": "العنوان",
   "common.type": "النوع",
+  "common.unassigned": "غير معين",
   "common.update": "تحديث",
   "common.userId": "معرف المستخدم",
   "common.userIdLabel": "معرف المستخدم:",

@@ -84,6 +84,7 @@
   "common.tenantIdOptional": "Tenant ID (Optional)",
   "common.title": "Title",
   "common.type": "Type",
+  "common.unassigned": "Unassigned",
   "common.update": "Update",
   "common.userId": "User ID",
   "common.userIdLabel": "User ID:",

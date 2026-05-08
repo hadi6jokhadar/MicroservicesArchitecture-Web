@@ -382,8 +382,15 @@ export class SongsComponent {
     }
   }
 
-  getArtistName(artistId: number): string {
-    return this.artists().find((a) => a.id === artistId)?.name ?? '-';
+  getArtistName(artistId?: number | null): string {
+    if (!artistId) {
+      return this._translationService.getCachedTranslation('common.unassigned');
+    }
+
+    return (
+      this.artists().find((a) => a.id === artistId)?.name ??
+      this._translationService.getCachedTranslation('common.unassigned')
+    );
   }
 
   onSearch(): void {
