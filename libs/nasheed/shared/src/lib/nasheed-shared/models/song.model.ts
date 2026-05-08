@@ -52,6 +52,7 @@ export interface CreateSongCommand {
 }
 
 export interface UpdateSongCommand {
+  id?: number;
   artistId?: number | null;
   title?: string;
   copyrightRiskLevel?: string;

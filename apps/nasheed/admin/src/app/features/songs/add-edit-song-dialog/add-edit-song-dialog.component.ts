@@ -51,6 +51,10 @@ interface ISongForm {
   lyricsRaw: FormControl<string | null>;
   lyricsVerifiedLrc: FormControl<string | null>;
   lyricsPlainText: FormControl<string | null>;
+  summary: FormControl<string | null>;
+  vocalStyle: FormControl<string | null>;
+  moodTags: FormControl<string | null>;
+  publishedAt: FormControl<string | null>;
   durationSeconds: FormControl<number | null>;
 }
 
@@ -139,6 +143,18 @@ export class AddEditSongDialogComponent {
     lyricsPlainText: new FormControl<string | null>(
       this.data?.song?.lyricsPlainText ?? null,
     ),
+    summary: new FormControl<string | null>(this.data?.song?.summary ?? null),
+    vocalStyle: new FormControl<string | null>(
+      this.data?.song?.vocalStyle ?? null,
+    ),
+    moodTags: new FormControl<string | null>(
+      this.data?.song?.moodTags?.length
+        ? this.data.song.moodTags.join(', ')
+        : null,
+    ),
+    publishedAt: new FormControl<string | null>(
+      this.getLocalDateTimeValue(this.data?.song?.publishedAt),
+    ),
     durationSeconds: new FormControl<number | null>(
       this.data?.song?.durationSeconds ?? null,
     ),
@@ -184,6 +200,7 @@ export class AddEditSongDialogComponent {
 
     if (this.isEditMode && this.data.song) {
       const cmd: UpdateSongCommand = {
+        id: this.data.song.id,
         title: this.form.controls.title.value,
         artistId: parsedArtistId,
         fileId: this.form.controls.fileId.value ?? undefined,
@@ -201,6 +218,10 @@ export class AddEditSongDialogComponent {
         lyricsVerifiedLrc:
           this.form.controls.lyricsVerifiedLrc.value ?? undefined,
         lyricsPlainText: this.form.controls.lyricsPlainText.value ?? undefined,
+        summary: this.toOptionalTrimmed(this.form.controls.summary.value),
+        vocalStyle: this.toOptionalTrimmed(this.form.controls.vocalStyle.value),
+        moodTags: this.parseMoodTags(this.form.controls.moodTags.value),
+        publishedAt: this.toApiDateTime(this.form.controls.publishedAt.value),
         durationSeconds: this.form.controls.durationSeconds.value ?? undefined,
       };
       this._songService.update(this.data.song.id, cmd, { context }).subscribe({
@@ -236,6 +257,10 @@ export class AddEditSongDialogComponent {
         lyricsVerifiedLrc:
           this.form.controls.lyricsVerifiedLrc.value ?? undefined,
         lyricsPlainText: this.form.controls.lyricsPlainText.value ?? undefined,
+        summary: this.toOptionalTrimmed(this.form.controls.summary.value),
+        vocalStyle: this.toOptionalTrimmed(this.form.controls.vocalStyle.value),
+        moodTags: this.parseMoodTags(this.form.controls.moodTags.value),
+        publishedAt: this.toApiDateTime(this.form.controls.publishedAt.value),
         durationSeconds: this.form.controls.durationSeconds.value ?? undefined,
       };
       this._songService.create(cmd, { context }).subscribe({
@@ -268,5 +293,59 @@ export class AddEditSongDialogComponent {
     return Number.isFinite(parsedValue) && parsedValue > 0
       ? parsedValue
       : undefined;
+  }
+
+  private toOptionalTrimmed(
+    value: string | null | undefined,
+  ): string | undefined {
+    const trimmed = value?.trim();
+    return trimmed ? trimmed : undefined;
+  }
+
+  private parseMoodTags(
+    value: string | null | undefined,
+  ): string[] | undefined {
+    const normalizedValue = this.toOptionalTrimmed(value);
+    if (!normalizedValue) {
+      return undefined;
+    }
+
+    const parsedTags = normalizedValue
+      .split(',')
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
+
+    return parsedTags.length > 0 ? parsedTags : undefined;
+  }
+
+  private toApiDateTime(value: string | null | undefined): string | undefined {
+    const normalizedValue = this.toOptionalTrimmed(value);
+    if (!normalizedValue) {
+      return undefined;
+    }
+
+    const parsed = new Date(normalizedValue);
+    return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
+  }
+
+  private getLocalDateTimeValue(
+    value: string | null | undefined,
+  ): string | null {
+    if (!value) {
+      return null;
+    }
+
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return null;
+    }
+
+    const year = parsed.getFullYear();
+    const month = `${parsed.getMonth() + 1}`.padStart(2, '0');
+    const day = `${parsed.getDate()}`.padStart(2, '0');
+    const hours = `${parsed.getHours()}`.padStart(2, '0');
+    const minutes = `${parsed.getMinutes()}`.padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 }

@@ -2,6 +2,8 @@
   display: block;
 
   .dialog-container {
+    max-height: 80vh;
+    overflow-y: auto;
     .dialog-form {
       display: flex;
       flex-direction: column;

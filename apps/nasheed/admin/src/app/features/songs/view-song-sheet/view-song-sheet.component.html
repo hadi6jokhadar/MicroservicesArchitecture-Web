@@ -47,6 +47,22 @@
         <span class="detail-value">{{ song.languageCode ?? '-' }}</span>
       </div>
 
+      @if (song.summary) {
+        <div class="detail-group lyrics-group">
+          <span class="detail-label">{{ 'common.summary' | translate }}</span>
+          <p class="lyrics" [dir]="songLyrics">{{ song.summary }}</p>
+        </div>
+      }
+
+      @if (song.vocalStyle) {
+        <div class="detail-group">
+          <span class="detail-label">{{
+            '#anashid#.songs.sheet.vocalStyle' | translate
+          }}</span>
+          <span class="detail-value">{{ song.vocalStyle }}</span>
+        </div>
+      }
+
       <div class="detail-group">
         <span class="detail-label">{{
           '#anashid#.songs.form.duration' | translate
@@ -78,12 +94,158 @@
           </div>
         </div>
 
-        <div class="detail-group">
-          <audio controls class="audio-player">
-            <source [src]="song.file.externalUrl ?? song.file.url" />
-          </audio>
+        <div class="detail-group player-group">
+          <div class="wave-player-shell">
+            <div class="player-toolbar">
+              <div class="player-controls">
+                <button
+                  z-button
+                  zType="secondary"
+                  [disabled]="!isPlayerReady()"
+                  (click)="seekBackwardFiveSeconds()"
+                  (mousedown)="scheduleSeekHold('backward')"
+                  (mouseup)="releaseSeekHold()"
+                  (mouseleave)="releaseSeekHold()"
+                  (touchstart)="scheduleSeekHold('backward')"
+                  (touchend)="releaseSeekHold()"
+                  (touchcancel)="releaseSeekHold()"
+                  [attr.aria-label]="
+                    '#anashid#.songs.sheet.seekBackwardFive' | translate
+                  "
+                  id="song-waveform-seek-backward-button"
+                >
+                  <z-icon zType="chevron-left" />
+                </button>
+
+                <button
+                  z-button
+                  [zType]="isPlaying() ? 'destructive' : 'default'"
+                  [disabled]="!isPlayerReady()"
+                  (click)="togglePlayPause()"
+                  id="song-waveform-play-pause-button"
+                >
+                  <z-icon [zType]="isPlaying() ? 'pause' : 'play'" />
+                </button>
+
+                <button
+                  z-button
+                  zType="secondary"
+                  [disabled]="!isPlayerReady()"
+                  (click)="seekForwardFiveSeconds()"
+                  (mousedown)="scheduleSeekHold('forward')"
+                  (mouseup)="releaseSeekHold()"
+                  (mouseleave)="releaseSeekHold()"
+                  (touchstart)="scheduleSeekHold('forward')"
+                  (touchend)="releaseSeekHold()"
+                  (touchcancel)="releaseSeekHold()"
+                  [attr.aria-label]="
+                    '#anashid#.songs.sheet.seekForwardFive' | translate
+                  "
+                  id="song-waveform-seek-forward-button"
+                >
+                  <z-icon zType="chevron-right" />
+                </button>
+              </div>
+
+              <span class="player-time">
+                {{ formatPlayerTime(currentTime()) }} /
+                {{ formatPlayerTime(duration()) }}
+              </span>
+            </div>
+
+            <div
+              class="waveform"
+              [class.waveform-disabled]="!isPlayerReady()"
+              #waveformContainer
+              id="song-waveform-container"
+            ></div>
+          </div>
         </div>
       }
+
+      <div class="detail-group lyrics-group">
+        <span class="detail-label">{{
+          '#anashid#.songs.form.lyricsRaw' | translate
+        }}</span>
+
+        <textarea
+          z-input
+          class="lyrics lrc"
+          rows="8"
+          [dir]="songLyrics"
+          [value]="lyricsRawForView()"
+          readonly
+          id="song-lyrics-raw-view"
+        ></textarea>
+      </div>
+
+      <div class="detail-group lyrics-group">
+        <span class="detail-label">{{
+          '#anashid#.songs.form.lyricsVerifiedLrc' | translate
+        }}</span>
+
+        <div class="lyrics-editor-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="sm"
+            (click)="copyLyricsRawToVerifiedLrc()"
+            [disabled]="!lyricsRawForView()"
+            id="song-lyrics-copy-raw-button"
+          >
+            {{ '#anashid#.songs.sheet.copyRawToVerified' | translate }}
+          </button>
+
+          <button
+            z-button
+            zType="outline"
+            zSize="sm"
+            (click)="formatLrcLyrics()"
+            id="song-lyrics-format-button"
+          >
+            {{ '#anashid#.songs.sheet.formatLrc' | translate }}
+          </button>
+        </div>
+
+        <textarea
+          z-input
+          class="lyrics lrc"
+          rows="8"
+          [dir]="songLyrics"
+          [value]="editableLyricsLrc()"
+          (input)="onLyricsLrcInput($event)"
+          id="song-lyrics-editor"
+        ></textarea>
+      </div>
+
+      <div class="detail-group lyrics-group">
+        <span class="detail-label">{{
+          '#anashid#.songs.form.lyricsPlainText' | translate
+        }}</span>
+
+        <div class="lyrics-editor-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="sm"
+            (click)="fillPlainTextFromVerifiedLyrics()"
+            [disabled]="!editableLyricsLrc() || isSavingLyrics()"
+            id="song-lyrics-fill-plain-from-raw-button"
+          >
+            {{ '#anashid#.songs.sheet.fillPlainFromRaw' | translate }}
+          </button>
+        </div>
+
+        <textarea
+          z-input
+          class="lyrics"
+          rows="8"
+          [dir]="songLyrics"
+          [value]="lyricsPlainTextForView()"
+          readonly
+          id="song-lyrics-plain-view"
+        ></textarea>
+      </div>
 
       <div class="detail-group">
         <span class="detail-label">{{
@@ -121,22 +283,6 @@
           song.legalCompliance?.riskReason ?? '-'
         }}</span>
       </div>
-
-      @if (song.summary) {
-        <div class="detail-group lyrics-group">
-          <span class="detail-label">{{ 'common.summary' | translate }}</span>
-          <p class="lyrics" [dir]="songLyrics">{{ song.summary }}</p>
-        </div>
-      }
-
-      @if (song.vocalStyle) {
-        <div class="detail-group">
-          <span class="detail-label">{{
-            '#anashid#.songs.sheet.vocalStyle' | translate
-          }}</span>
-          <span class="detail-value">{{ song.vocalStyle }}</span>
-        </div>
-      }
 
       @if (song.moodTags.length) {
         <div class="detail-group">
@@ -182,58 +328,6 @@
         </z-badge>
       </div>
 
-      @if (song.lyricsRaw) {
-        <div class="detail-group lyrics-group">
-          <span class="detail-label">{{
-            '#anashid#.songs.form.lyricsRaw' | translate
-          }}</span>
-          <div class="lyrics" [dir]="songLyrics">
-            @for (line of formatLyricsLines(song.lyricsRaw); track $index) {
-              <span class="lyrics-line">{{ line }}</span>
-            }
-          </div>
-        </div>
-      }
-
-      @if (song.lyricsPlainText) {
-        <div class="detail-group lyrics-group">
-          <span class="detail-label">{{
-            '#anashid#.songs.form.lyricsRaw' | translate
-          }}</span>
-          <div class="lyrics" [dir]="songLyrics">
-            @for (
-              line of formatLyricsLines(song.lyricsPlainText);
-              track $index
-            ) {
-              <span class="lyrics-line">{{ line }}</span>
-            }
-          </div>
-        </div>
-      }
-
-      @if (song.lyricsVerifiedLrc) {
-        <div class="detail-group lyrics-group">
-          <span class="detail-label">{{
-            '#anashid#.songs.sheet.lyricsLrc' | translate
-          }}</span>
-          <div class="lyrics lrc">
-            @for (
-              line of formatLyricsLines(song.lyricsVerifiedLrc);
-              track $index
-            ) {
-              <span class="lyrics-line">
-                @if (parseLrcLine(line).timestamp) {
-                  <span class="lrc-timestamp">{{
-                    parseLrcLine(line).timestamp
-                  }}</span>
-                }
-                <span [dir]="songLyrics">{{ parseLrcLine(line).text }}</span>
-              </span>
-            }
-          </div>
-        </div>
-      }
-
       <div class="detail-group">
         <span class="detail-label">{{ 'common.created' | translate }}</span>
         <span class="detail-value">{{ song.created | date }}</span>
@@ -249,4 +343,34 @@
       }
     </div>
   </div>
+
+  @if (hasPendingChanges()) {
+    <div class="sheet-save-bar" id="song-sheet-save-bar">
+      <div class="sheet-save-bar-content">
+        <button
+          z-button
+          zType="default"
+          zSize="lg"
+          (click)="saveAllChanges()"
+          [disabled]="isSavingLyrics()"
+          [zLoading]="isSavingLyrics()"
+          id="song-sheet-save-all-button"
+        >
+          {{ '#anashid#.songs.sheet.saveAllChanges' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (isPlaying() && hasTimedLyrics()) {
+    <div class="lyrics-overlay" [dir]="songLyrics" id="song-lyrics-overlay">
+      <div class="lyrics-overlay-content">
+        <p class="overlay-active-line">{{ activeLyricLine() }}</p>
+
+        @if (nextLyricLine()) {
+          <p class="overlay-next-line">{{ nextLyricLine() }}</p>
+        }
+      </div>
+    </div>
+  }
 </div>

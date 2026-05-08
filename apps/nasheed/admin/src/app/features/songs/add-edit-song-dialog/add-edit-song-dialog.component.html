@@ -185,6 +185,105 @@
       </z-form-control>
     </z-form-field>
 
+    <!-- Lyrics Verified LRC -->
+    <z-form-field zardId="lyricsVerifiedLrc" #f10="zardId">
+      <label z-form-label [for]="f10.id()">{{
+        '#anashid#.songs.form.lyricsVerifiedLrc' | translate
+      }}</label>
+      <z-form-control>
+        <textarea
+          z-input
+          [id]="f10.id()"
+          formControlName="lyricsVerifiedLrc"
+          rows="4"
+          [placeholder]="
+            '#anashid#.songs.form.lyricsVerifiedLrcPlaceholder' | translate
+          "
+        ></textarea>
+      </z-form-control>
+    </z-form-field>
+
+    <!-- Lyrics Plain Text -->
+    <z-form-field zardId="lyricsPlainText" #f11="zardId">
+      <label z-form-label [for]="f11.id()">{{
+        '#anashid#.songs.form.lyricsPlainText' | translate
+      }}</label>
+      <z-form-control>
+        <textarea
+          z-input
+          [id]="f11.id()"
+          formControlName="lyricsPlainText"
+          rows="4"
+          [placeholder]="
+            '#anashid#.songs.form.lyricsPlainTextPlaceholder' | translate
+          "
+        ></textarea>
+      </z-form-control>
+    </z-form-field>
+
+    <!-- Summary -->
+    <z-form-field zardId="summary" #f12="zardId">
+      <label z-form-label [for]="f12.id()">{{
+        '#anashid#.songs.form.summary' | translate
+      }}</label>
+      <z-form-control>
+        <textarea
+          z-input
+          [id]="f12.id()"
+          formControlName="summary"
+          rows="3"
+          [placeholder]="'#anashid#.songs.form.summaryPlaceholder' | translate"
+        ></textarea>
+      </z-form-control>
+    </z-form-field>
+
+    <!-- Vocal Style -->
+    <z-form-field zardId="vocalStyle" #f13="zardId">
+      <label z-form-label [for]="f13.id()">{{
+        '#anashid#.songs.form.vocalStyle' | translate
+      }}</label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="f13.id()"
+          formControlName="vocalStyle"
+          [placeholder]="
+            '#anashid#.songs.form.vocalStylePlaceholder' | translate
+          "
+        />
+      </z-form-control>
+    </z-form-field>
+
+    <!-- Mood Tags -->
+    <z-form-field zardId="moodTags" #f14="zardId">
+      <label z-form-label [for]="f14.id()">{{
+        '#anashid#.songs.form.moodTags' | translate
+      }}</label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="f14.id()"
+          formControlName="moodTags"
+          [placeholder]="'#anashid#.songs.form.moodTagsPlaceholder' | translate"
+        />
+      </z-form-control>
+    </z-form-field>
+
+    <!-- Published At -->
+    <z-form-field zardId="publishedAt" #f15="zardId">
+      <label z-form-label [for]="f15.id()">{{
+        '#anashid#.songs.form.publishedAt' | translate
+      }}</label>
+      <z-form-control>
+        <input
+          z-input
+          type="datetime-local"
+          [id]="f15.id()"
+          formControlName="publishedAt"
+        />
+      </z-form-control>
+    </z-form-field>
+
     @if (errorMessage()) {
       <z-alert zType="destructive" [zDescription]="errorMessage()!" />
     }

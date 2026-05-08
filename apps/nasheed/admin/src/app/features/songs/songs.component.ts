@@ -236,6 +236,7 @@ export class SongsComponent {
         zData: { song },
         zWidth: '650px',
         zHideFooter: true,
+        zCustomClasses: 'z-dialog-max-width-100',
       })
       .afterClosed()
       .subscribe((result: { success: boolean }) => {
