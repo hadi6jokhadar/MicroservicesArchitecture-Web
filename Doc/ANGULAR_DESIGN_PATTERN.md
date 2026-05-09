@@ -384,6 +384,40 @@ export class UsersComponent {
 }
 ```
 
+### Sequential Timeline Edit Pattern
+
+For editors that store ordered timestamps such as LRC lines, use a dedicated signal toggle to control whether edits should cascade to following rows.
+
+```typescript
+readonly cascadeFollowingLineTimes = signal(false);
+
+updateLineTime(index: number, nextValueSeconds: number): void {
+  const lines = [...this.editableLrcLines()];
+  const previous = lines[index].time;
+  const delta = nextValueSeconds - previous;
+
+  lines[index] = { ...lines[index], time: nextValueSeconds };
+
+  if (this.cascadeFollowingLineTimes() && Math.abs(delta) > Number.EPSILON) {
+    for (let lineIndex = index + 1; lineIndex < lines.length; lineIndex++) {
+      lines[lineIndex] = {
+        ...lines[lineIndex],
+        time: Math.max(0, lines[lineIndex].time + delta),
+      };
+    }
+  }
+
+  this.gatherLyricsFromInputs(lines);
+}
+```
+
+Rules:
+
+- Apply the delta only to rows after the edited row.
+- Keep rows before the edited row unchanged.
+- Clamp resulting times to zero when shifting backward.
+- Keep the behavior opt in via a UI toggle.
+
 ## Error Handling
 
 ### Global Error Interceptor (Default)
@@ -611,7 +645,7 @@ Chart.register(
   PointElement,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 ```
 

@@ -205,17 +205,198 @@
           >
             {{ '#anashid#.songs.sheet.formatLrc' | translate }}
           </button>
+
+          <!-- Time Offset Controls -->
+          <div class="time-offset-controls">
+            <span class="offset-label"
+              >{{ 'common.time' | translate }}
+              {{ currentOffsetDisplay() }}</span
+            >
+            <input
+              type="number"
+              z-input
+              class="offset-input"
+              placeholder="ms"
+              [value]="offsetTimeMs()"
+              (input)="updateOffsetTimeMs($event)"
+              min="0"
+              id="time-offset-input"
+            />
+            <button
+              z-button
+              zType="outline"
+              zSize="sm"
+              (click)="decreaseOffset()"
+              id="time-decrease-button"
+              title="Decrease all times"
+            >
+              −
+            </button>
+            <button
+              z-button
+              zType="outline"
+              zSize="sm"
+              (click)="increaseOffset()"
+              id="time-increase-button"
+              title="Increase all times"
+            >
+              +
+            </button>
+
+            <div class="offset-mode-toggle">
+              <button
+                z-button
+                [zType]="offsetMode() === 'all' ? 'default' : 'outline'"
+                zSize="sm"
+                (click)="setOffsetMode('all')"
+                id="offset-mode-all-button"
+              >
+                {{ '#anashid#.songs.sheet.applyToAll' | translate }}
+              </button>
+              <button
+                z-button
+                [zType]="offsetMode() === 'single' ? 'default' : 'outline'"
+                zSize="sm"
+                (click)="setOffsetMode('single')"
+                id="offset-mode-single-button"
+              >
+                {{ '#anashid#.songs.sheet.applyToSelected' | translate }}
+              </button>
+            </div>
+
+            <div class="cascade-toggle">
+              <button
+                z-button
+                [zType]="cascadeFollowingLineTimes() ? 'default' : 'outline'"
+                zSize="sm"
+                (click)="toggleCascadeFollowingLineTimes()"
+                id="time-cascade-toggle-button"
+              >
+                {{ '#anashid#.songs.sheet.cascadeFollowingLines' | translate }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Word Changer Controls -->
+          <div class="word-changer-controls">
+            <span class="word-changer-label">{{
+              '#anashid#.songs.sheet.replaceWord' | translate
+            }}</span>
+            <div class="word-changer-inputs">
+              <input
+                type="text"
+                z-input
+                class="word-input"
+                placeholder="{{ '#anashid#.songs.sheet.findWord' | translate }}"
+                [(ngModel)]="findWord"
+                [disabled]="editableLrcLines().length === 0"
+                id="word-find-input"
+              />
+              <input
+                type="text"
+                z-input
+                class="word-input"
+                placeholder="{{
+                  '#anashid#.songs.sheet.replaceWordWith' | translate
+                }}"
+                [(ngModel)]="replaceWord"
+                [disabled]="editableLrcLines().length === 0"
+                id="word-replace-input"
+              />
+              <button
+                z-button
+                zType="outline"
+                zSize="sm"
+                (click)="replaceWordInLyrics()"
+                [disabled]="
+                  !findWord || !replaceWord || editableLrcLines().length === 0
+                "
+                id="word-replace-button"
+              >
+                {{ '#anashid#.songs.sheet.replace' | translate }}
+              </button>
+            </div>
+          </div>
         </div>
 
-        <textarea
-          z-input
-          class="lyrics lrc"
-          rows="8"
-          [dir]="songLyrics"
-          [value]="editableLyricsLrc()"
-          (input)="onLyricsLrcInput($event)"
-          id="song-lyrics-editor"
-        ></textarea>
+        <!-- LRC Lines Editor -->
+        <div class="lrc-lines-editor">
+          @if (offsetMode() === 'single' && editableLrcLines().length > 0) {
+            <div class="selection-hint">
+              <strong
+                >{{ '#anashid#.songs.sheet.selectMode' | translate }}:</strong
+              >
+              {{ '#anashid#.songs.sheet.selectHint' | translate }}
+            </div>
+          }
+          @if (editableLrcLines().length > 0) {
+            <div
+              class="lrc-lines-container"
+              [dir]="song.languageCode === 'ar' ? 'rtl' : 'ltr'"
+            >
+              @for (line of editableLrcLines(); track line.id; let i = $index) {
+                <div
+                  class="lrc-line-item"
+                  [class.active]="activeLyricIndex() === i"
+                  [class.selected]="selectedLineIndexForOffset() === i"
+                  #lrcLineItem
+                >
+                  <div class="line-time">
+                    <input
+                      type="text"
+                      z-input
+                      class="time-input"
+                      [value]="formatTimeDisplay(line.time)"
+                      (change)="updateLineTime(i, $event)"
+                      [id]="'lrc-time-' + i"
+                    />
+                  </div>
+                  <div class="line-text">
+                    <textarea
+                      z-input
+                      class="lrc-line-text"
+                      rows="2"
+                      [value]="line.text"
+                      (input)="updateLineText(i, $event)"
+                      [id]="'lrc-text-' + i"
+                    ></textarea>
+                  </div>
+                  <div class="line-controls">
+                    @if (offsetMode() === 'single') {
+                      <button
+                        z-button
+                        [zType]="
+                          selectedLineIndexForOffset() === i
+                            ? 'default'
+                            : 'outline'
+                        "
+                        zSize="sm"
+                        (click)="selectLineForOffset(i)"
+                        [id]="'lrc-select-' + i"
+                      >
+                        {{ '#anashid#.songs.sheet.select' | translate }}
+                      </button>
+                    }
+                    <button
+                      z-button
+                      zType="destructive"
+                      zSize="sm"
+                      (click)="removeLine(i)"
+                      [id]="'lrc-remove-' + i"
+                      [attr.aria-label]="'common.remove' | translate"
+                    >
+                      <z-icon zType="trash" />
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="empty-message">
+              {{ '#anashid#.songs.sheet.noLrcLines' | translate }}
+            </p>
+          }
+        </div>
       </div>
 
       <div class="detail-group lyrics-group">

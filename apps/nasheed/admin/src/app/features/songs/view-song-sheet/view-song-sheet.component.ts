@@ -3,12 +3,15 @@ import {
   Component,
   ElementRef,
   OnDestroy,
+  QueryList,
   ViewChild,
+  ViewChildren,
   computed,
   inject,
   signal,
 } from '@angular/core';
 import { HttpContext } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslationService } from '@ihsan/core';
 import {
   ZardBadgeComponent,
@@ -36,11 +39,16 @@ interface LrcLine {
   text: string;
 }
 
+interface EditableLrcLine extends LrcLine {
+  id: string;
+}
+
 @Component({
   selector: 'app-view-song-sheet',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     TranslatePipe,
     ZardButtonComponent,
     ZardBadgeComponent,
@@ -52,6 +60,12 @@ interface LrcLine {
 export class ViewSongSheetComponent implements AfterViewInit, OnDestroy {
   @ViewChild('waveformContainer')
   private _waveformContainer?: ElementRef<HTMLDivElement>;
+
+  @ViewChildren('lrcLineItem')
+  private _lrcLineItems?: QueryList<ElementRef<HTMLDivElement>>;
+
+  private _isViewInitialized = false;
+  private _lastScrolledLyricIndex = -1;
 
   private readonly _sheetRef = inject(ZardSheetRef);
   private readonly _dialogService = inject(ZardDialogService);
@@ -72,6 +86,19 @@ export class ViewSongSheetComponent implements AfterViewInit, OnDestroy {
   readonly editableLyricsPlainText = signal(this.getInitialPlainTextValue());
   readonly savedLyricsPlainText = signal(this.getInitialPlainTextValue());
   readonly isSavingLyrics = signal(false);
+
+  // LRC Editor state signals
+  readonly offsetTimeMs = signal(0);
+  readonly offsetMode = signal<'all' | 'single'>('all');
+  readonly cascadeFollowingLineTimes = signal(false);
+  readonly selectedLineIndexForOffset = signal(-1);
+  readonly editableLrcLines = computed(() =>
+    this.parseLrcLinesToEditable(this.editableLyricsLrc()),
+  );
+
+  // Word changer properties for ngModel binding
+  findWord = '';
+  replaceWord = '';
 
   private _waveSurfer: WaveSurfer | null = null;
   private _seekHoldTimer: ReturnType<typeof setInterval> | null = null;
@@ -124,7 +151,9 @@ export class ViewSongSheetComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+    this._isViewInitialized = true;
     this.initializeWaveSurfer();
+    this.scrollActiveLyricIntoView(this.activeLyricIndex());
   }
 
   ngOnDestroy(): void {
@@ -233,6 +262,221 @@ export class ViewSongSheetComponent implements AfterViewInit, OnDestroy {
   formatLrcLyrics(): void {
     this.editableLyricsLrc.set(this.normalizeLrcText(this.editableLyricsLrc()));
     this.updateActiveLyric(this.currentTime());
+  }
+
+  currentOffsetDisplay(): string {
+    const ms = this.offsetTimeMs();
+    const seconds = Math.floor(ms / 1000);
+    const milliseconds = ms % 1000;
+    return `${seconds}s ${milliseconds}ms`;
+  }
+
+  updateOffsetTimeMs(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    const value = target?.value ?? '0';
+    this.offsetTimeMs.set(parseInt(value, 10) || 0);
+  }
+
+  setOffsetMode(mode: 'all' | 'single'): void {
+    this.offsetMode.set(mode);
+    if (mode === 'single') {
+      this.selectedLineIndexForOffset.set(-1);
+    }
+  }
+
+  toggleCascadeFollowingLineTimes(): void {
+    this.cascadeFollowingLineTimes.update((value) => !value);
+  }
+
+  selectLineForOffset(index: number): void {
+    this.selectedLineIndexForOffset.set(
+      this.selectedLineIndexForOffset() === index ? -1 : index,
+    );
+  }
+
+  increaseOffset(): void {
+    if (this.offsetTimeMs() === 0) {
+      return;
+    }
+
+    const offset = this.offsetTimeMs();
+    const linesToAdjust = this.getLinesToAdjust();
+
+    const adjustedLines = linesToAdjust.map((line) => ({
+      ...line,
+      time: Math.max(0, line.time + offset / 1000),
+    }));
+
+    this.applyAdjustedLines(adjustedLines);
+    this.offsetTimeMs.set(0);
+  }
+
+  decreaseOffset(): void {
+    if (this.offsetTimeMs() === 0) {
+      return;
+    }
+
+    const offset = this.offsetTimeMs();
+    const linesToAdjust = this.getLinesToAdjust();
+
+    const adjustedLines = linesToAdjust.map((line) => ({
+      ...line,
+      time: Math.max(0, line.time - offset / 1000),
+    }));
+
+    this.applyAdjustedLines(adjustedLines);
+    this.offsetTimeMs.set(0);
+  }
+
+  private getLinesToAdjust(): EditableLrcLine[] {
+    const allLines = this.editableLrcLines();
+    if (this.offsetMode() === 'all') {
+      return allLines;
+    }
+
+    const selectedIndex = this.selectedLineIndexForOffset();
+    return selectedIndex >= 0 && selectedIndex < allLines.length
+      ? [allLines[selectedIndex]]
+      : [];
+  }
+
+  private applyAdjustedLines(adjustedLines: EditableLrcLine[]): void {
+    const allLines = [...this.editableLrcLines()];
+    const adjustedLineIds = new Set(adjustedLines.map((l) => l.id));
+
+    const updatedLines = allLines.map((line) => {
+      if (adjustedLineIds.has(line.id)) {
+        const adjusted = adjustedLines.find((l) => l.id === line.id);
+        return adjusted || line;
+      }
+      return line;
+    });
+
+    this.gatherLyricsFromInputs(updatedLines);
+  }
+
+  formatTimeDisplay(seconds: number): string {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    const centiseconds = Math.round((seconds % 1) * 100);
+
+    return `[${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${centiseconds.toString().padStart(2, '0')}]`;
+  }
+
+  updateLineTime(index: number, event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    const timeStr = target?.value ?? '';
+
+    // Parse time format [MM:SS.MS] or [MM:SS]
+    const match = timeStr.match(/\[?(\d{1,2}):(\d{1,2})(?:\.(\d{1,2}))?\]?/);
+    if (!match) {
+      return;
+    }
+
+    const minutes = Number.parseInt(match[1], 10);
+    const seconds = Number.parseInt(match[2], 10);
+    const centiseconds = Number.parseInt((match[3] ?? '0').padEnd(2, '0'), 10);
+
+    const totalSeconds = minutes * 60 + seconds + centiseconds / 100;
+    const lines = [...this.editableLrcLines()];
+
+    if (index >= 0 && index < lines.length) {
+      const previousTime = lines[index].time;
+      const delta = totalSeconds - previousTime;
+
+      lines[index] = { ...lines[index], time: totalSeconds };
+
+      if (
+        this.cascadeFollowingLineTimes() &&
+        Math.abs(delta) > Number.EPSILON
+      ) {
+        for (let lineIndex = index + 1; lineIndex < lines.length; lineIndex++) {
+          lines[lineIndex] = {
+            ...lines[lineIndex],
+            time: Math.max(0, lines[lineIndex].time + delta),
+          };
+        }
+      }
+
+      this.gatherLyricsFromInputs(lines);
+    }
+  }
+
+  updateLineText(index: number, event: Event): void {
+    const target = event.target as HTMLTextAreaElement | null;
+    const text = target?.value ?? '';
+    const lines = [...this.editableLrcLines()];
+
+    if (index >= 0 && index < lines.length) {
+      lines[index] = { ...lines[index], text };
+      this.gatherLyricsFromInputs(lines);
+    }
+  }
+
+  removeLine(index: number): void {
+    const lines = [...this.editableLrcLines()];
+    if (index >= 0 && index < lines.length) {
+      lines.splice(index, 1);
+      this.gatherLyricsFromInputs(lines);
+    }
+  }
+
+  gatherLyricsFromInputs(lines?: EditableLrcLine[]): void {
+    const lrcLines = lines ?? this.editableLrcLines();
+
+    // Sort by time
+    const sorted = [...lrcLines].sort((a, b) => a.time - b.time);
+
+    // Format as LRC
+    const lrcText = sorted
+      .map((line) => {
+        const timeStr = this.formatTimeDisplay(line.time);
+        return `${timeStr} ${line.text}`;
+      })
+      .join('\n');
+
+    this.editableLyricsLrc.set(lrcText);
+    this.updateActiveLyric(this.currentTime());
+  }
+
+  private parseLrcLinesToEditable(text: string | undefined): EditableLrcLine[] {
+    const parsed = this.parseLrcLines(text);
+    return parsed.map((line, index) => ({
+      ...line,
+      id: `lrc-line-${index}`,
+    }));
+  }
+
+  replaceWordInLyrics(): void {
+    const findStr = this.findWord.trim();
+    const replaceStr = this.replaceWord.trim();
+
+    if (!findStr || !replaceStr) {
+      return;
+    }
+
+    const lines = this.editableLrcLines();
+    const updatedLines = lines.map((line) => ({
+      ...line,
+      text: line.text.replace(
+        new RegExp(this.escapeRegex(findStr), 'g'),
+        replaceStr,
+      ),
+    }));
+
+    this.gatherLyricsFromInputs(updatedLines);
+    this.findWord = '';
+    this.replaceWord = '';
+
+    toast.success(
+      this._translationService.getCachedTranslation(
+        '#anashid#.songs.sheet.wordReplaced',
+      ),
+    );
+  }
+
+  private escapeRegex(str: string): string {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
   copyLyricsRawToVerifiedLrc(): void {
@@ -384,16 +628,18 @@ export class ViewSongSheetComponent implements AfterViewInit, OnDestroy {
 
   formatPlayerTime(value: number): string {
     if (!Number.isFinite(value) || value < 0) {
-      return '00:00';
+      return '00:00.00';
     }
 
-    const minutes = Math.floor(value / 60)
+    const totalHundredths = Math.floor((value + Number.EPSILON) * 100);
+    const minutes = Math.floor(totalHundredths / 6000)
       .toString()
       .padStart(2, '0');
-    const seconds = Math.floor(value % 60)
+    const seconds = Math.floor((totalHundredths % 6000) / 100)
       .toString()
       .padStart(2, '0');
-    return `${minutes}:${seconds}`;
+    const hundredths = (totalHundredths % 100).toString().padStart(2, '0');
+    return `${minutes}:${seconds}.${hundredths}`;
   }
 
   getSearchIndexStatusBadgeType(
@@ -471,6 +717,7 @@ export class ViewSongSheetComponent implements AfterViewInit, OnDestroy {
     this.currentTime.set(0);
     this.duration.set(0);
     this.activeLyricIndex.set(-1);
+    this._lastScrolledLyricIndex = -1;
   }
 
   private seekBy(offsetSeconds: number): void {
@@ -612,6 +859,37 @@ export class ViewSongSheetComponent implements AfterViewInit, OnDestroy {
       }
     }
 
+    const previousIndex = this.activeLyricIndex();
     this.activeLyricIndex.set(activeIndex);
+
+    if (activeIndex < 0) {
+      this._lastScrolledLyricIndex = -1;
+      return;
+    }
+
+    if (previousIndex !== activeIndex) {
+      this.scrollActiveLyricIntoView(activeIndex);
+    }
+  }
+
+  private scrollActiveLyricIntoView(index: number): void {
+    if (!this._isViewInitialized || index < 0) {
+      return;
+    }
+
+    if (this._lastScrolledLyricIndex === index) {
+      return;
+    }
+
+    const lineElement = this._lrcLineItems?.toArray()[index]?.nativeElement;
+    if (!lineElement) {
+      return;
+    }
+
+    lineElement.scrollIntoView({
+      block: 'center',
+      inline: 'nearest',
+    });
+    this._lastScrolledLyricIndex = index;
   }
 }
