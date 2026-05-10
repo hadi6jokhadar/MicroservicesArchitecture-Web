@@ -1,6 +1,8 @@
 import {
+  ElementRef,
   Component,
   OnInit,
+  OnDestroy,
   inject,
   signal,
   computed,
@@ -82,7 +84,7 @@ export interface IFileManagerDialogData {
   styleUrl: './file-manager.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FileManagerComponent implements OnInit {
+export class FileManagerComponent implements OnInit, OnDestroy {
   private _service = inject(FileManagerService);
   private _tenantService = inject(TenantService);
   private _translationService = inject(TranslationService);
@@ -94,6 +96,8 @@ export class FileManagerComponent implements OnInit {
   private _fb = inject(FormBuilder);
 
   @ViewChild(ZardTabGroupComponent) tabGroup!: ZardTabGroupComponent;
+  @ViewChild('fileManagerContainer', { static: true })
+  fileManagerContainer!: ElementRef<HTMLDivElement>;
 
   // Signals
   files = signal<IFileManagerResponse[]>([]);
@@ -408,11 +412,17 @@ export class FileManagerComponent implements OnInit {
   }
 
   confirmSelection(): void {
+    this.stopPreviewAudioPlayback();
     this._dialogRef.close(this.selectedFiles());
   }
 
   cancel(): void {
+    this.stopPreviewAudioPlayback();
     this._dialogRef.close();
+  }
+
+  ngOnDestroy(): void {
+    this.stopPreviewAudioPlayback();
   }
 
   deselectAll(): void {
@@ -553,5 +563,18 @@ export class FileManagerComponent implements OnInit {
     if (url) {
       window.open(url, '_blank');
     }
+  }
+
+  private stopPreviewAudioPlayback(): void {
+    const container = this.fileManagerContainer?.nativeElement;
+    if (!container) {
+      return;
+    }
+
+    const audioElements = container.querySelectorAll('audio');
+    audioElements.forEach((audioElement) => {
+      audioElement.pause();
+      audioElement.currentTime = 0;
+    });
   }
 }

@@ -13,15 +13,16 @@
           [placeholder]="'aiSystemPrompts.dialog.namePlaceholder' | translate"
         />
       </z-form-control>
-      @if (form.get('Name')?.hasError('required') && form.get('Name')?.touched)
-      {
-      <span z-form-error>{{
-        'aiSystemPrompts.validation.nameRequired' | translate
-      }}</span>
+      @if (
+        form.get('Name')?.hasError('required') && form.get('Name')?.touched
+      ) {
+        <span z-form-error>{{
+          'aiSystemPrompts.validation.nameRequired' | translate
+        }}</span>
       } @else if (form.get('Name')?.hasError('maxlength')) {
-      <span z-form-error>{{
-        'aiSystemPrompts.validation.nameMaxLength' | translate
-      }}</span>
+        <span z-form-error>{{
+          'aiSystemPrompts.validation.nameMaxLength' | translate
+        }}</span>
       }
     </z-form-field>
 
@@ -37,18 +38,20 @@
           [placeholder]="
             'aiSystemPrompts.dialog.promptTextPlaceholder' | translate
           "
-          rows="8"
+          rows="18"
         ></textarea>
       </z-form-control>
-      @if (form.get('PromptText')?.hasError('required') &&
-      form.get('PromptText')?.touched) {
-      <span z-form-error>{{
-        'aiSystemPrompts.validation.promptTextRequired' | translate
-      }}</span>
+      @if (
+        form.get('PromptText')?.hasError('required') &&
+        form.get('PromptText')?.touched
+      ) {
+        <span z-form-error>{{
+          'aiSystemPrompts.validation.promptTextRequired' | translate
+        }}</span>
       } @else if (form.get('PromptText')?.hasError('maxlength')) {
-      <span z-form-error>{{
-        'aiSystemPrompts.validation.promptTextMaxLength' | translate
-      }}</span>
+        <span z-form-error>{{
+          'aiSystemPrompts.validation.promptTextMaxLength' | translate
+        }}</span>
       }
     </z-form-field>
 
@@ -68,18 +71,18 @@
         />
       </z-form-control>
       @if (form.get('TenantId')?.hasError('maxlength')) {
-      <span z-form-error>{{
-        'aiSystemPrompts.validation.tenantIdMaxLength' | translate
-      }}</span>
+        <span z-form-error>{{
+          'aiSystemPrompts.validation.tenantIdMaxLength' | translate
+        }}</span>
       }
     </z-form-field>
 
     @if (errorMessage()) {
-    <z-alert
-      zType="destructive"
-      zIcon="circle-alert"
-      [zDescription]="errorMessage()!"
-    />
+      <z-alert
+        zType="destructive"
+        zIcon="circle-alert"
+        [zDescription]="errorMessage()!"
+      />
     }
 
     <div class="dialog-actions">
@@ -101,9 +104,9 @@
         id="submit-ai-system-prompt-btn"
       >
         @if (isEditMode()) {
-        {{ 'common.update' | translate }}
+          {{ 'common.update' | translate }}
         } @else {
-        {{ 'common.create' | translate }}
+          {{ 'common.create' | translate }}
         }
       </button>
     </div>

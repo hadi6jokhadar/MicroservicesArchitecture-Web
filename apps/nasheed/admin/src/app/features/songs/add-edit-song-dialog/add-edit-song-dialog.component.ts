@@ -202,7 +202,7 @@ export class AddEditSongDialogComponent {
       const cmd: UpdateSongCommand = {
         id: this.data.song.id,
         title: this.form.controls.title.value,
-        artistId: parsedArtistId,
+        artistId: parsedArtistId === undefined ? null : parsedArtistId,
         fileId: this.form.controls.fileId.value ?? undefined,
         copyrightRiskLevel:
           this.form.controls.copyrightRiskLevel.value !== 'all'

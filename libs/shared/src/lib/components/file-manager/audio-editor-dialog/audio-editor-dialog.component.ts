@@ -208,6 +208,8 @@ export class AudioEditorDialogComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.stopPlayback();
+
     if (this._onWheelOriginal) {
       this.waveformHost.nativeElement.removeEventListener(
         'wheel',
@@ -369,6 +371,7 @@ export class AudioEditorDialogComponent implements AfterViewInit, OnDestroy {
   }
 
   cancel(): void {
+    this.stopPlayback();
     this._dialogRef.close({ success: false } as IAudioEditorDialogResult);
   }
 
@@ -384,6 +387,7 @@ export class AudioEditorDialogComponent implements AfterViewInit, OnDestroy {
       const hasEdits = isTrimmed || this.enhanceAudio();
 
       if (!hasEdits) {
+        this.stopPlayback();
         this._dialogRef.close({
           success: true,
           file: this.sourceFile,
@@ -399,6 +403,7 @@ export class AudioEditorDialogComponent implements AfterViewInit, OnDestroy {
       );
 
       this.progressStep.set('fileManager.audioEditor.progress.finishing');
+      this.stopPlayback();
       this._dialogRef.close({
         success: true,
         file: processedFile,
@@ -409,6 +414,18 @@ export class AudioEditorDialogComponent implements AfterViewInit, OnDestroy {
     } finally {
       this.isProcessing.set(false);
       this.progressStep.set(null);
+    }
+  }
+
+  private stopPlayback(): void {
+    this._waveSurfer?.pause();
+    this._waveSurferEnhanced?.pause();
+    this.isPlaying.set(false);
+    this.isPlayingEnhanced.set(false);
+
+    if (this._audioElement) {
+      this._audioElement.pause();
+      this._audioElement.currentTime = 0;
     }
   }
 

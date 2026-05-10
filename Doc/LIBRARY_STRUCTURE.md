@@ -57,7 +57,7 @@ export class LoginComponent {
   - `ai-chat/` — AI chat UI component
   - `ai-embedding/` — AI embedding component
   - `login/` — Login form component
-  - `file-manager/` — File manager UI with upload, inline audio preview for music files, and direct file removal
+  - `file-manager/` — File manager UI with upload, inline audio preview for music files, direct file removal, and close-time preview playback cleanup
     - `audio-editor-dialog/` — Pre-upload dialog: waveform trimming, audio enhancement, WebM/Opus encoding via Web Codecs API
   - `file-selector/` — File selection component
   - `forgot-password/` — Password recovery component
@@ -127,6 +127,7 @@ Pre-upload dialog that lets users trim an audio region and optionally apply audi
 | **Mouse wheel zoom**       | Scroll on either waveform to zoom in/out; Reset Zoom button restores the default view               |
 | **Audio enhancement**      | Optional toggle — applies +1.2x gain and −18 dB compression via Tone.js                             |
 | **Enhanced preview**       | When enhancement is on, a second waveform shows the processed audio for A/B comparison              |
+| **Close cleanup**          | Any active playback (original/enhanced) is paused and reset when the dialog closes or is destroyed  |
 | **Progress steps**         | Submit shows labelled progress: Preparing → Decoding → Trimming → Enhancing → Encoding → Finalizing |
 | **Selection metadata**     | Displays From / To / Length / estimated file size in real time                                      |
 | **WebM/Opus encoding**     | Encodes via Web Codecs API + `webm-muxer`; timestamps are integer-arithmetic (no clock drift)       |

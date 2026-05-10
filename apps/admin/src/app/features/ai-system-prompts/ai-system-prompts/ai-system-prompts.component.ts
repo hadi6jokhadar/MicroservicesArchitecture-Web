@@ -74,7 +74,7 @@ export class AiSystemPromptsComponent {
   readonly isLoading = signal(false);
   readonly prompts = signal<IAiSystemPrompt[]>(
     (this._route.snapshot.data['prompts'] as IAiSystemPrompt[] | undefined) ||
-      []
+      [],
   );
 
   readonly currentPage = signal(1);
@@ -152,8 +152,8 @@ export class AiSystemPromptsComponent {
         this.isLoading.set(false);
         toast.error(
           this._translationService.getCachedTranslation(
-            'aiSystemPrompts.messages.loadFailed'
-          )
+            'aiSystemPrompts.messages.loadFailed',
+          ),
         );
       },
     });
@@ -176,14 +176,15 @@ export class AiSystemPromptsComponent {
   onAddPrompt(): void {
     this._dialogService.create({
       zTitle: this._translationService.getCachedTranslation(
-        'aiSystemPrompts.dialog.addTitle'
+        'aiSystemPrompts.dialog.addTitle',
       ),
       zDescription: this._translationService.getCachedTranslation(
-        'aiSystemPrompts.dialog.addDescription'
+        'aiSystemPrompts.dialog.addDescription',
       ),
       zContent: AddEditAiSystemPromptDialogComponent,
       zHideFooter: true,
       zWidth: '600px',
+      zCustomClasses: 'z-dialog-max-width-100',
       zClosable: false,
     });
   }
@@ -191,15 +192,16 @@ export class AiSystemPromptsComponent {
   onEditPrompt(prompt: IAiSystemPrompt): void {
     this._dialogService.create({
       zTitle: this._translationService.getCachedTranslation(
-        'aiSystemPrompts.dialog.editTitle'
+        'aiSystemPrompts.dialog.editTitle',
       ),
       zDescription: this._translationService.getCachedTranslation(
-        'aiSystemPrompts.dialog.editDescription'
+        'aiSystemPrompts.dialog.editDescription',
       ),
       zContent: AddEditAiSystemPromptDialogComponent,
       zData: { prompt },
       zHideFooter: true,
       zWidth: '600px',
+      zCustomClasses: 'z-dialog-max-width-100',
       zClosable: true,
     });
   }
@@ -222,7 +224,7 @@ export class AiSystemPromptsComponent {
 
     this._alertDialogService.confirm({
       zTitle: this._translationService.getCachedTranslation(
-        'aiSystemPrompts.dialog.deleteTitle'
+        'aiSystemPrompts.dialog.deleteTitle',
       ),
       zDescription: description,
       zOkText: this._translationService.getCachedTranslation('common.delete'),
@@ -234,16 +236,16 @@ export class AiSystemPromptsComponent {
           next: () => {
             toast.success(
               this._translationService.getCachedTranslation(
-                'aiSystemPrompts.messages.deleted'
-              )
+                'aiSystemPrompts.messages.deleted',
+              ),
             );
             this._eventsService.notifyDataChanged();
           },
           error: () => {
             toast.error(
               this._translationService.getCachedTranslation(
-                'aiSystemPrompts.messages.deleteFailed'
-              )
+                'aiSystemPrompts.messages.deleteFailed',
+              ),
             );
           },
         });
@@ -252,7 +254,7 @@ export class AiSystemPromptsComponent {
   }
 
   getTenantBadgeType(
-    tenantId?: string | null
+    tenantId?: string | null,
   ): 'default' | 'secondary' | 'destructive' | 'outline' {
     return tenantId ? 'outline' : 'default';
   }

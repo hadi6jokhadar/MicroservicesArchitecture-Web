@@ -1,16 +1,17 @@
 :host {
   display: block;
-
   .dialog-container {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    height: 100%;
   }
 
   .dialog-form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    height: 100%;
 
     textarea[z-input] {
       resize: vertical;
