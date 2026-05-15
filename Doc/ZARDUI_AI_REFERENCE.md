@@ -846,7 +846,7 @@ import { ZardIconComponent } from '@ihsan/ui';
 **Available Icons in ZARD_ICONS:**
 
 ```typescript
-'house',
+('house',
   'settings',
   'user',
   'search',
@@ -932,7 +932,7 @@ import { ZardIconComponent } from '@ihsan/ui';
   'credit-card',
   'activity',
   'circle-dollar-sign',
-  'circle-small';
+  'circle-small');
 ```
 
 ````
@@ -1727,3 +1727,6 @@ this._sheetService.create({
 **Version:** 3.2 (100% Verified)  
 **Last Updated:** January 28, 2026  
 **Verification:** All properties verified against actual component source code
+
+- For import paths and selectors only: `libs\ui\src\lib\zard\zard-quick-ref.md`
+- ZARDUI_AI_REFERENCE.md takes priority over all other Zard references
