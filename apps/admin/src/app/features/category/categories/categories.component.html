@@ -1,0 +1,302 @@
+<div class="categories-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>{{ 'page.title.categories' | translate }}</h1>
+        <p>{{ 'page.subtitle.categories' | translate }}</p>
+      </div>
+      <div class="header-actions">
+        <button z-button zType="default" zSize="lg" (click)="onAddRoot()">
+          <z-icon zType="plus" />
+          {{ 'category.addCategory' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Card -->
+  <z-card>
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <z-form-field
+          class="filter-field search-field"
+          zardId="searchTerm"
+          #s="zardId"
+        >
+          <label z-form-label [for]="s.id()">{{
+            'common.search' | translate
+          }}</label>
+          <z-form-control>
+            <div class="search-input-wrapper">
+              <z-icon zType="search" class="search-icon" />
+              <input
+                z-input
+                [id]="s.id()"
+                type="text"
+                formControlName="searchTerm"
+                [placeholder]="'category.searchPlaceholder' | translate"
+              />
+            </div>
+          </z-form-control>
+        </z-form-field>
+
+        <div class="filter-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            (click)="onClearFilters()"
+            type="button"
+          >
+            <z-icon zType="x" />
+            {{ 'common.clearFilters' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </z-card>
+
+  <!-- Table Card -->
+  <z-card class="table-card">
+    @if (isLoading()) {
+      <div class="loading-container">
+        <z-loader zSize="lg" />
+        <p>{{ 'common.loading' | translate }}</p>
+      </div>
+    } @else if (getFlatRows().length === 0) {
+      <div class="empty-container">
+        <z-empty
+          zIcon="folder-open"
+          [zTitle]="'common.noResults' | translate"
+        />
+      </div>
+    } @else {
+      <div class="table-container">
+        <div class="table-header">
+          <div class="results-info">
+            <z-icon zType="list" />
+            <span
+              >{{ getFlatRows().length }}
+              {{ 'common.results' | translate }}</span
+            >
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table z-table class="standard-table">
+            <thead z-table-header>
+              <tr z-table-row>
+                <th z-table-head class="col-drag"></th>
+                <th z-table-head class="col-name">
+                  {{ 'common.name' | translate }}
+                </th>
+                <th z-table-head class="col-slug">
+                  {{ 'category.table.slug' | translate }}
+                </th>
+                <th z-table-head class="col-depth">
+                  {{ 'category.table.depth' | translate }}
+                </th>
+                <th z-table-head class="col-path">
+                  {{ 'category.table.path' | translate }}
+                </th>
+                <th z-table-head class="col-icon-file">
+                  {{ 'category.table.iconFile' | translate }}
+                </th>
+                <th z-table-head class="col-image-file">
+                  {{ 'category.table.imageFile' | translate }}
+                </th>
+                <th z-table-head class="col-actions">
+                  {{ 'common.actions' | translate }}
+                </th>
+              </tr>
+            </thead>
+            <tbody z-table-body>
+              <!-- Root drop zone: drop here to promote a category to root -->
+              @if (draggedNode()) {
+                <tr
+                  z-table-row
+                  class="root-drop-zone"
+                  [class.drag-over-root]="isOverRootZone()"
+                  (dragover)="onDragOverRootZone($event)"
+                  (dragleave)="onDragLeaveRootZone($event)"
+                  (drop)="onDropRootZone($event)"
+                >
+                  <td z-table-cell colspan="8" class="root-drop-cell">
+                    <z-icon zType="folder-tree" />
+                    {{ 'category.drag.dropHere' | translate }}
+                  </td>
+                </tr>
+              }
+              @for (row of getFlatRows(); track row.node.id) {
+                <tr
+                  z-table-row
+                  class="standard-row"
+                  [class.is-dragging]="draggedNode()?.id === row.node.id"
+                  [class.drop-target]="dropTargetId() === row.node.id"
+                  [draggable]="true"
+                  (dragstart)="onDragStart($event, row.node)"
+                  (dragover)="onDragOver($event, row.node)"
+                  (dragleave)="onDragLeave($event)"
+                  (drop)="onDrop($event, row.node)"
+                  (dragend)="onDragEnd()"
+                >
+                  <!-- Drag handle -->
+                  <td z-table-cell class="col-drag">
+                    <div
+                      class="drag-handle"
+                      [title]="'category.drag.handle' | translate"
+                    >
+                      <span></span><span></span> <span></span><span></span>
+                      <span></span><span></span>
+                    </div>
+                  </td>
+
+                  <!-- Name (collapsible) -->
+                  <td
+                    z-table-cell
+                    class="col-name"
+                    [attr.data-label]="'common.name' | translate"
+                  >
+                    <div
+                      class="name-cell"
+                      [style.padding-inline-start.px]="row.depth * 24"
+                    >
+                      @if (hasChildren(row.node)) {
+                        <button
+                          class="collapse-btn"
+                          type="button"
+                          (click)="toggleCollapse(row.node.id)"
+                          [title]="
+                            (isCollapsed(row.node.id)
+                              ? 'category.expand'
+                              : 'category.collapse'
+                            ) | translate
+                          "
+                        >
+                          <z-icon
+                            [zType]="
+                              isCollapsed(row.node.id)
+                                ? 'chevron-right'
+                                : 'chevron-down'
+                            "
+                          />
+                        </button>
+                      } @else {
+                        <span class="leaf-spacer"></span>
+                      }
+                      @if (row.node.iconName) {
+                        <z-icon
+                          [zType]="$any(row.node.iconName)"
+                          class="category-icon"
+                        />
+                      }
+                      <span class="name-text">{{
+                        getDisplayName(row.node)
+                      }}</span>
+                    </div>
+                  </td>
+
+                  <!-- Slug -->
+                  <td
+                    z-table-cell
+                    class="col-slug"
+                    [attr.data-label]="'category.table.slug' | translate"
+                  >
+                    <code class="slug-badge">{{ row.node.slug }}</code>
+                  </td>
+
+                  <!-- Depth -->
+                  <td
+                    z-table-cell
+                    class="col-depth"
+                    [attr.data-label]="'category.table.depth' | translate"
+                  >
+                    {{ row.node.depth }}
+                  </td>
+
+                  <!-- Path -->
+                  <td
+                    z-table-cell
+                    class="col-path"
+                    [attr.data-label]="'category.table.path' | translate"
+                  >
+                    <span class="path-text">{{ row.node.path }}</span>
+                  </td>
+
+                  <!-- Icon File -->
+                  <td
+                    z-table-cell
+                    class="col-icon-file"
+                    [attr.data-label]="'category.table.iconFile' | translate"
+                  >
+                    @if (row.node.iconFile) {
+                      <img
+                        [src]="row.node.iconFile.url"
+                        class="category-thumbnail"
+                        [alt]="row.node.iconName || ''"
+                      />
+                    } @else {
+                      <span class="no-thumbnail">—</span>
+                    }
+                  </td>
+
+                  <!-- Image File -->
+                  <td
+                    z-table-cell
+                    class="col-image-file"
+                    [attr.data-label]="'category.table.imageFile' | translate"
+                  >
+                    @if (row.node.imageFile) {
+                      <img
+                        [src]="row.node.imageFile.url"
+                        class="category-thumbnail"
+                        [alt]="row.node.slug"
+                      />
+                    } @else {
+                      <span class="no-thumbnail">—</span>
+                    }
+                  </td>
+
+                  <!-- Actions -->
+                  <td z-table-cell class="col-actions">
+                    <div class="action-buttons">
+                      <button
+                        z-button
+                        zType="ghost"
+                        zSize="sm"
+                        [title]="'category.addChild' | translate"
+                        (click)="onAddChild(row.node)"
+                      >
+                        <z-icon zType="plus-circle" />
+                      </button>
+                      <button
+                        z-button
+                        zType="ghost"
+                        zSize="sm"
+                        [title]="'common.edit' | translate"
+                        (click)="onEdit(row.node)"
+                      >
+                        <z-icon zType="pencil" />
+                      </button>
+                      <button
+                        z-button
+                        zType="ghost"
+                        zSize="sm"
+                        [title]="'common.delete' | translate"
+                        (click)="onDelete(row.node)"
+                        class="delete-btn"
+                      >
+                        <z-icon zType="trash" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </z-card>
+</div>

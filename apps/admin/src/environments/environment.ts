@@ -9,5 +9,6 @@ export const environment: Environment = {
     fileManager: 'http://localhost:5005',
     translation: 'http://localhost:5006',
     ai: 'http://localhost:5008',
+    category: 'http://localhost:5007',
   },
 };

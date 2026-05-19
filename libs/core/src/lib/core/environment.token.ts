@@ -10,6 +10,7 @@ export interface Environment {
     fileManager: string;
     translation: string;
     ai: string;
+    category: string;
     nasheed?: string;
   };
 }

@@ -161,6 +161,14 @@ export class PagesComponent {
       route: '/ai-token-usage-logs',
       type: SidebarPageType.Management,
     }),
+    new SidebarPageClass({
+      translationKey: 'sidebar.pages.categories',
+      icon: 'folder-tree' as ZardIcon,
+      group: 'sidebar.groups.system',
+      roles: ['Admin', 'SuperAdmin'],
+      route: '/categories',
+      type: SidebarPageType.Management,
+    }),
   ]);
 
   currentUser = computed<ISidebarUser>(() => {
@@ -193,7 +201,7 @@ export class PagesComponent {
     if (isPlatformBrowser(this._platformId)) {
       const savedTheme = localStorage.getItem(this.DARK_MODE_KEY);
       const prefersDark = window.matchMedia(
-        '(prefers-color-scheme: dark)'
+        '(prefers-color-scheme: dark)',
       ).matches;
       const shouldBeDark =
         savedTheme === 'dark' || (!savedTheme && prefersDark);

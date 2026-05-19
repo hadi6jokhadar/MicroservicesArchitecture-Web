@@ -19,7 +19,7 @@
           {
             "glob": "**/*",
             "input": "apps/admin/public"
-          },
+          }
         ],
         "styles": ["apps/admin/src/styles.css"]
       },
@@ -130,6 +130,13 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "start cmd /k node ..\\MicroservicesArchitecture\\src\\Services\\AI\\AI.API\\run-development-instance.mjs"
+      }
+    },
+    "start-category": {
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "start cmd /k node ..\\MicroservicesArchitecture\\src\\Services\\Category\\Category.API\\run-development-instance.mjs"
       }
     }
   }

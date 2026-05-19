@@ -22,6 +22,9 @@ export * from './lib/ai-system-prompts';
 // AI Chat
 export * from './lib/ai-chat';
 
+// Category
+export * from './lib/category';
+
 // Interceptors
 export * from './lib/interceptors';
 

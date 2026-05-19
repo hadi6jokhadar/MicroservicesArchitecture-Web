@@ -100,6 +100,10 @@ import {
   RefreshCw,
   Play,
   Pause,
+  Pencil,
+  PlusCircle,
+  List,
+  FolderTree,
 } from 'lucide-angular';
 
 const DarkMode: LucideIconData = [
@@ -212,6 +216,10 @@ export const ZARD_ICONS = {
   'refresh-cw': RefreshCw,
   play: Play,
   pause: Pause,
+  pencil: Pencil,
+  'plus-circle': PlusCircle,
+  list: List,
+  'folder-tree': FolderTree,
 } as const satisfies Record<string, LucideIconData>;
 
 export declare type ZardIcon = keyof typeof ZARD_ICONS | LucideIconData;

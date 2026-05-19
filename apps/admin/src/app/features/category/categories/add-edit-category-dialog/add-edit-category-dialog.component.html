@@ -1,0 +1,194 @@
+<div class="dialog-container">
+  <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="dialog-form">
+    <!-- Name (English) -->
+    <z-form-field zardId="nameEn" #ne="zardId">
+      <label z-form-label [for]="ne.id()">
+        {{ 'category.dialog.nameEnLabel' | translate }} *
+      </label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="ne.id()"
+          type="text"
+          formControlName="nameEn"
+          [placeholder]="'category.dialog.nameEnPlaceholder' | translate"
+        />
+      </z-form-control>
+      @if (
+        categoryForm.get('nameEn')?.hasError('required') &&
+        categoryForm.get('nameEn')?.touched
+      ) {
+        <span z-form-error>{{
+          'category.validation.nameEnRequired' | translate
+        }}</span>
+      } @else if (categoryForm.get('nameEn')?.hasError('maxlength')) {
+        <span z-form-error>{{
+          'category.validation.nameMaxLength' | translate
+        }}</span>
+      }
+    </z-form-field>
+
+    <!-- Name (Arabic) -->
+    <z-form-field zardId="nameAr" #na="zardId">
+      <label z-form-label [for]="na.id()">
+        {{ 'category.dialog.nameArLabel' | translate }}
+      </label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="na.id()"
+          type="text"
+          formControlName="nameAr"
+          [placeholder]="'category.dialog.nameArPlaceholder' | translate"
+          dir="rtl"
+        />
+      </z-form-control>
+      @if (categoryForm.get('nameAr')?.hasError('maxlength')) {
+        <span z-form-error>{{
+          'category.validation.nameMaxLength' | translate
+        }}</span>
+      }
+    </z-form-field>
+
+    <!-- Slug -->
+    <z-form-field zardId="slug" #sl="zardId">
+      <label z-form-label [for]="sl.id()">
+        {{ 'category.dialog.slugLabel' | translate }} *
+      </label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="sl.id()"
+          type="text"
+          formControlName="slug"
+          [placeholder]="'category.dialog.slugPlaceholder' | translate"
+        />
+      </z-form-control>
+      @if (
+        categoryForm.get('slug')?.hasError('required') &&
+        categoryForm.get('slug')?.touched
+      ) {
+        <span z-form-error>{{
+          'category.validation.slugRequired' | translate
+        }}</span>
+      } @else if (categoryForm.get('slug')?.hasError('maxlength')) {
+        <span z-form-error>{{
+          'category.validation.slugMaxLength' | translate
+        }}</span>
+      }
+    </z-form-field>
+
+    <!-- URI -->
+    <z-form-field zardId="uri" #ur="zardId">
+      <label z-form-label [for]="ur.id()">
+        {{ 'category.dialog.uriLabel' | translate }}
+      </label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="ur.id()"
+          type="text"
+          formControlName="uri"
+          [placeholder]="'category.dialog.uriPlaceholder' | translate"
+        />
+      </z-form-control>
+    </z-form-field>
+
+    <!-- Icon Name -->
+    <z-form-field zardId="iconName" #ic="zardId">
+      <label z-form-label [for]="ic.id()">
+        {{ 'category.dialog.iconNameLabel' | translate }}
+      </label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="ic.id()"
+          type="text"
+          formControlName="iconName"
+          [placeholder]="'category.dialog.iconNamePlaceholder' | translate"
+        />
+      </z-form-control>
+    </z-form-field>
+
+    <!-- Parent ID (only on create) -->
+    @if (!isEditMode()) {
+      <z-form-field zardId="parentId" #pi="zardId">
+        <label z-form-label [for]="pi.id()">
+          {{ 'category.dialog.parentIdLabel' | translate }}
+        </label>
+        <z-form-control>
+          <input
+            z-input
+            [id]="pi.id()"
+            type="number"
+            formControlName="parentId"
+            [placeholder]="'category.dialog.parentIdPlaceholder' | translate"
+          />
+        </z-form-control>
+      </z-form-field>
+    }
+
+    <!-- Icon File -->
+    <div class="file-selector-field">
+      <p class="file-selector-label">
+        {{ 'category.dialog.iconFileLabel' | translate }}
+      </p>
+      <shared-file-selector
+        [label]="'category.dialog.iconFileButton' | translate"
+        [maxFiles]="1"
+        selectionMode="single"
+        [type]="FileType.Image"
+        [group]="FileGroup.Project"
+        [files]="existingIconFiles"
+        buttonType="outline"
+        (filesChanged)="onIconFileSelected($event)"
+      />
+    </div>
+
+    <!-- Image File -->
+    <div class="file-selector-field">
+      <p class="file-selector-label">
+        {{ 'category.dialog.imageFileLabel' | translate }}
+      </p>
+      <shared-file-selector
+        [label]="'category.dialog.imageFileButton' | translate"
+        [maxFiles]="1"
+        selectionMode="single"
+        [type]="FileType.Image"
+        [group]="FileGroup.Project"
+        [files]="existingImageFiles"
+        buttonType="outline"
+        (filesChanged)="onImageFileSelected($event)"
+      />
+    </div>
+
+    <!-- Error Display -->
+    @if (errorMessage()) {
+      <z-alert
+        zType="destructive"
+        zIcon="circle-alert"
+        [zDescription]="errorMessage()!"
+      />
+    }
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <button z-button zType="outline" type="button" (click)="onCancel()">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        z-button
+        zType="default"
+        type="submit"
+        [zLoading]="isLoading()"
+        [zDisabled]="categoryForm.invalid"
+      >
+        @if (isEditMode()) {
+          {{ 'common.save' | translate }}
+        } @else {
+          {{ 'common.create' | translate }}
+        }
+      </button>
+    </div>
+  </form>
+</div>

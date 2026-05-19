@@ -1,0 +1,345 @@
+:host {
+  display: block;
+
+  .categories-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 1400px;
+    margin-inline: auto;
+  }
+
+  // ── Header ──────────────────────────────────────────────────────────────
+
+  .header {
+    margin-block-end: 1rem;
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-text {
+      h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-foreground);
+        margin-block-end: 0.25rem;
+      }
+
+      p {
+        margin: 0;
+        color: var(--color-muted-foreground);
+        font-size: 0.9375rem;
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+  }
+
+  // ── Filter Form ──────────────────────────────────────────────────────────
+
+  .filter-form {
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-end;
+
+      .filter-field {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .search-field {
+        flex: 2;
+
+        .search-input-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+
+          .search-icon {
+            position: absolute;
+            inset-inline-start: 0.75rem;
+            color: var(--color-muted-foreground);
+            pointer-events: none;
+          }
+
+          input {
+            padding-inline-start: 2.25rem;
+          }
+        }
+      }
+
+      .filter-actions {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+    }
+  }
+
+  // ── Table Card ───────────────────────────────────────────────────────────
+
+  .table-card {
+    .loading-container,
+    .empty-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-block: 4rem;
+      gap: 1rem;
+
+      p {
+        margin: 0;
+        color: var(--color-muted-foreground);
+      }
+    }
+
+    .table-container {
+      .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-block-end: 1rem;
+        border-block-end: 1px solid var(--color-border);
+        margin-block-end: 1rem;
+
+        .results-info {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: var(--color-muted-foreground);
+          font-size: 0.875rem;
+
+          z-icon {
+            color: var(--color-primary);
+          }
+        }
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+      }
+    }
+  }
+
+  // ── Tree / Row cells ─────────────────────────────────────────────────────
+
+  .col-name {
+    min-width: 220px;
+  }
+  .col-slug {
+    min-width: 140px;
+  }
+  .col-depth {
+    width: 80px;
+    text-align: center;
+  }
+  .col-path {
+    min-width: 180px;
+  }
+  .col-icon-file,
+  .col-image-file {
+    width: 80px;
+    text-align: center;
+  }
+
+  .category-thumbnail {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 0.375rem;
+    border: 1px solid var(--color-border);
+  }
+
+  .no-thumbnail {
+    color: var(--color-muted-foreground);
+    font-size: 1rem;
+  }
+
+  .col-actions {
+    width: 130px;
+    text-align: end;
+  }
+
+  .name-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    .collapse-btn {
+      background: none;
+      border: none;
+      padding: 0.15rem;
+      cursor: pointer;
+      color: var(--color-muted-foreground);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      transition: color 0.15s;
+
+      &:hover {
+        color: var(--color-foreground);
+      }
+    }
+
+    .leaf-spacer {
+      display: inline-block;
+      width: 1.25rem;
+    }
+
+    .category-icon {
+      color: var(--color-primary);
+      flex-shrink: 0;
+    }
+
+    .name-text {
+      font-weight: 500;
+    }
+  }
+
+  .slug-badge {
+    background: var(--color-muted);
+    color: var(--color-muted-foreground);
+    padding: 0.15rem 0.4rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+  }
+
+  .path-text {
+    color: var(--color-muted-foreground);
+    font-size: 0.85rem;
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.25rem;
+
+    .delete-btn {
+      color: var(--color-destructive);
+
+      &:hover {
+        background: color-mix(
+          in srgb,
+          var(--color-destructive) 10%,
+          transparent
+        );
+      }
+    }
+  }
+
+  // ── Responsive ───────────────────────────────────────────────────────────
+
+  @media (max-width: 768px) {
+    .table-card {
+      .table-container {
+        .table-wrapper {
+          thead {
+            display: none;
+          }
+
+          tbody tr {
+            display: grid;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            margin-block-end: 1rem;
+            padding: 0.75rem;
+          }
+
+          tbody td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-block: 0.5rem;
+            border-block-end: 1px solid var(--color-border);
+
+            &:last-child {
+              border-block-end: none;
+            }
+
+            &::before {
+              content: attr(data-label);
+              font-weight: 600;
+              color: var(--color-foreground);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // ── Drag and drop ────────────────────────────────────────────────────────
+
+  .col-drag {
+    width: 2rem;
+    padding-inline: 0.25rem;
+  }
+
+  .drag-handle {
+    display: grid;
+    grid-template-columns: repeat(2, 4px);
+    gap: 3px;
+    padding: 4px;
+    cursor: grab;
+    opacity: 0.35;
+    transition: opacity 0.15s;
+
+    span {
+      display: block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--color-foreground);
+    }
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  tr.is-dragging {
+    opacity: 0.4;
+  }
+
+  tr.drop-target {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  }
+
+  .root-drop-zone {
+    transition: background 0.15s;
+  }
+
+  .root-drop-cell {
+    text-align: center;
+    padding-block: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--color-muted-foreground);
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  tr.drag-over-root .root-drop-cell {
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+}

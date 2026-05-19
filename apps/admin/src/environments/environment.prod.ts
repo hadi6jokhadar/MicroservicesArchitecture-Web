@@ -9,5 +9,6 @@ export const environment: Environment = {
     fileManager: 'https://api.yourdomain.com/filemanager',
     translation: 'https://api.yourdomain.com/translation',
     ai: 'https://api.yourdomain.com/ai',
+    category: 'https://api.yourdomain.com/category',
   },
 };
