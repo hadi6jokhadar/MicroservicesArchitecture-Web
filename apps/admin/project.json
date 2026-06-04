@@ -138,6 +138,12 @@
       "options": {
         "command": "start cmd /k node ..\\MicroservicesArchitecture\\src\\Services\\Category\\Category.API\\run-development-instance.mjs"
       }
+    },
+    "start-observability": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node ..\\MicroservicesArchitecture\\src\\Services\\start-observability.mjs"
+      }
     }
   }
 }
