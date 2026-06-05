@@ -102,15 +102,18 @@ Before marking any task complete:
 
 ## Auto-Maintenance Rules
 
-After completing ANY task, self-check and update instruction files:
+After completing ANY task, self-check and update ALL affected files. These are **required** steps — a task is not done until they are complete.
 
-| Change Made | Section to Update |
-|---|---|
-| New/deleted/renamed `Doc/*.md` | This file → "Documentation" reading list |
-| New Zardui component installed | This file → available components note |
-| New lib added to `libs/` | This file → Project Structure |
-| New page/feature pattern | This file → reference feature path |
-| New Angular doc in `Doc/` | Root `CLAUDE.md` → "Key File Locations" table |
+| Change Made | File(s) to Update | Section |
+|---|---|---|
+| New/deleted/renamed `Doc/*.md` | This file | "Documentation" reading list |
+| New/deleted/renamed `Doc/*.md` | Root `CLAUDE.md` | "Key File Locations" table |
+| New Zardui component installed | This file | Available Zardui Components |
+| New lib added to `libs/` | This file | Project Structure |
+| New page/feature pattern discovered | `.claude/instructions/Angular.instructions.md` | Relevant section |
+| New Zardui usage rule discovered | `.claude/instructions/Zardui-Strict.instructions.md` | Relevant section |
+| Translation keys added | `apps/admin/src/assets/i18n/en.json` + `ar.json` | Respective key sections |
+| New anti-pattern discovered | `.claude/instructions/Angular.instructions.md` | "Common Pitfalls to Avoid" |
 
 ---
 

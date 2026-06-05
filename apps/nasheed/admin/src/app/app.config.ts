@@ -9,6 +9,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { appRoutes } from './app.routes';
 import { provideZard } from '@ihsan/ui/lib/zard/core/provider/providezard';
 import {
+  correlationIdInterceptor,
   ENVIRONMENT,
   tenantInterceptor,
   tokenInterceptor,
@@ -22,7 +23,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(appRoutes),
     provideHttpClient(
-      withInterceptors([errorInterceptor, tokenInterceptor, tenantInterceptor])
+      withInterceptors([correlationIdInterceptor, errorInterceptor, tokenInterceptor, tenantInterceptor])
     ),
     provideAnimationsAsync(),
     { provide: ENVIRONMENT, useValue: environment },

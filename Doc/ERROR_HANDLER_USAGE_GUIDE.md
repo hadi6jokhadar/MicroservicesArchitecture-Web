@@ -713,6 +713,91 @@ this._service.someMethod(data, context).subscribe({
 
 ---
 
-**Version:** 1.0  
-**Last Updated:** January 25, 2026  
+---
+
+## 🔗 HTTP Interceptors Reference
+
+All HTTP interceptors live in `libs/core/src/lib/interceptors/` and are registered in each app's `app.config.ts` via `withInterceptors([...])`.
+
+### Interceptor chain (order matters)
+
+```typescript
+// apps/admin/src/app/app.config.ts
+withInterceptors([
+  correlationIdInterceptor,  // 1. stamp/read X-Correlation-Id
+  errorInterceptor,          // 2. catch errors, show toast
+  tokenInterceptor,          // 3. attach Bearer token
+  tenantInterceptor,         // 4. attach x-tenant-id header
+])
+```
+
+Interceptors run **in order** for outgoing requests and **in reverse** for incoming responses. `correlationIdInterceptor` is first so the ID is stamped before anything else modifies the request; on the response path it runs last so it always sees the final echoed ID.
+
+---
+
+### `correlationIdInterceptor`
+
+**File:** `libs/core/src/lib/interceptors/correlation-id.interceptor.ts`  
+**Import:** `import { correlationIdInterceptor } from '@ihsan/core';`
+
+**What it does:**
+
+- **Outgoing request**: reads the current ID from `CorrelationIdService` and adds `X-Correlation-Id` header
+- **Incoming response**: reads the echoed `X-Correlation-Id` header from the backend response and calls `CorrelationIdService.update()` to store it for the next request
+
+**`CorrelationIdService`**
+
+**File:** `libs/core/src/lib/interceptors/correlation-id.service.ts`  
+**Import:** `import { CorrelationIdService } from '@ihsan/core';`
+
+```typescript
+@Injectable({ providedIn: 'root' })
+export class CorrelationIdService {
+  readonly current = signal(crypto.randomUUID()); // starts with a fresh UUID on app boot
+
+  update(id: string): void { ... }  // called automatically by the interceptor
+}
+```
+
+Inject `CorrelationIdService` anywhere to read the active ID — useful for logging it in error dialogs or support screens:
+
+```typescript
+private readonly _correlationId = inject(CorrelationIdService);
+
+showError(): void {
+  console.error('Request failed. Correlation ID:', this._correlationId.current());
+}
+```
+
+---
+
+### `errorInterceptor`
+
+**File:** `libs/shared/src/lib/interceptors/error.interceptor.ts`  
+**Import:** `import { errorInterceptor } from '@ihsan/shared';`
+
+Catches all HTTP errors. Shows a toast by default. Components can opt out with `new HttpContext().set(SKIP_ERROR_TOAST, true)`. See full documentation above.
+
+---
+
+### `tokenInterceptor`
+
+**File:** `libs/core/src/lib/identity/`  
+**Import:** `import { tokenInterceptor } from '@ihsan/core';`
+
+Reads the stored JWT access token and adds `Authorization: Bearer <token>` to every outgoing request. No action on requests that already have an `Authorization` header.
+
+---
+
+### `tenantInterceptor`
+
+**File:** `libs/core/src/lib/interceptors/tenant.interceptor.ts`  
+**Import:** `import { tenantInterceptor } from '@ihsan/core';`
+
+Reads `tenantId` from the injected `ENVIRONMENT` token and adds `x-tenant-id` header. Does nothing if `tenantId` is null/undefined (for apps that don't need tenant context).
+
+---
+
+**Version:** 1.1  
+**Last Updated:** June 5, 2026  
 **Maintained By:** Development Team

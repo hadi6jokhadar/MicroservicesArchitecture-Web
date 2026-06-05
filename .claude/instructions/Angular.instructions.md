@@ -62,9 +62,25 @@ Before writing ANY frontend code, you MUST:
 
 ## Documentation Protocol
 
-If you encounter a discrepancy between these rules and the codebase:
+### Before starting
 
-1. **Stop.**
-2. **Analyze** the `Doc/` folder.
-3. **Fix** the documentation if it misled you (Self-Correcting Documentation).
+Read `Doc/ZARDUI_AI_REFERENCE.md`, `Doc/TRANSLATION_SYSTEM_GUIDE.md`, and any other doc relevant to the task. State which files you read.
+
+### After every change — BLOCKING REQUIREMENT
+
+A task is **not complete** until:
+
+1. Every `Doc/*.md` that describes changed behavior has been updated in place
+2. `MicroservicesArchitecture-Web/CLAUDE.md` docs table reflects any added or removed doc files
+3. Both `en.json` and `ar.json` have been updated if any translation keys were added or renamed
+4. If a new Zardui usage pattern or anti-pattern was discovered: it is added to this file or to `Zardui-Strict.instructions.md`
+5. No stale information remains in any doc you touched during the task
+
+### Self-correcting docs
+
+If you make a mistake caused by incorrect or misleading documentation:
+
+1. **Stop.** Acknowledge the mistake.
+2. **Fix** the offending doc immediately with correct information.
+3. **Add** a warning or clarification to prevent repeating it.
 4. **Proceed** with the correct pattern.

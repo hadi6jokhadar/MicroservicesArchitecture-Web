@@ -1,6 +1,6 @@
 # Frontend Documentation Index
 
-**Last Updated:** May 7, 2026  
+**Last Updated:** June 5, 2026  
 **Purpose:** Central entry point for all Angular frontend documentation
 
 ---
@@ -14,7 +14,8 @@
 | **Translation & i18n** | [TRANSLATION_SYSTEM_GUIDE](#translation-system-guide) • [TRANSLATION_FEATURE_GUIDE](#translation-feature-guide)                             |
 | **Dialog & Overlays**  | [DIALOG_DESIGN_GUIDE](#dialog-design-guide)                                                                                                 |
 | **Authentication**     | [MULTI_MODE_AUTHENTICATION_GUIDE](#multi-mode-authentication-guide) • [IDENTITY_MODULE_GUIDE](#identity-module-guide)                       |
-| **Error Handling**     | [FRONTEND_ERROR_INTERCEPTOR_GUIDE](#frontend-error-interceptor-guide) • [ERROR_HANDLER_USAGE_GUIDE](#error-handler-usage-guide)             |
+| **Error Handling**     | [ERROR_HANDLER_USAGE_GUIDE](#error-handler-usage-guide)                                                                                     |
+| **HTTP Interceptors**  | [ERROR_HANDLER_USAGE_GUIDE → HTTP Interceptors Reference](#error-handler-usage-guide)                                                       |
 | **Design Patterns**    | [PAGE_CONTAINER_DESIGN_PATTERN](#page-container-design-pattern)                                                                             |
 
 ---
@@ -240,17 +241,19 @@
 
 ---
 
-### Error Handling
+### Error Handling & HTTP Interceptors
 
 #### ERROR_HANDLER_USAGE_GUIDE.md
 
-**Purpose:** Complete HTTP error handling guide (interceptor + component patterns)  
+**Purpose:** Complete HTTP error handling guide (interceptor + component patterns) + reference for all HTTP interceptors  
 **Read When:**
 
 - Implementing error handling in components
 - Understanding error interceptor
 - Handling API errors
 - Displaying error messages
+- Adding or modifying HTTP interceptors
+- Understanding how `X-Correlation-Id` is propagated from the frontend
 
 **Key Topics:**
 
@@ -261,6 +264,7 @@
 - z-alert component usage
 - Complete error flow diagrams
 - Backend error formats support
+- HTTP interceptors reference: `errorInterceptor`, `tokenInterceptor`, `tenantInterceptor`, `correlationIdInterceptor`
 
 ---
 
@@ -317,7 +321,8 @@ Each documentation file should have:
 | Handle RTL                       | TRANSLATION_SYSTEM_GUIDE.md → RTL Section                    |
 | Use an icon                      | ZARD_ICON_REFERENCE.md                                       |
 | Create a form                    | COMPONENT_USAGE_GUIDE.md → Form Components                   |
-| Handle errors                    | FRONTEND_ERROR_INTERCEPTOR_GUIDE.md                          |
+| Handle errors                    | ERROR_HANDLER_USAGE_GUIDE.md                                 |
+| Understand HTTP interceptors     | ERROR_HANDLER_USAGE_GUIDE.md → HTTP Interceptors Reference   |
 | Implement login                  | MULTI_MODE_AUTHENTICATION_GUIDE.md                           |
 | Create a page                    | ANGULAR_DESIGN_PATTERN.md + PAGE_CONTAINER_DESIGN_PATTERN.md |
 | Use AI for coding                | ZARDUI_AI_REFERENCE.md                                       |

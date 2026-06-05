@@ -8,7 +8,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { appRoutes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideZard } from '@ihsan/ui/lib/zard/core/provider/providezard';
-import { ENVIRONMENT, tenantInterceptor, tokenInterceptor } from '@ihsan/core';
+import { correlationIdInterceptor, ENVIRONMENT, tenantInterceptor, tokenInterceptor } from '@ihsan/core';
 import { errorInterceptor } from '@ihsan/shared';
 import { environment } from '../environments/environment';
 
@@ -18,7 +18,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(appRoutes),
     provideHttpClient(
-      withInterceptors([errorInterceptor, tokenInterceptor, tenantInterceptor])
+      withInterceptors([correlationIdInterceptor, errorInterceptor, tokenInterceptor, tenantInterceptor])
     ),
     provideAnimationsAsync(),
     { provide: ENVIRONMENT, useValue: environment },
