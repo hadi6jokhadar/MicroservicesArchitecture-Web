@@ -10,5 +10,7 @@ export const environment: Environment = {
     translation: 'https://api.yourdomain.com/translation',
     ai: 'https://api.yourdomain.com/ai',
     category: 'https://api.yourdomain.com/category',
+    nasheed: 'https://api.yourdomain.com/nasheed',
+    gateway: 'https://api.yourdomain.com',
   },
 };

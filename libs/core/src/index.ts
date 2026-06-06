@@ -25,6 +25,9 @@ export * from './lib/ai-chat';
 // Category
 export * from './lib/category';
 
+// Audit Log
+export * from './lib/audit-log';
+
 // Interceptors
 export * from './lib/interceptors';
 

@@ -10,5 +10,7 @@ export const environment: Environment = {
     translation: 'http://localhost:5006',
     ai: 'http://localhost:5008',
     category: 'http://localhost:5007',
+    nasheed: 'http://localhost:5009',
+    gateway: 'http://localhost:5000',
   },
 };

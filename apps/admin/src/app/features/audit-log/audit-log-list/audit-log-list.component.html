@@ -1,0 +1,346 @@
+<div class="audit-log-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-text">
+      <h1>{{ 'page.title.auditLog' | translate }}</h1>
+      <p>{{ 'page.subtitle.auditLog' | translate }}</p>
+    </div>
+  </div>
+
+  <!-- Source & Filters -->
+  <z-card>
+    <form [formGroup]="filterForm" class="filter-form">
+      <!-- Source Selector -->
+      <div class="source-row" [formGroup]="sourceForm">
+        <z-form-field class="source-field" zardId="source" #src="zardId">
+          <label z-form-label [for]="src.id()">
+            {{ 'auditLog.filters.sourceLabel' | translate }}
+          </label>
+          <z-form-control>
+            <z-select
+              formControlName="source"
+              [zPlaceholder]="'auditLog.filters.sourcePlaceholder' | translate"
+            >
+              @for (opt of sources; track opt.value) {
+              <z-select-item [zValue]="opt.value">
+                {{ opt.labelKey | translate }}
+              </z-select-item>
+              }
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+      </div>
+
+      <z-divider />
+
+      <!-- Filter Fields -->
+      <div class="filter-row">
+        <!-- User ID -->
+        <z-form-field class="filter-field" zardId="userId" #uid="zardId">
+          <label z-form-label [for]="uid.id()">
+            {{ 'common.userId' | translate }}
+          </label>
+          <z-form-control>
+            <input
+              z-input
+              [id]="uid.id()"
+              type="text"
+              formControlName="userId"
+              [placeholder]="'auditLog.filters.userIdPlaceholder' | translate"
+            />
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Action -->
+        <z-form-field class="filter-field" zardId="action" #act="zardId">
+          <label z-form-label [for]="act.id()">
+            {{ 'auditLog.table.action' | translate }}
+          </label>
+          <z-form-control>
+            <input
+              z-input
+              [id]="act.id()"
+              type="text"
+              formControlName="action"
+              [placeholder]="'auditLog.filters.actionPlaceholder' | translate"
+            />
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Entity Type -->
+        <z-form-field
+          class="filter-field"
+          zardId="entityType"
+          #etype="zardId"
+        >
+          <label z-form-label [for]="etype.id()">
+            {{ 'auditLog.table.entityType' | translate }}
+          </label>
+          <z-form-control>
+            <input
+              z-input
+              [id]="etype.id()"
+              type="text"
+              formControlName="entityType"
+              [placeholder]="
+                'auditLog.filters.entityTypePlaceholder' | translate
+              "
+            />
+          </z-form-control>
+        </z-form-field>
+      </div>
+
+      <div class="filter-row">
+        <!-- Start Date -->
+        <z-form-field
+          class="filter-field"
+          zardId="startDate"
+          #sdate="zardId"
+        >
+          <label z-form-label [for]="sdate.id()">
+            {{ 'auditLog.filters.startDate' | translate }}
+          </label>
+          <z-form-control>
+            <z-date-picker
+              formControlName="startDate"
+              [id]="sdate.id()"
+              [placeholder]="'auditLog.filters.datePlaceholder' | translate"
+              zFormat="MM/dd/yyyy"
+            />
+          </z-form-control>
+        </z-form-field>
+
+        <!-- End Date -->
+        <z-form-field class="filter-field" zardId="endDate" #edate="zardId">
+          <label z-form-label [for]="edate.id()">
+            {{ 'auditLog.filters.endDate' | translate }}
+          </label>
+          <z-form-control>
+            <z-date-picker
+              formControlName="endDate"
+              [id]="edate.id()"
+              [placeholder]="'auditLog.filters.datePlaceholder' | translate"
+              zFormat="MM/dd/yyyy"
+            />
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Sort By -->
+        <z-form-field class="filter-field" zardId="sortBy" #srt="zardId">
+          <label z-form-label [for]="srt.id()">
+            {{ 'auditLog.filters.sortBy' | translate }}
+          </label>
+          <z-form-control>
+            <z-select formControlName="sortBy">
+              @for (opt of sortByOptions; track opt.value) {
+              <z-select-item [zValue]="opt.value">
+                {{ opt.labelKey | translate }}
+              </z-select-item>
+              }
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Sort Direction -->
+        <z-form-field
+          class="filter-field filter-field--narrow"
+          zardId="sortDir"
+          #sdir="zardId"
+        >
+          <label z-form-label [for]="sdir.id()">
+            {{ 'auditLog.filters.sortDirection' | translate }}
+          </label>
+          <z-form-control>
+            <z-select formControlName="sortDescending">
+              <z-select-item zValue="true">
+                {{ 'auditLog.filters.sortDesc' | translate }}
+              </z-select-item>
+              <z-select-item zValue="false">
+                {{ 'auditLog.filters.sortAsc' | translate }}
+              </z-select-item>
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Actions -->
+        <div class="filter-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            (click)="onClearFilters()"
+            type="button"
+          >
+            <z-icon zType="x" />
+            {{ 'common.clear' | translate }}
+          </button>
+          <button
+            z-button
+            zType="default"
+            zSize="default"
+            (click)="onSearch()"
+            type="button"
+          >
+            <z-icon zType="search" />
+            {{ 'common.search' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </z-card>
+
+  <!-- Table -->
+  <z-card class="table-card">
+    @if (isLoading()) {
+    <div class="loading-container">
+      <z-loader zSize="lg" />
+      <p>{{ 'auditLog.messages.loading' | translate }}</p>
+    </div>
+    } @else if (logs().length === 0) {
+    <div class="empty-container">
+      <z-empty
+        zIcon="clipboard"
+        [zTitle]="'auditLog.messages.emptyTitle' | translate"
+        [zDescription]="'auditLog.messages.emptyDescription' | translate"
+      />
+    </div>
+    } @else {
+    <div class="table-container">
+      <div class="table-header">
+        <div class="results-info">
+          <z-icon zType="clipboard" />
+          <span>
+            {{ 'common.showing' | translate }}
+            {{ logs().length }}
+            {{ 'common.of' | translate }}
+            {{ totalCount() }}
+            {{ 'auditLog.items' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table z-table class="audit-table">
+          <thead z-table-header>
+            <tr z-table-row>
+              <th z-table-head>{{ 'auditLog.table.action' | translate }}</th>
+              <th z-table-head>
+                {{ 'auditLog.table.entityType' | translate }}
+              </th>
+              <th z-table-head>
+                {{ 'auditLog.table.entityId' | translate }}
+              </th>
+              <th z-table-head>{{ 'common.userId' | translate }}</th>
+              <th z-table-head>{{ 'common.tenant' | translate }}</th>
+              <th z-table-head>{{ 'auditLog.table.ipAddress' | translate }}</th>
+              <th z-table-head>
+                {{ 'auditLog.table.timestamp' | translate }}
+              </th>
+              <th z-table-head>{{ 'auditLog.table.details' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody z-table-body>
+            @for (log of logs(); track log.id) {
+            <tr z-table-row class="log-row">
+              <td
+                z-table-cell
+                [attr.data-label]="'auditLog.table.action' | translate"
+              >
+                <z-badge
+                  [zType]="getActionBadgeType(log.action)"
+                  zShape="pill"
+                >
+                  {{ log.action }}
+                </z-badge>
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'auditLog.table.entityType' | translate"
+              >
+                <z-badge zType="outline" zShape="square">{{
+                  log.entityType
+                }}</z-badge>
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'auditLog.table.entityId' | translate"
+              >
+                <span class="mono-text">{{ log.entityId || '-' }}</span>
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'common.userId' | translate"
+              >
+                <span class="mono-text">{{ log.userId || '-' }}</span>
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'common.tenant' | translate"
+              >
+                {{ log.tenantId || '-' }}
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'auditLog.table.ipAddress' | translate"
+              >
+                <span class="mono-text">{{ log.ipAddress || '-' }}</span>
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'auditLog.table.timestamp' | translate"
+              >
+                {{ log.timestamp | date : 'medium' }}
+              </td>
+              <td z-table-cell class="details-toggle-cell">
+                <button
+                  z-button
+                  zType="ghost"
+                  zSize="sm"
+                  type="button"
+                  (click)="toggleDetails(log.id)"
+                >
+                  <i
+                    z-icon
+                    [zType]="expandedLogId() === log.id ? 'chevron-up' : 'chevron-down'"
+                  ></i>
+                </button>
+              </td>
+            </tr>
+            @if (expandedLogId() === log.id) {
+            <tr z-table-row class="details-row">
+              <td z-table-cell colspan="8" class="details-cell">
+                <div class="details-grid">
+                  <div class="details-pane">
+                    <span class="details-pane-label">
+                      {{ 'auditLog.details.before' | translate }}
+                    </span>
+                    <pre class="json-pre">{{ formatJson(log.oldValues) }}</pre>
+                  </div>
+                  <div class="details-pane">
+                    <span class="details-pane-label details-pane-label--after">
+                      {{ 'auditLog.details.after' | translate }}
+                    </span>
+                    <pre class="json-pre">{{ formatJson(log.newValues) }}</pre>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            }
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (totalPages() > 1) {
+      <div class="pagination-container">
+        <z-pagination
+          [zTotal]="totalPages()"
+          [zPageIndex]="currentPage()"
+          (zPageIndexChange)="onPageChange($event)"
+        />
+      </div>
+      }
+    </div>
+    }
+  </z-card>
+</div>

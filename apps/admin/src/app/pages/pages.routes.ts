@@ -10,6 +10,7 @@ import { aiTokenUsageLogsRoutes } from '../features/ai-token-usage-logs/ai-token
 import { tenantRoutes } from '../features/tenant/tenant.routes';
 import { notificationRoutes } from '../features/notification/notification.routes';
 import { categoryRoutes } from '../features/category/category.routes';
+import { auditLogRoutes } from '../features/audit-log/audit-log.routes';
 import { authGuard, roleGuard } from '@ihsan/core';
 
 export const pagesRoutes: Routes = [
@@ -77,6 +78,12 @@ export const pagesRoutes: Routes = [
         loadChildren: () => Promise.resolve(categoryRoutes),
         canActivate: [authGuard, roleGuard],
         data: { roles: ['Admin', 'SuperAdmin'] },
+      },
+      {
+        path: 'audit-log',
+        loadChildren: () => Promise.resolve(auditLogRoutes),
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['SuperAdmin'] },
       },
     ],
   },

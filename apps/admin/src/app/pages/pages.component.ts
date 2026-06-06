@@ -170,6 +170,14 @@ export class PagesComponent {
       type: SidebarPageType.Management,
     }),
     new SidebarPageClass({
+      translationKey: 'sidebar.pages.auditLog',
+      icon: 'clipboard' as ZardIcon,
+      group: 'sidebar.groups.system',
+      roles: ['SuperAdmin'],
+      route: '/audit-log',
+      type: SidebarPageType.Management,
+    }),
+    new SidebarPageClass({
       translationKey: 'sidebar.pages.prometheus',
       icon: 'activity' as ZardIcon,
       group: 'sidebar.groups.observability',
@@ -253,9 +261,7 @@ export class PagesComponent {
     }
   }
 
-  onPageClick(event: ISidebarPage): void {
-    // Page navigation handled by routerLink
-  }
+  onPageClick(_event: ISidebarPage): void {}
 
   toggleDarkMode(): void {
     this.isDarkMode.update((current) => !current);
