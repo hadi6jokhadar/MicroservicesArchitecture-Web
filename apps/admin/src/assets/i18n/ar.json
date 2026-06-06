@@ -542,5 +542,9 @@
   "category.error.moveFailed": "فشل نقل الفئة",
   "category.drag.handle": "اسحب لإعادة الترتيب",
   "category.drag.dropHere": "أفلت هنا لجعلها فئة جذر",
-  "sidebar.pages.categories": "التصنيفات"
+  "sidebar.pages.categories": "التصنيفات",
+  "sidebar.groups.observability": "المراقبة",
+  "sidebar.pages.prometheus": "بروميثيوس",
+  "sidebar.pages.grafana": "جرافانا",
+  "sidebar.pages.jaeger": "ييجر"
 }

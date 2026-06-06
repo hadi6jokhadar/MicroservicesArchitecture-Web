@@ -169,6 +169,30 @@ export class PagesComponent {
       route: '/categories',
       type: SidebarPageType.Management,
     }),
+    new SidebarPageClass({
+      translationKey: 'sidebar.pages.prometheus',
+      icon: 'activity' as ZardIcon,
+      group: 'sidebar.groups.observability',
+      roles: ['SuperAdmin'],
+      action: () => window.open('http://localhost:9090/', '_blank'),
+      type: SidebarPageType.Management,
+    }),
+    new SidebarPageClass({
+      translationKey: 'sidebar.pages.grafana',
+      icon: 'monitor' as ZardIcon,
+      group: 'sidebar.groups.observability',
+      roles: ['SuperAdmin'],
+      action: () => window.open('http://localhost:3100/', '_blank'),
+      type: SidebarPageType.Management,
+    }),
+    new SidebarPageClass({
+      translationKey: 'sidebar.pages.jaeger',
+      icon: 'search' as ZardIcon,
+      group: 'sidebar.groups.observability',
+      roles: ['SuperAdmin'],
+      action: () => window.open('http://localhost:16686/', '_blank'),
+      type: SidebarPageType.Management,
+    }),
   ]);
 
   currentUser = computed<ISidebarUser>(() => {

@@ -542,5 +542,9 @@
   "category.error.moveFailed": "Failed to move category",
   "category.drag.handle": "Drag to reorder",
   "category.drag.dropHere": "Drop here to make root category",
-  "sidebar.pages.categories": "Categories"
+  "sidebar.pages.categories": "Categories",
+  "sidebar.groups.observability": "Observability",
+  "sidebar.pages.prometheus": "Prometheus",
+  "sidebar.pages.grafana": "Grafana",
+  "sidebar.pages.jaeger": "Jaeger"
 }
