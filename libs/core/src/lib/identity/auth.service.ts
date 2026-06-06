@@ -22,7 +22,7 @@ export class AuthService {
   private _http = inject(HttpClient);
   private _env = inject(ENVIRONMENT);
   private _identityStorage = inject(IdentityStorageService);
-  private readonly _baseUrl = `${this._env.apiUrls.identity}/api/auth`;
+  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/auth`;
 
   currentUser = signal<UserClass | null>(null);
 
@@ -163,7 +163,7 @@ export class AuthService {
 
   getProfile(): Observable<IUser> {
     return this._http.get<IUser>(
-      `${this._env.apiUrls.identity}/api/user/profile`
+      `${this._env.apiUrls.gateway}/api/user/profile`
     );
   }
 

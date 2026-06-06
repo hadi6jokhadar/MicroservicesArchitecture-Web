@@ -28,8 +28,8 @@ export interface ITenantFilterRequest {
 export class TenantService {
   private _http = inject(HttpClient);
   private _env = inject(ENVIRONMENT);
-  private readonly _baseUrl = `${this._env.apiUrls.tenant}/api/tenant`;
-  private readonly _adminUrl = `${this._env.apiUrls.tenant}/api/admin/tenant`;
+  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/tenant`;
+  private readonly _adminUrl = `${this._env.apiUrls.gateway}/api/admin/tenant`;
 
   // State
   readonly currentTenantId = signal<string | null>(null);

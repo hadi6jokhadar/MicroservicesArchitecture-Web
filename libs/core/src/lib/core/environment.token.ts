@@ -4,15 +4,15 @@ export interface Environment {
   production: boolean;
   tenantId?: string;
   apiUrls: {
-    identity: string;
-    tenant: string;
-    notification: string;
-    fileManager: string;
-    translation: string;
-    ai: string;
-    category: string;
+    gateway: string;
+    identity?: string;
+    tenant?: string;
+    notification?: string;
+    fileManager?: string;
+    translation?: string;
+    ai?: string;
+    category?: string;
     nasheed?: string;
-    gateway?: string;
   };
 }
 

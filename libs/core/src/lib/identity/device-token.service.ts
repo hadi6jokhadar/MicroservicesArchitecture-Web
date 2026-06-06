@@ -16,7 +16,7 @@ import {
 export class DeviceTokenService {
   private _http = inject(HttpClient);
   private _env = inject(ENVIRONMENT);
-  private readonly _baseUrl = `${this._env.apiUrls.identity}/api/device-tokens`;
+  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/device-tokens`;
 
   addDeviceToken(request: IAddDeviceTokenRequest): Observable<IDeviceToken> {
     return this._http.post<IDeviceToken>(this._baseUrl, request);

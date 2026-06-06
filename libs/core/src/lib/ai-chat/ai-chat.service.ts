@@ -25,7 +25,7 @@ import {
 export class AiChatService {
   private readonly _http = inject(HttpClient);
   private readonly _env = inject(ENVIRONMENT);
-  private readonly _base = `${this._env.apiUrls.ai}/api/v1`;
+  private readonly _base = `${this._env.apiUrls.gateway}/api/v1/ai`;
 
   // -------------------------------------------------------------------------
   // Chat Sessions

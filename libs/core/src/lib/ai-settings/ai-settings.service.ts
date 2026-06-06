@@ -14,7 +14,7 @@ import {
 export class AiSettingsService {
   private readonly _http = inject(HttpClient);
   private readonly _env = inject(ENVIRONMENT);
-  private readonly _baseUrl = `${this._env.apiUrls.ai}/api/v1/settings`;
+  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/v1/ai/settings`;
 
   getSettings(
     scope: AiSettingsScopeFilter = 'all'

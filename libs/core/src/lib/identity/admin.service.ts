@@ -20,7 +20,7 @@ export interface IUserFilterRequest {
 export class IdentityAdminService {
   private _http = inject(HttpClient);
   private _env = inject(ENVIRONMENT);
-  private readonly _baseUrl = `${this._env.apiUrls.identity}/api/admin`;
+  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/admin`;
 
   getUsers(
     request?: IUserFilterRequest

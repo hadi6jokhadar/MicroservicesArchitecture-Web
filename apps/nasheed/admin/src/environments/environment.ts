@@ -4,6 +4,7 @@ export const environment: Environment = {
   production: false,
   tenantId: 'anashid',
   apiUrls: {
+    gateway: 'http://localhost:5000',
     identity: 'http://localhost:5001',
     tenant: 'http://localhost:5002',
     notification: 'http://localhost:5004',

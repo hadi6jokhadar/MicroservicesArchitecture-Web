@@ -13,7 +13,7 @@ export class AuditLogService {
   private _env = inject(ENVIRONMENT);
 
   private get _gateway(): string {
-    return this._env.apiUrls.gateway ?? 'http://localhost:5000';
+    return this._env.apiUrls.gateway;
   }
 
   // Paths as routed through the gateway (see Gateway appsettings.json).
