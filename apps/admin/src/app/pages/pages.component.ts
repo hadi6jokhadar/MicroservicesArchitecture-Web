@@ -104,7 +104,7 @@ export class PagesComponent {
       group: 'sidebar.groups.ai',
       roles: ['Admin', 'SuperAdmin'],
       action: () => this.openAiChatDialog(),
-      type: SidebarPageType.Both,
+      type: SidebarPageType.Management,
     }),
     new SidebarPageClass({
       translationKey: 'sidebar.pages.aiEmbedding',
@@ -112,7 +112,7 @@ export class PagesComponent {
       group: 'sidebar.groups.ai',
       roles: ['Admin', 'SuperAdmin'],
       action: () => this.openAiEmbeddingDialog(),
-      type: SidebarPageType.Both,
+      type: SidebarPageType.Management,
     }),
     new SidebarPageClass({
       translationKey: 'sidebar.pages.aiSettings',
