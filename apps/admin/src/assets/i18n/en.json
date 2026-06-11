@@ -582,5 +582,10 @@
   "auditLog.table.details": "Details",
   "auditLog.details.before": "Before",
   "auditLog.details.after": "After",
-  "auditLog.details.noData": "No data"
+  "auditLog.details.noData": "No data",
+  "sidebar.groups.jobs": "Background Jobs",
+  "sidebar.pages.jobsCategory": "Category Jobs",
+  "sidebar.pages.jobsFileManager": "FileManager Jobs",
+  "sidebar.pages.jobsNotification": "Notification Jobs",
+  "sidebar.pages.jobsTenant": "Tenant Jobs"
 }

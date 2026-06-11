@@ -28,6 +28,9 @@ export * from './lib/category';
 // Audit Log
 export * from './lib/audit-log';
 
+// Background Jobs
+export * from './lib/background-jobs';
+
 // Interceptors
 export * from './lib/interceptors';
 

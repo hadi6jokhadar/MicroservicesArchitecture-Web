@@ -10,7 +10,7 @@ import { Router, RouterOutlet } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { ZardIcon } from '@ihsan/ui/lib/zard/components/icon';
 import { ZardDialogService } from '@ihsan/ui';
-import { AuthService } from '@ihsan/core';
+import { AuthService, BackgroundJobsService } from '@ihsan/core';
 import {
   ISidebarPage,
   ISidebarUser,
@@ -34,6 +34,7 @@ export class PagesComponent {
   private _authService = inject(AuthService);
   private _router = inject(Router);
   private _dialogService = inject(ZardDialogService);
+  private _backgroundJobsService = inject(BackgroundJobsService);
   private readonly DARK_MODE_KEY = 'theme-preference';
 
   isDarkMode = signal<boolean>(false);
@@ -199,6 +200,38 @@ export class PagesComponent {
       group: 'sidebar.groups.observability',
       roles: ['SuperAdmin'],
       action: () => window.open('http://localhost:16686/', '_blank'),
+      type: SidebarPageType.Management,
+    }),
+    new SidebarPageClass({
+      translationKey: 'sidebar.pages.jobsCategory',
+      icon: 'folder-tree' as ZardIcon,
+      group: 'sidebar.groups.jobs',
+      roles: ['SuperAdmin'],
+      action: () => this._backgroundJobsService.openDashboard('category'),
+      type: SidebarPageType.Management,
+    }),
+    new SidebarPageClass({
+      translationKey: 'sidebar.pages.jobsFileManager',
+      icon: 'folder' as ZardIcon,
+      group: 'sidebar.groups.jobs',
+      roles: ['SuperAdmin'],
+      action: () => this._backgroundJobsService.openDashboard('filemanager'),
+      type: SidebarPageType.Management,
+    }),
+    new SidebarPageClass({
+      translationKey: 'sidebar.pages.jobsNotification',
+      icon: 'bell' as ZardIcon,
+      group: 'sidebar.groups.jobs',
+      roles: ['SuperAdmin'],
+      action: () => this._backgroundJobsService.openDashboard('notification'),
+      type: SidebarPageType.Management,
+    }),
+    new SidebarPageClass({
+      translationKey: 'sidebar.pages.jobsTenant',
+      icon: 'house' as ZardIcon,
+      group: 'sidebar.groups.jobs',
+      roles: ['SuperAdmin'],
+      action: () => this._backgroundJobsService.openDashboard('tenant'),
       type: SidebarPageType.Management,
     }),
   ]);

@@ -582,5 +582,10 @@
   "auditLog.table.details": "التفاصيل",
   "auditLog.details.before": "قبل",
   "auditLog.details.after": "بعد",
-  "auditLog.details.noData": "لا توجد بيانات"
+  "auditLog.details.noData": "لا توجد بيانات",
+  "sidebar.groups.jobs": "الوظائف الخلفية",
+  "sidebar.pages.jobsCategory": "وظائف التصنيفات",
+  "sidebar.pages.jobsFileManager": "وظائف مدير الملفات",
+  "sidebar.pages.jobsNotification": "وظائف الإشعارات",
+  "sidebar.pages.jobsTenant": "وظائف المستأجر"
 }
