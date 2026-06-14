@@ -48,16 +48,17 @@ Before writing ANY frontend code, you MUST:
 ### 4. Error Handling (Context-Aware)
 
 - **General Config:** Global error interceptor handles most errors via Toast.
-- **Dialogs/Modals:**
-  - ❌ **NO TOASTS** allowed.
-  - ✅ Pass `new HttpContext().set(SKIP_ERROR_TOAST, true)` to requests.
-  - ✅ Display errors inline using `<z-alert>` and `errorMessage` signal.
+- **Dialogs/Modals/Sheets:**
+  - ✅ `toast.success()` IS correct on success — call it immediately before closing the dialog.
+  - ❌ **NO inline success `<z-alert>`** — success uses toast and immediate close, not a displayed success message.
+  - ✅ **ALWAYS** pass `new HttpContext().set(SKIP_ERROR_TOAST, true)` to every HTTP request inside a dialog/sheet — prevents the global error interceptor from showing a duplicate toast when an error occurs.
+  - ✅ Display errors inline using `<z-alert zType="destructive">` and an `errorMessage` signal populated via `extractErrorMessage(error)` from `@ihsan/shared`.
 
 ## Common Pitfalls to Avoid
 
 1. **Hardcoded Text:** Instant failure. Even purely structural text must be translated.
 2. **Incorrect Icons:** Guessing icon names like "language" instead of "book-open".
-3. **Manual Toasts in Dialogs:** Do not use `toast.success()`. Use inline success messages, then close.
+3. **Missing SKIP_ERROR_TOAST in Dialogs/Sheets:** Every HTTP call inside a dialog or sheet MUST include `new HttpContext().set(SKIP_ERROR_TOAST, true)`. Omitting it causes the global error interceptor to fire a toast AND the inline `z-alert` to render — a double error display. Success toasts via `toast.success()` are correct and expected.
 4. **API Calls in Parent:** API calls for creating/editing entities MUST happen inside the Dialog component, not the parent.
 
 ## Documentation Protocol
