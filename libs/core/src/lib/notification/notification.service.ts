@@ -33,7 +33,7 @@ export interface IQueueItemFilterRequest {
 export class NotificationService {
   private _http = inject(HttpClient);
   private _env = inject(ENVIRONMENT);
-  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/notifications`;
+  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/v1/notifications`;
 
   // User Endpoints
   getUserNotifications(): Observable<INotificationResponse[]> {

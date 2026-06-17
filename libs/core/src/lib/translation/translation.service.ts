@@ -22,7 +22,7 @@ import {
 export class TranslationService {
   private readonly _http = inject(HttpClient);
   private readonly _env = inject(ENVIRONMENT);
-  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/translations`;
+  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/v1/translations`;
 
   // Translation cache
   private readonly _translations = signal<Record<string, string>>({});

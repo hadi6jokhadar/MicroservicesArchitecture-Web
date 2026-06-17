@@ -10,7 +10,7 @@ import { IUser, IUpdateProfileRequest } from './models';
 export class IdentityUserService {
   private _http = inject(HttpClient);
   private _env = inject(ENVIRONMENT);
-  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/user`;
+  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/v1/user`;
 
   getProfile(): Observable<IUser> {
     return this._http.get<IUser>(`${this._baseUrl}/profile`);

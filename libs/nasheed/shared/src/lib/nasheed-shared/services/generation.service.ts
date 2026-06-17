@@ -10,7 +10,7 @@ import { GenerateLyricsCommand, GenerateLyricsResponseModel } from '../models';
 export class GenerationService {
   private readonly _http = inject(HttpClient);
   private readonly _env = inject(ENVIRONMENT);
-  private get baseUrl(): string { return `${this._env.apiUrls['nasheed']}/api/generation`; }
+  private get baseUrl(): string { return `${this._env.apiUrls['nasheed']}/api/v1/generation`; }
 
   generateLyrics(command: GenerateLyricsCommand, options?: { context?: import('@angular/common/http').HttpContext }): Observable<GenerateLyricsResponseModel> {
     return this._http.post<GenerateLyricsResponseModel>(`${this.baseUrl}/lyrics`, command, options ?? {});

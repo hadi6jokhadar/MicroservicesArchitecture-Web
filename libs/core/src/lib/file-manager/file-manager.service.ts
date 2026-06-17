@@ -16,8 +16,8 @@ import {
 export class FileManagerService {
   private _http = inject(HttpClient);
   private _env = inject(ENVIRONMENT);
-  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/filemanager`;
-  private readonly _adminUrl = `${this._env.apiUrls.gateway}/api/filemanager/admin`;
+  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/v1/filemanager`;
+  private readonly _adminUrl = `${this._env.apiUrls.gateway}/api/v1/filemanager/admin`;
 
   // Tenant User Endpoints
   uploadFile(

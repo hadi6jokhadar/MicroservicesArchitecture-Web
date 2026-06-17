@@ -16,7 +16,7 @@ import {
 export class RoleService {
   private _http = inject(HttpClient);
   private _env = inject(ENVIRONMENT);
-  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/admin/roles`;
+  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/v1/admin/roles`;
 
   // Cache for roles
   private readonly _rolesCache = signal<IRole[] | null>(null);

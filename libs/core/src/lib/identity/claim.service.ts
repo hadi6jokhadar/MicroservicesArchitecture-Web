@@ -10,7 +10,7 @@ import { IClaim, ICreateClaimRequest, IUpdateClaimRequest } from './models';
 export class ClaimService {
   private _http = inject(HttpClient);
   private _env = inject(ENVIRONMENT);
-  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/admin/claims`;
+  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/v1/admin/claims`;
 
   getAllClaims(): Observable<IClaim[]> {
     return this._http.get<IClaim[]>(this._baseUrl);

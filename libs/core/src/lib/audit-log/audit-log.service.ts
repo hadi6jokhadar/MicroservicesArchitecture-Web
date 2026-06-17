@@ -21,13 +21,13 @@ export class AuditLogService {
   // which means the service receives /api/admin/audit-logs — a BypassTenant
   // endpoint — so no x-tenant-id header is required.
   private readonly _paths: Record<AuditLogSource, string> = {
-    identity: '/api/admin/audit-logs',
-    tenant: '/api/admin/tenant/audit-logs',
-    notification: '/api/admin/notifications/audit-logs',
-    fileManager: '/api/admin/filemanager/audit-logs',
-    translation: '/api/admin/translations/audit-logs',
-    category: '/api/admin/categories/audit-logs',
-    nasheed: '/api/admin/nasheed/audit-logs',
+    identity: '/api/v1/admin/audit-logs',
+    tenant: '/api/v1/admin/tenant/audit-logs',
+    notification: '/api/v1/admin/notifications/audit-logs',
+    fileManager: '/api/v1/admin/filemanager/audit-logs',
+    translation: '/api/v1/admin/translations/audit-logs',
+    category: '/api/v1/admin/categories/audit-logs',
+    nasheed: '/api/v1/admin/nasheed/audit-logs',
   };
 
   getAuditLogs(

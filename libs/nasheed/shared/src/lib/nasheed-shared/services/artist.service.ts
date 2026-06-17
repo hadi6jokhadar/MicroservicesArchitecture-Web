@@ -11,7 +11,7 @@ import { IArtistQuery } from '../interfaces';
 export class ArtistService {
   private readonly _http = inject(HttpClient);
   private readonly _env = inject(ENVIRONMENT);
-  private get baseUrl(): string { return `${this._env.apiUrls['nasheed']}/api/artists`; }
+  private get baseUrl(): string { return `${this._env.apiUrls['nasheed']}/api/v1/artists`; }
 
   getAll(query: IArtistQuery): Observable<PaginatedList<ArtistModel>> {
     let params = new HttpParams();

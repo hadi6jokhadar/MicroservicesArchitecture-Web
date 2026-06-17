@@ -144,6 +144,12 @@
       "options": {
         "command": "node ..\\MicroservicesArchitecture\\src\\Services\\start-observability.mjs"
       }
+    },
+    "test-backend": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node ..\\MicroservicesArchitecture\\src\\Services\\run-all-tests.mjs"
+      }
     }
   }
 }

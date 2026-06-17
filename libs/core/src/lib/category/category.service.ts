@@ -17,8 +17,8 @@ import {
 export class CategoryService {
   private _http = inject(HttpClient);
   private _env = inject(ENVIRONMENT);
-  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/categories`;
-  private readonly _adminBaseUrl = `${this._env.apiUrls.gateway}/api/admin/categories`;
+  private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/v1/categories`;
+  private readonly _adminBaseUrl = `${this._env.apiUrls.gateway}/api/v1/admin/categories`;
 
   // ── Tenant-scoped endpoints ──────────────────────────────────────────────
 

@@ -18,7 +18,7 @@ export class SongService {
   private readonly _http = inject(HttpClient);
   private readonly _env = inject(ENVIRONMENT);
   private get baseUrl(): string {
-    return `${this._env.apiUrls['nasheed']}/api/songs`;
+    return `${this._env.apiUrls['nasheed']}/api/v1/songs`;
   }
 
   getAll(query: ISongQuery): Observable<PaginatedList<SongModel>> {

@@ -11,7 +11,7 @@ import { ISearchQuery } from '../interfaces';
 export class SearchService {
   private readonly _http = inject(HttpClient);
   private readonly _env = inject(ENVIRONMENT);
-  private get baseUrl(): string { return `${this._env.apiUrls['nasheed']}/api/search`; }
+  private get baseUrl(): string { return `${this._env.apiUrls['nasheed']}/api/v1/search`; }
 
   search(query: ISearchQuery): Observable<SearchResultModel[]> {
     let params = new HttpParams();
