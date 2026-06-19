@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpContext, HttpErrorResponse } from '@angular/common/http';
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   OnDestroy,
@@ -10,6 +11,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   ITenantConfig,
   ITenantConfiguration,
@@ -21,9 +23,11 @@ import {
 import { SKIP_ERROR_TOAST, extractErrorMessage } from '@ihsan/shared';
 import {
   Z_SHEET_DATA,
+  ZardAlertComponent,
   ZardButtonComponent,
   ZardLoaderComponent,
   ZardSheetRef,
+  ZardSwitchComponent,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
 import {
@@ -38,14 +42,24 @@ interface ITenantConfigurationSheetData {
   tenantId: string;
 }
 
+interface IFeatureFlagDef {
+  key: 'aiChatEnabled' | 'nasheedIngestionEnabled';
+  labelKey: string;
+  descKey: string;
+}
+
 @Component({
   selector: 'app-tenant-configuration-sheet',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     TranslatePipe,
+    ZardAlertComponent,
     ZardButtonComponent,
     ZardLoaderComponent,
+    ZardSwitchComponent,
   ],
   templateUrl: './tenant-configuration-sheet.component.html',
   styleUrls: ['./tenant-configuration-sheet.component.scss'],
@@ -56,7 +70,6 @@ export class TenantConfigurationSheetComponent implements OnInit, OnDestroy {
   private readonly _translationService = inject(TranslationService);
   protected readonly data = inject<ITenantConfigurationSheetData>(Z_SHEET_DATA);
 
-  // ViewChild for editor container - optional because it's behind @if
   readonly editorContainer = viewChild<ElementRef>('editorContainer');
   private editor: JsonEditor | null = null;
 
@@ -65,8 +78,30 @@ export class TenantConfigurationSheetComponent implements OnInit, OnDestroy {
   readonly errorMessage = signal<string | null>(null);
   readonly tenantConfig = signal<ITenantConfig | null>(null);
 
-  // Keep track of current content to submit
+  // JSON editor tracks all non-featureFlags config
   private currentContent: unknown = {};
+  // Custom flags (keys not in knownFlags) from the original config — preserved on save
+  private originalCustomFlags: Record<string, boolean> = {};
+
+  readonly knownFlags: IFeatureFlagDef[] = [
+    {
+      key: 'aiChatEnabled',
+      labelKey: 'tenants.featureFlags.aiChatEnabled',
+      descKey: 'tenants.featureFlags.aiChatEnabledDesc',
+    },
+    {
+      key: 'nasheedIngestionEnabled',
+      labelKey: 'tenants.featureFlags.nasheedIngestionEnabled',
+      descKey: 'tenants.featureFlags.nasheedIngestionEnabledDesc',
+    },
+  ];
+
+  private readonly knownFlagKeys = new Set<string>(this.knownFlags.map((f) => f.key));
+
+  readonly flagsForm = new FormGroup({
+    aiChatEnabled: new FormControl<boolean>(true, { nonNullable: true }),
+    nasheedIngestionEnabled: new FormControl<boolean>(true, { nonNullable: true }),
+  });
 
   constructor() {
     effect(() => {
@@ -74,7 +109,8 @@ export class TenantConfigurationSheetComponent implements OnInit, OnDestroy {
       const config = this.tenantConfig();
 
       if (container && config && !this.editor) {
-        this.initEditor(container.nativeElement, config.data || {});
+        const mainConfig = this.extractMainConfig(config.data);
+        this.initEditor(container.nativeElement, mainConfig);
       }
     });
   }
@@ -90,6 +126,12 @@ export class TenantConfigurationSheetComponent implements OnInit, OnDestroy {
     }
   }
 
+  private extractMainConfig(data: ITenantConfiguration | undefined): Record<string, unknown> {
+    if (!data) return {};
+    const { featureFlags, ...mainConfig } = data as ITenantConfiguration & { featureFlags?: Record<string, boolean> };
+    return mainConfig as Record<string, unknown>;
+  }
+
   private initEditor(container: HTMLElement, content: unknown): void {
     this.editor = createJSONEditor({
       target: container,
@@ -99,29 +141,23 @@ export class TenantConfigurationSheetComponent implements OnInit, OnDestroy {
         content: { json: content },
         validator: this.createValidator(),
         onChange: (updatedContent: Content) => {
-          // Update current content ref
           if ('json' in updatedContent) {
             this.currentContent = updatedContent.json;
           } else if ('text' in updatedContent) {
             try {
               this.currentContent = JSON.parse(updatedContent.text);
             } catch {
-              // invalid json, ignore
+              // invalid JSON — ignore, keep last valid
             }
           }
         },
       },
     });
-    // Initialize currentContent with the loaded data
     this.currentContent = content;
   }
 
   private createValidator(): Validator {
-    return () => {
-      // Optional: Add custom validation logic here if needed
-      // vanilla-jsoneditor handles syntax validation automatically
-      return [];
-    };
+    return () => [];
   }
 
   loadConfiguration(): void {
@@ -130,6 +166,7 @@ export class TenantConfigurationSheetComponent implements OnInit, OnDestroy {
     this.isLoading.set(true);
     this._tenantService.getTenantConfig(this.data.tenantId).subscribe({
       next: (config) => {
+        this.initFlagsFromConfig(config);
         this.tenantConfig.set(config);
         this.isLoading.set(false);
       },
@@ -140,22 +177,37 @@ export class TenantConfigurationSheetComponent implements OnInit, OnDestroy {
     });
   }
 
+  private initFlagsFromConfig(config: ITenantConfig): void {
+    const flags = config.data?.featureFlags ?? {};
+
+    this.flagsForm.patchValue({
+      aiChatEnabled: flags['aiChatEnabled'] ?? true,
+      nasheedIngestionEnabled: flags['nasheedIngestionEnabled'] ?? true,
+    });
+
+    this.originalCustomFlags = Object.fromEntries(
+      Object.entries(flags).filter(([k]) => !this.knownFlagKeys.has(k))
+    );
+  }
+
   onSubmit(): void {
     const config = this.tenantConfig();
     if (!config) return;
-
-    // Optional: Get latest content from editor directly to be safe
-    // But onChange handling should be sufficient if no bugs.
-
-    // We can validate if currentContent is valid JSON object if needed.
 
     this.isSaving.set(true);
     this.errorMessage.set(null);
 
     const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
 
-    const tenantConfiguration: ITenantConfiguration = this
-      .currentContent as ITenantConfiguration;
+    const featureFlags: Record<string, boolean> = {
+      ...this.originalCustomFlags,
+      ...this.flagsForm.getRawValue(),
+    };
+
+    const tenantConfiguration: ITenantConfiguration = {
+      ...(this.currentContent as ITenantConfiguration),
+      featureFlags,
+    };
 
     const request: IUpdateTenantRequest = {
       tenantId: config.tenantId,

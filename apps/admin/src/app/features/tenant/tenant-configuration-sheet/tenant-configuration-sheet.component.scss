@@ -1,6 +1,6 @@
 :host {
   display: block;
-  height: 62vh;
+  height: 82vh;
 
   .tenant-configuration-sheet {
     display: flex;
@@ -67,7 +67,7 @@
           .json-editor-container {
             flex: 1;
             min-height: 200px;
-            max-height: 50vh;
+            max-height: 35vh;
             width: 100%;
             border: 1px solid var(--color-border);
             border-radius: var(--radius);
@@ -75,6 +75,62 @@
             background-color: var(
               --color-background
             ); // Contrast against muted wrapper
+          }
+
+          .feature-flags-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+
+            .feature-flags-header {
+              h3 {
+                margin: 0;
+                font-size: 1rem;
+                font-weight: 600;
+                color: var(--color-foreground);
+              }
+
+              p {
+                margin: 0.25rem 0 0;
+                font-size: 0.875rem;
+                color: var(--color-muted-foreground);
+              }
+            }
+
+            .feature-flags-list {
+              display: flex;
+              flex-direction: column;
+              gap: 0.5rem;
+
+              .flag-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0.75rem 1rem;
+                background-color: var(--color-background);
+                border: 1px solid var(--color-border);
+                border-radius: var(--radius);
+                gap: 1rem;
+
+                .flag-info {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 0.125rem;
+                  flex: 1;
+
+                  .flag-label {
+                    font-size: 0.875rem;
+                    font-weight: 500;
+                    color: var(--color-foreground);
+                  }
+
+                  .flag-desc {
+                    font-size: 0.75rem;
+                    color: var(--color-muted-foreground);
+                  }
+                }
+              }
+            }
           }
 
           .form-actions {

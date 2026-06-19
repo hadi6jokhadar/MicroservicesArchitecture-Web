@@ -1,21 +1,4 @@
 <div class="tenant-configuration-sheet">
-  <!-- <div class="sheet-header">
-    <div class="header-content">
-      <div class="header-text">
-        <h2>{{ 'tenants.configuration.title' | translate }}</h2>
-      </div>
-      <button
-        z-button
-        zType="outline"
-        zSize="sm"
-        (click)="onCancel()"
-        type="button"
-      >
-        <z-icon zType="x" />
-      </button>
-    </div>
-  </div> -->
-
   <div class="sheet-content">
     @if (isLoading()) {
     <div class="loading">
@@ -25,6 +8,30 @@
     <div class="edit-form-container">
       <div class="edit-form">
         <div #editorContainer class="json-editor-container"></div>
+
+        <div class="feature-flags-section">
+          <div class="feature-flags-header">
+            <h3>{{ 'tenants.featureFlags.title' | translate }}</h3>
+            <p>{{ 'tenants.featureFlags.description' | translate }}</p>
+          </div>
+
+          <div class="feature-flags-list" [formGroup]="flagsForm">
+            @for (flag of knownFlags; track flag.key) {
+            <div class="flag-row">
+              <div class="flag-info">
+                <span class="flag-label">{{ flag.labelKey | translate }}</span>
+                <span class="flag-desc">{{ flag.descKey | translate }}</span>
+              </div>
+              <z-switch [formControlName]="flag.key" />
+            </div>
+            }
+          </div>
+        </div>
+
+        @if (errorMessage()) {
+        <z-alert zType="destructive">{{ errorMessage() }}</z-alert>
+        }
+
         <div class="form-actions">
           <button
             z-button

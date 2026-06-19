@@ -25,6 +25,7 @@ export interface ITenantConfiguration {
   databaseSettings?: IDatabaseSettings;
   cors?: ICorsSettings;
   otp?: IOtpSettings;
+  featureFlags?: Record<string, boolean>;
 }
 
 export interface ITenant {
