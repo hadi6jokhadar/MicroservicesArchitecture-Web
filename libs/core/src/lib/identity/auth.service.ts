@@ -192,4 +192,8 @@ export class AuthService {
   getRefreshToken(): string | null {
     return this._identityStorage.getRefreshToken();
   }
+
+  getTenantId(): string | null {
+    return this._identityStorage.getTenantId();
+  }
 }

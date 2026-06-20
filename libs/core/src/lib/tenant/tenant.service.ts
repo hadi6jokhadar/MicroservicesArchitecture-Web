@@ -59,6 +59,12 @@ export class TenantService {
     return this._http.get<ITenantConfig>(`${this._baseUrl}/config/${tenantId}`);
   }
 
+  // Public endpoint — no auth required. tenantId optional: returns defaults when omitted.
+  getFeatureFlags(tenantId?: string): Observable<Record<string, boolean>> {
+    const params = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : '';
+    return this._http.get<Record<string, boolean>>(`${this._baseUrl}/feature-flags${params}`);
+  }
+
   getAllActiveTenantsWithConfig(): Observable<
     IPaginatedResponse<ITenantConfig>
   > {

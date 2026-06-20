@@ -28,6 +28,8 @@ import {
   ZardLoaderComponent,
   ZardSheetRef,
   ZardSwitchComponent,
+  ZardTabComponent,
+  ZardTabGroupComponent,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
 import {
@@ -43,7 +45,7 @@ interface ITenantConfigurationSheetData {
 }
 
 interface IFeatureFlagDef {
-  key: 'aiChatEnabled' | 'nasheedIngestionEnabled';
+  key: 'aiChatEnabled' | 'nasheedIngestionEnabled' | 'isBackgroundJobPageEnabled' | 'isAuditLogPageEnabled';
   labelKey: string;
   descKey: string;
 }
@@ -60,6 +62,8 @@ interface IFeatureFlagDef {
     ZardButtonComponent,
     ZardLoaderComponent,
     ZardSwitchComponent,
+    ZardTabComponent,
+    ZardTabGroupComponent,
   ],
   templateUrl: './tenant-configuration-sheet.component.html',
   styleUrls: ['./tenant-configuration-sheet.component.scss'],
@@ -94,6 +98,16 @@ export class TenantConfigurationSheetComponent implements OnInit, OnDestroy {
       labelKey: 'tenants.featureFlags.nasheedIngestionEnabled',
       descKey: 'tenants.featureFlags.nasheedIngestionEnabledDesc',
     },
+    {
+      key: 'isBackgroundJobPageEnabled',
+      labelKey: 'tenants.featureFlags.isBackgroundJobPageEnabled',
+      descKey: 'tenants.featureFlags.isBackgroundJobPageEnabledDesc',
+    },
+    {
+      key: 'isAuditLogPageEnabled',
+      labelKey: 'tenants.featureFlags.isAuditLogPageEnabled',
+      descKey: 'tenants.featureFlags.isAuditLogPageEnabledDesc',
+    },
   ];
 
   private readonly knownFlagKeys = new Set<string>(this.knownFlags.map((f) => f.key));
@@ -101,6 +115,8 @@ export class TenantConfigurationSheetComponent implements OnInit, OnDestroy {
   readonly flagsForm = new FormGroup({
     aiChatEnabled: new FormControl<boolean>(true, { nonNullable: true }),
     nasheedIngestionEnabled: new FormControl<boolean>(true, { nonNullable: true }),
+    isBackgroundJobPageEnabled: new FormControl<boolean>(true, { nonNullable: true }),
+    isAuditLogPageEnabled: new FormControl<boolean>(true, { nonNullable: true }),
   });
 
   constructor() {
@@ -180,10 +196,10 @@ export class TenantConfigurationSheetComponent implements OnInit, OnDestroy {
   private initFlagsFromConfig(config: ITenantConfig): void {
     const flags = config.data?.featureFlags ?? {};
 
-    this.flagsForm.patchValue({
-      aiChatEnabled: flags['aiChatEnabled'] ?? true,
-      nasheedIngestionEnabled: flags['nasheedIngestionEnabled'] ?? true,
-    });
+    const patch = Object.fromEntries(
+      this.knownFlags.map((f) => [f.key, flags[f.key] ?? true])
+    );
+    this.flagsForm.patchValue(patch);
 
     this.originalCustomFlags = Object.fromEntries(
       Object.entries(flags).filter(([k]) => !this.knownFlagKeys.has(k))

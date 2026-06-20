@@ -1,144 +1,129 @@
 :host {
-  display: block;
-  height: 82vh;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 
   .tenant-configuration-sheet {
     display: flex;
     flex-direction: column;
     height: 100%;
 
-    // Sheet Header
-    .sheet-header {
-      padding: 1.5rem;
-      border-block-end: 1px solid var(--color-border);
-      background-color: var(--color-background);
-
-      .header-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 1rem;
-      }
-
-      .header-text {
-        flex: 1;
-
-        h2 {
-          margin: 0;
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: var(--color-foreground);
-          margin-block-end: 0.5rem;
-        }
-      }
-    }
-
-    // Sheet Content
     .sheet-content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 1.5rem;
       display: flex;
       flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      padding: 1.5rem;
 
       .loading {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100%;
+        flex: 1;
       }
 
-      // Styled to match .edit-form-container from view-values-sheet
       .edit-form-container {
-        background-color: var(--color-muted);
-        border-radius: var(--radius);
-        padding: 1.5rem;
-
         display: flex;
         flex-direction: column;
         flex: 1;
+        min-height: 0;
+        background-color: var(--color-muted);
+        border-radius: var(--radius);
+        padding: 0.5rem;
+        gap: 1rem;
 
         .edit-form {
           display: flex;
           flex-direction: column;
           flex: 1;
+          min-height: 0;
+          overflow-y: auto;
           gap: 1rem;
 
-          .json-editor-container {
+          .config-tabs {
             flex: 1;
-            min-height: 200px;
-            max-height: 35vh;
-            width: 100%;
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius);
-            overflow: hidden;
-            background-color: var(
-              --color-background
-            ); // Contrast against muted wrapper
-          }
+            min-height: 0;
 
-          .feature-flags-section {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-
-            .feature-flags-header {
-              h3 {
-                margin: 0;
-                font-size: 1rem;
-                font-weight: 600;
-                color: var(--color-foreground);
-              }
-
-              p {
-                margin: 0.25rem 0 0;
-                font-size: 0.875rem;
-                color: var(--color-muted-foreground);
-              }
+            .json-editor-container {
+              min-height: 300px;
+              width: 100%;
+              border: 1px solid var(--color-border);
+              border-radius: var(--radius);
+              overflow: auto;
+              background-color: var(--color-background);
+              height: 40vh;
             }
 
-            .feature-flags-list {
+            .feature-flags-section {
               display: flex;
               flex-direction: column;
-              gap: 0.5rem;
+              gap: 0.75rem;
+              padding-inline-end: 0.25rem;
+              height: 40vh;
+              overflow-y: auto;
 
-              .flag-row {
+              .feature-flags-header {
+                h3 {
+                  margin: 0;
+                  font-size: 1rem;
+                  font-weight: 600;
+                  color: var(--color-foreground);
+                }
+
+                p {
+                  margin: 0.25rem 0 0;
+                  font-size: 0.875rem;
+                  color: var(--color-muted-foreground);
+                }
+              }
+
+              .feature-flags-list {
                 display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 0.75rem 1rem;
-                background-color: var(--color-background);
-                border: 1px solid var(--color-border);
-                border-radius: var(--radius);
-                gap: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+                padding-block-end: 1rem;
 
-                .flag-info {
+                .flag-row {
                   display: flex;
-                  flex-direction: column;
-                  gap: 0.125rem;
-                  flex: 1;
+                  align-items: center;
+                  justify-content: space-between;
+                  padding: 0.75rem 1rem;
+                  background-color: var(--color-background);
+                  border: 1px solid var(--color-border);
+                  border-radius: var(--radius);
+                  gap: 1rem;
 
-                  .flag-label {
-                    font-size: 0.875rem;
-                    font-weight: 500;
-                    color: var(--color-foreground);
-                  }
+                  .flag-info {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.125rem;
+                    flex: 1;
 
-                  .flag-desc {
-                    font-size: 0.75rem;
-                    color: var(--color-muted-foreground);
+                    .flag-label {
+                      font-size: 0.875rem;
+                      font-weight: 500;
+                      color: var(--color-foreground);
+                    }
+
+                    .flag-desc {
+                      font-size: 0.75rem;
+                      color: var(--color-muted-foreground);
+                    }
                   }
                 }
               }
             }
           }
+        }
 
-          .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem;
-            padding-block-start: 0.5rem;
-          }
+        .form-actions {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 0.5rem;
+          flex-shrink: 0;
+          padding-block-start: 1rem;
+          border-block-start: 1px solid var(--color-border);
         }
       }
     }

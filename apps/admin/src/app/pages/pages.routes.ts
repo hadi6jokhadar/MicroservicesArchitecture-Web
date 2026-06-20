@@ -11,7 +11,7 @@ import { tenantRoutes } from '../features/tenant/tenant.routes';
 import { notificationRoutes } from '../features/notification/notification.routes';
 import { categoryRoutes } from '../features/category/category.routes';
 import { auditLogRoutes } from '../features/audit-log/audit-log.routes';
-import { authGuard, roleGuard } from '@ihsan/core';
+import { authGuard, featureFlagGuard, FeatureFlags, roleGuard } from '@ihsan/core';
 
 export const pagesRoutes: Routes = [
   {
@@ -82,8 +82,8 @@ export const pagesRoutes: Routes = [
       {
         path: 'audit-log',
         loadChildren: () => Promise.resolve(auditLogRoutes),
-        canActivate: [authGuard, roleGuard],
-        data: { roles: ['SuperAdmin'] },
+        canActivate: [authGuard, roleGuard, featureFlagGuard],
+        data: { roles: ['SuperAdmin'], featureFlag: FeatureFlags.IsAuditLogPageEnabled },
       },
     ],
   },

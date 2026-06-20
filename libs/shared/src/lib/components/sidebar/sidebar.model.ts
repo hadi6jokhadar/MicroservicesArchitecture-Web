@@ -15,6 +15,7 @@ export interface ISidebarPage {
   roles?: string[];
   type?: SidebarPageType;
   children?: ISidebarPage[];
+  featureFlag?: string;
 }
 
 export class SidebarPageClass implements ISidebarPage {
@@ -26,6 +27,7 @@ export class SidebarPageClass implements ISidebarPage {
   roles?: string[];
   type?: SidebarPageType;
   children?: ISidebarPage[];
+  featureFlag?: string;
 
   constructor(data: Partial<ISidebarPage> = {}) {
     this.translationKey = data.translationKey || '';
@@ -36,6 +38,7 @@ export class SidebarPageClass implements ISidebarPage {
     this.roles = data.roles;
     this.type = data.type || SidebarPageType.Both;
     this.children = data.children;
+    this.featureFlag = data.featureFlag;
   }
 }
 

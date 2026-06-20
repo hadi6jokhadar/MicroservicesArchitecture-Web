@@ -10,7 +10,7 @@ import { Router, RouterOutlet } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { ZardIcon } from '@ihsan/ui/lib/zard/components/icon';
 import { ZardDialogService } from '@ihsan/ui';
-import { AuthService, BackgroundJobsService } from '@ihsan/core';
+import { AuthService, BackgroundJobsService, FeatureFlagService, FeatureFlags } from '@ihsan/core';
 import {
   ISidebarPage,
   ISidebarUser,
@@ -35,11 +35,12 @@ export class PagesComponent {
   private _router = inject(Router);
   private _dialogService = inject(ZardDialogService);
   private _backgroundJobsService = inject(BackgroundJobsService);
+  private _flagService = inject(FeatureFlagService);
   private readonly DARK_MODE_KEY = 'theme-preference';
 
   isDarkMode = signal<boolean>(false);
 
-  sidebarPages = signal<ISidebarPage[]>([
+  private readonly _allPages: ISidebarPage[] = [
     new SidebarPageClass({
       translationKey: 'sidebar.pages.dashboard',
       icon: 'layout-dashboard' as ZardIcon,
@@ -176,7 +177,8 @@ export class PagesComponent {
       group: 'sidebar.groups.system',
       roles: ['SuperAdmin'],
       route: '/audit-log',
-      type: SidebarPageType.Management,
+      type: SidebarPageType.Both,
+      featureFlag: FeatureFlags.IsAuditLogPageEnabled,
     }),
     new SidebarPageClass({
       translationKey: 'sidebar.pages.prometheus',
@@ -208,7 +210,8 @@ export class PagesComponent {
       group: 'sidebar.groups.jobs',
       roles: ['SuperAdmin'],
       action: () => this._backgroundJobsService.openDashboard('category'),
-      type: SidebarPageType.Management,
+      type: SidebarPageType.Both,
+      featureFlag: FeatureFlags.IsBackgroundJobPageEnabled,
     }),
     new SidebarPageClass({
       translationKey: 'sidebar.pages.jobsFileManager',
@@ -216,7 +219,8 @@ export class PagesComponent {
       group: 'sidebar.groups.jobs',
       roles: ['SuperAdmin'],
       action: () => this._backgroundJobsService.openDashboard('filemanager'),
-      type: SidebarPageType.Management,
+      type: SidebarPageType.Both,
+      featureFlag: FeatureFlags.IsBackgroundJobPageEnabled,
     }),
     new SidebarPageClass({
       translationKey: 'sidebar.pages.jobsNotification',
@@ -224,7 +228,8 @@ export class PagesComponent {
       group: 'sidebar.groups.jobs',
       roles: ['SuperAdmin'],
       action: () => this._backgroundJobsService.openDashboard('notification'),
-      type: SidebarPageType.Management,
+      type: SidebarPageType.Both,
+      featureFlag: FeatureFlags.IsBackgroundJobPageEnabled,
     }),
     new SidebarPageClass({
       translationKey: 'sidebar.pages.jobsTenant',
@@ -232,9 +237,24 @@ export class PagesComponent {
       group: 'sidebar.groups.jobs',
       roles: ['SuperAdmin'],
       action: () => this._backgroundJobsService.openDashboard('tenant'),
-      type: SidebarPageType.Management,
+      type: SidebarPageType.Both,
+      featureFlag: FeatureFlags.IsBackgroundJobPageEnabled,
     }),
-  ]);
+  ];
+
+  sidebarPages = computed<ISidebarPage[]>(() =>
+    this._filterByFlags(this._allPages)
+  );
+
+  private _filterByFlags(pages: ISidebarPage[]): ISidebarPage[] {
+    return pages
+      .filter((p) => !p.featureFlag || this._flagService.isEnabled(p.featureFlag))
+      .map((p) =>
+        p.children
+          ? { ...p, children: this._filterByFlags(p.children) }
+          : p
+      );
+  }
 
   currentUser = computed<ISidebarUser>(() => {
     const user = this._authService.currentUser() as

@@ -1,36 +1,50 @@
 <div class="tenant-configuration-sheet">
   <div class="sheet-content">
     @if (isLoading()) {
-    <div class="loading">
-      <z-loader />
-    </div>
+      <div class="loading">
+        <z-loader />
+      </div>
     } @else {
-    <div class="edit-form-container">
-      <div class="edit-form">
-        <div #editorContainer class="json-editor-container"></div>
+      <div class="edit-form-container">
+        <div class="edit-form">
+          <z-tab-group class="config-tabs">
+            <z-tab class="tab" [label]="'tenants.tabs.jsonEditor' | translate">
+              <div #editorContainer class="json-editor-container"></div>
+            </z-tab>
 
-        <div class="feature-flags-section">
-          <div class="feature-flags-header">
-            <h3>{{ 'tenants.featureFlags.title' | translate }}</h3>
-            <p>{{ 'tenants.featureFlags.description' | translate }}</p>
-          </div>
+            <z-tab
+              class="tab tab-content"
+              [label]="'tenants.tabs.featureFlags' | translate"
+            >
+              <div class="feature-flags-section" [formGroup]="flagsForm">
+                <div class="feature-flags-header">
+                  <h3>{{ 'tenants.featureFlags.title' | translate }}</h3>
+                  <p>{{ 'tenants.featureFlags.description' | translate }}</p>
+                </div>
 
-          <div class="feature-flags-list" [formGroup]="flagsForm">
-            @for (flag of knownFlags; track flag.key) {
-            <div class="flag-row">
-              <div class="flag-info">
-                <span class="flag-label">{{ flag.labelKey | translate }}</span>
-                <span class="flag-desc">{{ flag.descKey | translate }}</span>
+                <div class="feature-flags-list">
+                  @for (flag of knownFlags; track flag.key) {
+                    <div class="flag-row">
+                      <div class="flag-info">
+                        <span class="flag-label">{{
+                          flag.labelKey | translate
+                        }}</span>
+                        <span class="flag-desc">{{
+                          flag.descKey | translate
+                        }}</span>
+                      </div>
+                      <z-switch [formControlName]="flag.key" />
+                    </div>
+                  }
+                </div>
               </div>
-              <z-switch [formControlName]="flag.key" />
-            </div>
-            }
-          </div>
-        </div>
+            </z-tab>
+          </z-tab-group>
 
-        @if (errorMessage()) {
-        <z-alert zType="destructive">{{ errorMessage() }}</z-alert>
-        }
+          @if (errorMessage()) {
+            <z-alert zType="destructive">{{ errorMessage() }}</z-alert>
+          }
+        </div>
 
         <div class="form-actions">
           <button
@@ -58,7 +72,6 @@
           </button>
         </div>
       </div>
-    </div>
     }
   </div>
 </div>

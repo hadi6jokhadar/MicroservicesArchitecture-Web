@@ -11,6 +11,7 @@ Before writing any code, confirm you have read all files below. State this expli
 | 3 | `Doc/ZARDUI_AI_REFERENCE.md` | Complete Zardui component reference **(MANDATORY before any `z-*` usage)** |
 | 4 | `Doc/TRANSLATION_SYSTEM_GUIDE.md` | Translation system & RTL support **(CRITICAL)** |
 | 5 | `Doc/DIALOG_DESIGN_GUIDE.md` | Dialog component patterns |
+| 6 | `Doc/FEATURE_FLAGS_GUIDE.md` | Feature flags directive, guard, and service |
 
 ## Critical Errors to Avoid
 

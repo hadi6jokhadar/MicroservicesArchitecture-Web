@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class IdentityStorageService {
   private readonly TOKEN_KEY = 'token';
   private readonly REFRESH_TOKEN_KEY = 'refreshToken';
+  private readonly TENANT_ID_KEY = 'tenant_id';
 
   getAccessToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
@@ -31,8 +32,21 @@ export class IdentityStorageService {
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);
   }
 
+  getTenantId(): string | null {
+    return localStorage.getItem(this.TENANT_ID_KEY);
+  }
+
+  setTenantId(tenantId: string): void {
+    localStorage.setItem(this.TENANT_ID_KEY, tenantId);
+  }
+
+  removeTenantId(): void {
+    localStorage.removeItem(this.TENANT_ID_KEY);
+  }
+
   clearAuth(): void {
     this.removeAccessToken();
     this.removeRefreshToken();
+    this.removeTenantId();
   }
 }

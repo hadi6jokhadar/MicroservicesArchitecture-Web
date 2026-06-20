@@ -31,6 +31,9 @@ export * from './lib/audit-log';
 // Background Jobs
 export * from './lib/background-jobs';
 
+// Feature Flags
+export * from './lib/feature-flags';
+
 // Interceptors
 export * from './lib/interceptors';
 
