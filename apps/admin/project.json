@@ -90,6 +90,13 @@
         "command": "start cmd /k node ..\\MicroservicesArchitecture\\src\\Services\\start-all-services.mjs"
       }
     },
+    "start-gateway": {
+      "continuous": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "start cmd /k node ..\\MicroservicesArchitecture\\src\\Gateway\\Gateway.API\\run-development-instance.mjs"
+      }
+    },
     "start-identity": {
       "continuous": true,
       "executor": "nx:run-commands",

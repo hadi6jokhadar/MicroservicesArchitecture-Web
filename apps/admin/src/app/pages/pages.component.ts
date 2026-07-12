@@ -10,7 +10,12 @@ import { Router, RouterOutlet } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { ZardIcon } from '@ihsan/ui/lib/zard/components/icon';
 import { ZardDialogService } from '@ihsan/ui';
-import { AuthService, BackgroundJobsService, FeatureFlagService, FeatureFlags } from '@ihsan/core';
+import {
+  AuthService,
+  BackgroundJobsService,
+  FeatureFlagService,
+  FeatureFlags,
+} from '@ihsan/core';
 import {
   ISidebarPage,
   ISidebarUser,
@@ -169,7 +174,7 @@ export class PagesComponent {
       group: 'sidebar.groups.system',
       roles: ['Admin', 'SuperAdmin'],
       route: '/categories',
-      type: SidebarPageType.Management,
+      type: SidebarPageType.Both,
     }),
     new SidebarPageClass({
       translationKey: 'sidebar.pages.auditLog',
@@ -243,16 +248,16 @@ export class PagesComponent {
   ];
 
   sidebarPages = computed<ISidebarPage[]>(() =>
-    this._filterByFlags(this._allPages)
+    this._filterByFlags(this._allPages),
   );
 
   private _filterByFlags(pages: ISidebarPage[]): ISidebarPage[] {
     return pages
-      .filter((p) => !p.featureFlag || this._flagService.isEnabled(p.featureFlag))
+      .filter(
+        (p) => !p.featureFlag || this._flagService.isEnabled(p.featureFlag),
+      )
       .map((p) =>
-        p.children
-          ? { ...p, children: this._filterByFlags(p.children) }
-          : p
+        p.children ? { ...p, children: this._filterByFlags(p.children) } : p,
       );
   }
 
