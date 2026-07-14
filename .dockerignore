@@ -1,0 +1,10 @@
+node_modules/
+dist/
+tmp/
+.git/
+.github/
+.claude/
+.nx/
+*.code-workspace
+coverage/
+**/*.log

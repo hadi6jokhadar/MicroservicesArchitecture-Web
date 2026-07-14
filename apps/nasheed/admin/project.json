@@ -49,6 +49,15 @@
           "optimization": false,
           "extractLicenses": false,
           "sourceMap": true
+        },
+        "docker": {
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "apps/nasheed/admin/src/environments/environment.ts",
+              "with": "apps/nasheed/admin/src/environments/environment.docker.ts"
+            }
+          ]
         }
       },
       "defaultConfiguration": "production"

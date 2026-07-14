@@ -49,6 +49,15 @@
           "optimization": false,
           "extractLicenses": false,
           "sourceMap": true
+        },
+        "docker": {
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "apps/admin/src/environments/environment.ts",
+              "with": "apps/admin/src/environments/environment.docker.ts"
+            }
+          ]
         }
       },
       "defaultConfiguration": "production"
