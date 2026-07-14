@@ -6,85 +6,91 @@
     "build-identity": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build identity"
+        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build --push identity"
       }
     },
     "build-tenant": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build tenant"
+        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build --push tenant"
       }
     },
     "build-notification": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build notification"
+        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build --push notification"
       }
     },
     "build-filemanager": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build filemanager"
+        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build --push filemanager"
       }
     },
     "build-translation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build translation"
+        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build --push translation"
       }
     },
     "build-category": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build category"
+        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build --push category"
       }
     },
     "build-ai": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build ai"
+        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build --push ai"
       }
     },
     "build-nasheed-service": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build nasheed"
+        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build --push nasheed"
       }
     },
     "build-gateway": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build gateway"
+        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build --push gateway"
       }
     },
     "build-admin": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build admin"
+        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build --push admin"
       }
     },
     "build-nasheed-admin": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build nasheed-admin"
+        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build --push nasheed-admin"
       }
     },
     "build-nasheed-web": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build nasheed-web"
+        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build --push nasheed-web"
       }
     },
     "build-all": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build"
+        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build --push"
       }
     },
     "build-push-all": {
       "executor": "nx:run-commands",
       "options": {
         "command": "node ..\\MicroservicesArchitecture\\docker\\build-and-push.mjs"
+      }
+    },
+    "build-changed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node ..\\MicroservicesArchitecture\\docker\\build-changed.mjs"
       }
     }
   }
