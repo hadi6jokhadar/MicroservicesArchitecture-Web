@@ -122,9 +122,10 @@ export class TenantDialogComponent implements OnInit {
       this.form.controls.userId.clearValidators();
       this.form.controls.userId.updateValueAndValidity();
 
-      // Fetch existing config to preserve it
+      // Fetch existing config to preserve it (admin endpoint — works for archived tenants too)
       this.isLoading.set(true);
-      this._tenantService.getTenantConfig(tenant.tenantId).subscribe({
+      const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
+      this._tenantService.getTenantConfigAdmin(tenant.tenantId, context).subscribe({
         next: (config) => {
           if (config.data) {
             this.existingConfig.set(config.data);

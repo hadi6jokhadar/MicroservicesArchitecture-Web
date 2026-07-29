@@ -8,6 +8,7 @@ import { aiSystemPromptsRoutes } from '../features/ai-system-prompts/ai-system-p
 import { aiChatSessionsRoutes } from '../features/ai-chat-sessions/ai-chat-sessions.routes';
 import { aiTokenUsageLogsRoutes } from '../features/ai-token-usage-logs/ai-token-usage-logs.routes';
 import { tenantRoutes } from '../features/tenant/tenant.routes';
+import { backupRoutes } from '../features/backup/backup.routes';
 import { notificationRoutes } from '../features/notification/notification.routes';
 import { categoryRoutes } from '../features/category/category.routes';
 import { auditLogRoutes } from '../features/audit-log/audit-log.routes';
@@ -34,6 +35,12 @@ export const pagesRoutes: Routes = [
       {
         path: 'tenant',
         loadChildren: () => Promise.resolve(tenantRoutes),
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['SuperAdmin'] },
+      },
+      {
+        path: 'backup',
+        loadChildren: () => Promise.resolve(backupRoutes),
         canActivate: [authGuard, roleGuard],
         data: { roles: ['SuperAdmin'] },
       },

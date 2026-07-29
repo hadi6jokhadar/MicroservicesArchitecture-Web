@@ -1,6 +1,6 @@
 # Frontend Documentation Index
 
-**Last Updated:** June 5, 2026  
+**Last Updated:** July 30, 2026  
 **Purpose:** Central entry point for all Angular frontend documentation
 
 ---
@@ -12,6 +12,7 @@
 | **Getting Started**    | [ANGULAR_DESIGN_PATTERN](#angular-design-pattern)                                                                                           |
 | **UI Components**      | [COMPONENT_USAGE_GUIDE](#component-usage-guide) • [ZARDUI_AI_REFERENCE](#zardui-ai-reference) • [ZARD_ICON_REFERENCE](#zard-icon-reference) |
 | **Translation & i18n** | [TRANSLATION_SYSTEM_GUIDE](#translation-system-guide) • [TRANSLATION_FEATURE_GUIDE](#translation-feature-guide)                             |
+| **Backup Management** | [BACKUP_FEATURE_GUIDE](#backup-feature-guide)                                                                                                |
 | **Dialog & Overlays**  | [DIALOG_DESIGN_GUIDE](#dialog-design-guide)                                                                                                 |
 | **Authentication**     | [MULTI_MODE_AUTHENTICATION_GUIDE](#multi-mode-authentication-guide) • [IDENTITY_MODULE_GUIDE](#identity-module-guide)                       |
 | **Error Handling**     | [ERROR_HANDLER_USAGE_GUIDE](#error-handler-usage-guide)                                                                                     |
@@ -202,6 +203,27 @@
 
 ---
 
+### Backup Management
+
+#### BACKUP_FEATURE_GUIDE.md
+
+**Purpose:** Admin UI for the platform's database backup/restore service
+**Read When:**
+
+- Working on the Backup Overview or History pages
+- Adding a new known service to the Trigger Backup dialog
+- Understanding the Local/Cloud dual-status badge pattern
+- Debugging why a database doesn't show up until triggered/synced
+
+**Key Topics:**
+
+- Overview (status table) and History (run log) pages
+- Trigger Backup / Restore Backup dialogs, View Run sheet
+- BackupService, BackupEventsService
+- String-valued enum fields (scope/status/localStatus/cloudStatus) — not numeric
+
+---
+
 ### Authentication & Identity
 
 #### MULTI_MODE_AUTHENTICATION_GUIDE.md
@@ -284,7 +306,7 @@
 - ❌ `IMPLEMENTATION_SUMMARY_FRONTEND_ERROR_INTERCEPTOR.md` - Temporary summary (removed)
 
 **Total files removed:** 10  
-**Current file count:** 13 (clean, production-ready documentation)
+**Current file count:** 14 (clean, production-ready documentation)
 
 ---
 
@@ -328,6 +350,7 @@ Each documentation file should have:
 | Use AI for coding                | ZARDUI_AI_REFERENCE.md                                       |
 | Use the audio editor dialog      | LIBRARY_STRUCTURE.md → Shared Component Reference            |
 | Add audio editing to file upload | LIBRARY_STRUCTURE.md → AudioEditorDialogComponent            |
+| Work on database backups         | BACKUP_FEATURE_GUIDE.md                                      |
 
 ---
 

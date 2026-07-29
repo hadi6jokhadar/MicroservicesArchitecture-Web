@@ -4,6 +4,9 @@ export * from './lib/identity';
 // Tenant
 export * from './lib/tenant';
 
+// Backup
+export * from './lib/backup';
+
 // Notification
 export * from './lib/notification';
 

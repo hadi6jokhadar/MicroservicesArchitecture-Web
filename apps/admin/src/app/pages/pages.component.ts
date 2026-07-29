@@ -97,6 +97,29 @@ export class PagesComponent {
       type: SidebarPageType.Management,
     }),
     new SidebarPageClass({
+      translationKey: 'sidebar.pages.backup',
+      icon: 'archive' as ZardIcon,
+      group: 'sidebar.groups.system',
+      roles: ['SuperAdmin'],
+      type: SidebarPageType.Both,
+      children: [
+        new SidebarPageClass({
+          translationKey: 'sidebar.pages.backupOverview',
+          icon: 'archive' as ZardIcon,
+          route: '/backup/overview',
+          roles: ['SuperAdmin'],
+          type: SidebarPageType.Both,
+        }),
+        new SidebarPageClass({
+          translationKey: 'sidebar.pages.backupHistory',
+          icon: 'clock' as ZardIcon,
+          route: '/backup/history',
+          roles: ['SuperAdmin'],
+          type: SidebarPageType.Both,
+        }),
+      ],
+    }),
+    new SidebarPageClass({
       translationKey: 'sidebar.pages.translation',
       icon: 'book-open-text' as ZardIcon,
       group: 'sidebar.groups.system',

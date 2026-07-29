@@ -59,6 +59,17 @@ export class TenantService {
     return this._http.get<ITenantConfig>(`${this._baseUrl}/config/${tenantId}`);
   }
 
+  // Admin-only — includes archived tenants (use for editing/viewing config in the admin dashboard)
+  getTenantConfigAdmin(
+    tenantId: string,
+    context?: HttpContext
+  ): Observable<ITenantConfig> {
+    return this._http.get<ITenantConfig>(
+      `${this._adminUrl}/${tenantId}/config`,
+      { context }
+    );
+  }
+
   // Public endpoint — no auth required. tenantId optional: returns defaults when omitted.
   getFeatureFlags(tenantId?: string): Observable<Record<string, boolean>> {
     const params = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : '';

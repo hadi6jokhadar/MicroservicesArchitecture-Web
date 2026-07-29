@@ -180,17 +180,20 @@ export class TenantConfigurationSheetComponent implements OnInit, OnDestroy {
     if (!this.data.tenantId) return;
 
     this.isLoading.set(true);
-    this._tenantService.getTenantConfig(this.data.tenantId).subscribe({
-      next: (config) => {
-        this.initFlagsFromConfig(config);
-        this.tenantConfig.set(config);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        this.handleError(err);
-        this.isLoading.set(false);
-      },
-    });
+    const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
+    this._tenantService
+      .getTenantConfigAdmin(this.data.tenantId, context)
+      .subscribe({
+        next: (config) => {
+          this.initFlagsFromConfig(config);
+          this.tenantConfig.set(config);
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          this.handleError(err);
+          this.isLoading.set(false);
+        },
+      });
   }
 
   private initFlagsFromConfig(config: ITenantConfig): void {

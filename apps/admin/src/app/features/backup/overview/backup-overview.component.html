@@ -1,0 +1,226 @@
+<div class="backup-overview-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>{{ 'backup.overview.title' | translate }}</h1>
+        <p>{{ 'backup.overview.subtitle' | translate }}</p>
+      </div>
+      <div class="header-actions">
+        <button z-button zSize="lg" (click)="onNewBackup()" id="new-backup-btn">
+          <z-icon zType="zap" />
+          {{ 'backup.overview.newBackup' | translate }}
+        </button>
+        <a z-button zType="outline" zSize="lg" routerLink="/backup/history" id="view-all-history-btn">
+          <z-icon zType="clock" />
+          {{ 'backup.overview.viewAllHistory' | translate }}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Table Card -->
+  <z-card class="table-card">
+    @if (isLoading()) {
+    <div class="loading-container">
+      <z-loader zSize="lg" />
+      <p>{{ 'backup.overview.loading' | translate }}</p>
+    </div>
+    } @else if (summary().length === 0) {
+    <div class="empty-container">
+      <z-empty
+        zIcon="archive"
+        [zTitle]="'backup.overview.emptyTitle' | translate"
+        [zDescription]="'backup.overview.emptyDescription' | translate"
+      />
+    </div>
+    } @else {
+    <div class="table-wrapper">
+      <table z-table class="standard-table">
+        <thead z-table-header>
+          <tr z-table-row>
+            <th z-table-head class="col-target">
+              {{ 'backup.overview.table.target' | translate }}
+            </th>
+            <th z-table-head class="col-last-backup">
+              {{ 'backup.overview.table.lastBackupAt' | translate }}
+            </th>
+            <th z-table-head class="col-status">
+              {{ 'common.status' | translate }}
+            </th>
+            <th z-table-head class="col-local-status">
+              {{ 'backup.overview.table.localStatus' | translate }}
+            </th>
+            <th z-table-head class="col-cloud-status">
+              {{ 'backup.overview.table.cloudStatus' | translate }}
+            </th>
+            <th z-table-head class="col-size">
+              {{ 'backup.overview.table.size' | translate }}
+            </th>
+            <th z-table-head class="col-error">
+              {{ 'backup.overview.table.error' | translate }}
+            </th>
+            <th z-table-head class="col-actions">
+              {{ 'common.actions' | translate }}
+            </th>
+          </tr>
+        </thead>
+        <tbody z-table-body>
+          @for (item of summary(); track trackByItem($index, item)) {
+          <tr z-table-row class="standard-row">
+            <!-- Target -->
+            <td
+              z-table-cell
+              class="col-target"
+              [attr.data-label]="'backup.overview.table.target' | translate"
+            >
+              <div class="target-cell">
+                <span class="target-name">{{ item.displayName }}</span>
+                <z-badge zType="outline" zShape="pill">
+                  {{ getTargetLabelKey(item.scope) | translate }}
+                </z-badge>
+              </div>
+            </td>
+
+            <!-- Last Backup At -->
+            <td
+              z-table-cell
+              class="col-last-backup"
+              [attr.data-label]="'backup.overview.table.lastBackupAt' | translate"
+            >
+              <span>{{ item.lastBackupAt ? (item.lastBackupAt | date : 'mediumDate') : ('backup.overview.never' | translate) }}</span>
+            </td>
+
+            <!-- Status -->
+            <td
+              z-table-cell
+              class="col-status"
+              [attr.data-label]="'common.status' | translate"
+            >
+              @if (item.lastBackupStatus) {
+              <z-badge [zType]="getStatusBadgeType(item.lastBackupStatus)" zShape="pill">
+                {{ 'backup.status.' + item.lastBackupStatus.toLowerCase() | translate }}
+              </z-badge>
+              } @else {
+              <span class="na-text">{{ 'backup.overview.never' | translate }}</span>
+              }
+            </td>
+
+            <!-- Local Status -->
+            <td
+              z-table-cell
+              class="col-local-status"
+              [attr.data-label]="'backup.overview.table.localStatus' | translate"
+            >
+              @if (item.lastLocalStatus) {
+              <z-badge [zType]="getLocalStatusBadgeType(item.lastLocalStatus)" zShape="pill">
+                {{ 'backup.localStatus.' + item.lastLocalStatus.toLowerCase() | translate }}
+              </z-badge>
+              } @else {
+              <span class="na-text">-</span>
+              }
+            </td>
+
+            <!-- Cloud Status -->
+            <td
+              z-table-cell
+              class="col-cloud-status"
+              [attr.data-label]="'backup.overview.table.cloudStatus' | translate"
+            >
+              @if (item.lastCloudStatus) {
+              <z-badge [zType]="getCloudStatusBadgeType(item.lastCloudStatus)" zShape="pill">
+                {{ 'backup.cloudStatus.' + item.lastCloudStatus.toLowerCase() | translate }}
+              </z-badge>
+              } @else {
+              <span class="na-text">-</span>
+              }
+            </td>
+
+            <!-- Size -->
+            <td
+              z-table-cell
+              class="col-size"
+              [attr.data-label]="'backup.overview.table.size' | translate"
+            >
+              <span>{{ formatBytes(item.lastFileSizeBytes) }}</span>
+            </td>
+
+            <!-- Error -->
+            <td
+              z-table-cell
+              class="col-error"
+              [attr.data-label]="'backup.overview.table.error' | translate"
+            >
+              @if (item.lastErrorMessage) {
+              <span class="error-text" [zTooltip]="item.lastErrorMessage">
+                {{ item.lastErrorMessage }}
+              </span>
+              } @else {
+              <span class="na-text">-</span>
+              }
+            </td>
+
+            <!-- Actions Dropdown -->
+            <td z-table-cell class="col-actions">
+              <button
+                z-button
+                zType="outline"
+                zSize="sm"
+                z-dropdown
+                [zDropdownMenu]="actionsMenu"
+                [id]="'target-actions-' + trackByItem($index, item)"
+              >
+                <z-icon zType="ellipsis" />
+              </button>
+              <z-dropdown-menu-content #actionsMenu="zDropdownMenuContent">
+                <z-dropdown-menu-item
+                  (click)="onTriggerBackup(item)"
+                  [id]="'trigger-backup-' + trackByItem($index, item)"
+                >
+                  <z-icon zType="zap" />
+                  {{ 'backup.overview.actions.triggerNow' | translate }}
+                </z-dropdown-menu-item>
+
+                @if (findTargetId(item)) {
+                <z-dropdown-menu-item
+                  (click)="onToggleEnable(item)"
+                  [id]="'toggle-enable-' + trackByItem($index, item)"
+                >
+                  <z-icon [zType]="isTargetEnabled(item) ? 'cloud-off' : 'cloud'" />
+                  {{
+                    (isTargetEnabled(item)
+                      ? 'backup.overview.actions.disable'
+                      : 'backup.overview.actions.enable') | translate
+                  }}
+                </z-dropdown-menu-item>
+                }
+
+                @if (item.lastBackupRunId) {
+                <z-dropdown-menu-item
+                  (click)="onViewLastRun(item)"
+                  [id]="'view-last-run-' + trackByItem($index, item)"
+                >
+                  <z-icon zType="eye" />
+                  {{ 'backup.overview.actions.viewLastRun' | translate }}
+                </z-dropdown-menu-item>
+                }
+
+                @if (item.lastBackupStatus === 'Completed') {
+                <z-dropdown-menu-item
+                  (click)="onRestore(item)"
+                  [id]="'restore-' + trackByItem($index, item)"
+                >
+                  <z-icon zType="cloud-upload" />
+                  {{ 'backup.overview.actions.restore' | translate }}
+                </z-dropdown-menu-item>
+                }
+              </z-dropdown-menu-content>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    }
+  </z-card>
+</div>

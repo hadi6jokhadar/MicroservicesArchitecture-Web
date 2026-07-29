@@ -51,6 +51,18 @@
         "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build --push nasheed"
       }
     },
+    "build-backup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml build --push backup"
+      }
+    },
+    "run-backup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f ..\\MicroservicesArchitecture\\docker-compose.yml up -d backup"
+      }
+    },
     "build-gateway": {
       "executor": "nx:run-commands",
       "options": {

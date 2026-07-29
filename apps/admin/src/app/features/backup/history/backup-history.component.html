@@ -1,0 +1,520 @@
+<div class="backup-history-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-text">
+      <h1>{{ 'backup.history.title' | translate }}</h1>
+      <p>{{ 'backup.history.subtitle' | translate }}</p>
+    </div>
+  </div>
+
+  <!-- Tab Toggle -->
+  <div class="tab-toggle">
+    <button
+      z-button
+      [zType]="activeTab() === 'backups' ? 'default' : 'outline'"
+      (click)="onTabChange('backups')"
+      type="button"
+      id="history-tab-backups"
+    >
+      <z-icon zType="archive" />
+      {{ 'backup.history.tabs.backups' | translate }}
+    </button>
+    <button
+      z-button
+      [zType]="activeTab() === 'restores' ? 'default' : 'outline'"
+      (click)="onTabChange('restores')"
+      type="button"
+      id="history-tab-restores"
+    >
+      <z-icon zType="cloud-upload" />
+      {{ 'backup.history.tabs.restores' | translate }}
+    </button>
+  </div>
+
+  @if (activeTab() === 'backups') {
+
+  <!-- Filter Form Card -->
+  <z-card zPadding="lg">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <!-- Scope Filter -->
+        <z-form-field class="filter-field" zardId="scope" #sc="zardId">
+          <label z-form-label [for]="sc.id()">
+            {{ 'backup.history.filters.scope' | translate }}
+          </label>
+          <z-form-control>
+            <z-select
+              [id]="sc.id()"
+              [zPlaceholder]="'backup.history.filters.allScopes' | translate"
+              formControlName="scope"
+            >
+              <z-select-item zValue="all">
+                {{ 'backup.history.filters.allScopes' | translate }}
+              </z-select-item>
+              <z-select-item zValue="GlobalService">
+                {{ 'backup.scope.globalService' | translate }}
+              </z-select-item>
+              <z-select-item zValue="Tenant">
+                {{ 'backup.scope.tenant' | translate }}
+              </z-select-item>
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Status Filter -->
+        <z-form-field class="filter-field" zardId="status" #st="zardId">
+          <label z-form-label [for]="st.id()">
+            {{ 'common.status' | translate }}
+          </label>
+          <z-form-control>
+            <z-select
+              [id]="st.id()"
+              [zPlaceholder]="'backup.history.filters.allStatus' | translate"
+              formControlName="status"
+            >
+              <z-select-item zValue="all">
+                {{ 'backup.history.filters.allStatus' | translate }}
+              </z-select-item>
+              <z-select-item zValue="Pending">
+                {{ 'backup.status.pending' | translate }}
+              </z-select-item>
+              <z-select-item zValue="Running">
+                {{ 'backup.status.running' | translate }}
+              </z-select-item>
+              <z-select-item zValue="Completed">
+                {{ 'backup.status.completed' | translate }}
+              </z-select-item>
+              <z-select-item zValue="Failed">
+                {{ 'backup.status.failed' | translate }}
+              </z-select-item>
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Service Name Filter -->
+        <z-form-field class="filter-field" zardId="serviceName" #svc="zardId">
+          <label z-form-label [for]="svc.id()">
+            {{ 'backup.history.filters.serviceName' | translate }}
+          </label>
+          <z-form-control>
+            <input
+              z-input
+              [id]="svc.id()"
+              type="text"
+              formControlName="serviceName"
+              [placeholder]="'backup.history.filters.serviceNamePlaceholder' | translate"
+              (keyup.enter)="onSearch()"
+            />
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Tenant Id Filter -->
+        <z-form-field class="filter-field" zardId="tenantId" #tid="zardId">
+          <label z-form-label [for]="tid.id()">
+            {{ 'backup.history.filters.tenantId' | translate }}
+          </label>
+          <z-form-control>
+            <input
+              z-input
+              [id]="tid.id()"
+              type="text"
+              formControlName="tenantId"
+              [placeholder]="'backup.history.filters.tenantIdPlaceholder' | translate"
+              (keyup.enter)="onSearch()"
+            />
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Action Buttons -->
+        <div class="filter-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            (click)="onClearFilters()"
+            type="button"
+            id="clear-history-filters-btn"
+          >
+            <z-icon zType="x" />
+            {{ 'common.clear' | translate }}
+          </button>
+          <button
+            z-button
+            zType="default"
+            zSize="default"
+            (click)="onSearch()"
+            type="button"
+            id="search-history-btn"
+          >
+            <z-icon zType="search" />
+            {{ 'common.search' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </z-card>
+
+  <!-- Runs Table Card -->
+  <z-card class="table-card">
+    @if (isLoading()) {
+    <div class="loading-container">
+      <z-loader zSize="lg" />
+      <p>{{ 'backup.history.loading' | translate }}</p>
+    </div>
+    } @else if (runs().length === 0) {
+    <div class="empty-container">
+      <z-empty
+        zIcon="clock"
+        [zTitle]="'backup.history.emptyTitle' | translate"
+        [zDescription]="'backup.history.emptyDescription' | translate"
+      />
+    </div>
+    } @else {
+    <div class="table-container">
+      <!-- Results Info -->
+      <div class="table-header">
+        <div class="results-info">
+          <z-icon zType="clock" />
+          <span>
+            {{ 'common.showing' | translate }} {{ runs().length }}
+            {{ 'common.of' | translate }} {{ totalCount() }}
+            {{ 'backup.history.runs' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table z-table class="standard-table">
+          <thead z-table-header>
+            <tr z-table-row>
+              <th z-table-head class="col-scope">
+                {{ 'backup.history.table.scope' | translate }}
+              </th>
+              <th z-table-head class="col-target">
+                {{ 'backup.history.table.target' | translate }}
+              </th>
+              <th z-table-head class="col-database">
+                {{ 'backup.history.table.database' | translate }}
+              </th>
+              <th z-table-head class="col-trigger-type">
+                {{ 'backup.history.table.triggerType' | translate }}
+              </th>
+              <th z-table-head class="col-status">
+                {{ 'common.status' | translate }}
+              </th>
+              <th z-table-head class="col-local-status">
+                {{ 'backup.overview.table.localStatus' | translate }}
+              </th>
+              <th z-table-head class="col-cloud-status">
+                {{ 'backup.overview.table.cloudStatus' | translate }}
+              </th>
+              <th z-table-head class="col-started">
+                {{ 'backup.history.table.startedAt' | translate }}
+              </th>
+              <th z-table-head class="col-size">
+                {{ 'backup.overview.table.size' | translate }}
+              </th>
+              <th z-table-head class="col-actions">
+                {{ 'common.actions' | translate }}
+              </th>
+            </tr>
+          </thead>
+          <tbody z-table-body>
+            @for (run of runs(); track run.id) {
+            <tr z-table-row class="standard-row">
+              <!-- Scope -->
+              <td
+                z-table-cell
+                class="col-scope"
+                [attr.data-label]="'backup.history.table.scope' | translate"
+              >
+                <z-badge zType="outline" zShape="pill">
+                  {{
+                    'backup.scope.' + (run.scope === 'GlobalService' ? 'globalService' : 'tenant')
+                      | translate
+                  }}
+                </z-badge>
+              </td>
+
+              <!-- Target -->
+              <td
+                z-table-cell
+                class="col-target"
+                [attr.data-label]="'backup.history.table.target' | translate"
+              >
+                <span class="target-text">{{ getTargetLabel(run) }}</span>
+              </td>
+
+              <!-- Database -->
+              <td
+                z-table-cell
+                class="col-database"
+                [attr.data-label]="'backup.history.table.database' | translate"
+              >
+                <span class="db-text">{{ run.databaseName || '-' }}</span>
+              </td>
+
+              <!-- Trigger Type -->
+              <td
+                z-table-cell
+                class="col-trigger-type"
+                [attr.data-label]="'backup.history.table.triggerType' | translate"
+              >
+                <z-badge zType="outline" zShape="pill">
+                  {{ 'backup.triggerType.' + run.triggerType.toLowerCase() | translate }}
+                </z-badge>
+              </td>
+
+              <!-- Status -->
+              <td
+                z-table-cell
+                class="col-status"
+                [attr.data-label]="'common.status' | translate"
+              >
+                <z-badge [zType]="getStatusBadgeType(run.status)" zShape="pill">
+                  {{ 'backup.status.' + run.status.toLowerCase() | translate }}
+                </z-badge>
+              </td>
+
+              <!-- Local Status -->
+              <td
+                z-table-cell
+                class="col-local-status"
+                [attr.data-label]="'backup.overview.table.localStatus' | translate"
+              >
+                <z-badge [zType]="getLocalStatusBadgeType(run.localStatus)" zShape="pill">
+                  {{ 'backup.localStatus.' + run.localStatus.toLowerCase() | translate }}
+                </z-badge>
+              </td>
+
+              <!-- Cloud Status -->
+              <td
+                z-table-cell
+                class="col-cloud-status"
+                [attr.data-label]="'backup.overview.table.cloudStatus' | translate"
+              >
+                <z-badge [zType]="getCloudStatusBadgeType(run.cloudStatus)" zShape="pill">
+                  {{ 'backup.cloudStatus.' + run.cloudStatus.toLowerCase() | translate }}
+                </z-badge>
+              </td>
+
+              <!-- Started At -->
+              <td
+                z-table-cell
+                class="col-started"
+                [attr.data-label]="'backup.history.table.startedAt' | translate"
+              >
+                <span>{{ run.startedAt ? (run.startedAt | date : 'short') : '-' }}</span>
+              </td>
+
+              <!-- Size -->
+              <td
+                z-table-cell
+                class="col-size"
+                [attr.data-label]="'backup.overview.table.size' | translate"
+              >
+                <span>{{ formatBytes(run.fileSizeBytes) }}</span>
+              </td>
+
+              <!-- Actions Dropdown -->
+              <td z-table-cell class="col-actions">
+                <button
+                  z-button
+                  zType="outline"
+                  zSize="sm"
+                  z-dropdown
+                  [zDropdownMenu]="actionsMenu"
+                  [id]="'run-actions-' + run.id"
+                >
+                  <z-icon zType="ellipsis" />
+                </button>
+                <z-dropdown-menu-content #actionsMenu="zDropdownMenuContent">
+                  <z-dropdown-menu-item
+                    (click)="onViewRun(run)"
+                    [id]="'view-run-' + run.id"
+                  >
+                    <z-icon zType="eye" />
+                    {{ 'common.view' | translate }}
+                  </z-dropdown-menu-item>
+
+                  @if (run.status === 'Completed') {
+                  <z-dropdown-menu-item
+                    (click)="onRestore(run)"
+                    [id]="'restore-run-' + run.id"
+                  >
+                    <z-icon zType="cloud-upload" />
+                    {{ 'backup.overview.actions.restore' | translate }}
+                  </z-dropdown-menu-item>
+                  }
+                </z-dropdown-menu-content>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      @if (totalPages() > 1) {
+      <div class="pagination-container">
+        <z-pagination
+          zSize="sm"
+          [zTotal]="totalPages()"
+          [(zPageIndex)]="currentPage"
+        />
+      </div>
+      }
+    </div>
+    }
+  </z-card>
+
+  } @else {
+
+  <!-- Restore Runs Table Card -->
+  <z-card class="table-card">
+    @if (isRestoreRunsLoading()) {
+    <div class="loading-container">
+      <z-loader zSize="lg" />
+      <p>{{ 'backup.history.loading' | translate }}</p>
+    </div>
+    } @else if (restoreRuns().length === 0) {
+    <div class="empty-container">
+      <z-empty
+        zIcon="cloud-upload"
+        [zTitle]="'backup.history.noRestoresTitle' | translate"
+        [zDescription]="'backup.history.noRestoresDescription' | translate"
+      />
+    </div>
+    } @else {
+    <div class="table-container">
+      <div class="table-header">
+        <div class="results-info">
+          <z-icon zType="cloud-upload" />
+          <span>
+            {{ 'common.showing' | translate }} {{ restoreRuns().length }}
+            {{ 'common.of' | translate }} {{ restoreTotalCount() }}
+            {{ 'backup.history.restores' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table z-table class="standard-table">
+          <thead z-table-header>
+            <tr z-table-row>
+              <th z-table-head class="col-backup-run">
+                {{ 'backup.history.table.backupRun' | translate }}
+              </th>
+              <th z-table-head class="col-status">
+                {{ 'common.status' | translate }}
+              </th>
+              <th z-table-head class="col-triggered-by">
+                {{ 'backup.history.table.triggeredBy' | translate }}
+              </th>
+              <th z-table-head class="col-started">
+                {{ 'backup.history.table.startedAt' | translate }}
+              </th>
+              <th z-table-head class="col-completed">
+                {{ 'backup.sheet.completedAt' | translate }}
+              </th>
+              <th z-table-head class="col-error">
+                {{ 'backup.overview.table.error' | translate }}
+              </th>
+              <th z-table-head class="col-actions">
+                {{ 'common.actions' | translate }}
+              </th>
+            </tr>
+          </thead>
+          <tbody z-table-body>
+            @for (restoreRun of restoreRuns(); track restoreRun.id) {
+            <tr z-table-row class="standard-row">
+              <td
+                z-table-cell
+                class="col-backup-run"
+                [attr.data-label]="'backup.history.table.backupRun' | translate"
+              >
+                <span class="target-text">#{{ restoreRun.backupRunId }}</span>
+              </td>
+
+              <td
+                z-table-cell
+                class="col-status"
+                [attr.data-label]="'common.status' | translate"
+              >
+                <z-badge [zType]="getRestoreStatusBadgeType(restoreRun.status)" zShape="pill">
+                  {{ 'backup.status.' + restoreRun.status.toLowerCase() | translate }}
+                </z-badge>
+              </td>
+
+              <td
+                z-table-cell
+                class="col-triggered-by"
+                [attr.data-label]="'backup.history.table.triggeredBy' | translate"
+              >
+                <span>{{ restoreRun.triggeredByEmail || '-' }}</span>
+              </td>
+
+              <td
+                z-table-cell
+                class="col-started"
+                [attr.data-label]="'backup.history.table.startedAt' | translate"
+              >
+                <span>{{ restoreRun.startedAt ? (restoreRun.startedAt | date : 'short') : '-' }}</span>
+              </td>
+
+              <td
+                z-table-cell
+                class="col-completed"
+                [attr.data-label]="'backup.sheet.completedAt' | translate"
+              >
+                <span>{{ restoreRun.completedAt ? (restoreRun.completedAt | date : 'short') : '-' }}</span>
+              </td>
+
+              <td
+                z-table-cell
+                class="col-error"
+                [attr.data-label]="'backup.overview.table.error' | translate"
+              >
+                @if (restoreRun.errorMessage) {
+                <span class="error-text" [zTooltip]="restoreRun.errorMessage">
+                  {{ restoreRun.errorMessage }}
+                </span>
+                } @else {
+                <span class="na-text">-</span>
+                }
+              </td>
+
+              <td z-table-cell class="col-actions">
+                <button
+                  z-button
+                  zType="outline"
+                  zSize="sm"
+                  (click)="onViewBackupForRestore(restoreRun)"
+                  [id]="'view-backup-for-restore-' + restoreRun.id"
+                >
+                  <z-icon zType="eye" />
+                </button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      @if (restoreTotalPages() > 1) {
+      <div class="pagination-container">
+        <z-pagination
+          zSize="sm"
+          [zTotal]="restoreTotalPages()"
+          [(zPageIndex)]="restoreCurrentPage"
+        />
+      </div>
+      }
+    </div>
+    }
+  </z-card>
+
+  }
+</div>

@@ -1,0 +1,80 @@
+<div class="dialog-container">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+    <p class="dialog-description">
+      {{ 'backup.restoreDialog.description' | translate }}
+    </p>
+
+    <z-accordion zType="single">
+      <z-accordion-item
+        zValue="advanced"
+        [zTitle]="'backup.restoreDialog.advancedOptions' | translate"
+      >
+        <z-form-field zardId="targetConnectionOverride" #tco="zardId">
+          <label z-form-label [for]="tco.id()">
+            {{ 'backup.restoreDialog.targetConnectionOverride' | translate }}
+          </label>
+          <z-form-control>
+            <input
+              z-input
+              [id]="tco.id()"
+              type="text"
+              formControlName="targetConnectionOverride"
+              [placeholder]="
+                'backup.restoreDialog.targetConnectionOverridePlaceholder'
+                  | translate
+              "
+            />
+          </z-form-control>
+          <p z-form-description>
+            {{ 'backup.restoreDialog.targetConnectionOverrideHint' | translate }}
+          </p>
+        </z-form-field>
+      </z-accordion-item>
+    </z-accordion>
+
+    <div class="checkbox-field">
+      <div class="checkbox-label">
+        <z-checkbox formControlName="confirmRestore" zId="confirm-restore" />
+        <span>{{ 'backup.restoreDialog.confirmCheckbox' | translate }}</span>
+      </div>
+      @if (form.controls.confirmRestore.touched &&
+      form.controls.confirmRestore.hasError('required')) {
+      <p z-form-message>
+        {{ 'backup.restoreDialog.confirmRequired' | translate }}
+      </p>
+      }
+    </div>
+
+    @if (errorMessage()) {
+    <z-alert
+      zType="destructive"
+      zIcon="circle-alert"
+      [zDescription]="errorMessage()!"
+    />
+    }
+
+    <div class="dialog-actions">
+      <button
+        z-button
+        zType="outline"
+        type="button"
+        (click)="onCancel()"
+        [zDisabled]="isLoading()"
+        id="cancel-restore-button"
+      >
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        z-button
+        zType="destructive"
+        type="submit"
+        [zLoading]="isLoading()"
+        [zDisabled]="isLoading()"
+        id="confirm-restore-button"
+      >
+        <z-icon zType="cloud-upload" />
+        {{ 'backup.restoreDialog.submit' | translate }}
+      </button>
+    </div>
+  </form>
+</div>
