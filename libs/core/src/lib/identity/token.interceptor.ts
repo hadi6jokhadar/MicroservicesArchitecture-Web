@@ -9,6 +9,7 @@ import { inject, Injector } from '@angular/core';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, filter, switchMap, take } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import { IdentityStorageService } from './identity-storage.service';
 import { IAuthResponse } from './models';
 
 // State for token refreshing
@@ -16,7 +17,8 @@ let isRefreshing = false;
 const refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
 export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = localStorage.getItem('token');
+  const identityStorage = inject(IdentityStorageService);
+  const token = identityStorage.getAccessToken();
   const injector = inject(Injector);
 
   if (token) {
@@ -32,7 +34,7 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
         !req.url.includes('auth/login')
       ) {
         const authService = injector.get(AuthService);
-        return handle401Error(req, next, error, authService);
+        return handle401Error(req, next, error, authService, identityStorage);
       }
 
       return throwError(() => error);
@@ -44,15 +46,16 @@ const handle401Error = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
   originalError: HttpErrorResponse,
-  authService: AuthService
+  authService: AuthService,
+  identityStorage: IdentityStorageService
 ): Observable<HttpEvent<unknown>> => {
   if (!isRefreshing) {
     isRefreshing = true;
     refreshTokenSubject.next(null);
 
     // Get tokens directly from storage or service (service might be safer if method exists and is public)
-    const token = localStorage.getItem('token');
-    const refreshToken = localStorage.getItem('refreshToken');
+    const token = identityStorage.getAccessToken();
+    const refreshToken = identityStorage.getRefreshToken();
 
     if (token && refreshToken) {
       return authService

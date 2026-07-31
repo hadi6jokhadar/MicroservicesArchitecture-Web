@@ -2,7 +2,7 @@
 
 **Location:** `libs/core/src/lib/identity/`
 
-**Last Updated:** April 21, 2026
+**Last Updated:** July 31, 2026
 
 ---
 
@@ -36,7 +36,8 @@ libs/core/src/lib/identity/
 ├── role.service.ts           # Role & role-user assignment
 ├── claim.service.ts          # Claim CRUD operations
 ├── device-token.service.ts   # Device token management
-├── token.interceptor.ts      # Auto-attach JWT to requests
+├── identity-storage.service.ts # Single choke point for token/tenant localStorage access
+├── token.interceptor.ts      # Auto-attach JWT to requests (reads via IdentityStorageService)
 ├── auth.guard.ts             # Route protection (authenticated users)
 ├── role.guard.ts             # Route protection (role-based)
 ├── profile.resolver.ts       # Pre-load user profile
@@ -684,7 +685,7 @@ export const appConfig: ApplicationConfig = {
 
 **Behavior:**
 
-- Reads token from `AuthService.getToken()`
+- Reads the access/refresh tokens via `IdentityStorageService` (`getAccessToken()` / `getRefreshToken()`) — the single choke point for token storage; the interceptor no longer touches `localStorage` directly
 - Adds `Authorization: Bearer <token>` header to all requests
 - No manual token management needed
 
