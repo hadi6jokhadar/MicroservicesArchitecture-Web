@@ -932,7 +932,8 @@ import { ZardIconComponent } from '@ihsan/ui';
   'credit-card',
   'activity',
   'circle-dollar-sign',
-  'circle-small');
+  'circle-small',
+  'shapes');
 ```
 
 ````

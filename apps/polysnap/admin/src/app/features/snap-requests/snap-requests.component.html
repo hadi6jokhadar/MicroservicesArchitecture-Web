@@ -1,0 +1,249 @@
+<div class="snap-requests-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>{{ 'common.snapRequests' | translate }}</h1>
+        <p>{{ '#polysnap#.snapRequests.subtitle' | translate }}</p>
+      </div>
+      <div class="header-actions">
+        <button
+          z-button
+          zType="default"
+          zSize="lg"
+          (click)="onAddSnapRequest()"
+          id="add-snap-request-btn"
+        >
+          <z-icon zType="plus" />
+          {{ '#polysnap#.snapRequests.addSnapRequest' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Form Card -->
+  <z-card>
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <!-- Search Input -->
+        <z-form-field
+          class="filter-field search-field"
+          zardId="searchTerm"
+          #s="zardId"
+        >
+          <label z-form-label [for]="s.id()">{{
+            'common.name' | translate
+          }}</label>
+          <z-form-control>
+            <div class="search-input-wrapper">
+              <z-icon zType="search" class="search-icon" />
+              <input
+                z-input
+                [id]="s.id()"
+                type="text"
+                formControlName="searchTerm"
+                [placeholder]="'#polysnap#.snapRequests.searchPlaceholder' | translate"
+                (keyup.enter)="onSearch()"
+              />
+            </div>
+          </z-form-control>
+        </z-form-field>
+
+        <!-- Action Buttons -->
+        <div class="filter-actions">
+          <button
+            z-button
+            zType="outline"
+            zSize="default"
+            (click)="onClearFilters()"
+            type="button"
+            id="clear-filters-btn"
+          >
+            <z-icon zType="x" />
+            {{ 'common.clear' | translate }}
+          </button>
+          <button
+            z-button
+            zType="default"
+            zSize="default"
+            (click)="onSearch()"
+            type="button"
+            id="search-btn"
+          >
+            <z-icon zType="search" />
+            {{ 'common.search' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </z-card>
+
+  <!-- Snap Requests Table Card -->
+  <z-card class="table-card">
+    @if (isLoading()) {
+    <div class="loading-container">
+      <z-loader zSize="lg" />
+      <p>{{ '#polysnap#.snapRequests.loading' | translate }}</p>
+    </div>
+    } @else if (snapRequests().length === 0) {
+    <div class="empty-container">
+      <z-empty
+        zIcon="shapes"
+        [zTitle]="'#polysnap#.snapRequests.noSnapRequestsFound' | translate"
+        [zDescription]="'#polysnap#.snapRequests.noSnapRequestsFoundDesc' | translate"
+      />
+    </div>
+    } @else {
+    <div class="table-container">
+      <!-- Results Info -->
+      <div class="table-header">
+        <div class="results-info">
+          <z-icon zType="shapes" />
+          <span
+            >{{ 'common.showing' | translate }}
+            {{ snapRequests().length }}
+            {{ 'common.of' | translate }}
+            {{ totalCount() }}
+            {{ 'common.snapRequests' | translate }}</span
+          >
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table z-table class="snap-requests-table">
+          <thead z-table-header>
+            <tr z-table-row>
+              <th z-table-head class="col-name">
+                {{ 'common.name' | translate }}
+              </th>
+              <th z-table-head class="col-threshold">
+                {{ '#polysnap#.snapRequests.table.threshold' | translate }}
+              </th>
+              <th z-table-head class="col-status">
+                {{ 'common.status' | translate }}
+              </th>
+              <th z-table-head class="col-created">
+                {{ 'common.created' | translate }}
+              </th>
+              <th z-table-head class="col-actions">
+                {{ 'common.actions' | translate }}
+              </th>
+            </tr>
+          </thead>
+          <tbody z-table-body>
+            @for (snapRequest of snapRequests(); track snapRequest.id) {
+            <tr z-table-row class="snap-request-row">
+              <!-- Name -->
+              <td
+                z-table-cell
+                class="col-name"
+                [attr.data-label]="'common.name' | translate"
+              >
+                <div class="name-cell">
+                  <z-icon zType="shapes" class="name-icon" />
+                  <span class="name-text">{{ snapRequest.name }}</span>
+                </div>
+              </td>
+
+              <!-- Threshold -->
+              <td
+                z-table-cell
+                class="col-threshold"
+                [attr.data-label]="'#polysnap#.snapRequests.table.threshold' | translate"
+              >
+                <span class="threshold-text">{{ snapRequest.threshold }}</span>
+              </td>
+
+              <!-- Status -->
+              <td
+                z-table-cell
+                class="col-status"
+                [attr.data-label]="'common.status' | translate"
+              >
+                <z-badge
+                  [zType]="getStatusBadgeType(snapRequest.status)"
+                  zShape="pill"
+                >
+                  {{
+                    snapRequest.status
+                      ? ('common.active' | translate)
+                      : ('common.inactive' | translate)
+                  }}
+                </z-badge>
+              </td>
+
+              <!-- Created Date -->
+              <td
+                z-table-cell
+                class="col-created"
+                [attr.data-label]="'common.created' | translate"
+              >
+                <span class="date-text">{{
+                  snapRequest.created | date : 'mediumDate'
+                }}</span>
+              </td>
+
+              <!-- Actions Dropdown -->
+              <td
+                z-table-cell
+                class="col-actions"
+                [attr.data-label]="'common.actions' | translate"
+              >
+                <button
+                  z-button
+                  zType="outline"
+                  zSize="sm"
+                  z-dropdown
+                  [zDropdownMenu]="actionsMenu"
+                  [id]="'snap-request-actions-' + snapRequest.id"
+                >
+                  <z-icon zType="ellipsis" />
+                </button>
+                <z-dropdown-menu-content #actionsMenu="zDropdownMenuContent">
+                  <z-dropdown-menu-item
+                    (click)="onViewSnapRequest(snapRequest)"
+                    [id]="'view-snap-request-' + snapRequest.id"
+                  >
+                    <z-icon zType="eye" />
+                    {{ 'common.view' | translate }}
+                  </z-dropdown-menu-item>
+
+                  <z-dropdown-menu-item
+                    (click)="onEditSnapRequest(snapRequest)"
+                    [id]="'edit-snap-request-' + snapRequest.id"
+                  >
+                    <z-icon zType="file-text" />
+                    {{ 'common.edit' | translate }}
+                  </z-dropdown-menu-item>
+
+                  <z-dropdown-menu-item
+                    (click)="onDeleteSnapRequest(snapRequest)"
+                    [id]="'delete-snap-request-' + snapRequest.id"
+                    class="delete-action"
+                  >
+                    <z-icon zType="trash" />
+                    {{ 'common.delete' | translate }}
+                  </z-dropdown-menu-item>
+                </z-dropdown-menu-content>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      @if (totalPages() > 1) {
+      <div class="pagination-container">
+        <z-pagination
+          zSize="sm"
+          [zTotal]="totalPages()"
+          [(zPageIndex)]="currentPage"
+        />
+      </div>
+      }
+    </div>
+    }
+  </z-card>
+</div>

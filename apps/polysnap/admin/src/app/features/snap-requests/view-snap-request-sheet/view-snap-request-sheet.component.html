@@ -1,0 +1,92 @@
+<div class="view-snap-request-sheet">
+  <!-- Header -->
+  <div class="sheet-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h2>{{ '#polysnap#.snapRequests.view.title' | translate }}</h2>
+        <div class="name-info">
+          <z-icon zType="shapes" />
+          <span class="name-value">{{ snapRequest().name }}</span>
+        </div>
+      </div>
+      <button
+        z-button
+        zType="outline"
+        zSize="sm"
+        (click)="onClose()"
+        id="close-sheet-btn"
+      >
+        <z-icon zType="x" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="sheet-content">
+    <div class="detail-section">
+      <div class="detail-row">
+        <span class="detail-label">{{ 'common.name' | translate }}</span>
+        <span class="detail-value">{{ snapRequest().name }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{
+          '#polysnap#.snapRequests.table.threshold' | translate
+        }}</span>
+        <span class="detail-value">{{ snapRequest().threshold }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'common.status' | translate }}</span>
+        <span class="detail-value">
+          <z-badge
+            [zType]="getStatusBadgeType(snapRequest().status)"
+            zShape="pill"
+          >
+            {{
+              snapRequest().status
+                ? ('common.active' | translate)
+                : ('common.inactive' | translate)
+            }}
+          </z-badge>
+        </span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">{{ 'common.created' | translate }}</span>
+        <span class="detail-value">{{
+          snapRequest().created | date : 'medium'
+        }}</span>
+      </div>
+
+      @if (snapRequest().lastModified) {
+      <div class="detail-row">
+        <span class="detail-label">{{
+          '#polysnap#.snapRequests.view.lastModified' | translate
+        }}</span>
+        <span class="detail-value">{{
+          snapRequest().lastModified | date : 'medium'
+        }}</span>
+      </div>
+      }
+    </div>
+
+    <div class="geometry-section">
+      <h3>{{ '#polysnap#.snapRequests.dialog.rawGeometryLabel' | translate }}</h3>
+      <pre class="geometry-block">{{ snapRequest().rawGeometryGeoJson }}</pre>
+    </div>
+
+    <div class="geometry-section">
+      <h3>{{ '#polysnap#.snapRequests.dialog.snappedGeometryLabel' | translate }}</h3>
+      @if (snapRequest().snappedGeometryGeoJson) {
+      <pre class="geometry-block">{{
+        snapRequest().snappedGeometryGeoJson
+      }}</pre>
+      } @else {
+      <p class="geometry-empty">
+        {{ '#polysnap#.snapRequests.view.snappedGeometryPending' | translate }}
+      </p>
+      }
+    </div>
+  </div>
+</div>

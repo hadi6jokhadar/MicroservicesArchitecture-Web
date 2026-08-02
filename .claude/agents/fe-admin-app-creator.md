@@ -24,11 +24,12 @@ Collect the following required information:
 
 ### Known Ports
 
-| App           | Port |
-| ------------- | ---- |
-| admin (root)  | 4200 |
-| nasheed-admin | 4300 |
-| nasheed-web   | 4301 |
+| App            | Port |
+| -------------- | ---- |
+| admin (root)   | 4200 |
+| nasheed-admin  | 4300 |
+| nasheed-web    | 4301 |
+| polysnap-admin | 4302 |
 
 **Pick the next unused port for each new app.**
 

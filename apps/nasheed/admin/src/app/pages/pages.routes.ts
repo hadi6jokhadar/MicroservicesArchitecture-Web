@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { identityRoutes } from '../features/identity/identity.routes';
 import { authGuard, roleGuard } from '@ihsan/core';
+import { identityRoutes } from '@ihsan/shared';
 
 export const pagesRoutes: Routes = [
   {

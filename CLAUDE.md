@@ -12,6 +12,7 @@ Before writing any code, confirm you have read all files below. State this expli
 | 4 | `Doc/TRANSLATION_SYSTEM_GUIDE.md` | Translation system & RTL support **(CRITICAL)** |
 | 5 | `Doc/DIALOG_DESIGN_GUIDE.md` | Dialog component patterns |
 | 6 | `Doc/FEATURE_FLAGS_GUIDE.md` | Feature flags directive, guard, and service |
+| 7 | `../Doc/POLYSNAP_PROJECT_OVERVIEW.md` | PolySnap product idea, architecture decisions, and roadmap — read before working on `apps/polysnap/` |
 
 ## Critical Errors to Avoid
 

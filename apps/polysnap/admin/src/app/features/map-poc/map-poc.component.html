@@ -1,0 +1,132 @@
+<div class="map-poc-container">
+  <z-card
+    [zTitle]="'#polysnap#.mapPoc.title' | translate"
+    [zDescription]="'#polysnap#.mapPoc.description' | translate"
+  >
+    <form
+      [formGroup]="searchForm"
+      (ngSubmit)="onSearch()"
+      class="search-row"
+    >
+      <input
+        z-input
+        type="text"
+        formControlName="query"
+        [placeholder]="'#polysnap#.mapPoc.searchPlaceholder' | translate"
+        id="location-search-input"
+      />
+      <button
+        z-button
+        zType="outline"
+        type="submit"
+        [zLoading]="isSearching()"
+        id="location-search-btn"
+      >
+        <i z-icon zType="search"></i>
+        {{ '#polysnap#.mapPoc.searchButton' | translate }}
+      </button>
+    </form>
+
+    @if (searchResults().length > 0) {
+      <div class="search-results">
+        @for (result of searchResults(); track result.label) {
+          <button
+            z-button
+            zType="ghost"
+            [zFull]="true"
+            class="search-result-item"
+            (click)="onSelectSearchResult(result)"
+          >
+            {{ result.label }}
+          </button>
+        }
+      </div>
+    }
+
+    <div class="toolbar">
+      <button z-button zType="default" (click)="startDrawing()" id="draw-area-btn">
+        <i z-icon zType="pencil"></i>
+        {{ '#polysnap#.mapPoc.drawArea' | translate }}
+      </button>
+      <button z-button zType="outline" (click)="clear()" id="clear-btn">
+        <i z-icon zType="trash"></i>
+        {{ '#polysnap#.mapPoc.clear' | translate }}
+      </button>
+      <button
+        z-button
+        zType="outline"
+        (click)="copyGeoJson()"
+        [zDisabled]="step() !== 'done'"
+        id="copy-geojson-btn"
+      >
+        <i z-icon zType="copy"></i>
+        {{ '#polysnap#.mapPoc.copyGeoJson' | translate }}
+      </button>
+    </div>
+
+    @switch (step()) {
+      @case ('drawing') {
+        <z-alert
+          zIcon="pencil"
+          [zDescription]="'#polysnap#.mapPoc.instructionDrawing' | translate"
+        />
+      }
+      @case ('detecting') {
+        <ng-template #detectingIcon>
+          <z-loader zSize="sm" />
+        </ng-template>
+        <z-alert
+          [zIcon]="detectingIcon"
+          [zDescription]="'#polysnap#.mapPoc.instructionDetecting' | translate"
+        />
+      }
+      @case ('done') {
+        <z-alert
+          zType="success"
+          [zDescription]="'#polysnap#.mapPoc.instructionDone' | translate"
+        />
+        @if (detectedPointCount(); as pointCount) {
+          <p class="detected-place-name">
+            {{ '#polysnap#.mapPoc.detectedPointCount' | translate: { count: pointCount } }}
+          </p>
+        }
+      }
+      @default {
+        <z-alert
+          zIcon="map"
+          [zDescription]="'#polysnap#.mapPoc.instructionIdle' | translate"
+        />
+      }
+    }
+
+    <div #mapContainer class="map-container"></div>
+
+    @if (capturedImagePreview(); as capturedImageSrc) {
+      <div class="captured-image-debug">
+        <p class="geojson-label">{{
+          '#polysnap#.mapPoc.capturedImageDebugLabel' | translate
+        }}</p>
+        <img
+          [src]="capturedImageSrc"
+          [alt]="'#polysnap#.mapPoc.capturedImageDebugLabel' | translate"
+          class="captured-image-debug-img"
+        />
+      </div>
+    }
+
+    @if (polygonGeoJson()) {
+      <div class="geojson-output">
+        <label class="geojson-label" for="polygon-geojson-output">{{
+          '#polysnap#.mapPoc.geoJsonLabel' | translate
+        }}</label>
+        <textarea
+          z-input
+          id="polygon-geojson-output"
+          [value]="polygonGeoJson()"
+          rows="10"
+          disabled
+        ></textarea>
+      </div>
+    }
+  </z-card>
+</div>

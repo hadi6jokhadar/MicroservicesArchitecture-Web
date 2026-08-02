@@ -13,6 +13,7 @@ export interface Environment {
     ai?: string;
     category?: string;
     nasheed?: string;
+    polySnap?: string;
   };
 }
 

@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TestComponentsComponent } from './test-components/test-components.component';
-import { identityRoutes } from '../features/identity/identity.routes';
 import { translationRoutes } from '../features/translation/translation.routes';
 import { aiSettingsRoutes } from '../features/ai-settings/ai-settings.routes';
 import { aiSystemPromptsRoutes } from '../features/ai-system-prompts/ai-system-prompts.routes';
@@ -13,6 +12,7 @@ import { notificationRoutes } from '../features/notification/notification.routes
 import { categoryRoutes } from '../features/category/category.routes';
 import { auditLogRoutes } from '../features/audit-log/audit-log.routes';
 import { authGuard, featureFlagGuard, FeatureFlags, roleGuard } from '@ihsan/core';
+import { identityRoutes } from '@ihsan/shared';
 
 export const pagesRoutes: Routes = [
   {

@@ -144,13 +144,10 @@
 
       .table-wrapper {
         overflow-x: auto;
-        border-radius: var(--radius);
-        border: 1px solid var(--color-border);
 
         .users-table {
           width: 100%;
           border-collapse: collapse;
-          font-size: 0.875rem;
 
           thead {
             background: var(--color-muted);
@@ -161,8 +158,11 @@
                 padding-block: 0.75rem;
                 padding-inline: 1rem;
                 text-align: start;
+                font-size: 0.8125rem;
                 font-weight: 600;
                 color: var(--color-foreground);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
                 white-space: nowrap;
 
                 &.col-avatar {
@@ -287,8 +287,8 @@
       .pagination-container {
         display: flex;
         justify-content: center;
-        padding-block-start: 1.5rem;
-        margin-block-start: 1.5rem;
+        padding-block: 1.5rem;
+        padding-inline: 1.5rem;
         border-block-start: 1px solid var(--color-border);
       }
     }

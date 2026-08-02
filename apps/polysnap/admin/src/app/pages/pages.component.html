@@ -1,0 +1,13 @@
+<div class="pages-container">
+  <shared-sidebar
+    [pages]="sidebarPages()"
+    [currentUser]="currentUser()"
+    [appTitleTranslationKey]="appTitleTranslationKey()"
+    (pageClicked)="onPageClick($event)"
+    (darkModeToggled)="toggleDarkMode()"
+    (logoutClicked)="onLogout()"
+  />
+  <main class="main-content">
+    <router-outlet />
+  </main>
+</div>

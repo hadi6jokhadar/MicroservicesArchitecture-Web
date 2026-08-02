@@ -1,3 +1,6 @@
+// Export features
+export * from './lib/features/identity';
+
 // Export components
 export * from './lib/components';
 

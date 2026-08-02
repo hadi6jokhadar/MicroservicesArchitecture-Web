@@ -3,7 +3,7 @@ import { HttpContext } from '@angular/common/http';
 import {
   extractErrorMessage,
   SKIP_ERROR_TOAST,
-} from '../../../../../../interceptors/error.interceptor';
+} from '../../../../interceptors/error.interceptor';
 import { toast } from 'ngx-sonner';
 import {
   TranslatePipe,

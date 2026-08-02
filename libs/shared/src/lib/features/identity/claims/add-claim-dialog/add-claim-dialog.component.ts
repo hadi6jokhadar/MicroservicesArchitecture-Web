@@ -10,7 +10,7 @@ import { ClaimService, TranslatePipe, TranslationService } from '@ihsan/core';
 import {
   extractErrorMessage,
   SKIP_ERROR_TOAST,
-} from '../../../../../../interceptors/error.interceptor';
+} from '../../../../interceptors/error.interceptor';
 import {
   ZardDialogRef,
   ZardFormImports,

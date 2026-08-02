@@ -1,0 +1,153 @@
+<div class="dialog-container">
+  <form
+    [formGroup]="snapRequestForm"
+    (ngSubmit)="onSubmit()"
+    class="dialog-form"
+  >
+    <!-- Name -->
+    <z-form-field zardId="name" #n="zardId">
+      <label z-form-label [for]="n.id()"
+        >{{ 'common.name' | translate }} *</label
+      >
+      <z-form-control>
+        <input
+          z-input
+          [id]="n.id()"
+          type="text"
+          formControlName="name"
+          [placeholder]="'#polysnap#.snapRequests.dialog.namePlaceholder' | translate"
+        />
+      </z-form-control>
+      @if (snapRequestForm.get('name')?.hasError('required') &&
+      snapRequestForm.get('name')?.touched) {
+      <span z-form-error>{{
+        '#polysnap#.snapRequests.validation.nameRequired' | translate
+      }}</span>
+      } @else if (snapRequestForm.get('name')?.hasError('maxlength')) {
+      <span z-form-error>{{
+        '#polysnap#.snapRequests.validation.nameMaxLength' | translate
+      }}</span>
+      }
+    </z-form-field>
+
+    <!-- Raw Geometry GeoJSON -->
+    <z-form-field zardId="rawGeometryGeoJson" #g="zardId">
+      <label z-form-label [for]="g.id()"
+        >{{ '#polysnap#.snapRequests.dialog.rawGeometryLabel' | translate }} *</label
+      >
+      <z-form-control>
+        <textarea
+          z-input
+          [id]="g.id()"
+          formControlName="rawGeometryGeoJson"
+          [placeholder]="
+            '#polysnap#.snapRequests.dialog.rawGeometryPlaceholder' | translate
+          "
+          rows="5"
+        ></textarea>
+      </z-form-control>
+      @if (snapRequestForm.get('rawGeometryGeoJson')?.hasError('required') &&
+      snapRequestForm.get('rawGeometryGeoJson')?.touched) {
+      <span z-form-error>{{
+        '#polysnap#.snapRequests.validation.rawGeometryRequired' | translate
+      }}</span>
+      }
+      <span z-form-description>{{
+        '#polysnap#.snapRequests.dialog.rawGeometryHint' | translate
+      }}</span>
+    </z-form-field>
+
+    <!-- Threshold -->
+    <z-form-field zardId="threshold" #t="zardId">
+      <label z-form-label [for]="t.id()"
+        >{{ '#polysnap#.snapRequests.dialog.thresholdLabel' | translate }} *</label
+      >
+      <z-form-control>
+        <input
+          z-input
+          [id]="t.id()"
+          type="number"
+          step="0.01"
+          min="0"
+          formControlName="threshold"
+          [placeholder]="
+            '#polysnap#.snapRequests.dialog.thresholdPlaceholder' | translate
+          "
+        />
+      </z-form-control>
+      @if (snapRequestForm.get('threshold')?.hasError('required') &&
+      snapRequestForm.get('threshold')?.touched) {
+      <span z-form-error>{{
+        '#polysnap#.snapRequests.validation.thresholdRequired' | translate
+      }}</span>
+      } @else if (snapRequestForm.get('threshold')?.hasError('min')) {
+      <span z-form-error>{{
+        '#polysnap#.snapRequests.validation.thresholdMin' | translate
+      }}</span>
+      }
+      <span z-form-description>{{
+        '#polysnap#.snapRequests.dialog.thresholdHint' | translate
+      }}</span>
+    </z-form-field>
+
+    <!-- Snapped Geometry GeoJSON (edit mode only, read-only) -->
+    @if (isEditMode()) {
+    <z-form-field zardId="snappedGeometryGeoJson" #sg="zardId">
+      <label z-form-label [for]="sg.id()">{{
+        '#polysnap#.snapRequests.dialog.snappedGeometryLabel' | translate
+      }}</label>
+      <z-form-control>
+        <textarea
+          z-input
+          [id]="sg.id()"
+          [value]="snappedGeometryGeoJson()"
+          rows="5"
+          disabled
+          [placeholder]="
+            '#polysnap#.snapRequests.dialog.snappedGeometryPlaceholder' | translate
+          "
+        ></textarea>
+      </z-form-control>
+      <span z-form-description>{{
+        '#polysnap#.snapRequests.dialog.snappedGeometryHint' | translate
+      }}</span>
+    </z-form-field>
+    }
+
+    <!-- Error Display -->
+    @if (errorMessage()) {
+    <z-alert
+      zType="destructive"
+      zIcon="circle-alert"
+      [zDescription]="errorMessage()!"
+    />
+    }
+
+    <!-- Form Actions -->
+    <div class="dialog-actions">
+      <button
+        z-button
+        zType="outline"
+        type="button"
+        (click)="onCancel()"
+        id="cancel-btn"
+      >
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        z-button
+        zType="default"
+        type="submit"
+        [zLoading]="isLoading()"
+        [zDisabled]="snapRequestForm.invalid"
+        id="submit-btn"
+      >
+        {{
+          isEditMode()
+            ? ('common.save' | translate)
+            : ('common.create' | translate)
+        }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,4 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -17,10 +22,6 @@ import {
   FileGroup,
 } from '@ihsan/core';
 import {
-  extractErrorMessage,
-  SKIP_ERROR_TOAST,
-} from '../../../../../../interceptors/error.interceptor';
-import {
   ZardDialogRef,
   Z_MODAL_DATA,
   ZardFormImports,
@@ -32,8 +33,12 @@ import {
   ZardIdDirective,
   ZardButtonComponent,
 } from '@ihsan/ui';
+import {
+  extractErrorMessage,
+  SKIP_ERROR_TOAST,
+} from '../../../../interceptors/error.interceptor';
+import { FileSelectorComponent } from '../../../../components/file-selector/file-selector.component';
 import { IFileManagerResponse, FileType } from '@ihsan/core';
-import { FileSelectorComponent } from '../../../file-manager/file-selector/file-selector.component';
 import { toast } from 'ngx-sonner';
 
 interface IEditUserDialogData {
