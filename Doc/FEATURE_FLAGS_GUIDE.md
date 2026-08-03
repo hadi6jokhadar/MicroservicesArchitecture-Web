@@ -231,6 +231,7 @@ export const FeatureFlags = {
 | `FeatureFlags.NasheedIngestionEnabled` | `nasheedIngestionEnabled` | `true` | `NasheedIngestionWorker` |
 | `FeatureFlags.IsBackgroundJobPageEnabled` | `isBackgroundJobPageEnabled` | `true` | Sidebar items (jobs group) |
 | `FeatureFlags.IsAuditLogPageEnabled` | `isAuditLogPageEnabled` | `true` | Sidebar item + `/audit-log` route guard |
+| `FeatureFlags.NasheedNewLyricsExtractionEnabled` | `nasheedNewLyricsExtractionEnabled` | `false` | `NasheedIngestionWorker` (backend) — no frontend gating, toggle only |
 
 ---
 

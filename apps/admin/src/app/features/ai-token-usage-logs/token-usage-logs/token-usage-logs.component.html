@@ -177,6 +177,9 @@
                 {{ 'tokenUsageLogs.table.totalTokens' | translate }}
               </th>
               <th z-table-head>
+                {{ 'tokenUsageLogs.table.audioDuration' | translate }}
+              </th>
+              <th z-table-head>
                 {{ 'common.createdAt' | translate }}
               </th>
             </tr>
@@ -230,6 +233,15 @@
                 "
               >
                 {{ log.TotalTokens }}
+              </td>
+              <td
+                z-table-cell
+                class="col-number"
+                [attr.data-label]="
+                  'tokenUsageLogs.table.audioDuration' | translate
+                "
+              >
+                {{ log.AudioDurationSeconds != null ? (log.AudioDurationSeconds | number : '1.0-1') + 's' : '-' }}
               </td>
               <td
                 z-table-cell

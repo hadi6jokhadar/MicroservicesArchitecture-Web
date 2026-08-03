@@ -3,6 +3,7 @@ export const FeatureFlags = {
   NasheedIngestionEnabled: 'nasheedIngestionEnabled',
   IsBackgroundJobPageEnabled: 'isBackgroundJobPageEnabled',
   IsAuditLogPageEnabled: 'isAuditLogPageEnabled',
+  NasheedNewLyricsExtractionEnabled: 'nasheedNewLyricsExtractionEnabled',
 } as const;
 
 export type FeatureFlag = (typeof FeatureFlags)[keyof typeof FeatureFlags];

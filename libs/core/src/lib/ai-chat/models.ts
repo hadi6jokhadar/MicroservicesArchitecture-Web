@@ -99,6 +99,7 @@ export interface IAiTokenUsageLog {
   PromptTokens: number;
   CompletionTokens: number;
   TotalTokens: number;
+  AudioDurationSeconds?: number | null;
   Endpoint: string;
   CreatedAt: string;
 }

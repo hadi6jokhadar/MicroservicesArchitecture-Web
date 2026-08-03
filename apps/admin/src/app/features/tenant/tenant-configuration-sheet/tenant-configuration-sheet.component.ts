@@ -45,9 +45,15 @@ interface ITenantConfigurationSheetData {
 }
 
 interface IFeatureFlagDef {
-  key: 'aiChatEnabled' | 'nasheedIngestionEnabled' | 'isBackgroundJobPageEnabled' | 'isAuditLogPageEnabled';
+  key:
+    | 'aiChatEnabled'
+    | 'nasheedIngestionEnabled'
+    | 'isBackgroundJobPageEnabled'
+    | 'isAuditLogPageEnabled'
+    | 'nasheedNewLyricsExtractionEnabled';
   labelKey: string;
   descKey: string;
+  defaultValue: boolean;
 }
 
 @Component({
@@ -92,31 +98,45 @@ export class TenantConfigurationSheetComponent implements OnInit, OnDestroy {
       key: 'aiChatEnabled',
       labelKey: 'tenants.featureFlags.aiChatEnabled',
       descKey: 'tenants.featureFlags.aiChatEnabledDesc',
+      defaultValue: true,
     },
     {
       key: 'nasheedIngestionEnabled',
       labelKey: 'tenants.featureFlags.nasheedIngestionEnabled',
       descKey: 'tenants.featureFlags.nasheedIngestionEnabledDesc',
+      defaultValue: true,
     },
     {
       key: 'isBackgroundJobPageEnabled',
       labelKey: 'tenants.featureFlags.isBackgroundJobPageEnabled',
       descKey: 'tenants.featureFlags.isBackgroundJobPageEnabledDesc',
+      defaultValue: true,
     },
     {
       key: 'isAuditLogPageEnabled',
       labelKey: 'tenants.featureFlags.isAuditLogPageEnabled',
       descKey: 'tenants.featureFlags.isAuditLogPageEnabledDesc',
+      defaultValue: true,
+    },
+    {
+      key: 'nasheedNewLyricsExtractionEnabled',
+      labelKey: 'tenants.featureFlags.nasheedNewLyricsExtractionEnabled',
+      descKey: 'tenants.featureFlags.nasheedNewLyricsExtractionEnabledDesc',
+      defaultValue: false,
     },
   ];
 
   private readonly knownFlagKeys = new Set<string>(this.knownFlags.map((f) => f.key));
+  private readonly knownFlagDefaults = new Map<string, boolean>(
+    this.knownFlags.map((f) => [f.key, f.defaultValue])
+  );
 
   readonly flagsForm = new FormGroup({
     aiChatEnabled: new FormControl<boolean>(true, { nonNullable: true }),
     nasheedIngestionEnabled: new FormControl<boolean>(true, { nonNullable: true }),
     isBackgroundJobPageEnabled: new FormControl<boolean>(true, { nonNullable: true }),
     isAuditLogPageEnabled: new FormControl<boolean>(true, { nonNullable: true }),
+    nasheedNewLyricsExtractionEnabled: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   constructor() {
@@ -200,7 +220,7 @@ export class TenantConfigurationSheetComponent implements OnInit, OnDestroy {
     const flags = config.data?.featureFlags ?? {};
 
     const patch = Object.fromEntries(
-      this.knownFlags.map((f) => [f.key, flags[f.key] ?? true])
+      this.knownFlags.map((f) => [f.key, flags[f.key] ?? this.knownFlagDefaults.get(f.key) ?? true])
     );
     this.flagsForm.patchValue(patch);
 
