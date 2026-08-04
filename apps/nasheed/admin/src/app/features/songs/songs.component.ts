@@ -28,7 +28,6 @@ import {
   ZardSelectComponent,
   ZardSelectItemComponent,
 } from '@ihsan/ui';
-import { toast } from 'ngx-sonner';
 import {
   SongService,
   IngestionJobService,
@@ -41,6 +40,7 @@ import {
   SongState,
   SearchIndexStatus,
 } from '@web-app/nasheed-shared';
+import { toast } from 'ngx-sonner';
 import { AddEditSongDialogComponent } from './add-edit-song-dialog/add-edit-song-dialog.component';
 import { ViewSongSheetComponent } from './view-song-sheet/view-song-sheet.component';
 
@@ -50,6 +50,7 @@ interface ISongFilterForm {
   songState: FormControl<string>;
   copyrightRiskLevel: FormControl<string>;
   contentSafetyFlag: FormControl<string>;
+  lyricsVerified: FormControl<string>;
 }
 
 @Component({
@@ -129,6 +130,7 @@ export class SongsComponent {
     songState: new FormControl<string>('all', { nonNullable: true }),
     copyrightRiskLevel: new FormControl<string>('all', { nonNullable: true }),
     contentSafetyFlag: new FormControl<string>('all', { nonNullable: true }),
+    lyricsVerified: new FormControl<string>('all', { nonNullable: true }),
   });
 
   constructor() {
@@ -184,6 +186,10 @@ export class SongsComponent {
       contentSafetyFlag:
         this.filterForm.controls.contentSafetyFlag.value !== 'all'
           ? this.filterForm.controls.contentSafetyFlag.value
+          : undefined,
+      lyricsVerified:
+        this.filterForm.controls.lyricsVerified.value !== 'all'
+          ? this.filterForm.controls.lyricsVerified.value === 'true'
           : undefined,
     };
 
@@ -242,6 +248,19 @@ export class SongsComponent {
       .subscribe((result: { success: boolean }) => {
         if (result?.success) this.loadData();
       });
+  }
+
+  onToggleLyricsVerified(song: SongModel): void {
+    this._songService.toggleLyricsVerified(song.id).subscribe({
+      next: (updated) => {
+        song.lyricsVerified = updated.lyricsVerified;
+        toast.success(
+          this._translationService.getCachedTranslation(
+            '#anashid#.songs.messages.lyricsVerified',
+          ),
+        );
+      },
+    });
   }
 
   onViewSong(song: SongModel): void {
@@ -406,6 +425,7 @@ export class SongsComponent {
       songState: 'all',
       copyrightRiskLevel: 'all',
       contentSafetyFlag: 'all',
+      lyricsVerified: 'all',
     });
   }
 }

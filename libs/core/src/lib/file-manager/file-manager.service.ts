@@ -1,5 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams, HttpContext } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpParams,
+  HttpContext,
+  HttpEvent,
+} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ENVIRONMENT } from '../core/environment.token';
 import {
@@ -25,7 +30,7 @@ export class FileManagerService {
     group?: FileGroup,
     userId?: number,
     context?: HttpContext
-  ): Observable<IFileManagerResponse> {
+  ): Observable<HttpEvent<IFileManagerResponse>> {
     const formData = new FormData();
     formData.append('file', file);
     if (group) formData.append('group', group.toString());
@@ -34,7 +39,7 @@ export class FileManagerService {
     return this._http.post<IFileManagerResponse>(
       `${this._baseUrl}/files`,
       formData,
-      { context }
+      { context, reportProgress: true, observe: 'events' }
     );
   }
 

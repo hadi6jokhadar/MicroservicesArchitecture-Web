@@ -18,7 +18,11 @@ import {
   ZardDropdownImports,
 } from '@ihsan/ui';
 import { ISidebarPage, ISidebarUser, SidebarPageType } from './sidebar.model';
-import { TranslatePipe, TranslationService } from '@ihsan/core';
+import {
+  NavigationLoadingService,
+  TranslatePipe,
+  TranslationService,
+} from '@ihsan/core';
 
 @Component({
   selector: 'shared-sidebar',
@@ -54,6 +58,10 @@ export class SidebarComponent {
   private _platformId = inject(PLATFORM_ID);
   private _router = inject(Router);
   private _translationService = inject(TranslationService);
+  private _navigationLoading = inject(NavigationLoadingService);
+
+  /** True while a route transition triggered from this sidebar is still in flight. */
+  isNavigating = this._navigationLoading.isNavigating;
 
   availableLanguages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -180,12 +188,19 @@ export class SidebarComponent {
     if (page.children && page.children.length > 0) {
       this.toggleExpand(page.translationKey);
       this.isMobileOpen.set(true);
-    } else {
-      this.closeMobileMenu();
-      this.pageClicked.emit(page);
-      if (page.action) {
-        page.action();
-      }
+      return;
+    }
+
+    // Real navigations must be blocked while a previous one is still resolving,
+    // so rapid repeated clicks can't trigger overlapping route transitions.
+    if (page.route && this.isNavigating()) {
+      return;
+    }
+
+    this.closeMobileMenu();
+    this.pageClicked.emit(page);
+    if (page.action) {
+      page.action();
     }
   }
 

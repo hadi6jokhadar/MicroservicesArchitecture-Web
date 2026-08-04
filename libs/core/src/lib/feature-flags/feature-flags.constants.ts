@@ -4,6 +4,7 @@ export const FeatureFlags = {
   IsBackgroundJobPageEnabled: 'isBackgroundJobPageEnabled',
   IsAuditLogPageEnabled: 'isAuditLogPageEnabled',
   NasheedNewLyricsExtractionEnabled: 'nasheedNewLyricsExtractionEnabled',
+  AutoUploadToExternalStorageEnabled: 'autoUploadToExternalStorageEnabled',
 } as const;
 
 export type FeatureFlag = (typeof FeatureFlags)[keyof typeof FeatureFlags];

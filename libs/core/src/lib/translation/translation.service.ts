@@ -179,11 +179,13 @@ export class TranslationService {
   }
 
   importTranslations(
-    command: IImportTranslationsCommand
+    command: IImportTranslationsCommand,
+    context?: HttpContext
   ): Observable<IImportTranslationsResult> {
     return this._http.post<IImportTranslationsResult>(
       `${this._baseUrl}/import`,
-      command
+      command,
+      { context }
     );
   }
 }

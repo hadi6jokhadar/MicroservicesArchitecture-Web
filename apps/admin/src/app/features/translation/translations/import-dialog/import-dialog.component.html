@@ -13,56 +13,58 @@
           (keyup.enter)="onBrowseFile()"
           tabindex="0"
           sharedDragDropFiles
+          [multiple]="true"
           accept=".json"
           (filesDropped)="onFileDropped($event)"
         >
-          @if (selectedFileName()) {
-            <div class="file-selected">
-              <z-icon zType="file-text" />
-              <span>{{ selectedFileName() }}</span>
-            </div>
-          } @else {
-            <div class="file-placeholder">
-              <z-icon zType="arrow-up" />
-              <span>{{ 'import.browseOrDrop' | translate }}</span>
-              <small>{{ 'import.jsonFilesOnly' | translate }}</small>
-            </div>
-          }
+          <div class="file-placeholder">
+            <z-icon zType="arrow-up" />
+            <span>{{ 'import.browseOrDrop' | translate }}</span>
+            <small>{{ 'import.jsonFilesOnly' | translate }}</small>
+          </div>
         </div>
       </z-form-control>
-      @if (
-        importForm.get('file')?.touched &&
-        importForm.get('file')?.hasError('required')
-      ) {
+      @if (selectedFiles().length === 0 && importAttempted()) {
         <span z-form-error>{{ 'import.jsonFileRequired' | translate }}</span>
       }
     </z-form-field>
 
-    <!-- Language Selection -->
-    <z-form-field zardId="language" #lang="zardId">
-      <label z-form-label [for]="lang.id()">
-        {{ 'common.language' | translate }} <span class="required">*</span>
-      </label>
-      <z-form-control>
-        <z-select
-          [id]="lang.id()"
-          formControlName="language"
-          [zPlaceholder]="'import.selectLanguage' | translate"
-        >
-          @for (language of availableLanguages; track language.code) {
-            <z-select-item [zValue]="language.code">
-              {{ language.name }} ({{ language.code }})
-            </z-select-item>
+    <!-- Selected Files -->
+    @if (selectedFiles().length > 0) {
+      <div class="selected-files-list">
+        @for (entry of selectedFiles(); track entry.file.name) {
+          <div class="selected-file-row">
+            <div class="file-info">
+              <z-icon zType="file-text" />
+              <span class="file-name">{{ entry.file.name }}</span>
+            </div>
+            <z-select
+              [formControl]="entry.languageControl"
+              [zPlaceholder]="'import.selectLanguage' | translate"
+            >
+              @for (language of availableLanguages; track language.code) {
+                <z-select-item [zValue]="language.code">
+                  {{ language.name }} ({{ language.code }})
+                </z-select-item>
+              }
+            </z-select>
+            <button
+              z-button
+              zType="ghost"
+              zSize="sm"
+              type="button"
+              [attr.aria-label]="'import.removeFile' | translate"
+              (click)="removeFile(entry.file)"
+            >
+              <z-icon zType="x" />
+            </button>
+          </div>
+          @if (entry.languageControl.touched && entry.languageControl.invalid) {
+            <span z-form-error>{{ 'common.languageRequired' | translate }}</span>
           }
-        </z-select>
-      </z-form-control>
-      @if (
-        importForm.get('language')?.touched &&
-        importForm.get('language')?.hasError('required')
-      ) {
-        <span z-form-error>{{ 'common.languageRequired' | translate }}</span>
-      }
-    </z-form-field>
+        }
+      </div>
+    }
 
     <!-- Category for New Keys -->
     <z-form-field zardId="category" #cat="zardId">
@@ -126,7 +128,7 @@
         zType="default"
         type="submit"
         [zLoading]="isImporting()"
-        [zDisabled]="importForm.invalid"
+        [zDisabled]="selectedFiles().length === 0"
         id="submit-import-btn"
       >
         {{ 'common.import' | translate }}

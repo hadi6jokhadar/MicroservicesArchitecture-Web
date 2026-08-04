@@ -42,6 +42,7 @@ export * from './lib/interceptors';
 
 // Services
 export * from './lib/services/page-title.service';
+export * from './lib/services/navigation-loading.service';
 
 // Core
 export * from './lib/core/environment.token';

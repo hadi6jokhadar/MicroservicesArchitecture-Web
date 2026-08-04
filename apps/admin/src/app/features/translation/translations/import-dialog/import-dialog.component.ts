@@ -1,11 +1,16 @@
-import { Component, inject, signal } from '@angular/core';
+import { HttpContext, HttpErrorResponse } from '@angular/common/http';
+import { Component, computed, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { TranslationService, TranslatePipe } from '@ihsan/core';
+import {
+  IImportTranslationsResult,
+  TranslationService,
+  TranslatePipe,
+} from '@ihsan/core';
 import { TranslationEventsService } from '../../translation-events.service';
 import {
   ZardAlertComponent,
@@ -18,13 +23,24 @@ import {
   ZardSelectImports,
 } from '@ihsan/ui';
 import { toast } from 'ngx-sonner';
+import { catchError, forkJoin, from, map, Observable, of, switchMap } from 'rxjs';
 
-import { DragDropFilesDirective, extractErrorMessage } from '@ihsan/shared';
+import { DragDropFilesDirective, extractErrorMessage, SKIP_ERROR_TOAST } from '@ihsan/shared';
+
+interface ISelectedImportFile {
+  file: File;
+  languageControl: FormControl<string>;
+  tenants: string[];
+}
+
+interface IFileImportOutcome {
+  fileName: string;
+  result: IImportTranslationsResult | null;
+  error: string | null;
+}
 
 interface IImportForm {
-  language: FormControl<string>;
   category: FormControl<string>;
-  file: FormControl<File | null>;
 }
 
 @Component({
@@ -51,19 +67,16 @@ export class ImportDialogComponent {
   private readonly _translationEvents = inject(TranslationEventsService);
 
   readonly isImporting = signal(false);
-  readonly selectedFileName = signal<string | null>(null);
   readonly errorMessage = signal<string | null>(null);
-  readonly detectedTenants = signal<string[]>([]);
+  readonly importAttempted = signal(false);
+  readonly selectedFiles = signal<ISelectedImportFile[]>([]);
+
+  readonly detectedTenants = computed(() =>
+    Array.from(new Set(this.selectedFiles().flatMap((f) => f.tenants)))
+  );
 
   readonly importForm = new FormGroup<IImportForm>({
-    language: new FormControl<string>('', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
     category: new FormControl<string>('General', { nonNullable: true }),
-    file: new FormControl<File | null>(null, {
-      validators: [Validators.required],
-    }),
   });
 
   get availableLanguages() {
@@ -72,34 +85,44 @@ export class ImportDialogComponent {
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (file) {
-      this._handleFile(file);
-    }
+    Array.from(input.files ?? []).forEach((file) => this._addFile(file));
+    input.value = '';
   }
 
   onFileDropped(event: DragEvent): void {
-    const file = event.dataTransfer?.files?.[0];
-    if (file) {
-      this._handleFile(file);
-    }
+    Array.from(event.dataTransfer?.files ?? []).forEach((file) =>
+      this._addFile(file)
+    );
   }
 
-  private _handleFile(file: File): void {
-    this.importForm.patchValue({ file });
-    this.selectedFileName.set(file.name);
-    this.detectedTenants.set([]);
-
-    const languageCode = file.name.split('.')[0];
-    if (languageCode) {
-      this.importForm.patchValue({ language: languageCode });
+  private _addFile(file: File): void {
+    if (this.selectedFiles().some((f) => f.file.name === file.name)) {
+      return;
     }
 
-    // Preview: scan JSON for #tenantId# key patterns
+    this.importAttempted.set(false);
+    const languageCode = file.name.split('.')[0] ?? '';
+    const languageControl = new FormControl<string>(languageCode, {
+      nonNullable: true,
+      validators: [Validators.required],
+    });
+
+    this.selectedFiles.update((files) => [
+      ...files,
+      { file, languageControl, tenants: [] },
+    ]);
+
+    this._detectTenants(file);
+  }
+
+  private _detectTenants(file: File): void {
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const json = JSON.parse(e.target?.result as string) as Record<string, string>;
+        const json = JSON.parse(e.target?.result as string) as Record<
+          string,
+          string
+        >;
         const tenants = new Set<string>();
         const tenantPattern = /^#([^#]+)#/;
         for (const key of Object.keys(json)) {
@@ -108,7 +131,11 @@ export class ImportDialogComponent {
             tenants.add(match[1]);
           }
         }
-        this.detectedTenants.set(Array.from(tenants));
+        this.selectedFiles.update((files) =>
+          files.map((f) =>
+            f.file === file ? { ...f, tenants: Array.from(tenants) } : f
+          )
+        );
       } catch {
         // ignore preview errors — the actual import will surface the error
       }
@@ -116,64 +143,129 @@ export class ImportDialogComponent {
     reader.readAsText(file);
   }
 
+  removeFile(file: File): void {
+    this.selectedFiles.update((files) => files.filter((f) => f.file !== file));
+  }
+
   onBrowseFile(): void {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json';
+    input.multiple = true;
     input.onchange = (event: Event) => this.onFileSelected(event);
     input.click();
   }
 
   onImport(): void {
-    if (this.importForm.invalid) {
-      this.importForm.markAllAsTouched();
+    const files = this.selectedFiles();
+    if (files.length === 0) {
+      this.importAttempted.set(true);
+      return;
+    }
+
+    if (files.some((f) => f.languageControl.invalid)) {
+      files.forEach((f) => f.languageControl.markAsTouched());
       return;
     }
 
     this.isImporting.set(true);
     this.errorMessage.set(null);
-    const formValue = this.importForm.getRawValue();
-    const file = formValue.file;
+    const category = this.capitalizeFirstLetter(
+      this.importForm.getRawValue().category || ''
+    );
+    const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
 
-    if (!file) {
-      this.errorMessage.set('Please select a file');
+    forkJoin(
+      files.map((entry) => this._importFile(entry, category, context))
+    ).subscribe((outcomes) => {
       this.isImporting.set(false);
-      return;
-    }
+      const succeeded = outcomes.filter((o) => o.result);
+      const failed = outcomes.filter((o) => o.error);
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const translations = JSON.parse(e.target?.result as string);
-        const command = {
-          translations,
-          language: formValue.language,
-          category: this.capitalizeFirstLetter(formValue.category || ''),
-          tenantId: undefined,
-        };
-
-        this._translationService.importTranslations(command).subscribe({
-          next: (result) => {
-            toast.success(
-              `Import successful: ${result.createdKeys} keys created, ${result.updatedValues} values updated`
-            );
-            this.isImporting.set(false);
-            this._translationEvents.notifyTranslationKeysChanged();
-            this._dialogRef.close();
-          },
-          error: (error) => {
-            this.errorMessage.set(extractErrorMessage(error));
-            this.isImporting.set(false);
-          },
-        });
-      } catch {
-        this.errorMessage.set(
-          'Invalid JSON file. Please check the file format.'
+      if (succeeded.length > 0) {
+        this._translationEvents.notifyTranslationKeysChanged();
+        const totals = succeeded.reduce(
+          (acc, o) => ({
+            createdKeys: acc.createdKeys + (o.result?.createdKeys ?? 0),
+            updatedValues: acc.updatedValues + (o.result?.updatedValues ?? 0),
+          }),
+          { createdKeys: 0, updatedValues: 0 }
         );
-        this.isImporting.set(false);
+        toast.success(
+          this._translationService.getCachedTranslation(
+            'import.importSuccess',
+            '{{files}} file(s) imported: {{created}} keys created, {{updated}} values updated',
+            {
+              files: succeeded.length,
+              created: totals.createdKeys,
+              updated: totals.updatedValues,
+            }
+          )
+        );
       }
-    };
-    reader.readAsText(file);
+
+      if (failed.length === 0) {
+        this._dialogRef.close();
+        return;
+      }
+
+      this.errorMessage.set(
+        failed.map((f) => `${f.fileName}: ${f.error}`).join('\n')
+      );
+      this.selectedFiles.update((current) =>
+        current.filter((f) => failed.some((fo) => fo.fileName === f.file.name))
+      );
+    });
+  }
+
+  private _importFile(
+    entry: ISelectedImportFile,
+    category: string,
+    context: HttpContext
+  ): Observable<IFileImportOutcome> {
+    return this._readFileAsJson(entry.file).pipe(
+      switchMap((translations) =>
+        this._translationService.importTranslations(
+          {
+            translations,
+            language: entry.languageControl.value,
+            category,
+            tenantId: undefined,
+          },
+          context
+        )
+      ),
+      map(
+        (result): IFileImportOutcome => ({
+          fileName: entry.file.name,
+          result,
+          error: null,
+        })
+      ),
+      catchError((error: unknown) =>
+        of<IFileImportOutcome>({
+          fileName: entry.file.name,
+          result: null,
+          error: this._describeError(error),
+        })
+      )
+    );
+  }
+
+  private _readFileAsJson(file: File): Observable<Record<string, string>> {
+    return from(file.text()).pipe(
+      map((text) => JSON.parse(text) as Record<string, string>)
+    );
+  }
+
+  private _describeError(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      return extractErrorMessage(error);
+    }
+    return this._translationService.getCachedTranslation(
+      'import.invalidJsonFile',
+      'Invalid JSON file. Please check the file format.'
+    );
   }
 
   onCancel(): void {

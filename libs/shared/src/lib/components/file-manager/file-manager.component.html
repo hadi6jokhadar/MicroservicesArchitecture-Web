@@ -324,7 +324,7 @@
           tabindex="0"
         >
           <div class="upload-icon-wrapper">
-            <z-icon zType="arrow-up" />
+            <z-icon zType="arrow-up" zSize="xl" />
           </div>
           <h3>{{ 'fileManager.uploadFiles' | translate }}</h3>
           <p>{{ 'fileManager.dragDrop' | translate }}</p>
@@ -343,18 +343,59 @@
           />
         </div>
 
-        @if (loading()) {
+        @if (loading() && uploadingFiles().length > 0) {
           <div
             style="
               margin-top: 2rem;
               display: flex;
               flex-direction: column;
-              align-items: center;
-              color: var(--muted-foreground);
+              gap: 1rem;
             "
           >
-            <!-- Reuse spinner or similar -->
-            <p>{{ 'fileManager.uploading' | translate }}</p>
+            <p style="color: var(--muted-foreground); text-align: center">
+              {{ 'fileManager.uploading' | translate }}
+            </p>
+            @for (uploadingFile of uploadingFiles(); track uploadingFile.id) {
+              <div style="display: flex; flex-direction: column; gap: 0.375rem">
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 0.875rem;
+                  "
+                >
+                  <span
+                    style="
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      white-space: nowrap;
+                      font-weight: 500;
+                    "
+                    [title]="uploadingFile.name"
+                    >{{ uploadingFile.name }}</span
+                  >
+                  @if (uploadingFile.stage === 'uploading') {
+                    <span style="color: var(--muted-foreground)"
+                      >{{ uploadingFile.progress }}%</span
+                    >
+                  }
+                </div>
+                <p
+                  style="
+                    font-size: 0.8125rem;
+                    color: var(--muted-foreground);
+                    margin: 0;
+                  "
+                >
+                  {{ getUploadStageLabelKey(uploadingFile) | translate }}
+                </p>
+                <z-progress-bar
+                  [progress]="uploadingFile.progress"
+                  [zIndeterminate]="uploadingFile.stage === 'processing'"
+                  zSize="sm"
+                />
+              </div>
+            }
           </div>
         }
       </div>

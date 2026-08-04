@@ -58,10 +58,12 @@
         z-button
         zType="ghost"
         zFull
+        [zDisabled]="isNavigating()"
         [id]="'nav-' + page.translationKey + '-' + child.translationKey"
         [routerLink]="child.route"
         routerLinkActive="active"
         class="nav-item nav-child"
+        [class.nav-item-navigating]="isNavigating()"
         (click)="onPageClick(child)"
       >
         @if (child.icon) {
@@ -93,10 +95,12 @@
       z-button
       zType="ghost"
       zFull
+      [zDisabled]="isNavigating()"
       [id]="'nav-' + page.translationKey"
       [routerLink]="page.route"
       routerLinkActive="active"
       class="nav-item"
+      [class.nav-item-navigating]="isNavigating()"
       (click)="onPageClick(page)"
     >
       @if (page.icon) {

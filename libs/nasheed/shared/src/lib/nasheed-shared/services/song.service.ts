@@ -47,6 +47,8 @@ export class SongService {
       params = params.set('copyrightRiskLevel', query.copyrightRiskLevel);
     if (query.contentSafetyFlag)
       params = params.set('contentSafetyFlag', query.contentSafetyFlag);
+    if (query.lyricsVerified !== undefined)
+      params = params.set('lyricsVerified', query.lyricsVerified.toString());
     return this._http.get<PaginatedList<SongModel>>(this.baseUrl, { params });
   }
 
@@ -86,6 +88,13 @@ export class SongService {
     return this._http.get<SearchResultModel[]>(
       `${this.baseUrl}/${id}/similar`,
       { params },
+    );
+  }
+
+  toggleLyricsVerified(id: number): Observable<SongModel> {
+    return this._http.patch<SongModel>(
+      `${this.baseUrl}/${id}/toggle-lyrics-verified`,
+      {},
     );
   }
 }

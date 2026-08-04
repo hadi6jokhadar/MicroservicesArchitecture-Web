@@ -50,7 +50,8 @@ interface IFeatureFlagDef {
     | 'nasheedIngestionEnabled'
     | 'isBackgroundJobPageEnabled'
     | 'isAuditLogPageEnabled'
-    | 'nasheedNewLyricsExtractionEnabled';
+    | 'nasheedNewLyricsExtractionEnabled'
+    | 'autoUploadToExternalStorageEnabled';
   labelKey: string;
   descKey: string;
   defaultValue: boolean;
@@ -124,6 +125,12 @@ export class TenantConfigurationSheetComponent implements OnInit, OnDestroy {
       descKey: 'tenants.featureFlags.nasheedNewLyricsExtractionEnabledDesc',
       defaultValue: false,
     },
+    {
+      key: 'autoUploadToExternalStorageEnabled',
+      labelKey: 'tenants.featureFlags.autoUploadToExternalStorageEnabled',
+      descKey: 'tenants.featureFlags.autoUploadToExternalStorageEnabledDesc',
+      defaultValue: false,
+    },
   ];
 
   private readonly knownFlagKeys = new Set<string>(this.knownFlags.map((f) => f.key));
@@ -137,6 +144,7 @@ export class TenantConfigurationSheetComponent implements OnInit, OnDestroy {
     isBackgroundJobPageEnabled: new FormControl<boolean>(true, { nonNullable: true }),
     isAuditLogPageEnabled: new FormControl<boolean>(true, { nonNullable: true }),
     nasheedNewLyricsExtractionEnabled: new FormControl<boolean>(false, { nonNullable: true }),
+    autoUploadToExternalStorageEnabled: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   constructor() {

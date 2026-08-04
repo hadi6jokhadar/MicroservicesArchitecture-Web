@@ -232,6 +232,7 @@ export const FeatureFlags = {
 | `FeatureFlags.IsBackgroundJobPageEnabled` | `isBackgroundJobPageEnabled` | `true` | Sidebar items (jobs group) |
 | `FeatureFlags.IsAuditLogPageEnabled` | `isAuditLogPageEnabled` | `true` | Sidebar item + `/audit-log` route guard |
 | `FeatureFlags.NasheedNewLyricsExtractionEnabled` | `nasheedNewLyricsExtractionEnabled` | `false` | `NasheedIngestionWorker` (backend) — no frontend gating, toggle only |
+| `FeatureFlags.AutoUploadToExternalStorageEnabled` | `autoUploadToExternalStorageEnabled` | `false` | `SaveFileCommandHandler` (FileManager, backend) — no frontend gating, toggle only |
 
 ---
 

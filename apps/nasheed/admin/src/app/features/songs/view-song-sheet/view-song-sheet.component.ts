@@ -11,7 +11,7 @@ import {
   signal,
 } from '@angular/core';
 import { HttpContext } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe, TranslationService } from '@ihsan/core';
 import {
   ZardBadgeComponent,
@@ -19,6 +19,7 @@ import {
   ZardDialogService,
   ZardIconComponent,
   ZardSheetRef,
+  ZardSwitchComponent,
   Z_SHEET_DATA,
 } from '@ihsan/ui';
 import { CommonModule } from '@angular/common';
@@ -49,10 +50,12 @@ interface EditableLrcLine extends LrcLine {
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     TranslatePipe,
     ZardButtonComponent,
     ZardBadgeComponent,
     ZardIconComponent,
+    ZardSwitchComponent,
   ],
   templateUrl: './view-song-sheet.component.html',
   styleUrl: './view-song-sheet.component.scss',
@@ -86,6 +89,10 @@ export class ViewSongSheetComponent implements AfterViewInit, OnDestroy {
   readonly editableLyricsPlainText = signal(this.getInitialPlainTextValue());
   readonly savedLyricsPlainText = signal(this.getInitialPlainTextValue());
   readonly isSavingLyrics = signal(false);
+  readonly lyricsVerifiedControl = new FormControl<boolean>(
+    this.data.song.lyricsVerified,
+    { nonNullable: true },
+  );
 
   // LRC Editor state signals
   readonly offsetTimeMs = signal(0);
@@ -193,6 +200,30 @@ export class ViewSongSheetComponent implements AfterViewInit, OnDestroy {
 
   onClose(): void {
     this._sheetRef.close();
+  }
+
+  onToggleLyricsVerified(): void {
+    const previousValue = this.song.lyricsVerified;
+    this._songService.toggleLyricsVerified(this.song.id).subscribe({
+      next: (updated) => {
+        this.data.song.lyricsVerified = updated.lyricsVerified;
+        this.lyricsVerifiedControl.setValue(updated.lyricsVerified, {
+          emitEvent: false,
+        });
+        toast.success(
+          this._translationService.getCachedTranslation(
+            updated.lyricsVerified
+              ? '#anashid#.songs.messages.lyricsVerified'
+              : '#anashid#.songs.messages.lyricsUnverified',
+          ),
+        );
+      },
+      error: () => {
+        this.lyricsVerifiedControl.setValue(previousValue, {
+          emitEvent: false,
+        });
+      },
+    });
   }
 
   togglePlayPause(): void {

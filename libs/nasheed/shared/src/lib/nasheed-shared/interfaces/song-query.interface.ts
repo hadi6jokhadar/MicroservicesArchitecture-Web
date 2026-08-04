@@ -10,4 +10,5 @@ export interface ISongQuery extends IGetQuery {
   languageCode?: string;
   copyrightRiskLevel?: string;
   contentSafetyFlag?: string;
+  lyricsVerified?: boolean;
 }

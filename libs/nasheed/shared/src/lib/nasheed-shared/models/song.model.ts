@@ -29,6 +29,7 @@ export interface SongModel {
   moodTags: string[];
   status: number;
   isArchived: boolean;
+  lyricsVerified: boolean;
   created: string;
   lastModified?: string;
 }

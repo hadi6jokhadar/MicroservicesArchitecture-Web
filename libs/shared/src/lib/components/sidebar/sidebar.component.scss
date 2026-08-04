@@ -121,6 +121,12 @@
         }
       }
 
+      // Applied to nav-link anchors while a route transition is in flight,
+      // reinforcing the disabled state set via [zDisabled] on z-button.
+      &.nav-item-navigating {
+        opacity: 0.6;
+      }
+
       .nav-icon {
         flex-shrink: 0;
       }

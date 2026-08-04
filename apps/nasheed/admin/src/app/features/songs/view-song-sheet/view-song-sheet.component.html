@@ -47,6 +47,24 @@
         <span class="detail-value">{{ song.languageCode ?? '-' }}</span>
       </div>
 
+      <div class="detail-group">
+        <span class="detail-label">{{
+          '#anashid#.songs.filter.lyricsVerified' | translate
+        }}</span>
+        <z-switch
+          [formControl]="lyricsVerifiedControl"
+          (checkChange)="onToggleLyricsVerified()"
+          zId="song-lyrics-verified-switch"
+        >
+          {{
+            (lyricsVerifiedControl.value
+              ? '#anashid#.songs.filter.lyricsVerifiedYes'
+              : '#anashid#.songs.filter.lyricsVerifiedNo'
+            ) | translate
+          }}
+        </z-switch>
+      </div>
+
       @if (song.summary) {
         <div class="detail-group lyrics-group">
           <span class="detail-label">{{ 'common.summary' | translate }}</span>

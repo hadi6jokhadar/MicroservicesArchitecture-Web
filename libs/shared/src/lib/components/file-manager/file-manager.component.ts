@@ -10,7 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpContext } from '@angular/common/http';
+import { HttpContext, HttpEvent, HttpEventType } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import {
@@ -22,6 +22,8 @@ import {
   TranslatePipe,
   TranslationService,
   TenantService,
+  FeatureFlagService,
+  FeatureFlags,
 } from '@ihsan/core';
 import {
   SKIP_ERROR_TOAST,
@@ -43,11 +45,21 @@ import {
   Z_MODAL_DATA,
   ZardIcon,
   ZardAlertComponent,
+  ZardProgressBarComponent,
 } from '@ihsan/ui';
 import {
   AudioEditorDialogComponent,
   IAudioEditorDialogResult,
 } from './audio-editor-dialog/audio-editor-dialog.component';
+
+export type UploadStage = 'uploading' | 'processing';
+
+export interface IUploadingFile {
+  id: string;
+  name: string;
+  progress: number;
+  stage: UploadStage;
+}
 
 export interface IFileManagerDialogData {
   allowedTypes?: string[];
@@ -79,6 +91,7 @@ export interface IFileManagerDialogData {
     ZardSelectItemComponent,
     ZardCheckboxComponent,
     ZardAlertComponent,
+    ZardProgressBarComponent,
   ],
   templateUrl: './file-manager.component.html',
   styleUrl: './file-manager.component.scss',
@@ -88,6 +101,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   private _service = inject(FileManagerService);
   private _tenantService = inject(TenantService);
   private _translationService = inject(TranslationService);
+  private _featureFlagService = inject(FeatureFlagService);
   private _dialogRef = inject(ZardDialogRef);
   private _dialogService = inject(ZardDialogService);
   private _data = inject<IFileManagerDialogData>(Z_MODAL_DATA, {
@@ -111,6 +125,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   blobLoading = signal<boolean>(false);
   blobConfigured = signal<boolean>(true);
   deleteLoading = signal<boolean>(false);
+  uploadingFiles = signal<IUploadingFile[]>([]);
 
   // Settings from data
   allowedTypes = signal<string[]>(this._data?.allowedTypes || ['*']);
@@ -297,17 +312,50 @@ export class FileManagerComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.uploadingFiles.set(
+      preparedFiles.map((file) => ({
+        id: this.getFileUploadId(file),
+        name: file.name,
+        progress: 0,
+        stage: 'uploading' as UploadStage,
+      })),
+    );
+
     let completed = 0;
     let failed = 0;
 
     preparedFiles.forEach((file) => {
+      const fileId = this.getFileUploadId(file);
       const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
       this._service
         .uploadFile(file, this.group(), this.type(), context)
         .subscribe({
-          next: () => {
-            completed++;
-            this.checkUploadCompletion(completed, preparedFiles.length, failed);
+          next: (event: HttpEvent<IFileManagerResponse>) => {
+            switch (event.type) {
+              case HttpEventType.UploadProgress: {
+                const progress = Math.round(
+                  (100 * event.loaded) / (event.total ?? event.loaded ?? 1),
+                );
+                this.setFileUploadProgress(fileId, progress);
+                if (progress >= 100) {
+                  // All bytes are sent — the server now saves to local storage
+                  // and, if enabled, uploads to external storage before
+                  // responding. Neither step reports progress back to the
+                  // client, so this stage shows an indeterminate indicator.
+                  this.setFileUploadStage(fileId, 'processing');
+                }
+                break;
+              }
+              case HttpEventType.Response: {
+                completed++;
+                this.checkUploadCompletion(
+                  completed,
+                  preparedFiles.length,
+                  failed,
+                );
+                break;
+              }
+            }
           },
           error: () => {
             completed++;
@@ -316,6 +364,37 @@ export class FileManagerComponent implements OnInit, OnDestroy {
           },
         });
     });
+  }
+
+  private getFileUploadId(file: File): string {
+    return `${file.name}-${file.size}-${file.lastModified}`;
+  }
+
+  private setFileUploadProgress(fileId: string, progress: number): void {
+    this.uploadingFiles.update((list) =>
+      list.map((entry) =>
+        entry.id === fileId ? { ...entry, progress } : entry,
+      ),
+    );
+  }
+
+  private setFileUploadStage(fileId: string, stage: UploadStage): void {
+    this.uploadingFiles.update((list) =>
+      list.map((entry) => (entry.id === fileId ? { ...entry, stage } : entry)),
+    );
+  }
+
+  getUploadStageLabelKey(file: IUploadingFile): string {
+    if (file.stage === 'uploading') {
+      return 'fileManager.uploadingLocal';
+    }
+
+    return this._featureFlagService.isEnabled(
+      FeatureFlags.AutoUploadToExternalStorageEnabled,
+      false,
+    )
+      ? 'fileManager.uploadingExternal'
+      : 'fileManager.finalizing';
   }
 
   private async prepareFilesForUpload(files: File[]): Promise<File[] | null> {
@@ -400,6 +479,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
 
   finishUpload(failed: number): void {
     this.loading.set(false);
+    this.uploadingFiles.set([]);
     if (failed === 0) {
       this.tabGroup.selectTabByIndex(0);
       this.pageIndex.set(1);

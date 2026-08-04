@@ -159,6 +159,32 @@
           </z-form-control>
         </z-form-field>
 
+        <!-- Lyrics Verified Filter -->
+        <z-form-field class="filter-field" zardId="lyricsVerified" #lv="zardId">
+          <label z-form-label [for]="lv.id()">
+            {{ '#anashid#.songs.filter.lyricsVerified' | translate }}
+          </label>
+          <z-form-control>
+            <z-select
+              [id]="lv.id()"
+              formControlName="lyricsVerified"
+              [zPlaceholder]="
+                '#anashid#.songs.filter.lyricsVerifiedPlaceholder' | translate
+              "
+            >
+              <z-select-item zValue="all">{{
+                'common.all' | translate
+              }}</z-select-item>
+              <z-select-item zValue="true">{{
+                '#anashid#.songs.filter.lyricsVerifiedYes' | translate
+              }}</z-select-item>
+              <z-select-item zValue="false">{{
+                '#anashid#.songs.filter.lyricsVerifiedNo' | translate
+              }}</z-select-item>
+            </z-select>
+          </z-form-control>
+        </z-form-field>
+
         <!-- Action Buttons -->
         <div class="filter-actions">
           <button
@@ -239,6 +265,9 @@
                 </th>
                 <th z-table-head class="col-content-safety">
                   {{ '#anashid#.songs.filter.contentSafetyFlag' | translate }}
+                </th>
+                <th z-table-head class="col-lyrics-verified">
+                  {{ '#anashid#.songs.filter.lyricsVerified' | translate }}
                 </th>
                 <th z-table-head class="col-actions">
                   {{ 'common.actions' | translate }}
@@ -322,6 +351,27 @@
                     }
                   </td>
 
+                  <!-- Lyrics Verified -->
+                  <td
+                    z-table-cell
+                    class="col-lyrics-verified"
+                    [attr.data-label]="
+                      '#anashid#.songs.filter.lyricsVerified' | translate
+                    "
+                  >
+                    <z-badge
+                      [zType]="song.lyricsVerified ? 'default' : 'outline'"
+                      zShape="pill"
+                    >
+                      {{
+                        (song.lyricsVerified
+                          ? '#anashid#.songs.filter.lyricsVerifiedYes'
+                          : '#anashid#.songs.filter.lyricsVerifiedNo'
+                        ) | translate
+                      }}
+                    </z-badge>
+                  </td>
+
                   <!-- Actions Dropdown -->
                   <td z-table-cell class="col-actions">
                     <button
@@ -351,6 +401,15 @@
                         <z-icon zType="file-text" />
                         {{ '#anashid#.songs.actions.edit' | translate }}
                       </z-dropdown-menu-item>
+                      @if (!song.lyricsVerified) {
+                        <z-dropdown-menu-item
+                          (click)="onToggleLyricsVerified(song)"
+                          [id]="'verify-song-' + song.id"
+                        >
+                          <z-icon zType="badge-check" />
+                          {{ '#anashid#.songs.actions.verify' | translate }}
+                        </z-dropdown-menu-item>
+                      }
                       <z-dropdown-menu-item
                         (click)="onReindexSong(song)"
                         [id]="'reindex-song-' + song.id"
