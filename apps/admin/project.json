@@ -57,7 +57,15 @@
               "replace": "apps/admin/src/environments/environment.ts",
               "with": "apps/admin/src/environments/environment.docker.ts"
             }
-          ]
+          ],
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": false
+            },
+            "fonts": true
+          }
         }
       },
       "defaultConfiguration": "production"
