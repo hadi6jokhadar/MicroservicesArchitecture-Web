@@ -104,6 +104,24 @@
       "options": {
         "command": "node ..\\MicroservicesArchitecture\\docker\\build-changed.mjs"
       }
+    },
+    "deploy-all": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node ..\\MicroservicesArchitecture\\docker\\deploy-pc2.mjs"
+      }
+    },
+    "deploy-changed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node ..\\MicroservicesArchitecture\\docker\\deploy-changed.mjs"
+      }
+    },
+    "build-deploy-changed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node ..\\MicroservicesArchitecture\\docker\\build-and-deploy-changed.mjs"
+      }
     }
   }
 }
