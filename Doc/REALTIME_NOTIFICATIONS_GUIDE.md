@@ -75,13 +75,15 @@ This pattern intentionally reuses the existing full-refetch-on-change convention
 
 ## Environment / hub URL
 
-Never hardcode a port or host. The hub URL is built from the injected `ENVIRONMENT` token's `apiUrls.notification`, exactly like `SignalrService.initializeConnection()` does:
+Never hardcode a port or host. The hub URL is built from the injected `ENVIRONMENT` token's `apiUrls.gateway` — **not** `apiUrls.notification` — exactly like `SignalrService.initializeConnection()` does:
 
 ```ts
-const hubUrl = `${this.env.apiUrls.notification}/hubs/notifications`;
+const hubUrl = `${this.env.apiUrls.gateway}/hubs/notifications`;
 ```
 
-Every app's `environments/environment*.ts` must have `apiUrls.notification` set for this to work — check the app you're wiring up if the connection fails to establish.
+**Routed through Gateway deliberately, not Notification's own port directly** (fixed August 2026) — in the Docker deployment, every backend service port except Gateway's (5000) is bound to `127.0.0.1` only on PC2 (see `../MicroservicesArchitecture/Doc/DOCKER_DEPLOYMENT_GUIDE.md`'s known-limitations section), so a hub URL built from `apiUrls.notification` would work in local dev (where every port is reachable) but silently fail to connect (`ERR_CONNECTION_REFUSED` on the `/negotiate` request) the moment it's tested against a real Docker deployment. `Gateway.API/appsettings.json` has a matching `notification-hub-route` that proxies both the negotiate request and the WebSocket upgrade through to Notification — YARP handles the upgrade transparently, no special config needed on the .NET side.
+
+Every app's `environments/environment*.ts` must have `apiUrls.gateway` set for this to work — check the app you're wiring up if the connection fails to establish.
 
 ---
 

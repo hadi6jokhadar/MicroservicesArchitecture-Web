@@ -26,7 +26,11 @@ export class SignalrService extends BaseSignalrService implements OnDestroy {
   private env = inject(ENVIRONMENT);
 
   public override initializeConnection(): void {
-    const hubUrl = `${this.env.apiUrls.notification}/hubs/notifications`;
+    // Routed through Gateway, not Notification's own port directly — that port is
+    // 127.0.0.1-bound on PC2 (July 2026 security audit) and unreachable via the public
+    // hostname. Gateway's "notification-hub-route" (Gateway.API/appsettings.json) proxies
+    // WebSocket upgrades transparently.
+    const hubUrl = `${this.env.apiUrls.gateway}/hubs/notifications`;
     super.initializeConnection(hubUrl);
   }
 
