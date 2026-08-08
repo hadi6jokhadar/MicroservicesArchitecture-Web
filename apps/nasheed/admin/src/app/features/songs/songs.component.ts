@@ -329,6 +329,35 @@ export class SongsComponent {
     });
   }
 
+  onRetrySong(song: SongModel): void {
+    this._alertDialogService.confirm({
+      zTitle: this._translationService.getCachedTranslation(
+        '#anashid#.songs.dialog.retryTitle',
+      ),
+      zDescription: this._translationService.getCachedTranslation(
+        '#anashid#.songs.dialog.retryDescription',
+      ),
+      zOkText: this._translationService.getCachedTranslation(
+        '#anashid#.songs.actions.retry',
+      ),
+      zCancelText:
+        this._translationService.getCachedTranslation('common.cancel'),
+      zOnOk: () => {
+        this._songService.retryAnalysis(song.id).subscribe({
+          next: (updated) => {
+            song.lyricsVerified = updated.lyricsVerified;
+            song.songState = updated.songState;
+            toast.success(
+              this._translationService.getCachedTranslation(
+                '#anashid#.songs.messages.retried',
+              ),
+            );
+          },
+        });
+      },
+    });
+  }
+
   getIndexStatusBadgeType(
     status: SearchIndexStatus,
   ): 'default' | 'secondary' | 'destructive' | 'outline' {

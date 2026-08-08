@@ -13,6 +13,7 @@ Before writing any code, confirm you have read all files below. State this expli
 | 5 | `Doc/DIALOG_DESIGN_GUIDE.md` | Dialog component patterns |
 | 6 | `Doc/FEATURE_FLAGS_GUIDE.md` | Feature flags directive, guard, and service |
 | 7 | `../Doc/POLYSNAP_PROJECT_OVERVIEW.md` | PolySnap product idea, architecture decisions, and roadmap — read before working on `apps/polysnap/` |
+| 8 | `Doc/REALTIME_NOTIFICATIONS_GUIDE.md` | SignalR hub connection pattern (`BaseSignalrService`/`SignalrService`), the `"silent": true` toast-suppression convention, and how to add a domain-specific real-time listener — read before wiring any live/push-driven UI update |
 
 ## Critical Errors to Avoid
 

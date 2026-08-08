@@ -123,6 +123,9 @@
                 {{ 'common.tenant' | translate }}
               </th>
               <th z-table-head>
+                {{ 'chatSessions.table.pipelineRunId' | translate }}
+              </th>
+              <th z-table-head>
                 {{ 'common.createdAt' | translate }}
               </th>
               <th z-table-head class="col-actions">
@@ -152,6 +155,12 @@
                 <z-badge zType="secondary" zShape="pill">{{
                   session.TenantId
                 }}</z-badge>
+              </td>
+              <td
+                z-table-cell
+                [attr.data-label]="'chatSessions.table.pipelineRunId' | translate"
+              >
+                <span class="mono-text">{{ session.PipelineRunId || '—' }}</span>
               </td>
               <td
                 z-table-cell

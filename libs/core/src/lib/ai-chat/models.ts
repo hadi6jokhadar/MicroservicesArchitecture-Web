@@ -34,12 +34,16 @@ export interface IAiChatSession {
   TenantId: string;
   UserId: string;
   Title?: string | null;
+  /** Caller-supplied correlation id (e.g. "nasheed:job:123") grouping this session with other
+   *  sessions/log rows from the same batch/pipeline run. Null for sessions created without one. */
+  PipelineRunId?: string | null;
   CreatedAt: string;
 }
 
 export interface IAiChatSessionFilter {
   user_id?: string;
   title?: string;
+  pipeline_run_id?: string;
   created_from?: string;
   created_to?: string;
   skip?: number;

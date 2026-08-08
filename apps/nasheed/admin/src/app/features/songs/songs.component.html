@@ -418,6 +418,13 @@
                         {{ '#anashid#.songs.actions.reindex' | translate }}
                       </z-dropdown-menu-item>
                       <z-dropdown-menu-item
+                        (click)="onRetrySong(song)"
+                        [id]="'retry-song-' + song.id"
+                      >
+                        <z-icon zType="rotate-ccw" />
+                        {{ '#anashid#.songs.actions.retry' | translate }}
+                      </z-dropdown-menu-item>
+                      <z-dropdown-menu-item
                         (click)="onDeleteSong(song)"
                         [id]="'delete-song-' + song.id"
                         class="delete-action"

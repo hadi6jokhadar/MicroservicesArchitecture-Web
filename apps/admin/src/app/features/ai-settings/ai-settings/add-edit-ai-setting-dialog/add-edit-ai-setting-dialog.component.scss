@@ -38,4 +38,14 @@
       font-weight: 500;
     }
   }
+
+  .label-with-tooltip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+
+    i[z-icon] {
+      color: var(--color-muted-foreground);
+    }
+  }
 }

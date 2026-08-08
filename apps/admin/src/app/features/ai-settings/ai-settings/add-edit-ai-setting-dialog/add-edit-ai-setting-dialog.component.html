@@ -165,6 +165,7 @@
       }
     </z-form-field>
 
+    @if (showChatParams()) {
     <div class="form-row-2">
       <z-form-field zardId="temperature" #temp="zardId">
         <label z-form-label [for]="temp.id()">{{
@@ -300,6 +301,7 @@
         </z-checkbox>
       </div>
     </div>
+    }
 
     <z-form-field zardId="description" #dsc="zardId">
       <label z-form-label [for]="dsc.id()">{{
@@ -321,10 +323,17 @@
       }
     </z-form-field>
 
+    @if (showAudioFields()) {
     <z-form-field zardId="audioDataMode" #adm="zardId">
-      <label z-form-label [for]="adm.id()">{{
-        'aiSettings.dialog.audioDataModeLabel' | translate
-      }}</label>
+      <label z-form-label [for]="adm.id()" class="label-with-tooltip">
+        {{ 'aiSettings.dialog.audioDataModeLabel' | translate }}
+        <i
+          z-icon
+          zType="info"
+          zSize="sm"
+          [zTooltip]="'aiSettings.dialog.audioDataModeHint' | translate"
+        ></i>
+      </label>
       <z-form-control>
         <z-select
           [id]="adm.id()"
@@ -340,10 +349,40 @@
           }
         </z-select>
       </z-form-control>
-      <span z-form-hint>{{
-        'aiSettings.dialog.audioDataModeHint' | translate
-      }}</span>
     </z-form-field>
+
+    <z-form-field zardId="noSpeechProbThreshold" #nsp="zardId">
+      <label z-form-label [for]="nsp.id()" class="label-with-tooltip">
+        {{ 'aiSettings.dialog.noSpeechProbThresholdLabel' | translate }}
+        <i
+          z-icon
+          zType="info"
+          zSize="sm"
+          [zTooltip]="'aiSettings.dialog.noSpeechProbThresholdHint' | translate"
+        ></i>
+      </label>
+      <z-form-control>
+        <input
+          z-input
+          [id]="nsp.id()"
+          type="number"
+          min="0"
+          max="1"
+          step="0.05"
+          formControlName="NoSpeechProbThreshold"
+          [placeholder]="
+            'aiSettings.dialog.noSpeechProbThresholdPlaceholder' | translate
+          "
+        />
+      </z-form-control>
+      @if (form.get('NoSpeechProbThreshold')?.hasError('min') ||
+      form.get('NoSpeechProbThreshold')?.hasError('max')) {
+      <span z-form-error>{{
+        'aiSettings.validation.noSpeechProbThresholdRange' | translate
+      }}</span>
+      }
+    </z-form-field>
+    }
 
     @if (errorMessage()) {
     <z-alert

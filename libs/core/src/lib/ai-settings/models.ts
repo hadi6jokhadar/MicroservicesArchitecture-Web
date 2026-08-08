@@ -46,6 +46,10 @@ export interface IAiProviderSetting {
   PresencePenalty?: number | null;
   Description?: string | null;
   AudioDataMode?: AudioDataModeEnum | null;
+  /** Only meaningful when ModelType='Audio'. Whisper's no_speech_prob threshold above which a
+   *  segment's words are treated as likely-hallucinated and dropped before Nasheed's correction
+   *  pass. Null means the calling service uses its own hardcoded default. */
+  NoSpeechProbThreshold?: number | null;
 }
 
 export class AiProviderSettingClass implements IAiProviderSetting {
@@ -65,6 +69,7 @@ export class AiProviderSettingClass implements IAiProviderSetting {
   PresencePenalty?: number | null;
   Description?: string | null;
   AudioDataMode?: AudioDataModeEnum | null;
+  NoSpeechProbThreshold?: number | null;
 
   constructor(data: Partial<IAiProviderSetting> = {}) {
     this.Id = data.Id || '';
@@ -83,6 +88,7 @@ export class AiProviderSettingClass implements IAiProviderSetting {
     this.PresencePenalty = data.PresencePenalty ?? null;
     this.Description = data.Description ?? null;
     this.AudioDataMode = data.AudioDataMode ?? null;
+    this.NoSpeechProbThreshold = data.NoSpeechProbThreshold ?? null;
   }
 }
 
@@ -102,4 +108,5 @@ export interface IUpsertAiProviderSettingRequest {
   PresencePenalty?: number | null;
   Description?: string | null;
   AudioDataMode?: AudioDataModeEnum | null;
+  NoSpeechProbThreshold?: number | null;
 }

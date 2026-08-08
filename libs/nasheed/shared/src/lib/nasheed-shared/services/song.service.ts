@@ -97,4 +97,11 @@ export class SongService {
       {},
     );
   }
+
+  retryAnalysis(id: number): Observable<SongModel> {
+    return this._http.post<SongModel>(
+      `${this.baseUrl}/${id}/retry-analysis`,
+      {},
+    );
+  }
 }

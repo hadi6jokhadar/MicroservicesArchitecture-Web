@@ -89,7 +89,8 @@ export class ChatSessionsComponent {
         s.Id.toLowerCase().includes(search) ||
         s.TenantId.toLowerCase().includes(search) ||
         (s.Title ?? '').toLowerCase().includes(search) ||
-        s.UserId.toLowerCase().includes(search);
+        s.UserId.toLowerCase().includes(search) ||
+        (s.PipelineRunId ?? '').toLowerCase().includes(search);
 
       const matchesUser =
         !userFilter || s.UserId.toLowerCase().includes(userFilter);

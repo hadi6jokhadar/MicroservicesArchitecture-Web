@@ -66,223 +66,231 @@
       </z-form-control>
     </z-form-field>
 
-    <!-- Copyright Risk Level -->
-    <z-form-field zardId="copyrightRiskLevel" #f7="zardId">
-      <label z-form-label [for]="f7.id()">{{
-        '#anashid#.songs.form.copyrightRiskLevel' | translate
-      }}</label>
-      <z-form-control>
-        <z-select
-          [id]="f7.id()"
-          formControlName="copyrightRiskLevel"
-          [zPlaceholder]="
-            '#anashid#.songs.form.copyrightRiskLevelPlaceholder' | translate
-          "
-        >
-          <z-select-item zValue="all">{{
-            'common.all' | translate
-          }}</z-select-item>
-          @for (risk of copyrightRiskLevels; track risk.value) {
-            <z-select-item [zValue]="risk.value">{{
-              risk.label | translate
+    @if (isEditMode) {
+      <!-- Copyright Risk Level -->
+      <z-form-field zardId="copyrightRiskLevel" #f7="zardId">
+        <label z-form-label [for]="f7.id()">{{
+          '#anashid#.songs.form.copyrightRiskLevel' | translate
+        }}</label>
+        <z-form-control>
+          <z-select
+            [id]="f7.id()"
+            formControlName="copyrightRiskLevel"
+            [zPlaceholder]="
+              '#anashid#.songs.form.copyrightRiskLevelPlaceholder' | translate
+            "
+          >
+            <z-select-item zValue="all">{{
+              'common.all' | translate
             }}</z-select-item>
-          }
-        </z-select>
-      </z-form-control>
-    </z-form-field>
+            @for (risk of copyrightRiskLevels; track risk.value) {
+              <z-select-item [zValue]="risk.value">{{
+                risk.label | translate
+              }}</z-select-item>
+            }
+          </z-select>
+        </z-form-control>
+      </z-form-field>
 
-    <!-- Content Safety Flag -->
-    <z-form-field zardId="contentSafetyFlag" #f8="zardId">
-      <label z-form-label [for]="f8.id()">{{
-        '#anashid#.songs.form.contentSafetyFlag' | translate
-      }}</label>
-      <z-form-control>
-        <z-select
-          [id]="f8.id()"
-          formControlName="contentSafetyFlag"
-          [zPlaceholder]="
-            '#anashid#.songs.form.contentSafetyFlagPlaceholder' | translate
-          "
-        >
-          <z-select-item zValue="all">{{
-            'common.all' | translate
-          }}</z-select-item>
-          @for (flag of contentSafetyFlags; track flag.value) {
-            <z-select-item [zValue]="flag.value">{{
-              flag.label | translate
+      <!-- Content Safety Flag -->
+      <z-form-field zardId="contentSafetyFlag" #f8="zardId">
+        <label z-form-label [for]="f8.id()">{{
+          '#anashid#.songs.form.contentSafetyFlag' | translate
+        }}</label>
+        <z-form-control>
+          <z-select
+            [id]="f8.id()"
+            formControlName="contentSafetyFlag"
+            [zPlaceholder]="
+              '#anashid#.songs.form.contentSafetyFlagPlaceholder' | translate
+            "
+          >
+            <z-select-item zValue="all">{{
+              'common.all' | translate
             }}</z-select-item>
-          }
-        </z-select>
-      </z-form-control>
-    </z-form-field>
+            @for (flag of contentSafetyFlags; track flag.value) {
+              <z-select-item [zValue]="flag.value">{{
+                flag.label | translate
+              }}</z-select-item>
+            }
+          </z-select>
+        </z-form-control>
+      </z-form-field>
 
-    <!-- Risk Reason -->
-    <z-form-field zardId="riskReason" #f9="zardId">
-      <label z-form-label [for]="f9.id()">{{
-        '#anashid#.songs.form.riskReason' | translate
-      }}</label>
-      <z-form-control>
-        <textarea
-          z-input
-          [id]="f9.id()"
-          formControlName="riskReason"
-          rows="3"
-          [placeholder]="
-            '#anashid#.songs.form.riskReasonPlaceholder' | translate
-          "
-        ></textarea>
-      </z-form-control>
-    </z-form-field>
+      <!-- Risk Reason -->
+      <z-form-field zardId="riskReason" #f9="zardId">
+        <label z-form-label [for]="f9.id()">{{
+          '#anashid#.songs.form.riskReason' | translate
+        }}</label>
+        <z-form-control>
+          <textarea
+            z-input
+            [id]="f9.id()"
+            formControlName="riskReason"
+            rows="3"
+            [placeholder]="
+              '#anashid#.songs.form.riskReasonPlaceholder' | translate
+            "
+          ></textarea>
+        </z-form-control>
+      </z-form-field>
 
-    <!-- Language Code -->
-    <z-form-field zardId="langCode" #f4="zardId">
-      <label z-form-label [for]="f4.id()">{{
-        '#anashid#.songs.form.languageCode' | translate
-      }}</label>
-      <z-form-control>
-        <input
-          z-input
-          [id]="f4.id()"
-          formControlName="languageCode"
-          [placeholder]="
-            '#anashid#.songs.form.languageCodePlaceholder' | translate
-          "
-        />
-      </z-form-control>
-    </z-form-field>
+      <!-- Language Code -->
+      <z-form-field zardId="langCode" #f4="zardId">
+        <label z-form-label [for]="f4.id()">{{
+          '#anashid#.songs.form.languageCode' | translate
+        }}</label>
+        <z-form-control>
+          <input
+            z-input
+            [id]="f4.id()"
+            formControlName="languageCode"
+            [placeholder]="
+              '#anashid#.songs.form.languageCodePlaceholder' | translate
+            "
+          />
+        </z-form-control>
+      </z-form-field>
 
-    <!-- Duration -->
-    <z-form-field zardId="duration" #f5="zardId">
-      <label z-form-label [for]="f5.id()">{{
-        '#anashid#.songs.form.duration' | translate
-      }}</label>
-      <z-form-control>
-        <input
-          z-input
-          type="number"
-          [id]="f5.id()"
-          formControlName="durationSeconds"
-          [placeholder]="'#anashid#.songs.form.durationPlaceholder' | translate"
-        />
-      </z-form-control>
-    </z-form-field>
+      <!-- Duration -->
+      <z-form-field zardId="duration" #f5="zardId">
+        <label z-form-label [for]="f5.id()">{{
+          '#anashid#.songs.form.duration' | translate
+        }}</label>
+        <z-form-control>
+          <input
+            z-input
+            type="number"
+            [id]="f5.id()"
+            formControlName="durationSeconds"
+            [placeholder]="
+              '#anashid#.songs.form.durationPlaceholder' | translate
+            "
+          />
+        </z-form-control>
+      </z-form-field>
 
-    <!-- Lyrics Raw -->
-    <z-form-field zardId="lyricsRaw" #f6="zardId">
-      <label z-form-label [for]="f6.id()">{{
-        '#anashid#.songs.form.lyricsRaw' | translate
-      }}</label>
-      <z-form-control>
-        <textarea
-          z-input
-          [id]="f6.id()"
-          formControlName="lyricsRaw"
-          rows="4"
-          [placeholder]="
-            '#anashid#.songs.form.lyricsRawPlaceholder' | translate
-          "
-        ></textarea>
-      </z-form-control>
-    </z-form-field>
+      <!-- Lyrics Raw -->
+      <z-form-field zardId="lyricsRaw" #f6="zardId">
+        <label z-form-label [for]="f6.id()">{{
+          '#anashid#.songs.form.lyricsRaw' | translate
+        }}</label>
+        <z-form-control>
+          <textarea
+            z-input
+            [id]="f6.id()"
+            formControlName="lyricsRaw"
+            rows="4"
+            [placeholder]="
+              '#anashid#.songs.form.lyricsRawPlaceholder' | translate
+            "
+          ></textarea>
+        </z-form-control>
+      </z-form-field>
 
-    <!-- Lyrics Verified LRC -->
-    <z-form-field zardId="lyricsVerifiedLrc" #f10="zardId">
-      <label z-form-label [for]="f10.id()">{{
-        '#anashid#.songs.form.lyricsVerifiedLrc' | translate
-      }}</label>
-      <z-form-control>
-        <textarea
-          z-input
-          [id]="f10.id()"
-          formControlName="lyricsVerifiedLrc"
-          rows="4"
-          [placeholder]="
-            '#anashid#.songs.form.lyricsVerifiedLrcPlaceholder' | translate
-          "
-        ></textarea>
-      </z-form-control>
-    </z-form-field>
+      <!-- Lyrics Verified LRC -->
+      <z-form-field zardId="lyricsVerifiedLrc" #f10="zardId">
+        <label z-form-label [for]="f10.id()">{{
+          '#anashid#.songs.form.lyricsVerifiedLrc' | translate
+        }}</label>
+        <z-form-control>
+          <textarea
+            z-input
+            [id]="f10.id()"
+            formControlName="lyricsVerifiedLrc"
+            rows="4"
+            [placeholder]="
+              '#anashid#.songs.form.lyricsVerifiedLrcPlaceholder' | translate
+            "
+          ></textarea>
+        </z-form-control>
+      </z-form-field>
 
-    <!-- Lyrics Plain Text -->
-    <z-form-field zardId="lyricsPlainText" #f11="zardId">
-      <label z-form-label [for]="f11.id()">{{
-        '#anashid#.songs.form.lyricsPlainText' | translate
-      }}</label>
-      <z-form-control>
-        <textarea
-          z-input
-          [id]="f11.id()"
-          formControlName="lyricsPlainText"
-          rows="4"
-          [placeholder]="
-            '#anashid#.songs.form.lyricsPlainTextPlaceholder' | translate
-          "
-        ></textarea>
-      </z-form-control>
-    </z-form-field>
+      <!-- Lyrics Plain Text -->
+      <z-form-field zardId="lyricsPlainText" #f11="zardId">
+        <label z-form-label [for]="f11.id()">{{
+          '#anashid#.songs.form.lyricsPlainText' | translate
+        }}</label>
+        <z-form-control>
+          <textarea
+            z-input
+            [id]="f11.id()"
+            formControlName="lyricsPlainText"
+            rows="4"
+            [placeholder]="
+              '#anashid#.songs.form.lyricsPlainTextPlaceholder' | translate
+            "
+          ></textarea>
+        </z-form-control>
+      </z-form-field>
 
-    <!-- Summary -->
-    <z-form-field zardId="summary" #f12="zardId">
-      <label z-form-label [for]="f12.id()">{{
-        '#anashid#.songs.form.summary' | translate
-      }}</label>
-      <z-form-control>
-        <textarea
-          z-input
-          [id]="f12.id()"
-          formControlName="summary"
-          rows="3"
-          [placeholder]="'#anashid#.songs.form.summaryPlaceholder' | translate"
-        ></textarea>
-      </z-form-control>
-    </z-form-field>
+      <!-- Summary -->
+      <z-form-field zardId="summary" #f12="zardId">
+        <label z-form-label [for]="f12.id()">{{
+          '#anashid#.songs.form.summary' | translate
+        }}</label>
+        <z-form-control>
+          <textarea
+            z-input
+            [id]="f12.id()"
+            formControlName="summary"
+            rows="3"
+            [placeholder]="
+              '#anashid#.songs.form.summaryPlaceholder' | translate
+            "
+          ></textarea>
+        </z-form-control>
+      </z-form-field>
 
-    <!-- Vocal Style -->
-    <z-form-field zardId="vocalStyle" #f13="zardId">
-      <label z-form-label [for]="f13.id()">{{
-        '#anashid#.songs.form.vocalStyle' | translate
-      }}</label>
-      <z-form-control>
-        <input
-          z-input
-          [id]="f13.id()"
-          formControlName="vocalStyle"
-          [placeholder]="
-            '#anashid#.songs.form.vocalStylePlaceholder' | translate
-          "
-        />
-      </z-form-control>
-    </z-form-field>
+      <!-- Vocal Style -->
+      <z-form-field zardId="vocalStyle" #f13="zardId">
+        <label z-form-label [for]="f13.id()">{{
+          '#anashid#.songs.form.vocalStyle' | translate
+        }}</label>
+        <z-form-control>
+          <input
+            z-input
+            [id]="f13.id()"
+            formControlName="vocalStyle"
+            [placeholder]="
+              '#anashid#.songs.form.vocalStylePlaceholder' | translate
+            "
+          />
+        </z-form-control>
+      </z-form-field>
 
-    <!-- Mood Tags -->
-    <z-form-field zardId="moodTags" #f14="zardId">
-      <label z-form-label [for]="f14.id()">{{
-        '#anashid#.songs.form.moodTags' | translate
-      }}</label>
-      <z-form-control>
-        <input
-          z-input
-          [id]="f14.id()"
-          formControlName="moodTags"
-          [placeholder]="'#anashid#.songs.form.moodTagsPlaceholder' | translate"
-        />
-      </z-form-control>
-    </z-form-field>
+      <!-- Mood Tags -->
+      <z-form-field zardId="moodTags" #f14="zardId">
+        <label z-form-label [for]="f14.id()">{{
+          '#anashid#.songs.form.moodTags' | translate
+        }}</label>
+        <z-form-control>
+          <input
+            z-input
+            [id]="f14.id()"
+            formControlName="moodTags"
+            [placeholder]="
+              '#anashid#.songs.form.moodTagsPlaceholder' | translate
+            "
+          />
+        </z-form-control>
+      </z-form-field>
 
-    <!-- Published At -->
-    <z-form-field zardId="publishedAt" #f15="zardId">
-      <label z-form-label [for]="f15.id()">{{
-        '#anashid#.songs.form.publishedAt' | translate
-      }}</label>
-      <z-form-control>
-        <input
-          z-input
-          type="datetime-local"
-          [id]="f15.id()"
-          formControlName="publishedAt"
-        />
-      </z-form-control>
-    </z-form-field>
+      <!-- Published At -->
+      <z-form-field zardId="publishedAt" #f15="zardId">
+        <label z-form-label [for]="f15.id()">{{
+          '#anashid#.songs.form.publishedAt' | translate
+        }}</label>
+        <z-form-control>
+          <input
+            z-input
+            type="datetime-local"
+            [id]="f15.id()"
+            formControlName="publishedAt"
+          />
+        </z-form-control>
+      </z-form-field>
+    }
 
     @if (errorMessage()) {
       <z-alert zType="destructive" [zDescription]="errorMessage()!" />

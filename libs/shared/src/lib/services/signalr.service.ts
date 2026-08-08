@@ -11,6 +11,10 @@ export interface SignalRNotification {
   body?: string;
   type?: string;
   queueItemId?: number;
+  /** JSON-encoded string. A `"silent": true` marker inside it suppresses the toast popup below
+   * (used for high-frequency internal events, e.g. Nasheed ingestion progress, that should update
+   * the UI live without popping a notification per event). */
+  data?: string;
   [key: string]: unknown;
 }
 
@@ -44,6 +48,10 @@ export class SignalrService extends BaseSignalrService implements OnDestroy {
           this.acknowledgeDelivery(data.queueItemId);
         }
 
+        if (this.isSilent(data)) {
+          return;
+        }
+
         const title = data?.title || 'New Notification';
         const description =
           data?.message ||
@@ -57,6 +65,15 @@ export class SignalrService extends BaseSignalrService implements OnDestroy {
         });
       }
     );
+  }
+
+  private isSilent(notification: SignalRNotification): boolean {
+    if (typeof notification?.data !== 'string') return false;
+    try {
+      return JSON.parse(notification.data)?.silent === true;
+    } catch {
+      return false;
+    }
   }
 
   public async acknowledgeDelivery(queueItemId: number): Promise<void> {

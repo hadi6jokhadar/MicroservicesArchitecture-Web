@@ -18,6 +18,7 @@
 | **Error Handling**     | [ERROR_HANDLER_USAGE_GUIDE](#error-handler-usage-guide)                                                                                     |
 | **HTTP Interceptors**  | [ERROR_HANDLER_USAGE_GUIDE → HTTP Interceptors Reference](#error-handler-usage-guide)                                                       |
 | **Design Patterns**    | [PAGE_CONTAINER_DESIGN_PATTERN](#page-container-design-pattern)                                                                             |
+| **Real-Time / SignalR** | [REALTIME_NOTIFICATIONS_GUIDE](#realtime-notifications-guide)                                                                              |
 
 ---
 
@@ -260,6 +261,27 @@
 - Role-based access
 - Claims system
 - Identity services
+
+---
+
+### Real-Time / SignalR
+
+#### REALTIME_NOTIFICATIONS_GUIDE.md
+
+**Purpose:** How the frontend connects to the Notification service's SignalR hub, and the convention for feeding a push into app-specific state without toast spam
+**Read When:**
+
+- Connecting a new app to the notification hub
+- Adding a domain-specific real-time listener (e.g. a feature's events service reacting to a live push)
+- Deciding whether a new backend-pushed event should toast or update silently
+- Debugging why a notification isn't updating a table, or is popping an unwanted toast
+
+**Key Topics:**
+
+- `BaseSignalrService` / `SignalrService` architecture (`libs/shared`)
+- The `"silent": true` payload convention
+- Adding a new domain-specific listener (reference: Nasheed ingestion progress)
+- Hub URL / environment configuration
 
 ---
 

@@ -1,5 +1,6 @@
 import { HttpContext } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl,
   FormGroup,
@@ -23,9 +24,11 @@ import {
   ZardDialogRef,
   ZardCheckboxComponent,
   ZardFormImports,
+  ZardIconComponent,
   ZardIdDirective,
   ZardInputDirective,
   ZardSelectImports,
+  ZardTooltipImports,
   Z_MODAL_DATA,
 } from '@ihsan/ui';
 import { AiSettingsEventsService } from '../../ai-settings-events.service';
@@ -50,6 +53,7 @@ interface IAiSettingForm {
   PresencePenalty: FormControl<string>;
   Description: FormControl<string>;
   AudioDataMode: FormControl<AudioDataModeEnum | null>;
+  NoSpeechProbThreshold: FormControl<string>;
 }
 
 @Component({
@@ -60,8 +64,10 @@ interface IAiSettingForm {
     TranslatePipe,
     ...ZardFormImports,
     ...ZardSelectImports,
+    ...ZardTooltipImports,
     ZardInputDirective,
     ZardAlertComponent,
+    ZardIconComponent,
     ZardIdDirective,
     ZardButtonComponent,
     ZardCheckboxComponent,
@@ -158,7 +164,47 @@ export class AddEditAiSettingDialogComponent {
     AudioDataMode: new FormControl<AudioDataModeEnum | null>(
       this._data?.setting?.AudioDataMode ?? null
     ),
+    NoSpeechProbThreshold: new FormControl<string>(
+      this._data?.setting?.NoSpeechProbThreshold != null
+        ? String(this._data.setting.NoSpeechProbThreshold)
+        : '',
+      { nonNullable: true, validators: [Validators.min(0), Validators.max(1)] }
+    ),
   });
+
+  // Which fields apply depends on ModelType — Text/Vision/Audio go through the chat-completion
+  // pipeline (chat_workflow.py) and use Temperature/TopP/etc; Embedding/ImageGeneration don't touch
+  // any of those (confirmed in embedding.py). AudioDataMode/NoSpeechProbThreshold are Audio-only
+  // (AudioDataMode is only read for chat-routed audio attachments; NoSpeechProbThreshold only by
+  // /api/v1/transcription) — both are meaningless for every other ModelType.
+  readonly modelType = toSignal(this.form.controls.ModelType.valueChanges, {
+    initialValue: this.form.controls.ModelType.value,
+  });
+  readonly showChatParams = computed(() => {
+    const type = this.modelType();
+    return type === 'Text' || type === 'Vision' || type === 'Audio';
+  });
+  readonly showAudioFields = computed(() => this.modelType() === 'Audio');
+
+  constructor() {
+    // Clear values for fields that just became inapplicable, so switching ModelType doesn't leave
+    // a stale/irrelevant value (e.g. a Temperature set while the row was Text) to be saved silently
+    // after changing to Embedding.
+    effect(() => {
+      if (!this.showChatParams()) {
+        this.form.controls.Temperature.setValue('', { emitEvent: false });
+        this.form.controls.Stream.setValue(null, { emitEvent: false });
+        this.form.controls.MaxCompletionTokens.setValue('', { emitEvent: false });
+        this.form.controls.TopP.setValue('', { emitEvent: false });
+        this.form.controls.FrequencyPenalty.setValue('', { emitEvent: false });
+        this.form.controls.PresencePenalty.setValue('', { emitEvent: false });
+      }
+      if (!this.showAudioFields()) {
+        this.form.controls.AudioDataMode.setValue(null, { emitEvent: false });
+        this.form.controls.NoSpeechProbThreshold.setValue('', { emitEvent: false });
+      }
+    });
+  }
 
   onSubmit(): void {
     if (this.form.invalid) {
@@ -199,6 +245,10 @@ export class AddEditAiSettingDialogComponent {
           : null,
       Description: formValue.Description.trim() || null,
       AudioDataMode: formValue.AudioDataMode ?? null,
+      NoSpeechProbThreshold:
+        formValue.NoSpeechProbThreshold.trim() !== ''
+          ? parseFloat(formValue.NoSpeechProbThreshold)
+          : null,
     };
 
     if (this.isEditMode() && this._data?.setting?.Id) {

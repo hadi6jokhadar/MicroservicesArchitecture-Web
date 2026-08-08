@@ -48,6 +48,12 @@ When a full feature (shell + list pages + dialogs, not just a component/directiv
 - **Inside** `libs/shared`, files must import sibling lib code (e.g. `error.interceptor`, `file-selector`) via **relative paths**, not `@ihsan/shared` — `@nx/enforce-module-boundaries` rejects a project importing its own barrel from within itself ("Projects should use relative imports to import from other files within the same project").
 - When moving component files into `libs/shared/src/lib/features/<name>/` from an app folder, double-check every relative import (`../../../...`) — the new location has a different folder depth, so paths that resolved correctly in the app do NOT necessarily resolve from the lib, and esbuild only reports this as a hard build error, not a lint error.
 
+### 2b. Real-Time (SignalR) Listeners
+
+The app-wide hub connection lives in `libs/shared` (`SignalrService`/`BaseSignalrService`) and exposes `notificationReceived: Subject<SignalRNotification>` — every push, unfiltered. A feature that needs to react to a specific backend-pushed event (not just any notification) must **not** modify `libs/shared` to add domain-specific filtering. Instead, inject `SignalrService` from `@ihsan/shared` into that feature's own `providedIn: 'root'` events/state service (the same service that already exposes a `dataChanged$` refetch bus for manual mutations), subscribe in its constructor, and filter by a unique marker string inside the notification's JSON `data` payload. Reference: `libs/nasheed/shared/src/lib/nasheed-shared/services/ingestion-events.service.ts` + `nasheed-realtime.constants.ts`. Full guide: `Doc/REALTIME_NOTIFICATIONS_GUIDE.md`.
+
+If the event fires frequently and shouldn't pop a toast per occurrence, the *backend* producer must set `"silent": true` inside that same `data` payload — `SignalrService` already checks for this marker and skips its toast while still emitting to `notificationReceived`. This is a backend-side decision, not something a frontend listener can control.
+
 ### 3. State Management & Data Fetching
 
 - **Signals Only:** Use `signal()`, `computed()`, and `effect()` over RxJS where possible for local state.
