@@ -21,10 +21,12 @@ export const pagesRoutes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
+        canActivate: [authGuard],
       },
       {
         path: 'test-components',
         component: TestComponentsComponent,
+        canActivate: [authGuard],
       },
       {
         path: 'identity',
