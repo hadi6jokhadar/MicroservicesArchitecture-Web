@@ -79,6 +79,7 @@ export class PagesComponent {
       route: '/artists',
       group: 'sidebar.groups.nasheed',
       roles: ['Admin', 'SuperAdmin'],
+      permissions: ['nasheed.pages.artists'],
       type: SidebarPageType.Both,
     }),
     new SidebarPageClass({
@@ -87,6 +88,7 @@ export class PagesComponent {
       route: '/songs',
       group: 'sidebar.groups.nasheed',
       roles: ['Admin', 'SuperAdmin'],
+      permissions: ['nasheed.pages.songs'],
       type: SidebarPageType.Both,
     }),
     new SidebarPageClass({
@@ -116,15 +118,7 @@ export class PagesComponent {
   ]);
 
   currentUser = computed<ISidebarUser>(() => {
-    const user = this._authService.currentUser() as
-      | {
-          firstName?: string;
-          lastName?: string;
-          email?: string;
-          roles?: { name: string }[];
-        }
-      | null
-      | undefined;
+    const user = this._authService.currentUser();
 
     const name = user?.firstName
       ? `${user.firstName} ${user.lastName || ''}`.trim()
@@ -135,6 +129,7 @@ export class PagesComponent {
       username: user?.email || '',
       imageUrl: undefined,
       roles: user?.roles?.map((r) => r.name) || [],
+      permissions: user?.permissions || [],
     });
   });
 

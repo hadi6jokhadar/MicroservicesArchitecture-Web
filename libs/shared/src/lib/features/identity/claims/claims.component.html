@@ -128,6 +128,11 @@
                 <z-badge zType="secondary" zShape="pill">{{
                   claim.claimType
                 }}</z-badge>
+                @if (claim.isSystemClaim) {
+                <z-badge zType="outline" zSize="sm">{{
+                  'claims.table.systemClaim' | translate
+                }}</z-badge>
+                }
               </td>
               <td
                 z-table-cell
@@ -196,6 +201,7 @@
                     {{ 'claims.actions.edit' | translate }}
                   </z-dropdown-menu-item>
 
+                  @if (!claim.isSystemClaim) {
                   <z-dropdown-menu-item
                     (click)="onDeleteClaim(claim)"
                     class="delete-action"
@@ -203,6 +209,7 @@
                     <z-icon zType="trash" />
                     {{ 'claims.actions.delete' | translate }}
                   </z-dropdown-menu-item>
+                  }
                 </z-dropdown-menu-content>
               </td>
             </tr>

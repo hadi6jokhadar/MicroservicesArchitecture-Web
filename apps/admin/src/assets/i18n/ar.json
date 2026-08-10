@@ -295,6 +295,7 @@
   "claims.dialog.validation.nameRequired": "اسم المطالبة مطلوب",
   "claims.loading": "جاري تحميل المطالبات...",
   "claims.subtitle": "إدارة مطالبات وصلاحيات التطبيق",
+  "claims.table.systemClaim": "صلاحية نظام",
   "export.categoryDescription": "اتركه فارغًا لتصدير كافة الفئات",
   "fileManager.allGroups": "جميع المجموعات",
   "fileManager.allTypes": "جميع الأنواع",

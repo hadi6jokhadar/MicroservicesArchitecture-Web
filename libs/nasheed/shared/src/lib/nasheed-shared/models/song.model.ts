@@ -31,6 +31,7 @@ export interface SongModel {
   isArchived: boolean;
   lyricsVerified: boolean;
   created: string;
+  createdBy?: string | null;
   lastModified?: string;
 }
 

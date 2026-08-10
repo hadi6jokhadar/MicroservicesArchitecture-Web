@@ -14,6 +14,7 @@ Before writing any code, confirm you have read all files below. State this expli
 | 6 | `Doc/FEATURE_FLAGS_GUIDE.md` | Feature flags directive, guard, and service |
 | 7 | `../Doc/POLYSNAP_PROJECT_OVERVIEW.md` | PolySnap product idea, architecture decisions, and roadmap — read before working on `apps/polysnap/` |
 | 8 | `Doc/REALTIME_NOTIFICATIONS_GUIDE.md` | SignalR hub connection pattern (`BaseSignalrService`/`SignalrService`), the `"silent": true` toast-suppression convention, and how to add a domain-specific real-time listener — read before wiring any live/push-driven UI update |
+| 9 | `Doc/PERMISSIONS_GUIDE.md` | Permission-claim route guard (`roleGuard`), sidebar visibility, and action-level button gating for lower-privileged roles below the role system — read before gating any page/button by a Permission claim |
 
 ## Critical Errors to Avoid
 

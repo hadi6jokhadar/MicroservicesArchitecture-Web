@@ -128,11 +128,18 @@ export class SidebarComponent {
       }
     }
 
-    // Check Roles
-    if (page.roles && page.roles.length > 0) {
+    // Check Roles / Permissions — a page needing either shows if the user satisfies either
+    // (e.g. Admin sees it via role, a "NasheedDataEntry" user sees it via permission claim).
+    const requiredRoles = page.roles || [];
+    const requiredPermissions = page.permissions || [];
+    if (requiredRoles.length > 0 || requiredPermissions.length > 0) {
       const userRoles = this.currentUser().roles || [];
-      const hasRole = page.roles.some((role) => userRoles.includes(role));
-      if (!hasRole) {
+      const userPermissions = this.currentUser().permissions || [];
+      const hasRole = requiredRoles.some((role) => userRoles.includes(role));
+      const hasPermission = requiredPermissions.some((permission) =>
+        userPermissions.includes(permission)
+      );
+      if (!hasRole && !hasPermission) {
         return false;
       }
     }

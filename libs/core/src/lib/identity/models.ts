@@ -43,6 +43,8 @@ export class UserClass implements IUser {
   verificationCode?: string | null;
   data?: string | null;
   isArchived: boolean;
+  /** Flattened "Permission" claim values across all of this user's roles (e.g. "nasheed.songs.create"). */
+  permissions: string[];
 
   constructor(data: Partial<IUser> = {}) {
     this.id = data.id || 0;
@@ -61,6 +63,10 @@ export class UserClass implements IUser {
     this.verificationCode = data.verificationCode;
     this.data = data.data;
     this.isArchived = data.isArchived ?? false;
+    this.permissions = this.roles
+      .flatMap((r) => r.claims ?? [])
+      .filter((c) => c.claimType === 'Permission')
+      .map((c) => c.claimValue);
   }
 }
 
@@ -191,6 +197,8 @@ export interface IClaim {
   claimType: string;
   claimValue: string;
   isSuperAdminOnly: boolean;
+  /** Seeded by the system (SystemPermissionCatalog on the backend) — cannot be deleted or renamed. */
+  isSystemClaim: boolean;
   status: boolean;
 }
 
@@ -201,6 +209,7 @@ export class ClaimClass implements IClaim {
   claimType: string;
   claimValue: string;
   isSuperAdminOnly: boolean;
+  isSystemClaim: boolean;
   status: boolean;
 
   constructor(data: Partial<IClaim> = {}) {
@@ -210,6 +219,7 @@ export class ClaimClass implements IClaim {
     this.claimType = data.claimType || '';
     this.claimValue = data.claimValue || '';
     this.isSuperAdminOnly = data.isSuperAdminOnly ?? false;
+    this.isSystemClaim = data.isSystemClaim ?? false;
     this.status = data.status ?? true;
   }
 }

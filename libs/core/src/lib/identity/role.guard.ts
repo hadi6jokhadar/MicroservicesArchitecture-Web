@@ -8,9 +8,16 @@ export const roleGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
   const requiredRoles = (route.data?.['roles'] as Array<string>) || [];
-  const hasRequiredRole = (roles: Array<string>): boolean =>
-    requiredRoles.length === 0 ||
-    requiredRoles.some((role) => roles.includes(role));
+  const requiredPermissions =
+    (route.data?.['permissions'] as Array<string>) || [];
+  // Passes if no roles/permissions are required, the user holds any required role
+  // (e.g. Admin/SuperAdmin), OR the user holds any required permission claim (e.g. a
+  // "NasheedDataEntry" role's "nasheed.pages.songs" claim) — role and permission are
+  // alternative, not additive, gates.
+  const isAuthorized = (roles: Array<string>, permissions: Array<string>): boolean =>
+    (requiredRoles.length === 0 && requiredPermissions.length === 0) ||
+    requiredRoles.some((role) => roles.includes(role)) ||
+    requiredPermissions.some((permission) => permissions.includes(permission));
 
   if (!authService.getToken()) {
     return router.createUrlTree(['/login'], {
@@ -19,9 +26,9 @@ export const roleGuard: CanActivateFn = (route, state) => {
   }
 
   const user = authService.currentUser();
-  if (user && requiredRoles) {
+  if (user) {
     const userRoles = user.roles?.map((r) => r.name) || [];
-    if (hasRequiredRole(userRoles)) {
+    if (isAuthorized(userRoles, user.permissions)) {
       return true;
     }
 
@@ -31,10 +38,13 @@ export const roleGuard: CanActivateFn = (route, state) => {
   // On page refresh, token can exist while in-memory profile is still loading.
   // Resolve profile once before deciding authorization.
   return authService.getProfile().pipe(
-    tap((profile) => authService.currentUser.set(new UserClass(profile))),
-    map((profile) => {
-      const userRoles = profile.roles?.map((r) => r.name) || [];
-      return hasRequiredRole(userRoles) ? true : router.createUrlTree(['/']);
+    map((profile) => new UserClass(profile)),
+    tap((resolvedUser) => authService.currentUser.set(resolvedUser)),
+    map((resolvedUser) => {
+      const userRoles = resolvedUser.roles?.map((r) => r.name) || [];
+      return isAuthorized(userRoles, resolvedUser.permissions)
+        ? true
+        : router.createUrlTree(['/']);
     }),
     catchError(() =>
       of(

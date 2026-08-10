@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { forkJoin, of, switchMap, map } from 'rxjs';
-import { TranslatePipe, TranslationService, RtlService } from '@ihsan/core';
+import { AuthService, TranslatePipe, TranslationService, RtlService } from '@ihsan/core';
 import {
   ZardButtonComponent,
   ZardCardComponent,
@@ -93,6 +93,24 @@ export class SongsComponent {
   private readonly _rtlService = inject(RtlService);
   private readonly _alertDialogService = inject(ZardAlertDialogService);
   private readonly _translationService = inject(TranslationService);
+  private readonly _authService = inject(AuthService);
+
+  private static readonly ADMIN_ROLES = ['Admin', 'Superadmin', 'SuperAdmin'];
+
+  /** Admin/SuperAdmin — full access, including delete and admin-only pipeline actions. */
+  readonly isAdmin = computed(() => {
+    const roles = this._authService.currentUser()?.roles?.map((r) => r.name) ?? [];
+    return roles.some((role) => SongsComponent.ADMIN_ROLES.includes(role));
+  });
+
+  /** Admin, or a lower-privileged user holding the "nasheed.songs.create" permission claim. */
+  readonly canCreateSongs = computed(
+    () =>
+      this.isAdmin() ||
+      (this._authService.currentUser()?.permissions ?? []).includes(
+        'nasheed.songs.create',
+      ),
+  );
 
   readonly data = signal<SongModel[]>([]);
   readonly artists = signal<ArtistModel[]>([]);
@@ -207,6 +225,13 @@ export class SongsComponent {
   onPageChange(page: number): void {
     this.currentPage.set(page);
     this.loadData();
+  }
+
+  /** Admins may edit any song; everyone else only the songs they created. */
+  canEditSong(song: SongModel): boolean {
+    if (this.isAdmin()) return true;
+    const currentUserId = this._authService.currentUser()?.id;
+    return currentUserId != null && song.createdBy === String(currentUserId);
   }
 
   onAddSong(): void {

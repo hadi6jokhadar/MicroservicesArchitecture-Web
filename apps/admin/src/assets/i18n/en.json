@@ -295,6 +295,7 @@
   "claims.dialog.validation.nameRequired": "Claim name is required",
   "claims.loading": "Loading claims...",
   "claims.subtitle": "Manage application claims and permissions",
+  "claims.table.systemClaim": "System Claim",
   "export.categoryDescription": "Leave empty to export all categories",
   "fileManager.allGroups": "All Groups",
   "fileManager.allTypes": "All Types",

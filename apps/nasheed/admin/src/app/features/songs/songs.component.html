@@ -6,16 +6,18 @@
         <h1>{{ 'common.songs' | translate }}</h1>
         <p>{{ '#anashid#.songs.subtitle' | translate }}</p>
       </div>
-      <button
-        z-button
-        zType="default"
-        zSize="lg"
-        (click)="onAddSong()"
-        id="add-song-button"
-      >
-        <z-icon zType="plus" />
-        {{ '#anashid#.songs.actions.add' | translate }}
-      </button>
+      @if (canCreateSongs()) {
+        <button
+          z-button
+          zType="default"
+          zSize="lg"
+          (click)="onAddSong()"
+          id="add-song-button"
+        >
+          <z-icon zType="plus" />
+          {{ '#anashid#.songs.actions.add' | translate }}
+        </button>
+      }
     </div>
   </div>
 
@@ -394,44 +396,48 @@
                         <z-icon zType="eye" />
                         {{ 'common.view' | translate }}
                       </z-dropdown-menu-item>
-                      <z-dropdown-menu-item
-                        (click)="onEditSong(song)"
-                        [id]="'edit-song-' + song.id"
-                      >
-                        <z-icon zType="file-text" />
-                        {{ '#anashid#.songs.actions.edit' | translate }}
-                      </z-dropdown-menu-item>
-                      @if (!song.lyricsVerified) {
+                      @if (canEditSong(song)) {
                         <z-dropdown-menu-item
-                          (click)="onToggleLyricsVerified(song)"
-                          [id]="'verify-song-' + song.id"
+                          (click)="onEditSong(song)"
+                          [id]="'edit-song-' + song.id"
                         >
-                          <z-icon zType="badge-check" />
-                          {{ '#anashid#.songs.actions.verify' | translate }}
+                          <z-icon zType="file-text" />
+                          {{ '#anashid#.songs.actions.edit' | translate }}
                         </z-dropdown-menu-item>
                       }
-                      <z-dropdown-menu-item
-                        (click)="onReindexSong(song)"
-                        [id]="'reindex-song-' + song.id"
-                      >
-                        <z-icon zType="refresh-cw" />
-                        {{ '#anashid#.songs.actions.reindex' | translate }}
-                      </z-dropdown-menu-item>
-                      <z-dropdown-menu-item
-                        (click)="onRetrySong(song)"
-                        [id]="'retry-song-' + song.id"
-                      >
-                        <z-icon zType="rotate-ccw" />
-                        {{ '#anashid#.songs.actions.retry' | translate }}
-                      </z-dropdown-menu-item>
-                      <z-dropdown-menu-item
-                        (click)="onDeleteSong(song)"
-                        [id]="'delete-song-' + song.id"
-                        class="delete-action"
-                      >
-                        <z-icon zType="trash" />
-                        {{ 'common.delete' | translate }}
-                      </z-dropdown-menu-item>
+                      @if (isAdmin()) {
+                        @if (!song.lyricsVerified) {
+                          <z-dropdown-menu-item
+                            (click)="onToggleLyricsVerified(song)"
+                            [id]="'verify-song-' + song.id"
+                          >
+                            <z-icon zType="badge-check" />
+                            {{ '#anashid#.songs.actions.verify' | translate }}
+                          </z-dropdown-menu-item>
+                        }
+                        <z-dropdown-menu-item
+                          (click)="onReindexSong(song)"
+                          [id]="'reindex-song-' + song.id"
+                        >
+                          <z-icon zType="refresh-cw" />
+                          {{ '#anashid#.songs.actions.reindex' | translate }}
+                        </z-dropdown-menu-item>
+                        <z-dropdown-menu-item
+                          (click)="onRetrySong(song)"
+                          [id]="'retry-song-' + song.id"
+                        >
+                          <z-icon zType="rotate-ccw" />
+                          {{ '#anashid#.songs.actions.retry' | translate }}
+                        </z-dropdown-menu-item>
+                        <z-dropdown-menu-item
+                          (click)="onDeleteSong(song)"
+                          [id]="'delete-song-' + song.id"
+                          class="delete-action"
+                        >
+                          <z-icon zType="trash" />
+                          {{ 'common.delete' | translate }}
+                        </z-dropdown-menu-item>
+                      }
                     </z-dropdown-menu-content>
                   </td>
                 </tr>

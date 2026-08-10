@@ -6,16 +6,18 @@
         <h1>{{ 'common.artists' | translate }}</h1>
         <p>{{ '#anashid#.artists.subtitle' | translate }}</p>
       </div>
-      <button
-        z-button
-        zType="default"
-        zSize="lg"
-        (click)="onAddArtist()"
-        id="add-artist-button"
-      >
-        <z-icon zType="plus" />
-        {{ '#anashid#.artists.actions.add' | translate }}
-      </button>
+      @if (canCreateArtists()) {
+        <button
+          z-button
+          zType="default"
+          zSize="lg"
+          (click)="onAddArtist()"
+          id="add-artist-button"
+        >
+          <z-icon zType="plus" />
+          {{ '#anashid#.artists.actions.add' | translate }}
+        </button>
+      }
     </div>
   </div>
 
@@ -222,22 +224,24 @@
                         {{ 'common.view' | translate }}
                       </z-dropdown-menu-item>
 
-                      <z-dropdown-menu-item
-                        (click)="onEditArtist(artist)"
-                        [id]="'edit-artist-' + artist.id"
-                      >
-                        <z-icon zType="file-text" />
-                        {{ '#anashid#.artists.actions.edit' | translate }}
-                      </z-dropdown-menu-item>
+                      @if (isAdmin()) {
+                        <z-dropdown-menu-item
+                          (click)="onEditArtist(artist)"
+                          [id]="'edit-artist-' + artist.id"
+                        >
+                          <z-icon zType="file-text" />
+                          {{ '#anashid#.artists.actions.edit' | translate }}
+                        </z-dropdown-menu-item>
 
-                      <z-dropdown-menu-item
-                        (click)="onDeleteArtist(artist)"
-                        [id]="'delete-artist-' + artist.id"
-                        class="delete-action"
-                      >
-                        <z-icon zType="trash" />
-                        {{ 'common.delete' | translate }}
-                      </z-dropdown-menu-item>
+                        <z-dropdown-menu-item
+                          (click)="onDeleteArtist(artist)"
+                          [id]="'delete-artist-' + artist.id"
+                          class="delete-action"
+                        >
+                          <z-icon zType="trash" />
+                          {{ 'common.delete' | translate }}
+                        </z-dropdown-menu-item>
+                      }
                     </z-dropdown-menu-content>
                   </td>
                 </tr>

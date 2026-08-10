@@ -13,6 +13,8 @@ export interface ISidebarPage {
   route?: string;
   action?: () => void;
   roles?: string[];
+  /** Alternative to `roles` — page shows if the user holds ANY of these Permission claim values. */
+  permissions?: string[];
   type?: SidebarPageType;
   children?: ISidebarPage[];
   featureFlag?: string;
@@ -25,6 +27,7 @@ export class SidebarPageClass implements ISidebarPage {
   route?: string;
   action?: () => void;
   roles?: string[];
+  permissions?: string[];
   type?: SidebarPageType;
   children?: ISidebarPage[];
   featureFlag?: string;
@@ -36,6 +39,7 @@ export class SidebarPageClass implements ISidebarPage {
     this.route = data.route;
     this.action = data.action;
     this.roles = data.roles;
+    this.permissions = data.permissions;
     this.type = data.type || SidebarPageType.Both;
     this.children = data.children;
     this.featureFlag = data.featureFlag;
@@ -47,6 +51,7 @@ export interface ISidebarUser {
   username: string;
   imageUrl?: string;
   roles?: string[];
+  permissions?: string[];
 }
 
 export class SidebarUserClass implements ISidebarUser {
@@ -54,11 +59,13 @@ export class SidebarUserClass implements ISidebarUser {
   username: string;
   imageUrl?: string;
   roles?: string[];
+  permissions?: string[];
 
   constructor(data: Partial<ISidebarUser> = {}) {
     this.name = data.name || '';
     this.username = data.username || '';
     this.imageUrl = data.imageUrl;
     this.roles = data.roles;
+    this.permissions = data.permissions;
   }
 }

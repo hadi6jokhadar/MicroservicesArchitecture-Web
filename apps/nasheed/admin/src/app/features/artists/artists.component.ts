@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslatePipe, TranslationService, RtlService } from '@ihsan/core';
+import { AuthService, TranslatePipe, TranslationService, RtlService } from '@ihsan/core';
 import {
   ZardButtonComponent,
   ZardCardComponent,
@@ -78,6 +78,24 @@ export class ArtistsComponent {
   private readonly _rtlService = inject(RtlService);
   private readonly _alertDialogService = inject(ZardAlertDialogService);
   private readonly _translationService = inject(TranslationService);
+  private readonly _authService = inject(AuthService);
+
+  private static readonly ADMIN_ROLES = ['Admin', 'Superadmin', 'SuperAdmin'];
+
+  /** Admin/SuperAdmin only — artist edit/delete stay Admin-only (data-entry users get create only). */
+  readonly isAdmin = computed(() => {
+    const roles = this._authService.currentUser()?.roles?.map((r) => r.name) ?? [];
+    return roles.some((role) => ArtistsComponent.ADMIN_ROLES.includes(role));
+  });
+
+  /** Admin, or a lower-privileged user holding the "nasheed.artists.create" permission claim. */
+  readonly canCreateArtists = computed(
+    () =>
+      this.isAdmin() ||
+      (this._authService.currentUser()?.permissions ?? []).includes(
+        'nasheed.artists.create',
+      ),
+  );
 
   readonly data = signal<ArtistModel[]>([]);
   readonly isLoading = signal(false);

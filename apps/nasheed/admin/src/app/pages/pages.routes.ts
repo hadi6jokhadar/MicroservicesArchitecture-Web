@@ -23,14 +23,20 @@ export const pagesRoutes: Routes = [
         loadChildren: () =>
           import('../features/artists/artists.routes').then((m) => m.artistsRoutes),
         canActivate: [authGuard, roleGuard],
-        data: { roles: ['Admin', 'SuperAdmin'] },
+        data: {
+          roles: ['Admin', 'SuperAdmin'],
+          permissions: ['nasheed.pages.artists'],
+        },
       },
       {
         path: 'songs',
         loadChildren: () =>
           import('../features/songs/songs.routes').then((m) => m.SONGS_ROUTES),
         canActivate: [authGuard, roleGuard],
-        data: { roles: ['Admin', 'SuperAdmin'] },
+        data: {
+          roles: ['Admin', 'SuperAdmin'],
+          permissions: ['nasheed.pages.songs'],
+        },
       },
       {
         path: 'ingestion',

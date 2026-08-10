@@ -54,6 +54,10 @@ The app-wide hub connection lives in `libs/shared` (`SignalrService`/`BaseSignal
 
 If the event fires frequently and shouldn't pop a toast per occurrence, the *backend* producer must set `"silent": true` inside that same `data` payload — `SignalrService` already checks for this marker and skips its toast while still emitting to `notificationReceived`. This is a backend-side decision, not something a frontend listener can control.
 
+### 2c. Permission Claims (finer-grained than roles)
+
+When a lower-privileged role needs access to a slice of a page/action that a plain role check is too coarse for (e.g. a "data entry" role that can create/edit but not delete), don't invent a new access-control mechanism — extend the existing role-adjacent pattern: `roleGuard` and `ISidebarPage`/`ISidebarUser` already accept a parallel `permissions?: string[]` alongside `roles?: string[]` (role-OR-permission, never AND — Admin must never need a claim too). `UserClass.permissions` is already the flattened source (`roles[].claims[]` filtered to `claimType === 'Permission'`). Action-level gating (hiding a specific button, not a whole page) has no directive yet — use a local `computed()` in the component. Full guide: `Doc/PERMISSIONS_GUIDE.md`. Backend half (how claims are created/assigned, as data via Identity's admin UI, no seeding): `MicroservicesArchitecture/Doc/SHARED_IDENTITY_SERVICE_GUIDE.md`.
+
 ### 3. State Management & Data Fetching
 
 - **Signals Only:** Use `signal()`, `computed()`, and `effect()` over RxJS where possible for local state.
