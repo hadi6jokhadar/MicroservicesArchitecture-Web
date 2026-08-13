@@ -18,17 +18,19 @@ The login and register components now support **three authentication modes** wit
 
 | Mode               | Flow                                      | API Endpoints Used                                                            |
 | ------------------ | ----------------------------------------- | ----------------------------------------------------------------------------- |
-| **Email/Password** | Traditional login with email and password | `POST /api/auth/login`                                                        |
-| **Email Code**     | Request code → Enter 6-digit code → Login | `POST /api/auth/get-verification-code-by-email` → `/login-with-code-by-email` |
-| **Phone Code**     | Request code → Enter 6-digit code → Login | `POST /api/auth/get-verification-code-by-phone` → `/login-with-code-by-phone` |
+| **Email/Password** | Traditional login with email and password | `POST /api/v1/auth/login`                                                        |
+| **Email Code**     | Request code → Enter 6-digit code → Login | `POST /api/v1/auth/get-verification-code-by-email` → `/login-with-code-by-email` |
+| **Phone Code**     | Request code → Enter 6-digit code → Login | `POST /api/v1/auth/get-verification-code-by-phone` → `/login-with-code-by-phone` |
 
 ### Register Component
 
 | Mode               | Flow                                                        | API Endpoints Used                                                         |
 | ------------------ | ----------------------------------------------------------- | -------------------------------------------------------------------------- |
-| **Email/Password** | Traditional registration with all fields                    | `POST /api/auth/register`                                                  |
-| **Email Code**     | Enter name & email → Request code → Enter code → Auto-login | `POST /api/auth/register-with-code-by-email` → `/login-with-code-by-email` |
-| **Phone Code**     | Enter name & phone → Request code → Enter code → Auto-login | `POST /api/auth/register-with-code-by-phone` → `/login-with-code-by-phone` |
+| **Email/Password** | Traditional registration with all fields                    | `POST /api/v1/auth/register`                                                  |
+| **Email Code**     | Enter name & email → Request code → Enter code → Auto-login | `POST /api/v1/auth/register-with-code-by-email` → `/login-with-code-by-email` |
+| **Phone Code**     | Enter name & phone → Request code → Enter code → Auto-login | `POST /api/v1/auth/register-with-code-by-phone` → `/login-with-code-by-phone` |
+
+> All endpoints are served through `AuthService` at a versioned base URL: `{gateway}/api/v1/auth/...` (see `libs/core/src/lib/identity/auth.service.ts`).
 
 ---
 
@@ -83,6 +85,7 @@ interface IRegisterForm {
 - Uses **Zardui Segmented Component** (`z-segmented`)
 - Three options with icons (mail, smartphone)
 - Visible only on the first step (credentials/registration)
+- **Gated behind the `showModes` input, which defaults to `false`.** Both `LoginComponent` and `RegisterComponent` render the segmented mode selector only when `[showModes]="true"` is passed in — by default only the mode set via `defaultLoginMode`/`defaultRegisterMode` (also defaults to `'email-password'`) is used and the selector is hidden. Consumers that want the user to switch modes at runtime (the flow this guide describes) MUST pass `[showModes]="true"` explicitly.
 
 ### Conditional Field Visibility
 
@@ -118,17 +121,19 @@ interface IRegisterForm {
 
 ### Dynamic Submit Button Text
 
-The button text changes based on mode and step:
+The button text changes based on mode and step (see `submitButtonText` getters in `login.component.ts`/`register.component.ts`):
 
 **Login:**
 
-- Step 1: "Login", "Send Code" (Email), "Send Code" (Phone)
-- Step 2: "Verify & Login"
+- Step 1: "Sign In" (Email/Password), "Send Code" (Email Code / Phone Code)
+- Step 2: "Verify & Sign In"
+- Loading states: "Signing in...", "Sending code...", "Verifying..."
 
 **Register:**
 
-- Step 1: "Create Account", "Send Code" (Email), "Send Code" (Phone)
-- Step 2: "Verify & Register"
+- Step 1: "Create Account" (Email/Password), "Send Code" (Email Code / Phone Code)
+- Step 2: "Verify & Complete"
+- Loading states: "Creating account...", "Sending code...", "Verifying..."
 
 ---
 
@@ -139,7 +144,7 @@ The button text changes based on mode and step:
 ```typescript
 1. User selects "Email/Password" mode
 2. User enters email and password
-3. User clicks "Login"
+3. User clicks "Sign In"
 4. Component calls: authService.login({ email, password })
 5. On success: Navigate to dashboard
 ```
@@ -156,7 +161,7 @@ The button text changes based on mode and step:
    - In production: code sent via email only
 6. UI transitions to step 2 (verification-code)
 7. User enters 6-digit code
-8. User clicks "Verify & Login"
+8. User clicks "Verify & Sign In"
 9. Component calls: authService.loginWithCodeByEmail(email, code)
 10. On success: Navigate to dashboard
 ```
@@ -173,7 +178,7 @@ The button text changes based on mode and step:
    - In production: code sent via SMS only
 6. UI transitions to step 2 (verification-code)
 7. User enters 6-digit code
-8. User clicks "Verify & Login"
+8. User clicks "Verify & Sign In"
 9. Component calls: authService.loginWithCodeByPhone(phoneNumber, code)
 10. On success: Navigate to dashboard
 ```
@@ -190,7 +195,7 @@ The button text changes based on mode and step:
    - In production: code sent via email only
 6. UI transitions to step 2 (verification-code)
 7. User enters 6-digit code
-8. User clicks "Verify & Register"
+8. User clicks "Verify & Complete"
 9. Component calls: authService.loginWithCodeByEmail(email, code)
    - Note: Uses login endpoint, not register (user already exists)
 10. On success: Navigate to dashboard
@@ -208,7 +213,7 @@ The button text changes based on mode and step:
    - In production: code sent via SMS only
 6. UI transitions to step 2 (verification-code)
 7. User enters 6-digit code
-8. User clicks "Verify & Register"
+8. User clicks "Verify & Complete"
 9. Component calls: authService.loginWithCodeByPhone(phoneNumber, code)
 10. On success: Navigate to dashboard
 ```
@@ -219,18 +224,29 @@ The button text changes based on mode and step:
 
 ### Login Component Usage
 
+The real selector is `shared-login` (defined on `LoginComponent` in `libs/shared/src/lib/components/login/login.component.ts`). Pass `[showModes]="true"` to display the three-mode segmented selector described in this guide — it defaults to `false` and shows only the `defaultLoginMode` (default `'email-password'`) otherwise.
+
 ```html
-<app-login
+<shared-login
   [showForgotPassword]="true"
   [showCreateAccount]="true"
   [redirectAfterLogin]="'/dashboard'"
+  [showModes]="true"
+  [defaultLoginMode]="'email-password'"
 />
 ```
 
 ### Register Component Usage
 
+The real selector is `shared-register` (defined on `RegisterComponent` in `libs/shared/src/lib/components/register/register.component.ts`). Pass `[showModes]="true"` to display the three-mode segmented selector — it defaults to `false` and shows only the `defaultRegisterMode` (default `'email-password'`) otherwise.
+
 ```html
-<app-register [showLoginLink]="true" [redirectAfterRegister]="'/dashboard'" />
+<shared-register
+  [showLoginLink]="true"
+  [redirectAfterRegister]="'/dashboard'"
+  [showModes]="true"
+  [defaultRegisterMode]="'email-password'"
+/>
 ```
 
 ### Handling Development Mode Codes with Toast
@@ -407,6 +423,7 @@ authService
 
 ### Issue: Mode selector not working
 
+- Verify `[showModes]="true"` is passed to `<shared-login>`/`<shared-register>` — the selector defaults to hidden (`showModes` input defaults to `false`) and is not rendered at all otherwise
 - Verify `z-segmented-item` has both `value` and `label` inputs
 - Check `(zChange)` event is bound correctly (not `(valueChange)`)
 - Ensure `[zDefaultValue]` is used (not `[value]`)

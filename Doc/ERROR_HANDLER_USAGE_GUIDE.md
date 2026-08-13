@@ -753,11 +753,14 @@ Interceptors run **in order** for outgoing requests and **in reverse** for incom
 ```typescript
 @Injectable({ providedIn: 'root' })
 export class CorrelationIdService {
-  readonly current = signal(crypto.randomUUID()); // starts with a fresh UUID on app boot
+  private readonly _current = signal<string>(generateUuid()); // fresh UUID on app boot
+  readonly current = this._current.asReadonly();
 
   update(id: string): void { ... }  // called automatically by the interceptor
 }
 ```
+
+**Not a bare `crypto.randomUUID()` call** — `crypto.randomUUID()` only exists in a secure context (HTTPS or `localhost`); this platform serves the admin/nasheed apps over plain HTTP on a non-localhost hostname in some deployments, where `window.crypto.randomUUID` is `undefined` and throws a `TypeError` at app init. `generateUuid()` (private helper in the same file) checks for `crypto.randomUUID` and falls back to a `Math.random()`-based UUID v4 string when it's unavailable. Don't "simplify" this back to a direct `crypto.randomUUID()` call — see `.claude/instructions/Angular.instructions.md`'s pitfalls for the same class of environment-dependent API gap.
 
 Inject `CorrelationIdService` anywhere to read the active ID — useful for logging it in error dialogs or support screens:
 
@@ -782,10 +785,12 @@ Catches all HTTP errors. Shows a toast by default. Components can opt out with `
 
 ### `tokenInterceptor`
 
-**File:** `libs/core/src/lib/identity/`  
+**File:** `libs/core/src/lib/identity/token.interceptor.ts`  
 **Import:** `import { tokenInterceptor } from '@ihsan/core';`
 
-Reads the stored JWT access token and adds `Authorization: Bearer <token>` to every outgoing request. No action on requests that already have an `Authorization` header.
+Reads the stored JWT access token (`IdentityStorageService.getAccessToken()`) and, if present, adds `Authorization: Bearer <token>` to the outgoing request — it does not check whether the request already carries an `Authorization` header before overwriting it.
+
+**Also handles automatic token refresh on 401.** If a response comes back `401` and the request wasn't itself `auth/refresh` or `auth/login` (avoids a refresh loop), the interceptor calls `AuthService.refreshToken()` with the stored access+refresh token pair, retries the original request with the new access token, and lets the error interceptor's normal 401 handling (logout + redirect) run if the refresh itself fails. Concurrent requests that 401 while a refresh is already in flight queue on a shared `refreshTokenSubject` and retry once the new token arrives, instead of each triggering their own refresh call.
 
 ---
 
@@ -794,10 +799,10 @@ Reads the stored JWT access token and adds `Authorization: Bearer <token>` to ev
 **File:** `libs/core/src/lib/interceptors/tenant.interceptor.ts`  
 **Import:** `import { tenantInterceptor } from '@ihsan/core';`
 
-Reads `tenantId` from the injected `ENVIRONMENT` token and adds `x-tenant-id` header. Does nothing if `tenantId` is null/undefined (for apps that don't need tenant context).
+Resolves the tenant ID as `TenantService.currentTenantId() ?? environment.tenantId ?? null` — the signal-backed, runtime-selected tenant (set via a tenant-selection flow or per-tenant init) takes priority over the injected `ENVIRONMENT` token's static `tenantId`, which is the fallback for apps that don't have a runtime tenant-selection step (e.g. a fixed per-tenant app). Adds `x-tenant-id` header when a value is found; does nothing if both are null/undefined.
 
 ---
 
-**Version:** 1.1  
-**Last Updated:** June 5, 2026  
+**Version:** 1.2  
+**Last Updated:** August 13, 2026  
 **Maintained By:** Development Team

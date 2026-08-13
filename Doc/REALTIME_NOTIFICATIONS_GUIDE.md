@@ -85,7 +85,15 @@ const hubUrl = `${this.env.apiUrls.gateway}/hubs/notifications`;
 
 Every app's `environments/environment*.ts` must have `apiUrls.gateway` set for this to work — check the app you're wiring up if the connection fails to establish.
 
+## Tenant group membership — JWT-derived, not the client-supplied value
+
+`BaseSignalrService.initializeConnection()` (`libs/shared/src/lib/services/base-signalr.service.ts`) still appends `?tenantId=<id>` to the hub URL when `TenantService.getCurrentTenantId` has a value — this query string is how the value crosses over at all, since a browser's WebSocket handshake cannot carry a custom header the way a normal HTTP request can (there is no way to send `x-tenant-id` on a SignalR connection).
+
+**But that client-supplied `tenantId` is no longer trusted at face value for an authenticated connection.** `NotificationHub.OnConnectedAsync` (backend, `Notification.API/Hubs/NotificationHub.cs`) was fixed (August 2026 security audit) to join the `tenant:{tenantId}` broadcast group using the tenant baked into the connection's own JWT (`tenant_id` claim) whenever the connection is authenticated — the query-string value is only used as a fallback for an anonymous connection, or for a cross-tenant Service/SuperAdmin token that legitimately has no `tenant_id` claim to pin to. Before this fix, the hub read the raw query value unconditionally, which let any authenticated (or anonymous) client join another tenant's notification group just by connecting with a different `?tenantId=`.
+
+**Practical effect for frontend work:** nothing needs to change in `BaseSignalrService`/`SignalrService` — keep sending `tenantId` in the query string exactly as today. Just don't rely on that query value as "proof" of which tenant group a logged-in user actually joined when debugging a cross-tenant notification issue; for an authenticated user, the JWT's own `tenant_id` claim is what determines the group, not whatever `TenantService.getCurrentTenantId` happened to resolve to client-side. If those two ever disagree (e.g. a stale `localStorage` tenant selection after switching tenants), the backend wins.
+
 ---
 
 **Last Updated:** August 2026
-**Version:** 1.0
+**Version:** 1.1

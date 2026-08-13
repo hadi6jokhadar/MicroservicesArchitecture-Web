@@ -361,25 +361,35 @@ Use Tailwind spacing utilities:
 
 ## Error Handling in Dialogs
 
-### ⚠️ CRITICAL: NO Toast Notifications in Dialogs
+### ✅ Success: Toast — ❌ NO Inline Success Alert
 
-**NEVER** use toast notifications (`toast.success()`, `toast.error()`) inside dialogs or sheets.
+**On success**, call `toast.success()` immediately before closing the dialog — this IS the correct pattern (see `MicroservicesArchitecture-Web/.claude/instructions/Angular.instructions.md`, section 4 "Error Handling (Context-Aware)"). Do **not** render an inline success `<z-alert>` — there is no "success" `zType` on `z-alert` in the first place, and the dialog closes immediately on success anyway so an inline message would never be seen.
 
-### Use Inline Alerts Instead
+### ❌ Errors: Inline `<z-alert>` — NOT Toast
+
+**On error**, display the error inline with `<z-alert zType="destructive">` and an `errorMessage` signal — never call `toast.error()` from inside a dialog/sheet, since the global HTTP error interceptor already shows a toast unless `SKIP_ERROR_TOAST` is set (and it must always be set on dialog/sheet requests — see Pitfall #3 in `Angular.instructions.md`).
+
+This is the pattern used by every real dialog in the app (e.g. `apps/admin/src/app/features/category/categories/add-edit-category-dialog/add-edit-category-dialog.component.ts`, `apps/nasheed/admin/src/app/features/artists/add-edit-artist-dialog/add-edit-artist-dialog.component.ts`):
 
 ```typescript
 export class MyDialogComponent {
+  private readonly _dialogRef = inject(ZardDialogRef);
   protected readonly errorMessage = signal<string | null>(null);
-  protected readonly successMessage = signal<string | null>(null);
+  protected readonly isLoading = signal(false);
 
   onSubmit(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
     const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
 
     this._service.save(this.form.value, context).subscribe({
       next: () => {
-        this.successMessage.set('dialog.success.saved' | translate);
+        toast.success('dialog.success.saved' | translate);
+        this._eventsService.notifyDataChanged(); // Refresh the parent list
+        this._dialogRef.close({ success: true }); // Close immediately on success
       },
       error: (error) => {
+        this.isLoading.set(false);
         this.errorMessage.set(extractErrorMessage(error));
       },
     });
@@ -387,7 +397,7 @@ export class MyDialogComponent {
 }
 ```
 
-**Template:**
+**Template — error only, no inline success alert:**
 
 ```html
 @if (errorMessage()) {
@@ -395,12 +405,6 @@ export class MyDialogComponent {
   zType="destructive"
   zIcon="circle-alert"
   [zDescription]="errorMessage()"
-/>
-} @if (successMessage()) {
-<z-alert
-  zType="success"
-  zIcon="circle-check"
-  [zDescription]="successMessage()"
 />
 }
 ```
@@ -414,7 +418,8 @@ export class MyDialogComponent {
 - Pass data via `zData` and inject with `Z_MODAL_DATA`
 - Use reactive forms with proper validation
 - Follow Zardui form component patterns
-- Use inline alerts for errors (not toasts)
+- Use `toast.success()` on success, immediately before closing the dialog
+- Use inline `<z-alert zType="destructive">` for errors (never toast for errors in a dialog)
 - Set appropriate dialog width for content
 - Provide both OK and Cancel handlers
 - Use unique IDs for all form inputs
@@ -422,7 +427,8 @@ export class MyDialogComponent {
 ### ❌ DON'T
 
 - Never hardcode text in dialogs
-- Don't use toast notifications inside dialogs
+- Don't render an inline "success" `<z-alert>` — use `toast.success()` and close the dialog instead
+- Don't call `toast.error()` inside a dialog — use an inline `<z-alert zType="destructive">` instead (and always pass `SKIP_ERROR_TOAST` so the global interceptor doesn't double-toast)
 - Don't create custom dialog components (use Zardui)
 - Don't use template-driven forms
 - Don't forget RTL support (use logical CSS properties)

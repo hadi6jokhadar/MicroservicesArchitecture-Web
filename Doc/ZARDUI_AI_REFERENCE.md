@@ -702,7 +702,7 @@ import { ZardDropdownImports } from '@ihsan/ui';
 </button>
 <z-dropdown-menu-content #actionsMenu="zDropdownMenuContent">
   <z-dropdown-menu-item (click)="onEdit()">
-    <z-icon zType="file-text" />
+    <z-icon zType="pencil" />
     Edit
   </z-dropdown-menu-item>
 
@@ -727,7 +727,7 @@ import { ZardDropdownImports } from '@ihsan/ui';
   </button>
   <z-dropdown-menu-content #userMenu="zDropdownMenuContent">
     <z-dropdown-menu-item (click)="onEdit(user)">
-      <z-icon zType="file-text" />
+      <z-icon zType="pencil" />
       Edit User
     </z-dropdown-menu-item>
 
@@ -852,6 +852,7 @@ import { ZardIconComponent } from '@ihsan/ui';
   'search',
   'bell',
   'mail',
+  'map',
   'calendar',
   'log-out',
   'panel-left',
@@ -859,6 +860,9 @@ import { ZardIconComponent } from '@ihsan/ui';
   'inbox',
   'italic',
   'underline',
+  'text-align-center',
+  'text-align-end',
+  'text-align-start',
   'check',
   'x',
   'info',
@@ -867,6 +871,8 @@ import { ZardIconComponent } from '@ihsan/ui';
   'circle-alert',
   'circle-check',
   'circle-x',
+  'circle-dollar-sign',
+  'circle-small',
   'ban',
   'chevron-down',
   'chevron-up',
@@ -877,16 +883,18 @@ import { ZardIconComponent } from '@ihsan/ui';
   'arrow-right',
   'arrow-up',
   'arrow-up-right',
-  'arrow-left',
+  'external-link',
   'folder',
   'folder-open',
   'folder-plus',
   'folder-code',
+  'folder-tree',
   'file',
   'file-text',
   'layout-dashboard',
   'loader-circle',
   'save',
+  'shapes',
   'copy',
   'eye',
   'ellipsis',
@@ -919,6 +927,7 @@ import { ZardIconComponent } from '@ihsan/ui';
   'badge-check',
   'plus',
   'minus',
+  'arrow-left',
   'archive',
   'clock',
   'calendar-plus',
@@ -931,9 +940,20 @@ import { ZardIconComponent } from '@ihsan/ui';
   'dollar-sign',
   'credit-card',
   'activity',
-  'circle-dollar-sign',
-  'circle-small',
-  'shapes');
+  'cloud',
+  'cloud-upload',
+  'cloud-off',
+  'mic',
+  'music',
+  'list-checks',
+  'square-user',
+  'refresh-cw',
+  'rotate-ccw',
+  'play',
+  'pause',
+  'pencil',
+  'plus-circle',
+  'list');
 ```
 
 ````
@@ -941,10 +961,11 @@ import { ZardIconComponent } from '@ihsan/ui';
 **Common Icon Name Corrections:**
 
 - ❌ `more-vertical` → ✅ `ellipsis`
-- ❌ `pencil` → ✅ `file-text` (no edit/pencil icon)
 - ❌ `user-x` → ✅ `ban`
 - ❌ `user-check` → ✅ `check`
 - ❌ `trash-2` → ✅ `trash`
+
+`pencil` IS registered (`libs/ui/src/lib/zard/components/icon/icons.ts` — `pencil: Pencil`) and is used in real components (e.g. `apps/admin/src/app/features/category/categories/categories.component.html`, `apps/polysnap/admin/src/app/features/map-poc/map-poc.component.html`). Use `<z-icon zType="pencil" />` for edit actions — do not substitute `file-text`.
 
 **Usage:**
 
@@ -983,32 +1004,65 @@ private readonly _dialogService = inject(ZardDialogService);
 
 **CRITICAL NOTES:**
 
-- ❌ **NO `closed` property or observable** - The dialog ref does NOT have a `closed` property
-- ✅ **Use `zOnOk` and `zOnCancel` callbacks** for handling dialog close events
-- ✅ **Use event services** to communicate dialog results to parent components
-- ✅ **Dialog ref only has `close(result?)` method** - Use `this._dialogRef.close()` inside dialog component
+- ❌ **NO `closed` property** - The dialog ref does NOT have a `closed` property (that name does not exist)
+- ✅ **`ZardDialogRef` DOES have an `afterClosed(): Observable<R | undefined>` method** — this is the real, supported, actively-used way to get a dialog's result back in the parent component. Call `this._dialogRef.close(result)` inside the dialog component, then subscribe to `.afterClosed()` where the dialog was opened.
+- ✅ **Use `zOnOk` and `zOnCancel` callbacks** as an alternative for simple confirm-style dialogs (footer-driven, no custom content component logic)
+- ✅ **Use event services** (e.g. a feature's `*EventsService.notifyDataChanged()`) when the dialog result should trigger a data refetch elsewhere in the app, independent of the `afterClosed()` subscription
+- ✅ **Dialog ref only has `close(result?)` method** to close itself - call `this._dialogRef.close(result)` inside the dialog component
 
 **Usage:**
 
 ```typescript
-// ❌ WRONG - No 'closed' observable exists
+// ❌ WRONG - 'closed' does not exist, use 'afterClosed()' instead
 const ref = this._dialogService.create({
   zContent: MyDialogComponent,
   zData: { userId: 123 },
 });
 ref.closed.subscribe(() => { }); // ERROR: Property 'closed' does not exist
 
-// ✅ CORRECT - Simple dialog without result handling
-openDialog(): void {
-  this._dialogService.create({
-    zContent: MyDialogComponent,
-    zData: { userId: 123 },
-    zTitle: 'User Details',
-    zHideFooter: true, // Hide default OK/Cancel buttons
-  });
+// ✅ CORRECT - Real project pattern: zHideFooter + afterClosed()
+// This is the pattern used throughout the app (categories.component.ts,
+// roles.component.ts, users.component.ts, claims.component.ts, songs.component.ts,
+// artists.component.ts) for create/edit dialogs with a custom content component.
+// In parent component
+onEdit(category: ICategoryDto): void {
+  this._dialogService
+    .create({
+      zTitle: 'category.dialog.editTitle',
+      zContent: AddEditCategoryDialogComponent,
+      zData: { category },
+      zHideFooter: true, // Content component renders its own Save/Cancel buttons
+      zClosable: true,
+      zWidth: '550px',
+    })
+    .afterClosed()
+    .subscribe(); // Optionally inspect the emitted result, e.g. .subscribe((result) => { if (result?.success) { ... } })
 }
 
-// ✅ CORRECT - Dialog with callbacks
+// In dialog content component
+export class AddEditCategoryDialogComponent {
+  private readonly _dialogRef = inject(ZardDialogRef);
+  private readonly _categoryEvents = inject(CategoryEventsService); // feature events service
+
+  onSubmit(): void {
+    this._categoryService.create(request, ctx).subscribe({
+      next: () => {
+        toast.success('...'); // Toast IS correct on dialog success (see DIALOG_DESIGN_GUIDE.md)
+        this._categoryEvents.notifyDataChanged(); // Tells the list page to refetch
+        this._dialogRef.close({ success: true }); // Resolves the parent's afterClosed()
+      },
+      error: (err) => {
+        this.errorMessage.set(extractErrorMessage(err)); // Inline z-alert for errors only
+      },
+    });
+  }
+
+  onCancel(): void {
+    this._dialogRef.close();
+  }
+}
+
+// ✅ CORRECT - Dialog with zOnOk/zOnCancel callbacks (simple confirm-style dialogs)
 openConfirmDialog(): void {
   this._dialogService.create({
     zContent: MyDialogComponent,
@@ -1025,32 +1079,6 @@ openConfirmDialog(): void {
       console.log('Cancel clicked', instance);
     },
   });
-}
-
-// ✅ CORRECT - Use event service for parent-child communication
-// In parent component
-openDialog(): void {
-  this._dialogService.create({
-    zContent: MyDialogComponent,
-    zHideFooter: true,
-  });
-}
-
-// In dialog component
-export class MyDialogComponent {
-  private readonly _dialogRef = inject(ZardDialogRef);
-  private readonly _data = inject<{ userId: number }>(Z_MODAL_DATA);
-  private readonly _eventService = inject(MyEventService); // Your custom event service
-
-  onSave(): void {
-    // Perform save operation
-    this._eventService.notifyDataChanged(); // Notify parent
-    this._dialogRef.close(); // Close dialog
-  }
-
-  onCancel(): void {
-    this._dialogRef.close();
-  }
 }
 ```
 
@@ -1359,7 +1387,7 @@ readonly modeOptions = signal<SegmentedOption[]>([
           </button>
           <z-dropdown-menu-content #actionsMenu="zDropdownMenuContent">
             <z-dropdown-menu-item (click)="onEdit(user)">
-              <z-icon zType="file-text" />
+              <z-icon zType="pencil" />
               Edit
             </z-dropdown-menu-item>
             <z-dropdown-menu-item (click)="onDelete(user)">
@@ -1374,11 +1402,7 @@ readonly modeOptions = signal<SegmentedOption[]>([
   </table>
 
   @if (totalPages() > 1) {
-  <z-pagination
-    [zTotal]="totalPages()"
-    [zCurrent]="currentPage()"
-    (zPageChange)="onPageChange($event)"
-  />
+  <z-pagination [zTotal]="totalPages()" [(zPageIndex)]="currentPage" />
   } }
 </z-card>
 ```
@@ -1387,7 +1411,7 @@ readonly modeOptions = signal<SegmentedOption[]>([
 
 ## ❌ Common Mistakes to Avoid
 
-### 1. Using Dialog `ref.closed` (Does Not Exist)
+### 1. Using Dialog `ref.closed` (Does Not Exist) — Use `afterClosed()` Instead
 
 ```typescript
 // ❌ WRONG - Dialog ref has NO 'closed' property
@@ -1396,16 +1420,21 @@ const ref = this._dialogService.create({
 });
 ref.closed.subscribe(() => { }); // ERROR!
 
-// ✅ CORRECT - Use event service for parent-child communication
-this._dialogService.create({
-  zContent: MyDialog,
-  zHideFooter: true,
-});
+// ✅ CORRECT - Use the real 'afterClosed()' observable to get the result
+this._dialogService
+  .create({
+    zContent: MyDialog,
+    zHideFooter: true,
+  })
+  .afterClosed()
+  .subscribe((result) => {
+    // result is whatever the dialog component passed to this._dialogRef.close(result)
+  });
 
 // In dialog component:
 onSave(): void {
-  this._eventService.notifyDataChanged(); // Notify parent via event service
-  this._dialogRef.close();
+  this._eventService.notifyDataChanged(); // Optional: notify parent via event service too
+  this._dialogRef.close({ success: true }); // Resolves afterClosed() in the parent
 }
 ```
 
@@ -1445,14 +1474,14 @@ onSave(): void {
 ```html
 <!-- ❌ WRONG -->
 <z-icon zType="more-vertical" />
-<z-icon zType="pencil" />
 <z-icon zType="trash-2" />
 
 <!-- ✅ CORRECT -->
 <z-icon zType="ellipsis" />
-<z-icon zType="file-text" />
 <z-icon zType="trash" />
 ```
+
+Note: `pencil` IS a valid registered icon (see "Common Icon Name Corrections" above) — use `<z-icon zType="pencil" />` directly for edit actions.
 
 ### 9. Select Item with `value` instead of `zValue`
 

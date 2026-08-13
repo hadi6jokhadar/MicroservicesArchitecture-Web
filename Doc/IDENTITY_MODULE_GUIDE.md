@@ -2,7 +2,7 @@
 
 **Location:** `libs/core/src/lib/identity/`
 
-**Last Updated:** July 31, 2026
+**Last Updated:** August 13, 2026
 
 ---
 
@@ -57,7 +57,7 @@ import {
   AuthService,
   IdentityUserService,
   RoleService,
-} from '@ihsan/core/identity';
+} from '@ihsan/core';
 
 export class MyComponent {
   private _authService = inject(AuthService);
@@ -72,7 +72,7 @@ export class MyComponent {
 
 ```typescript
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { tokenInterceptor } from '@ihsan/core/identity';
+import { tokenInterceptor } from '@ihsan/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideHttpClient(withInterceptors([tokenInterceptor]))],
@@ -85,7 +85,7 @@ export const appConfig: ApplicationConfig = {
 
 ```typescript
 import { Routes } from '@angular/router';
-import { authGuard } from '@ihsan/core/identity';
+import { authGuard } from '@ihsan/core';
 
 export const routes: Routes = [
   {
@@ -99,7 +99,7 @@ export const routes: Routes = [
 **Role Guard:**
 
 ```typescript
-import { roleGuard } from '@ihsan/core/identity';
+import { roleGuard } from '@ihsan/core';
 
 export const routes: Routes = [
   {
@@ -140,10 +140,10 @@ register(request: IRegisterRequest): Observable<IAuthResponse>
 refreshToken(request: IRefreshTokenRequest): Observable<IAuthResponse>
 
 // Logout (clears tokens)
-logout(): Observable<object>
+logout(): Observable<void>
 
 // Request password reset
-forgotPassword(request: IForgotPasswordRequest): Observable<object>
+forgotPassword(request: IForgotPasswordRequest): Observable<string>
 ```
 
 ##### Verification Code Flow
@@ -202,7 +202,7 @@ getRefreshToken(): string | null
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { AuthService, ILoginRequest } from '@ihsan/core/identity';
+import { AuthService, ILoginRequest } from '@ihsan/core';
 
 export class LoginComponent {
   private _authService = inject(AuthService);
@@ -286,10 +286,10 @@ export class LoginComponent {
 getProfile(): Observable<IUser>
 
 // Update current user profile
-updateProfile(request: IUpdateProfileRequest): Observable<object>
+updateProfile(request: IUpdateProfileRequest): Observable<IUser>
 
 // Delete current user account
-deleteAccount(): Observable<object>
+deleteAccount(): Observable<boolean>
 ```
 
 #### Usage Example
@@ -299,7 +299,7 @@ import { Component, inject } from '@angular/core';
 import {
   IdentityUserService,
   IUpdateProfileRequest,
-} from '@ihsan/core/identity';
+} from '@ihsan/core';
 
 export class ProfileComponent {
   private _userService = inject(IdentityUserService);
@@ -329,24 +329,29 @@ export class ProfileComponent {
 #### Methods
 
 ```typescript
-// Get paginated users list
-getUsers(): Observable<IPaginatedResponse<IUser>>
+// Get paginated/filtered users list (all filter fields optional)
+getUsers(request?: IUserFilterRequest): Observable<IPaginatedResponse<IUser>>
 
 // Get user by ID
 getUserById(id: number): Observable<IUser>
 
 // Create new user (admin)
-createUser(request: ICreateUserRequest): Observable<object>
+createUser(request: ICreateUserRequest, context?: HttpContext): Observable<IUser>
 
 // Update user (admin)
-updateUser(id: number, request: IUpdateUserRequest): Observable<object>
+updateUser(id: number, request: IUpdateUserRequest, context?: HttpContext): Observable<IUser>
 
 // Toggle user active/inactive status
-toggleUserStatus(id: number): Observable<object>
+toggleUserStatus(id: number): Observable<boolean>
+
+// Toggle user archived status
+toggleArchive(id: number): Observable<boolean>
 
 // Delete user (soft delete)
-deleteUser(id: number): Observable<object>
+deleteUser(id: number): Observable<boolean>
 ```
+
+`IUserFilterRequest` (passed to `getUsers`): `{ pageNumber?, pageSize?, searchTerm?, roleName?, status?, isArchived? }`.
 
 #### Usage Example
 
@@ -356,7 +361,7 @@ import {
   IdentityAdminService,
   IUser,
   ICreateUserRequest,
-} from '@ihsan/core/identity';
+} from '@ihsan/core';
 
 export class UsersManagementComponent {
   private _adminService = inject(IdentityAdminService);
@@ -368,13 +373,19 @@ export class UsersManagementComponent {
     });
   }
 
-  createUser(email: string, firstName: string, lastName: string, role: string) {
+  createUser(
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    roleIds: number[]
+  ) {
     const request: ICreateUserRequest = {
       email,
+      password,
       firstName,
       lastName,
-      role,
-      isActive: true,
+      roleIds,
     };
 
     this._adminService.createUser(request).subscribe({
@@ -390,6 +401,12 @@ export class UsersManagementComponent {
       next: () => this.loadUsers(),
     });
   }
+
+  toggleArchive(userId: number) {
+    this._adminService.toggleArchive(userId).subscribe({
+      next: () => this.loadUsers(),
+    });
+  }
 }
 ```
 
@@ -402,33 +419,38 @@ export class UsersManagementComponent {
 #### Methods
 
 ```typescript
-// Get all roles
-getAllRoles(): Observable<IRole[]>
+// Get all roles — cached in-memory after the first call; pass true to bypass the cache
+getAllRoles(forceRefresh?: boolean): Observable<IRole[]>
+
+// Clear the in-memory roles cache (call after create/update/delete)
+clearCache(): void
 
 // Get role by ID
 getRoleById(id: number): Observable<IRole>
 
 // Create new role
-createRole(request: ICreateRoleRequest): Observable<object>
+createRole(request: ICreateRoleRequest, context?: HttpContext): Observable<IRole>
 
 // Update role
-updateRole(id: number, request: IUpdateRoleRequest): Observable<object>
+updateRole(id: number, request: IUpdateRoleRequest, context?: HttpContext): Observable<IRole>
 
 // Delete role
-deleteRole(id: number): Observable<object>
+deleteRole(id: number): Observable<boolean>
 
 // Assign claims to role
-assignClaimsToRole(roleId: number, request: IAssignClaimsToRoleRequest): Observable<object>
+assignClaimsToRole(roleId: number, request: IAssignClaimsToRoleRequest, context?: HttpContext): Observable<boolean>
 
-// Assign roles to user
-assignRolesToUser(userId: number, request: IAssignRolesToUserRequest): Observable<object>
+// Assign roles to user (role-scoped endpoint — see "Expected Backend Endpoints" below)
+assignRolesToUser(userId: number, request: IAssignRolesToUserRequest): Observable<boolean>
 ```
+
+`createRole`, `updateRole`, and `deleteRole` each clear the roles cache automatically after a successful response.
 
 #### Usage Example
 
 ```typescript
 import { Component, inject, signal } from '@angular/core';
-import { RoleService, IRole, ICreateRoleRequest } from '@ihsan/core/identity';
+import { RoleService, IRole, ICreateRoleRequest } from '@ihsan/core';
 
 export class RolesManagementComponent {
   private _roleService = inject(RoleService);
@@ -472,20 +494,20 @@ getAllClaims(): Observable<IClaim[]>
 getClaimById(id: number): Observable<IClaim>
 
 // Create new claim
-createClaim(request: ICreateClaimRequest): Observable<object>
+createClaim(request: ICreateClaimRequest, context?: HttpContext): Observable<IClaim>
 
 // Update claim
-updateClaim(id: number, request: IUpdateClaimRequest): Observable<object>
+updateClaim(id: number, request: IUpdateClaimRequest, context?: HttpContext): Observable<IClaim>
 
 // Delete claim
-deleteClaim(id: number): Observable<object>
+deleteClaim(id: number): Observable<boolean>
 ```
 
 #### Usage Example
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { ClaimService, ICreateClaimRequest } from '@ihsan/core/identity';
+import { ClaimService, ICreateClaimRequest } from '@ihsan/core';
 
 export class ClaimsManagementComponent {
   private _claimService = inject(ClaimService);
@@ -515,7 +537,7 @@ export class ClaimsManagementComponent {
 
 ```typescript
 // Add device token
-addDeviceToken(request: IAddDeviceTokenRequest): Observable<object>
+addDeviceToken(request: IAddDeviceTokenRequest): Observable<IDeviceToken>
 
 // Get device token by ID
 getDeviceTokenById(id: number): Observable<IDeviceToken>
@@ -527,17 +549,17 @@ getUserDeviceTokens(userId: number): Observable<IDeviceToken[]>
 getUserDeviceTokensByPlatform(userId: number, platform: string): Observable<IDeviceToken[]>
 
 // Update device token
-updateDeviceToken(id: number, request: IUpdateDeviceTokenRequest): Observable<object>
+updateDeviceToken(id: number, request: IUpdateDeviceTokenRequest): Observable<IDeviceToken>
 
 // Delete specific token
-deleteDeviceToken(id: number): Observable<object>
+deleteDeviceToken(id: number): Observable<void>
 
 // Delete all tokens for a user
-deleteAllUserDeviceTokens(userId: number): Observable<object>
+deleteAllUserDeviceTokens(userId: number): Observable<void>
 
-// Batch operations
-getBatchDeviceTokens(request: IGetBatchDeviceTokensRequest): Observable<IDeviceToken[]>
-deleteBatchDeviceTokens(request: IDeleteBatchDeviceTokensRequest): Observable<object>
+// Batch operations — response is keyed by userId, not a flat array
+getBatchDeviceTokens(request: IGetBatchDeviceTokensRequest): Observable<Record<number, IDeviceToken[]>>
+deleteBatchDeviceTokens(request: IDeleteBatchDeviceTokensRequest): Observable<number> // count of deleted tokens
 
 // Get all tokens in current tenant
 getTenantDeviceTokens(): Observable<IDeviceToken[]>
@@ -550,7 +572,7 @@ import { Component, inject } from '@angular/core';
 import {
   DeviceTokenService,
   IAddDeviceTokenRequest,
-} from '@ihsan/core/identity';
+} from '@ihsan/core';
 
 export class DeviceTokenComponent {
   private _deviceTokenService = inject(DeviceTokenService);
@@ -587,7 +609,7 @@ export class DeviceTokenComponent {
 **Usage:**
 
 ```typescript
-import { authGuard } from '@ihsan/core/identity';
+import { authGuard } from '@ihsan/core';
 
 const routes: Routes = [
   {
@@ -602,19 +624,21 @@ const routes: Routes = [
 
 ### roleGuard
 
-**Purpose:** Protect routes requiring specific roles.
+**Purpose:** Protect routes requiring specific roles **or** permission claims (role-OR-permission — never AND; a role holder never needs a claim too).
 
 **Behavior:**
 
-- ✅ Allows access if user has one of the required roles
+- ✅ Allows access if no `roles`/`permissions` are configured in route `data`
+- ✅ Allows access if the user has **any** of the required `data.roles` (checked against `UserClass.roles[].name`)
+- ✅ Allows access if the user has **any** of the required `data.permissions` (checked against `UserClass.permissions`, the flattened `Permission`-claim list — see `Doc/PERMISSIONS_GUIDE.md`)
 - ✅ On page refresh, fetches profile once when token exists but in-memory user is not yet loaded
 - ❌ Redirects to `/login` if not authenticated
 - ❌ Redirects to `/` if authenticated but unauthorized
 
-**Usage:**
+**Usage — role-gated route:**
 
 ```typescript
-import { roleGuard } from '@ihsan/core/identity';
+import { roleGuard } from '@ihsan/core';
 
 const routes: Routes = [
   {
@@ -625,6 +649,24 @@ const routes: Routes = [
   },
 ];
 ```
+
+**Usage — role OR permission-gated route** (lower-privileged role reachable via a claim instead of a role):
+
+```typescript
+const routes: Routes = [
+  {
+    path: 'songs',
+    component: SongsComponent,
+    canActivate: [roleGuard],
+    data: {
+      roles: ['Admin', 'SuperAdmin'],
+      permissions: ['nasheed.pages.songs'],
+    },
+  },
+];
+```
+
+See `Doc/PERMISSIONS_GUIDE.md` for the full permission-claims guide (where claims come from, sidebar visibility, and action-level button gating).
 
 ---
 
@@ -637,7 +679,7 @@ const routes: Routes = [
 **Usage:**
 
 ```typescript
-import { profileResolver } from '@ihsan/core/identity';
+import { profileResolver } from '@ihsan/core';
 
 const routes: Routes = [
   {
@@ -652,7 +694,7 @@ const routes: Routes = [
 
 ```typescript
 import { Component, input } from '@angular/core';
-import { IUser } from '@ihsan/core/identity';
+import { IUser } from '@ihsan/core';
 
 export class DashboardComponent {
   profile = input.required<IUser>(); // Resolved data
@@ -676,7 +718,7 @@ export class DashboardComponent {
 ```typescript
 // app.config.ts
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { tokenInterceptor } from '@ihsan/core/identity';
+import { tokenInterceptor } from '@ihsan/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideHttpClient(withInterceptors([tokenInterceptor]))],
@@ -689,9 +731,22 @@ export const appConfig: ApplicationConfig = {
 - Adds `Authorization: Bearer <token>` header to all requests
 - No manual token management needed
 
+### Token Expiry — Automatic Refresh (already implemented)
+
+`tokenInterceptor` (`libs/core/src/lib/identity/token.interceptor.ts`) already implements automatic token refresh — this is **not** an outstanding TODO:
+
+- On any `401` response (excluding the `auth/refresh` and `auth/login` requests themselves, to avoid a refresh loop), it calls `AuthService.refreshToken()` with the stored access + refresh tokens.
+- A module-level `isRefreshing` flag + `refreshTokenSubject` (`BehaviorSubject<string | null>`) ensure only **one** refresh call is in flight — concurrent requests that 401 while a refresh is already underway queue on `refreshTokenSubject` and retry once the new token arrives, instead of each firing their own refresh call.
+- On success, the failed request is retried once with the new access token via `addToken()`.
+- On refresh failure (or if no tokens are present), the original error propagates so the global error interceptor can handle logout/redirect.
+
+No caller-side action is needed — the interceptor handles this transparently for every HTTP request that goes through it.
+
 ---
 
 ## 📦 Models Reference
+
+> **RBAC redesign note:** This module moved from a single numeric `role`/`roleName` field on `IUser` to **multi-role** RBAC — a user now holds a `roles: IRole[]` array, and each `IRole` carries its own `claims: IClaim[]`. `UserClass` additionally derives a flattened `permissions: string[]` from every `Permission`-typed claim across all of the user's roles — see `Doc/PERMISSIONS_GUIDE.md`. Source of truth: `libs/core/src/lib/identity/models.ts`.
 
 ### Core Entities
 
@@ -700,26 +755,33 @@ export const appConfig: ApplicationConfig = {
 ```typescript
 export interface IUser {
   id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  role: number; // Numeric role (1=User, 2=Admin, 3=SuperAdmin)
-  roleName: string; // String role name
-  status: boolean; // Active/Inactive
-  isActive?: boolean; // Computed property (frontend)
-  emailConfirmed: boolean;
-  phoneNumberConfirmed?: boolean;
-  created: string; // ISO 8601 UTC format
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  emailConfirmed?: boolean;
   lastLogin?: string | null;
+  status: boolean; // Active/Inactive
+  created: string; // ISO 8601 UTC format
+  lastModified?: string | null;
+  roles: IRole[]; // Multi-role — replaces the old single role/roleName fields
   profilePictureId?: number | null;
   profilePicture?: IFileManagerResponse | null;
+  verificationCode?: string | null;
+  data?: string | null;
   isArchived: boolean;
-  createdBy?: string | null;
-  lastModified?: string;
-  lastModifiedBy?: string | null;
+}
+
+// UserClass implements IUser and additionally derives:
+export class UserClass implements IUser {
+  // ...all IUser fields, plus:
+
+  /** Flattened "Permission" claim values across all of this user's roles (e.g. "nasheed.songs.create"). */
+  permissions: string[];
 }
 ```
+
+`UserClass`'s constructor computes `permissions` once from `roles.flatMap(r => r.claims ?? []).filter(c => c.claimType === 'Permission').map(c => c.claimValue)` — nothing needs to be fetched separately.
 
 #### IRole / RoleClass
 
@@ -728,11 +790,9 @@ export interface IRole {
   id: number;
   name: string;
   description?: string;
-  created: string;
-  isArchived: boolean;
-  createdBy?: string | null;
-  lastModified?: string;
-  lastModifiedBy?: string | null;
+  isSystemRole: boolean;
+  status: boolean;
+  claims?: IClaim[]; // Populated on the roles returned with a user/role detail response
 }
 ```
 
@@ -742,15 +802,13 @@ export interface IRole {
 export interface IClaim {
   id: number;
   name: string;
-  claimType: string;
-  claimValue: string;
   description?: string;
+  claimType: string; // e.g. "Permission"
+  claimValue: string; // e.g. "nasheed.songs.create"
   isSuperAdminOnly: boolean;
-  created: string;
-  isArchived: boolean;
-  createdBy?: string | null;
-  lastModified?: string;
-  lastModifiedBy?: string | null;
+  /** Seeded by the system (SystemPermissionCatalog on the backend) — cannot be deleted or renamed. */
+  isSystemClaim: boolean;
+  status: boolean;
 }
 ```
 
@@ -764,10 +822,6 @@ export interface IDeviceToken {
   platform: string; // "iOS", "Android", "Web"
   deviceId: string;
   created: string;
-  isArchived: boolean;
-  createdBy?: string | null;
-  lastModified?: string;
-  lastModifiedBy?: string | null;
 }
 ```
 
@@ -801,25 +855,33 @@ export interface IForgotPasswordRequest {
 export interface IUpdateProfileRequest {
   firstName: string;
   lastName: string;
-  phoneNumber: string;
+  phoneNumber?: string | null;
+  profilePictureId?: number | null;
+  id?: number | null;
+  data?: string | null;
 }
 
 export interface ICreateUserRequest {
   email: string;
-  password?: string;
+  password: string;
   firstName: string;
   lastName: string;
-  phoneNumber?: string;
-  role: string;
-  isActive?: boolean;
+  roleIds: number[]; // Multi-role assignment — replaces the old single `role: string`
+  phoneNumber?: string | null;
+  profilePictureId?: number | null;
+  data?: string | null;
 }
 
 export interface IUpdateUserRequest {
+  id: number;
   firstName: string;
   lastName: string;
-  phoneNumber: string;
-  role: string;
-  isActive: boolean;
+  roleIds: number[]; // Multi-role assignment — replaces the old single `role: string`
+  phoneNumber?: string | null;
+  profilePictureId?: number | null;
+  emailConfirmed?: boolean | null;
+  status?: boolean | null;
+  data?: string | null;
 }
 
 // Role Management
@@ -883,11 +945,19 @@ export interface IDeleteBatchDeviceTokensRequest {
 ### Response Models
 
 ```typescript
-export interface IAuthResponse {
+// IAuthResponse extends IUser (flattened fields) — the login/register/refresh
+// response is NOT a nested `{ user: IUser }` shape, it IS a user plus tokens.
+export interface IAuthResponse extends IUser {
   accessToken: string;
   refreshToken: string;
   refreshTokenExpiryTime: string; // ISO 8601 UTC format
-  user: IUser;
+}
+
+// AuthResponseClass extends UserClass, so it also carries the derived `permissions: string[]`.
+export class AuthResponseClass extends UserClass implements IAuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  refreshTokenExpiryTime: string;
 }
 
 export interface IPaginatedResponse<T> {
@@ -900,6 +970,18 @@ export interface IPaginatedResponse<T> {
 }
 ```
 
+**Accessing the response:**
+
+```typescript
+this._authService.login({ email, password }).subscribe({
+  next: (response) => {
+    // response.roles, response.permissions, response.accessToken — all flattened,
+    // NOT response.user.roles.
+    console.log(response.accessToken, response.roles, response.permissions);
+  },
+});
+```
+
 ---
 
 ## 🎯 Common Patterns
@@ -908,7 +990,7 @@ export interface IPaginatedResponse<T> {
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { AuthService } from '@ihsan/core/identity';
+import { AuthService } from '@ihsan/core';
 
 export class LoginComponent {
   private _authService = inject(AuthService);
@@ -942,7 +1024,7 @@ export class LoginComponent {
 
 ```typescript
 import { Component, inject, signal } from '@angular/core';
-import { AuthService } from '@ihsan/core/identity';
+import { AuthService } from '@ihsan/core';
 
 export class PhoneLoginComponent {
   private _authService = inject(AuthService);
@@ -970,7 +1052,7 @@ export class PhoneLoginComponent {
 
 ```typescript
 import { Component, inject, computed } from '@angular/core';
-import { AuthService } from '@ihsan/core/identity';
+import { AuthService } from '@ihsan/core';
 
 export class NavbarComponent {
   private _authService = inject(AuthService);
@@ -978,7 +1060,10 @@ export class NavbarComponent {
 
   isAdmin = computed(() => {
     const user = this.currentUser();
-    return user?.roleName === 'Admin' || user?.roleName === 'SuperAdmin';
+    return (
+      user?.roles?.some((r) => r.name === 'Admin' || r.name === 'SuperAdmin') ??
+      false
+    );
   });
 }
 ```
@@ -997,7 +1082,7 @@ export class NavbarComponent {
 
 ```typescript
 import { Component, inject, signal } from '@angular/core';
-import { IdentityAdminService, IUser } from '@ihsan/core/identity';
+import { IdentityAdminService, IUser } from '@ihsan/core';
 
 export class UsersTableComponent {
   private _adminService = inject(IdentityAdminService);
@@ -1047,7 +1132,7 @@ export class UsersTableComponent {
 - **Don't manually add tokens:** ❌ Token interceptor handles this automatically
 - **Don't store sensitive data:** ❌ Never store passwords or unencrypted data in localStorage
 - **Don't bypass guards:** ❌ Always use `authGuard` or `roleGuard` for protected routes
-- **Don't hardcode roles:** ❌ Use `data: { roles: [...] }` in route configuration
+- **Don't hardcode roles:** ❌ Use `data: { roles: [...], permissions: [...] }` in route configuration
 
 ---
 
@@ -1055,7 +1140,7 @@ export class UsersTableComponent {
 
 1. **Token Storage:** Tokens are stored in `localStorage`. For production, consider using `HttpOnly` cookies for enhanced security.
 2. **HTTPS Only:** Always use HTTPS in production to prevent token interception.
-3. **Token Expiry:** Implement automatic token refresh logic using `refreshToken()` method.
+3. **Token Expiry:** Automatic token refresh is already implemented — see "Token Expiry" under the HTTP Interceptor section below. No outstanding work needed here.
 4. **Role Validation:** Backend MUST validate roles/claims - never rely on frontend validation alone.
 5. **Device Tokens:** Protect device token endpoints - only authenticated users should manage their own tokens.
 
@@ -1067,60 +1152,91 @@ export class UsersTableComponent {
 
 **Location:** `libs/core/src/lib/core/environment.token.ts`
 
+Every identity service builds its base URL from `environment.apiUrls.gateway` — **not** a dedicated `identity` port. All requests route through the API Gateway (port 5000), which proxies to the Identity service (port 5001) internally. This matches the platform-wide rule that only the Gateway is reachable externally (see root `CLAUDE.md`, "Cross-Stack Communication Rules").
+
 ```typescript
 export interface Environment {
+  production: boolean;
+  tenantId?: string;
   apiUrls: {
-    identity: string; // Example: 'https://localhost:5001'
+    gateway: string; // Example: 'https://localhost:5000' — every identity service builds off this
+    identity?: string; // Present for reference only — NOT used to build request URLs
+    // ...other per-service URLs, also unused by identity services
   };
 }
 ```
 
+```typescript
+// auth.service.ts
+private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/v1/auth`;
+
+// user.service.ts
+private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/v1/user`;
+
+// admin.service.ts
+private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/v1/admin`;
+
+// role.service.ts
+private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/v1/admin/roles`;
+
+// claim.service.ts
+private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/v1/admin/claims`;
+
+// device-token.service.ts
+private readonly _baseUrl = `${this._env.apiUrls.gateway}/api/v1/device-tokens`;
+```
+
 ### Expected Backend Endpoints
 
-| Endpoint                                   | Method | Description                 |
-| ------------------------------------------ | ------ | --------------------------- |
-| `/api/auth/login`                          | POST   | Login with email/password   |
-| `/api/auth/register`                       | POST   | Register new user           |
-| `/api/auth/refresh`                        | POST   | Refresh access token        |
-| `/api/auth/logout`                         | POST   | Logout user                 |
-| `/api/auth/forgot-password`                | POST   | Request password reset      |
-| `/api/auth/get-verification-code-by-phone` | POST   | Request SMS code            |
-| `/api/auth/get-verification-code-by-email` | POST   | Request email code          |
-| `/api/auth/login-with-code-by-phone`       | POST   | Login with SMS code         |
-| `/api/auth/login-with-code-by-email`       | POST   | Login with email code       |
-| `/api/auth/register-with-code-by-phone`    | POST   | Register with SMS code      |
-| `/api/auth/register-with-code-by-email`    | POST   | Register with email code    |
-| `/api/user/profile`                        | GET    | Get current user profile    |
-| `/api/user/profile`                        | PUT    | Update current user profile |
-| `/api/user/me`                             | DELETE | Delete current user account |
-| `/api/admin/users`                         | GET    | Get all users (paginated)   |
-| `/api/admin/users/{id}`                    | GET    | Get user by ID              |
-| `/api/admin/users`                         | POST   | Create user                 |
-| `/api/admin/users/{id}`                    | PUT    | Update user                 |
-| `/api/admin/users/{id}/toggle-status`      | PATCH  | Toggle user status          |
-| `/api/admin/users/{id}`                    | DELETE | Delete user                 |
-| `/api/admin/roles`                         | GET    | Get all roles               |
-| `/api/admin/roles/{id}`                    | GET    | Get role by ID              |
-| `/api/admin/roles`                         | POST   | Create role                 |
-| `/api/admin/roles/{id}`                    | PUT    | Update role                 |
-| `/api/admin/roles/{id}`                    | DELETE | Delete role                 |
-| `/api/admin/roles/{roleId}/claims`         | POST   | Assign claims to role       |
-| `/api/admin/users/{userId}/roles`          | POST   | Assign roles to user        |
-| `/api/admin/claims`                        | GET    | Get all claims              |
-| `/api/admin/claims/{id}`                   | GET    | Get claim by ID             |
-| `/api/admin/claims`                        | POST   | Create claim                |
-| `/api/admin/claims/{id}`                   | PUT    | Update claim                |
-| `/api/admin/claims/{id}`                   | DELETE | Delete claim                |
-| `/api/devicetokens`                        | POST   | Add device token            |
-| `/api/devicetokens/{id}`                   | GET    | Get device token            |
-| `/api/devicetokens/user/{userId}`          | GET    | Get user tokens             |
-| `/api/devicetokens/user/{userId}/platform` | GET    | Get user tokens by platform |
-| `/api/devicetokens/{id}`                   | PUT    | Update device token         |
-| `/api/devicetokens/{id}`                   | DELETE | Delete device token         |
-| `/api/devicetokens/user/{userId}`          | DELETE | Delete all user tokens      |
-| `/api/devicetokens/batch`                  | POST   | Get batch tokens            |
-| `/api/devicetokens/batch`                  | DELETE | Delete batch tokens         |
-| `/api/devicetokens/tenant`                 | GET    | Get tenant tokens           |
+All endpoints are versioned under `/api/v1/...` and reached through the Gateway.
+
+| Endpoint                                        | Method | Description                              |
+| ------------------------------------------------ | ------ | ----------------------------------------- |
+| `/api/v1/auth/login`                             | POST   | Login with email/password                |
+| `/api/v1/auth/register`                          | POST   | Register new user                        |
+| `/api/v1/auth/refresh`                           | POST   | Refresh access token                      |
+| `/api/v1/auth/logout`                            | POST   | Logout user                               |
+| `/api/v1/auth/forgot-password`                   | POST   | Request password reset                    |
+| `/api/v1/auth/get-verification-code-by-phone`    | POST   | Request SMS code                          |
+| `/api/v1/auth/get-verification-code-by-email`    | POST   | Request email code                        |
+| `/api/v1/auth/login-with-code-by-phone`          | POST   | Login with SMS code                       |
+| `/api/v1/auth/login-with-code-by-email`          | POST   | Login with email code                     |
+| `/api/v1/auth/register-with-code-by-phone`       | POST   | Register with SMS code                    |
+| `/api/v1/auth/register-with-code-by-email`       | POST   | Register with email code                  |
+| `/api/v1/user/profile`                           | GET    | Get current user profile                  |
+| `/api/v1/user/profile`                           | PUT    | Update current user profile               |
+| `/api/v1/user/me`                                | DELETE | Delete current user account               |
+| `/api/v1/admin/users`                            | GET    | Get all users (paginated, filterable)     |
+| `/api/v1/admin/users/{id}`                       | GET    | Get user by ID                            |
+| `/api/v1/admin/users`                            | POST   | Create user                               |
+| `/api/v1/admin/users/{id}`                       | PUT    | Update user                               |
+| `/api/v1/admin/users/{id}/toggle-status`         | PATCH  | Toggle user active/inactive status        |
+| `/api/v1/admin/users/{id}/toggle-archive`        | PATCH  | Toggle user archived status                |
+| `/api/v1/admin/users/{id}`                       | DELETE | Delete user                               |
+| `/api/v1/admin/roles`                            | GET    | Get all roles                             |
+| `/api/v1/admin/roles/{id}`                       | GET    | Get role by ID                            |
+| `/api/v1/admin/roles`                            | POST   | Create role                               |
+| `/api/v1/admin/roles/{id}`                       | PUT    | Update role                               |
+| `/api/v1/admin/roles/{id}`                       | DELETE | Delete role                               |
+| `/api/v1/admin/roles/{roleId}/claims`            | POST   | Assign claims to role                     |
+| `/api/v1/admin/roles/user/{userId}`              | POST   | Assign roles to user (role-scoped, not user-scoped — note the path is under `/admin/roles`, not `/admin/users/{userId}/roles`) |
+| `/api/v1/admin/claims`                           | GET    | Get all claims                            |
+| `/api/v1/admin/claims/{id}`                      | GET    | Get claim by ID                           |
+| `/api/v1/admin/claims`                           | POST   | Create claim                              |
+| `/api/v1/admin/claims/{id}`                      | PUT    | Update claim                              |
+| `/api/v1/admin/claims/{id}`                      | DELETE | Delete claim                              |
+| `/api/v1/device-tokens`                          | POST   | Add device token                          |
+| `/api/v1/device-tokens/{id}`                     | GET    | Get device token                          |
+| `/api/v1/device-tokens/user/{userId}`            | GET    | Get user tokens                           |
+| `/api/v1/device-tokens/user/{userId}/platform`   | GET    | Get user tokens by platform               |
+| `/api/v1/device-tokens/{id}`                     | PUT    | Update device token                       |
+| `/api/v1/device-tokens/{id}`                     | DELETE | Delete device token                       |
+| `/api/v1/device-tokens/user/{userId}`            | DELETE | Delete all user tokens                    |
+| `/api/v1/device-tokens/batch`                    | POST   | Get batch tokens (response keyed by userId) |
+| `/api/v1/device-tokens/batch`                    | DELETE | Delete batch tokens (returns deleted count) |
+| `/api/v1/device-tokens/tenant`                   | GET    | Get tenant tokens                         |
+
+Note the device-token path segment is hyphenated (`device-tokens`), not `devicetokens`.
 
 ---
 
@@ -1135,6 +1251,7 @@ For manual testing, use Postman or the running application.
 ## 📝 Related Documentation
 
 - [COMPONENT_USAGE_GUIDE.md](./COMPONENT_USAGE_GUIDE.md) - General component patterns
+- [PERMISSIONS_GUIDE.md](./PERMISSIONS_GUIDE.md) - Permission-claim route guard, sidebar visibility, and action-level button gating (finer-grained than roles)
 - Backend: `MicroservicesArchitecture/Doc/SHARED_IDENTITY_SERVICE_GUIDE.md` - Backend API documentation
 
 ---
@@ -1144,6 +1261,7 @@ For manual testing, use Postman or the running application.
 | Date         | Version | Changes                       |
 | ------------ | ------- | ----------------------------- |
 | Jan 18, 2026 | 1.0     | Initial documentation created |
+| Aug 13, 2026 | 2.0     | Rewrote doc to match the multi-role RBAC redesign: fixed Model Reference (`IUser.roles[]`/`UserClass.permissions`, `IClaim.isSystemClaim`, flattened `IAuthResponse`), corrected every `@ihsan/core/identity` import to `@ihsan/core`, fixed API base URL (`apiUrls.gateway`, not a dedicated `identity` URL) and versioned (`/api/v1/...`) + hyphenated (`/device-tokens`) endpoint table, documented `roleGuard`'s permission-claim OR-authorization, corrected several service method return types, and corrected the Token Expiry section (automatic refresh is already implemented in `token.interceptor.ts`, not a TODO) |
 
 ---
 

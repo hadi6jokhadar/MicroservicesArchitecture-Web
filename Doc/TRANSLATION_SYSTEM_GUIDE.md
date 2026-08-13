@@ -250,13 +250,13 @@ import { ExcludeRtlDirective } from '@ihsan/shared';
   imports: [ExcludeRtlDirective, ZardPaginationImports],
   template: `
     <!-- Pagination stays LTR in both languages -->
-    <z-pagination appExcludeRtl [zTotal]="totalPages()" />
+    <z-pagination sharedExcludeRtl [zTotal]="totalPages()" />
 
     <!-- Phone numbers stay LTR -->
-    <span appExcludeRtl>+1 (555) 123-4567</span>
+    <span sharedExcludeRtl>+1 (555) 123-4567</span>
 
     <!-- Code blocks stay LTR -->
-    <code appExcludeRtl>const x = 10;</code>
+    <code sharedExcludeRtl>const x = 10;</code>
   `
 })
 ```
@@ -375,19 +375,19 @@ export class MyComponent {
 ```html
 <!-- Pagination stays LTR even in Arabic -->
 <z-pagination
-  appExcludeRtl
+  sharedExcludeRtl
   [zTotal]="totalPages()"
   [(zPageIndex)]="currentPage"
 />
 
 <!-- Phone number input stays LTR -->
-<input appExcludeRtl type="tel" formControlName="phone" />
+<input sharedExcludeRtl type="tel" formControlName="phone" />
 
 <!-- Code blocks stay LTR -->
-<pre appExcludeRtl><code>{{ codeSnippet }}</code></pre>
+<pre sharedExcludeRtl><code>{{ codeSnippet }}</code></pre>
 ```
 
-**Components That Should Use `appExcludeRtl`:**
+**Components That Should Use `sharedExcludeRtl`:**
 
 - Pagination controls
 - Phone number inputs
@@ -569,6 +569,10 @@ export class UserListComponent {
 
 ---
 
-**Version:** 1.0  
-**Last Updated:** February 3, 2026  
+**Version:** 1.1
+**Last Updated:** August 13, 2026
 **Maintained by:** Development Team
+
+### Changelog
+
+- **1.1 (Aug 13, 2026):** Corrected `ExcludeRtlDirective` selector in all examples — it is `sharedExcludeRtl` (the directive's actual `@Directive({ selector: '[sharedExcludeRtl]' })` in `libs/shared/src/lib/directives/exclude-rtl.directive.ts`), not `appExcludeRtl`. All other content (resolver-based caching flow, RTL handler in `app.ts`, `RtlService` API, global RTL CSS) verified accurate against current source.

@@ -12,19 +12,27 @@ The MicroservicesArchitecture-Web project uses a **modular library structure** b
 
 **Contains:**
 
-- `services/` — Feature-specific application services
+- `services/` — Feature-specific application services (e.g. `navigation-loading.service.ts`, `page-title.service.ts`)
 - `guards/` — Route guards for authentication and authorization
-- `interceptors/` — HTTP interceptors for request/response handling
+- `interceptors/` — HTTP interceptors for request/response handling (`correlation-id`, `localization`, `tenant`)
 - `models/` — Data models and interfaces
-- `resolvers/` — Route resolvers for data pre-fetching
+- `core/` — App shell/root component (`core.ts`) and the `environment.token.ts` DI token used to inject `environment.apiUrls.*` throughout `libs/core`
 - `ai-chat/` — AI chat service and related logic
 - `ai-settings/` — AI settings management
 - `ai-system-prompts/` — AI system prompts handling
+- `app-settings/` — Application-wide settings service
+- `audit-log/` — Audit log query/service logic
+- `background-jobs/` — Background job status/tracking service
+- `backup/` — Backup service client (Backup microservice, port 5010)
+- `category/` — Category service
+- `feature-flags/` — Feature flags directive, guard, and service (see `Doc/FEATURE_FLAGS_GUIDE.md`)
 - `identity/` — Identity and authentication services
 - `file-manager/` — File management business logic
 - `notification/` — Notification services
 - `tenant/` — Tenant context and management
 - `translation/` — Translation service
+
+**Note on resolvers:** there is no top-level `resolvers/` folder — each resolver is colocated inside its owning feature folder (e.g. `ai-chat/ai-chat.resolver.ts`, `identity/profile.resolver.ts`, `tenant/tenant.resolver.ts`, `translation/translation.resolver.ts`, `backup/backup.resolver.ts`, `feature-flags/feature-flag.resolver.ts`, `ai-settings/ai-settings.resolver.ts`, `ai-system-prompts/ai-system-prompts.resolver.ts`), not grouped separately.
 
 **Key Characteristics:**
 
@@ -38,10 +46,10 @@ The MicroservicesArchitecture-Web project uses a **modular library structure** b
 
 ```typescript
 // In a component
-import { AuthService } from '@lib/core';
+import { AuthService } from '@ihsan/core';
 
 export class LoginComponent {
-  constructor(private authService: AuthService) {}
+  private authService = inject(AuthService);
 }
 ```
 
@@ -80,29 +88,75 @@ export class LoginComponent {
 **Example Usage:**
 
 ```typescript
-// In a feature module
-import { LoginComponent, FileManagerComponent } from '@lib/shared';
+// In a standalone component
+import { LoginComponent, FileManagerComponent } from '@ihsan/shared';
 
-@NgModule({
+@Component({
   imports: [LoginComponent, FileManagerComponent],
+  // ...
 })
-export class AuthModule {}
+export class AuthPageComponent {}
 ```
 
 ---
 
 ### 🖼️ UI Library (`libs/ui`)
 
-**Purpose:** Low-level, generic UI components (if needed).
+**Purpose:** The Zardui (`z-*`) design-system wrapper — every low-level, generic, business-logic-free UI primitive used across `apps/admin`, `apps/nasheed/admin`, and `apps/polysnap/admin`. Imported exclusively via `@ihsan/ui`.
 
-**Typically Contains:**
+**Actual structure (`libs/ui/src/lib/zard/`):**
 
-- Buttons, inputs, modals
-- Layout components
-- Form elements
-- Design system components
+```
+libs/ui/src/lib/zard/
+├── components/              ← 44 component folders, one per Zardui primitive
+│   ├── accordion/ alert/ alert-dialog/ avatar/ badge/ breadcrumb/
+│   ├── button/ button-group/ calendar/ card/ carousel/ checkbox/
+│   ├── combobox/ command/ date-picker/ dialog/ divider/ dropdown/
+│   ├── empty/ form/ icon/ input/ input-group/ kbd/ layout/ loader/
+│   ├── menu/ pagination/ popover/ progress-bar/ radio/ resizable/
+│   ├── segmented/ select/ sheet/ skeleton/ slider/ switch/ table/
+│   └── tabs/ toast/ toggle/ toggle-group/ tooltip/
+├── core/                     ← shared internal wiring (index.ts)
+├── services/                 ← cross-component services (e.g. dark-mode.ts)
+├── utils/                    ← merge-classes.ts, number.ts helpers
+├── index.ts                  ← barrel re-exporting every component
+└── zard-quick-ref.md          ← selector + import-path quick reference for all 44 components
+```
 
-**Note:** This is a separate library layer for highly reusable UI elements that don't depend on business logic.
+**Overlay/service-based components** (no host element selector — opened imperatively) each ship their own service + ref type colocated inside their component folder, not in a shared `services/` folder:
+
+| Component      | Service                  | Ref type            |
+| --------------- | ------------------------ | -------------------- |
+| `dialog/`       | `ZardDialogService`      | `ZardDialogRef`      |
+| `sheet/`        | `ZardSheetService`       | `ZardSheetRef`       |
+| `alert-dialog/` | `ZardAlertDialogService` | `ZardAlertDialogRef` |
+| `dropdown/`     | `ZardDropdownService`    | —                     |
+
+**Icon registry:** `components/icon/icons.ts` exports the `ZARD_ICONS` map (Lucide icons, keyed by kebab-case name) and the derived `ZardIcon` type — see `Doc/ZARD_ICON_REFERENCE.md` for the full list and `.claude/instructions/Zardui-Strict.instructions.md` for the mandatory registration workflow before using a new icon name.
+
+**Reference docs:** `Doc/ZARDUI_AI_REFERENCE.md` (full API per component) and `libs/ui/src/lib/zard/zard-quick-ref.md` (selectors + import paths) — read one of these before using any `z-*` selector.
+
+---
+
+### 🎵 Nasheed Shared Library (`libs/nasheed/shared`)
+
+**Purpose:** App-specific shared library for the Nasheed product (`apps/nasheed/admin`, `apps/nasheed/web`) — business logic, models, and real-time services for songs, artists, ingestion jobs, generation, and search. Unlike `libs/core`/`libs/shared` (used by every app), this library is scoped to Nasheed only.
+
+**Path alias:** `@web-app/nasheed-shared` (see `tsconfig.base.json` — note this does **not** follow the `@ihsan/*` naming convention used by the other libs).
+
+**Contains (`libs/nasheed/shared/src/lib/nasheed-shared/`):**
+
+- `services/` — `SongService`, `ArtistService`, `SearchService`, `IngestionJobService`, `GenerationService` (domain HTTP services, all base their URL on `environment.apiUrls.gateway`) plus `song-events.service.ts` / `artist-events.service.ts` / `ingestion-events.service.ts` (per-feature `dataChanged$` refetch buses that also subscribe to `SignalrService.notificationReceived` from `@ihsan/shared` and filter by the marker constants in `nasheed-realtime.constants.ts` — see `Doc/REALTIME_NOTIFICATIONS_GUIDE.md`)
+- `models/` — `song.model.ts`, `artist.model.ts`, `generation.model.ts`, `ingestion-job.model.ts`, `favorite.model.ts`, `rating.model.ts`, `search-result.model.ts`, `paginated-list.model.ts`
+- `enums/` — `song-state.enum.ts`, `ingestion-job-status.enum.ts`, `ingestion-job-type.enum.ts`, `search-index-status.enum.ts`
+- `interfaces/` — query interfaces for songs, artists, ingestion jobs, and search
+- `nasheed-shared.ts` (+ `.html`/`.scss`) — the library's placeholder root component, generated by Nx and not otherwise used
+
+**Example Usage:**
+
+```typescript
+import { SongService, SongState } from '@web-app/nasheed-shared';
+```
 
 ---
 
@@ -300,16 +354,37 @@ libs/core/
 │   │   │   ├── ai-chat.resolver.ts
 │   │   │   ├── models.ts
 │   │   │   └── index.ts
+│   │   ├── ai-settings/          ← AI settings service + resolver
+│   │   ├── ai-system-prompts/    ← AI system prompts service + resolver
+│   │   ├── app-settings/         ← app-wide settings service
+│   │   ├── audit-log/            ← audit log query/service logic
+│   │   ├── background-jobs/      ← background job status/tracking service
+│   │   ├── backup/               ← Backup microservice client + resolver
+│   │   ├── category/             ← category service
+│   │   ├── core/                 ← app shell component + environment.token.ts
+│   │   ├── feature-flags/        ← feature flags directive, guard, service, resolver
+│   │   ├── file-manager/         ← file management business logic
+│   │   ├── notification/         ← notification services
+│   │   ├── tenant/                ← tenant context + resolver
+│   │   ├── translation/          ← translation service + resolver
 │   │   ├── identity/
 │   │   │   ├── auth.service.ts
-│   │   │   ├── identity.resolver.ts
+│   │   │   ├── profile.resolver.ts
 │   │   │   └── index.ts
 │   │   ├── guards/
 │   │   │   ├── auth.guard.ts
 │   │   │   └── index.ts
 │   │   ├── interceptors/
-│   │   │   ├── auth.interceptor.ts
+│   │   │   ├── correlation-id.interceptor.ts
+│   │   │   ├── localization.interceptor.ts
+│   │   │   ├── tenant.interceptor.ts
 │   │   │   └── index.ts
+│   │   ├── models/
+│   │   │   └── common.ts
+│   │   ├── services/
+│   │   │   ├── navigation-loading.service.ts
+│   │   │   ├── page-title.service.ts
+│   │   │   └── ...
 │   │   └── index.ts
 │   ├── index.ts          ← Public API
 │   └── test-setup.ts
@@ -317,6 +392,8 @@ libs/core/
 ├── tsconfig.json
 └── jest.config.ts
 ```
+
+> There is no separate `resolvers/` folder — resolvers live inside their owning feature folder (see the "Note on resolvers" callout above).
 
 ### Shared Library Structure
 
@@ -330,13 +407,31 @@ libs/shared/
 │   │   │   │   ├── login.component.html
 │   │   │   │   ├── login.component.scss
 │   │   │   │   └── index.ts
+│   │   │   ├── register/
+│   │   │   ├── forgot-password/
+│   │   │   ├── sidebar/
+│   │   │   ├── ai-chat/
+│   │   │   ├── ai-embedding/
+│   │   │   ├── file-selector/
 │   │   │   ├── file-manager/
+│   │   │   │   └── audio-editor-dialog/   ← see "Shared Component Reference" below
 │   │   │   └── index.ts
+│   │   ├── features/                       ← full cross-app features (shell + pages + dialogs), not just components
+│   │   │   └── identity/
+│   │   │       ├── identity.routes.ts      ← exported route constant, e.g. `identityRoutes`
+│   │   │       ├── identity.component.ts   ← feature shell
+│   │   │       ├── users/                  ← list page + add/edit dialogs
+│   │   │       ├── roles/                  ← list page + add/edit/manage-claims dialogs
+│   │   │       ├── claims/                 ← list page + add/edit dialogs
+│   │   │       └── index.ts                ← re-exports the routes
 │   │   ├── directives/
 │   │   │   ├── highlight.directive.ts
 │   │   │   └── index.ts
 │   │   ├── pipes/
 │   │   │   ├── date-format.pipe.ts
+│   │   │   └── index.ts
+│   │   ├── interceptors/
+│   │   │   ├── error.interceptor.ts
 │   │   │   └── index.ts
 │   │   ├── services/
 │   │   │   ├── logger.service.ts
@@ -350,6 +445,8 @@ libs/shared/
 ├── tsconfig.json
 └── jest.config.ts
 ```
+
+> See `.claude/instructions/Angular.instructions.md` section 2a for the rule on when a feature belongs in `features/` vs `components/`, and why files inside `libs/shared` must import sibling lib code via relative paths (not `@ihsan/shared`).
 
 ---
 
@@ -382,8 +479,8 @@ libs/shared/
 
 ```typescript
 // ✅ Clean and organized
-import { AuthService, AuthGuard } from '@lib/core';
-import { LoginComponent, RegisterComponent } from '@lib/shared';
+import { AuthService, AuthGuard } from '@ihsan/core';
+import { LoginComponent, RegisterComponent } from '@ihsan/shared';
 ```
 
 ### Why This Works

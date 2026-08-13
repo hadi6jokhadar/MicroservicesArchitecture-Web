@@ -1,6 +1,6 @@
 # Frontend Documentation Index
 
-**Last Updated:** July 30, 2026  
+**Last Updated:** August 13, 2026  
 **Purpose:** Central entry point for all Angular frontend documentation
 
 ---
@@ -9,12 +9,13 @@
 
 | Category               | Files                                                                                                                                       |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Getting Started**    | [ANGULAR_DESIGN_PATTERN](#angular-design-pattern)                                                                                           |
-| **UI Components**      | [COMPONENT_USAGE_GUIDE](#component-usage-guide) • [ZARDUI_AI_REFERENCE](#zardui-ai-reference) • [ZARD_ICON_REFERENCE](#zard-icon-reference) |
+| **Getting Started**    | [ANGULAR_DESIGN_PATTERN](#angular-design-pattern) • [LIBRARY_STRUCTURE](#library-structure-guide)                                           |
+| **UI Components**      | [COMPONENT_USAGE_GUIDE](#component-usage-guide) • [ZARDUI_AI_REFERENCE](#zardui-ai-reference) • [ZARD_ICON_REFERENCE](#zard-icon-reference) • [components.context](#componentscontextmd) |
 | **Translation & i18n** | [TRANSLATION_SYSTEM_GUIDE](#translation-system-guide) • [TRANSLATION_FEATURE_GUIDE](#translation-feature-guide)                             |
 | **Backup Management** | [BACKUP_FEATURE_GUIDE](#backup-feature-guide)                                                                                                |
 | **Dialog & Overlays**  | [DIALOG_DESIGN_GUIDE](#dialog-design-guide)                                                                                                 |
-| **Authentication**     | [MULTI_MODE_AUTHENTICATION_GUIDE](#multi-mode-authentication-guide) • [IDENTITY_MODULE_GUIDE](#identity-module-guide)                       |
+| **Authentication**     | [MULTI_MODE_AUTHENTICATION_GUIDE](#multi-mode-authentication-guide) • [IDENTITY_MODULE_GUIDE](#identity-module-guide) • [PERMISSIONS_GUIDE](#permissions-guide) |
+| **Feature Flags**      | [FEATURE_FLAGS_GUIDE](#feature-flags-guide)                                                                                                 |
 | **Error Handling**     | [ERROR_HANDLER_USAGE_GUIDE](#error-handler-usage-guide)                                                                                     |
 | **HTTP Interceptors**  | [ERROR_HANDLER_USAGE_GUIDE → HTTP Interceptors Reference](#error-handler-usage-guide)                                                       |
 | **Design Patterns**    | [PAGE_CONTAINER_DESIGN_PATTERN](#page-container-design-pattern)                                                                             |
@@ -46,6 +47,23 @@
 
 ---
 
+#### LIBRARY_STRUCTURE.md
+
+**Purpose:** Nx monorepo library boundaries — what belongs in `libs/core` vs `libs/ui` vs `libs/shared` vs app-specific/domain libs (`libs/nasheed`, etc.), plus the shared component reference (audio editor dialog, file selector)  
+**Read When:**
+
+- Deciding which `libs/` folder a new service, directive, or component belongs in
+- Looking up the shared `AudioEditorDialogComponent` or other cross-app shared components
+- Understanding why a resolver lives colocated in its feature folder instead of a top-level `resolvers/` folder
+
+**Key Topics:**
+
+- `libs/core` (business logic, services, guards, interceptors) vs `libs/ui` (Zardui wrapper) vs `libs/shared` (reusable components/cross-app features)
+- Colocated resolvers per feature
+- Shared Component Reference (`AudioEditorDialogComponent`, file selector integration)
+
+---
+
 #### PAGE_CONTAINER_DESIGN_PATTERN.md
 
 **Purpose:** Standard pattern for page layouts and containers  
@@ -66,22 +84,9 @@
 
 ### UI Components & Styling
 
-#### COMPONENT_USAGE_GUIDE.md
+#### COMPONENT_USAGE_GUIDE.md — ⚠️ DEPRECATED
 
-**Purpose:** Comprehensive guide to all Zardui components  
-**Read When:**
-
-- Implementing any UI component
-- Checking component availability
-- Learning component APIs
-- Finding examples
-
-**Key Topics:**
-
-- All 43 Zardui components
-- Import patterns
-- Component variants
-- Best practices
+**Do not use.** Predates `ZARDUI_AI_REFERENCE.md` and was never reconciled with it — an August 2026 audit found nearly every example (button/badge variants, card sub-components, select, pagination inputs, dialog-ref API) uses a fictional or superseded Zardui API. The file now only contains a redirect. **Use `ZARDUI_AI_REFERENCE.md` instead** for all Zardui usage.
 
 ---
 
@@ -118,6 +123,20 @@
 - Alphabetical icon list
 - Usage examples
 - Icon categories
+
+---
+
+#### components.context.md
+
+**Purpose:** Auto-generated, AI-optimized inventory of all 43 Zard UI components (selector, category, inputs, outputs, variants) — the underlying data `COMPONENT_USAGE_GUIDE.md`'s deprecation notice points to as the current component list  
+**Read When:**
+
+- Looking up a component's exact input/output signature without opening `ZARDUI_AI_REFERENCE.md`'s full examples
+- Verifying a component exists before using its selector (per `Zardui-Strict.instructions.md`'s mandatory icon/selector verification rule)
+
+**Key Topics:**
+
+- Per-component selector, category, forms-compatibility, inputs table, outputs table, variants
 
 ---
 
@@ -264,6 +283,46 @@
 
 ---
 
+#### PERMISSIONS_GUIDE.md
+
+**Purpose:** Permission-claim route guard (`roleGuard`), sidebar visibility, and action-level button gating for a lower-privileged role below the role system (e.g. a "data entry" role that can create/edit but not delete)  
+**Read When:**
+
+- Gating any page/action by a Permission claim rather than a full role
+- Adding `permissions?: string[]` alongside `roles?: string[]` on a route or sidebar entry
+- Hiding a specific button (not a whole page) for a claim-holding user
+
+**Key Topics:**
+
+- `roleGuard` role-OR-permission check (never AND — Admin/SuperAdmin must never need a claim too)
+- `UserClass.permissions` (flattened `roles[].claims[]` where `claimType === 'Permission'`)
+- `ISidebarPage.permissions` / `ISidebarUser.permissions`
+- Action-level gating via a local `computed()` (no directive yet)
+- System claims are read-only in the admin UI (`IClaim.isSystemClaim`)
+
+---
+
+### Feature Flags
+
+#### FEATURE_FLAGS_GUIDE.md
+
+**Purpose:** Per-tenant feature flags — `FeatureFlagService`, the `*featureFlag` structural directive, and `featureFlagGuard` route guard  
+**Read When:**
+
+- Hiding/showing a block of UI or an entire route behind a tenant's feature flag
+- Adding a brand-new flag (backend constant + frontend `FeatureFlags` constant + optional Tenant Configuration sheet UI)
+- Debugging why a flag-gated element isn't showing/hiding as expected (default-value semantics)
+
+**Key Topics:**
+
+- `*featureFlag="Flags.X"` directive (with optional `else` template)
+- `featureFlagGuard` + `data: { featureFlag, featureFlagRedirect, featureFlagDefault }`
+- `FeatureFlagService.isEnabled()` / `isEnabledSignal()`
+- `featureFlagResolver` (admin app) vs `APP_INITIALIZER` (fixed-tenant app) loading patterns
+- Current flags table (`aiChatEnabled`, `nasheedIngestionEnabled`, `isBackgroundJobPageEnabled`, `isAuditLogPageEnabled`, `nasheedNewLyricsExtractionEnabled`, `autoUploadToExternalStorageEnabled`)
+
+---
+
 ### Real-Time / SignalR
 
 #### REALTIME_NOTIFICATIONS_GUIDE.md
@@ -328,7 +387,7 @@
 - ❌ `IMPLEMENTATION_SUMMARY_FRONTEND_ERROR_INTERCEPTOR.md` - Temporary summary (removed)
 
 **Total files removed:** 10  
-**Current file count:** 14 (clean, production-ready documentation)
+**Current file count:** 18, plus this index (verified against `Doc/*.md` on disk, August 2026)
 
 ---
 
@@ -359,12 +418,12 @@ Each documentation file should have:
 
 | I want to...                     | Read this file                                               |
 | -------------------------------- | ------------------------------------------------------------ |
-| Add a button                     | COMPONENT_USAGE_GUIDE.md → Button                            |
+| Add a button                     | ZARDUI_AI_REFERENCE.md → Button                              |
 | Create a dialog                  | DIALOG_DESIGN_GUIDE.md                                       |
 | Add translation                  | TRANSLATION_SYSTEM_GUIDE.md                                  |
 | Handle RTL                       | TRANSLATION_SYSTEM_GUIDE.md → RTL Section                    |
 | Use an icon                      | ZARD_ICON_REFERENCE.md                                       |
-| Create a form                    | COMPONENT_USAGE_GUIDE.md → Form Components                   |
+| Create a form                    | ZARDUI_AI_REFERENCE.md → Form Components                      |
 | Handle errors                    | ERROR_HANDLER_USAGE_GUIDE.md                                 |
 | Understand HTTP interceptors     | ERROR_HANDLER_USAGE_GUIDE.md → HTTP Interceptors Reference   |
 | Implement login                  | MULTI_MODE_AUTHENTICATION_GUIDE.md                           |
@@ -373,6 +432,11 @@ Each documentation file should have:
 | Use the audio editor dialog      | LIBRARY_STRUCTURE.md → Shared Component Reference            |
 | Add audio editing to file upload | LIBRARY_STRUCTURE.md → AudioEditorDialogComponent            |
 | Work on database backups         | BACKUP_FEATURE_GUIDE.md                                      |
+| Decide which `libs/` folder something belongs in | LIBRARY_STRUCTURE.md                          |
+| Look up a Zardui component's exact inputs/outputs | components.context.md                        |
+| Gate a page/button by a Permission claim (not a role) | PERMISSIONS_GUIDE.md                     |
+| Hide/show UI or a route by tenant feature flag   | FEATURE_FLAGS_GUIDE.md                        |
+| Connect to the SignalR notification hub          | REALTIME_NOTIFICATIONS_GUIDE.md               |
 
 ---
 

@@ -1,7 +1,7 @@
 # Translation Feature Guide
 
-**Version:** 1.0  
-**Date:** January 28, 2026  
+**Version:** 1.1
+**Date:** January 28, 2026 (last audited August 13, 2026)
 **Status:** ✅ Complete
 
 ---
@@ -16,9 +16,10 @@ Complete frontend implementation of the Translation Management feature with full
 
 ### Translation Keys Management
 
-- ✅ **List Keys** - Paginated table with search and category filtering
+- ✅ **List Keys** - Paginated table with search, category, tenant, and archived-status filtering
 - ✅ **Add Key** - Dialog form to create new translation keys
 - ✅ **Edit Key** - Dialog form to update key description (key/category immutable)
+- ✅ **Archive / Unarchive Key** - Confirmation dialog toggling `isArchived` (soft alternative to hard delete)
 - ✅ **Delete Key** - Confirmation dialog with cascade delete warning
 - ✅ **View Values** - Side sheet showing all translation values for a key
 
@@ -30,6 +31,11 @@ Complete frontend implementation of the Translation Management feature with full
 - ✅ **Delete Value** - Confirmation dialog to remove translation value
 - ✅ **Global/Tenant** - Visual indicators for global vs tenant-specific translations
 
+### Import / Export
+
+- ✅ **Export Translations** - Dialog to download a language's (optionally category-filtered) translations as a `.json` file
+- ✅ **Import Translations (multi-file)** - Dialog supporting drag-and-drop or browse selection of **multiple** `.json` files at once; each file gets its own auto-detected language (from the filename, e.g. `en.json` → `en`) with an overridable per-file language selector, a shared "category for new keys" field, tenant-scoped key detection/preview, and parallel per-file import with individual success/failure outcomes
+
 ---
 
 ## 📦 Architecture
@@ -38,24 +44,36 @@ Complete frontend implementation of the Translation Management feature with full
 
 ```
 apps/admin/src/app/features/translation/
-├── translations.component.ts          # Main list page
-├── translations.component.html
-├── translations.component.scss
-├── translations.routes.ts             # Lazy-loaded routes
-├── translation-events.service.ts      # Event coordination service
-├── view-values-sheet/
-│   ├── view-values-sheet.component.ts  # Side sheet for values
-│   ├── view-values-sheet.component.html
-│   └── view-values-sheet.component.scss
-└── add-edit-key-dialog/
-    ├── add-edit-key-dialog.component.ts  # Dialog for key CRUD
-    ├── add-edit-key-dialog.component.html
-    └── add-edit-key-dialog.component.scss
+├── translation.routes.ts               # Lazy-loaded routes (single '' path → TranslationsComponent)
+├── translation-events.service.ts       # Event coordination service
+└── translations/
+    ├── translations.component.ts       # Main list page
+    ├── translations.component.html
+    ├── translations.component.scss
+    ├── add-edit-key-dialog/
+    │   ├── add-edit-key-dialog.component.ts   # Dialog for key create/update
+    │   ├── add-edit-key-dialog.component.html
+    │   └── add-edit-key-dialog.component.scss
+    ├── view-values-sheet/
+    │   ├── view-values-sheet.component.ts     # Side sheet for values (add/edit/delete)
+    │   ├── view-values-sheet.component.html
+    │   └── view-values-sheet.component.scss
+    ├── export-dialog/
+    │   ├── export-dialog.component.ts         # Download translations as .json
+    │   ├── export-dialog.component.html
+    │   └── export-dialog.component.scss
+    └── import-dialog/
+        ├── import-dialog.component.ts         # Multi-file drag/drop .json import
+        ├── import-dialog.component.html
+        └── import-dialog.component.scss
 
 libs/core/src/lib/translation/
-├── models.ts                    # TypeScript interfaces
-├── translation.service.ts       # HTTP service
-└── index.ts                     # Public exports
+├── models.ts                    # TypeScript interfaces (DTOs, commands, queries)
+├── translation.service.ts       # HTTP service (admin CRUD + import + public getTranslations)
+├── translation.resolver.ts      # Route resolver — preloads/caches translations
+├── translate.pipe.ts            # `| translate` pipe — reads the cache only
+├── rtl.service.ts               # RtlService — RTL direction helpers
+└── index.ts                     # Public exports (barrel)
 ```
 
 ### Components
@@ -64,7 +82,9 @@ libs/core/src/lib/translation/
 
 - Paginated table of translation keys
 - Search and category filters
-- Action dropdowns (View, Edit, Delete)
+- Action dropdowns (View Values, Edit, Archive/Unarchive, Delete)
+- Export/Import buttons opening their respective dialogs
+- Archived-only filter switch (`z-switch`)
 - Pagination controls
 
 **AddEditKeyDialogComponent** - Create/Update dialog
@@ -81,6 +101,21 @@ libs/core/src/lib/translation/
 - Delete with confirmation
 - Success/error messages inline (no toast)
 
+**ExportDialogComponent** - Download translations dialog
+
+- Form: required language selector + optional category filter
+- Calls the same public `getTranslations(language, category)` used by the resolver, then serializes the response's `translations` map to a downloaded `.json` file (`translations_{language}[_{category}].json`)
+- Success/cancel via toast + dialog close (no inline alert)
+
+**ImportDialogComponent** - Multi-file translations import dialog
+
+- Accepts **multiple** `.json` files at once via a drag-and-drop drop zone (`sharedDragDropFiles` directive from `@ihsan/shared`) or a "browse" button (`<input type="file" multiple accept=".json">`)
+- Each selected file gets its own row: file name, a per-file language `z-select` (defaults to the language auto-detected from the filename stem, e.g. `en.json` → `en`), and a remove button
+- Previews tenant-scoped keys per file by scanning the JSON for keys matching a `#tenantId#` prefix pattern, shown as an info `z-alert` listing detected tenant IDs before import runs
+- One shared "category for new keys" text field applies to every file in the batch
+- On submit, reads every file's JSON client-side and imports them **in parallel** (`forkJoin`) via `TranslationService.importTranslations()`; files that fail (invalid JSON or a backend error) stay in the list with an inline error so the user can retry just those, while succeeded files are removed and their created-key/updated-value counts are summed into a single success toast
+- Dialog only closes automatically once **all** files succeed
+
 **TranslationEventsService** - Event coordination
 
 - Emits `translationKeysChanged$` after CRUD operations
@@ -93,29 +128,41 @@ libs/core/src/lib/translation/
 
 ### API Endpoints
 
-| Endpoint                        | Method | Purpose                          | Status |
-| ------------------------------- | ------ | -------------------------------- | ------ |
-| `/api/translations/keys`        | GET    | Get paginated translation keys   | ✅     |
-| `/api/translations/keys`        | POST   | Create translation key           | ✅     |
-| `/api/translations/keys`        | PUT    | Update translation key           | ✅     |
-| `/api/translations/keys/{id}`   | DELETE | Delete translation key           | ✅     |
-| `/api/translations`             | POST   | Set translation value (add/edit) | ✅     |
-| `/api/translations/values/{id}` | DELETE | Delete translation value         | ✅     |
+All admin/CRUD calls go through the Gateway, versioned, at `{gateway}/api/v1/translations/...` (never a hardcoded per-service port — see root `CLAUDE.md`'s Cross-Stack Communication Rules). `{gateway}` = `environment.apiUrls.gateway`.
+
+| Endpoint                                        | Method | Purpose                                                            | Status |
+| ------------------------------------------------ | ------ | ------------------------------------------------------------------- | ------ |
+| `/api/v1/translations/{language}`               | GET    | Get translations for a language (public, used by resolver/export)   | ✅     |
+| `/api/v1/translations/keys`                     | GET    | Get paginated translation keys                                     | ✅     |
+| `/api/v1/translations/keys`                     | POST   | Create translation key                                             | ✅     |
+| `/api/v1/translations/keys/{id}`                | PUT    | Update translation key (description only)                         | ✅     |
+| `/api/v1/translations/keys/{id}`                | DELETE | Delete translation key (cascades values)                           | ✅     |
+| `/api/v1/translations/keys/{id}/toggle-archive` | PATCH  | Toggle a key's archived status                                     | ✅     |
+| `/api/v1/translations/values`                   | POST   | Set translation value (add/edit)                                  | ✅     |
+| `/api/v1/translations/values/{id}`              | DELETE | Delete translation value                                           | ✅     |
+| `/api/v1/translations/import`                   | POST   | Bulk-import a JSON translations map                                | ✅     |
 
 ### TranslationService
 
 **Location:** `libs/core/src/lib/translation/translation.service.ts`
 
-All methods support optional `HttpContext` for error handling control:
+Mutating methods (`create`/`update`/`setTranslation`/`importTranslations`) accept an optional `HttpContext` — every dialog/sheet call site passes `new HttpContext().set(SKIP_ERROR_TOAST, true)` per this repo's error-handling convention:
 
 ```typescript
+getTranslations(language: string, category?: string): Observable<ITranslationsDto>
+getCachedTranslations(): Record<string, string>
+getCachedTranslation(key: string, defaultValue?: string, params?: Record<string, unknown>): string
+getCurrentLanguage(): string
+getCurrentLanguageSignal(): Signal<string>
+setTranslations(translations: Record<string, string>, language: string): void
 getTranslationKeys(query: IGetTranslationKeysQuery): Observable<IPaginatedList<ITranslationKeyDto>>
+toggleArchive(id: number): Observable<ITranslationKeyDto>
 createTranslationKey(command: ICreateTranslationKeyCommand, context?: HttpContext): Observable<ITranslationKeyDto>
 updateTranslationKey(command: IUpdateTranslationKeyCommand, context?: HttpContext): Observable<ITranslationKeyDto>
-deleteTranslationKey(id: number): Observable<void>
+deleteTranslationKey(id: number): Observable<boolean>
 setTranslation(command: ISetTranslationCommand, context?: HttpContext): Observable<ITranslationValueDto>
-deleteTranslationValue(id: number): Observable<void>
-getTranslations(query: IGetTranslationsQuery): Observable<IPaginatedList<ITranslationDto>>
+deleteTranslationValue(id: number): Observable<boolean>
+importTranslations(command: IImportTranslationsCommand, context?: HttpContext): Observable<IImportTranslationsResult>
 ```
 
 ---
@@ -179,9 +226,11 @@ this._alertDialogService.confirm({
 });
 ```
 
-### Sheet Error Handling (CRITICAL)
+### Sheet Success/Error Handling (CRITICAL — sheets only, not dialogs)
 
-**❌ NEVER use toast in sheets/dialogs** - toasts appear at screen edge and may be hidden.
+**❌ NEVER use a toast for the success case in a sheet that stays open across repeated actions (like `ViewValuesSheetComponent`)** - toasts appear at screen edge and may be hidden or missed between successive add/edit/delete actions in the same sheet session; use an inline `<z-alert>` instead.
+
+> This project's monorepo-wide convention (`MicroservicesArchitecture-Web/.claude/instructions/Angular.instructions.md`) is that **dialogs** *do* use `toast.success()` immediately before closing — see `AddEditKeyDialogComponent`, `ExportDialogComponent`, and `ImportDialogComponent`, all of which call `toast.success(...)` on success. The rule below is specific to `ViewValuesSheetComponent`, which stays open across multiple value add/edit/delete operations and therefore needs a persistent inline message rather than a transient toast. `SKIP_ERROR_TOAST` is still used in both dialogs and sheets — that part is about suppressing the *global error interceptor's* toast so it doesn't double up with the component's own error display, independent of how success is shown.
 
 ```typescript
 const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
@@ -245,15 +294,17 @@ interface IAddEditKeyForm {
 
 ```typescript
 interface IEditValueForm {
-  language: FormControl<string>; // Required, 2-5 characters (e.g., en, ar, en-US)
+  language: FormControl<string>; // Required — no length restriction enforced client-side
   value: FormControl<string>; // Required
+  tenantId: FormControl<string>; // Optional — empty string means a global (non-tenant) translation
 }
 ```
 
 **Validators:**
 
-- `language`: Required, min 2, max 5 characters
+- `language`: Required (no min/max length validator)
 - `value`: Required
+- `tenantId`: No validators — left empty for a global translation, or set to scope the value to one tenant
 
 ---
 
@@ -287,6 +338,15 @@ interface IEditValueForm {
    - On error: Show inline error in dialog
 5. Main component receives event, reloads keys
 
+### Archive / Unarchive Translation Key
+
+1. User clicks "Archive" or "Unarchive" in dropdown (label/dialog text depends on current `isArchived` state)
+2. Confirmation dialog shows (destructive styling only when archiving, not unarchiving)
+3. On confirm (`zOnOk` callback):
+   - Call `toggleArchive(id)`
+   - On success: Show toast, reload keys
+   - On error: Show error toast
+
 ### Delete Translation Key
 
 1. User clicks "Delete" in dropdown
@@ -319,6 +379,29 @@ interface IEditValueForm {
    - On success: Show inline success, remove from values signal
    - On error: Show inline error
 
+### Export Translations
+
+1. User clicks "Export" button on the main page
+2. Dialog opens with a required language selector and an optional category filter
+3. On submit:
+   - Call `getTranslations(language, category)`
+   - On success: Serialize `translations` to JSON, trigger a browser download (`translations_{language}[_{category}].json`), show success toast, close dialog
+   - On error: Show error toast (dialog stays open)
+
+### Import Translations (multi-file)
+
+1. User clicks "Import" button on the main page
+2. Dialog opens; user drags one or more `.json` files onto the drop zone, or browses and multi-selects files
+3. Each added file appears as a row with its filename, an editable language selector (pre-filled from the filename), and a remove button; the dialog also previews any `#tenantId#`-prefixed keys it detects in each file
+4. User optionally overrides the shared "category for new keys" field (default `General`)
+5. On submit:
+   - Skip toast (`SKIP_ERROR_TOAST`)
+   - Read every file's JSON client-side, then call `importTranslations(command, context)` for **each file in parallel** (`forkJoin`)
+   - Per file, on success: file is removed from the list and its `createdKeys`/`updatedValues` counts are accumulated
+   - Per file, on failure: file stays in the list with its own inline error message (invalid JSON parses to a friendly "Invalid JSON file" message; backend errors use `extractErrorMessage`)
+   - Once all `forkJoin` results resolve: if at least one file succeeded, notify `TranslationEventsService` and show one aggregated success toast (`"{{files}} file(s) imported: {{created}} keys created, {{updated}} values updated"`); if every file succeeded, close the dialog — otherwise leave it open showing only the failed files for retry
+6. Main component receives the change event, reloads keys
+
 ---
 
 ## 🎨 Zardui Components Used
@@ -333,10 +416,14 @@ interface IEditValueForm {
 - ✅ `ZardEmptyComponent` - Empty state when no data
 - ✅ `ZardFormImports` - Form fields, labels, validation errors
 - ✅ `ZardIconComponent` - All icons
+- ✅ `ZardIdDirective` - Unique `id`/`for` pairing on form fields (`zardId` template ref)
 - ✅ `ZardInputDirective` - Text inputs
 - ✅ `ZardLoaderComponent` - Loading spinners
 - ✅ `ZardPaginationImports` - Page navigation
+- ✅ `ZardSelectImports` - Language dropdowns (export dialog, per-file import language override)
 - ✅ `ZardSheetService` - View values side panel
+- ✅ `ZardSwitchComponent` - Archived-only filter toggle on the main page
+- ✅ `DragDropFilesDirective` (`sharedDragDropFiles`, from `@ihsan/shared`, not Zardui) - Multi-file drag-and-drop zone in the import dialog
 
 ### Custom Success Alert Variant
 
@@ -396,8 +483,9 @@ nx run admin:serve --configuration=development
 
 ### Error Handling
 
-- ✅ **SKIP_ERROR_TOAST in sheets/dialogs** - Prevents hidden toast notifications
-- ✅ **Inline error display** - Use `<z-alert>` for errors/success
+- ✅ **SKIP_ERROR_TOAST in sheets/dialogs** - Prevents the global error interceptor from duplicating the component's own inline error/toast
+- ✅ **Inline error display** - Use `<z-alert zType="destructive">` for errors in both dialogs and sheets
+- ✅ **Inline success display (sheets only)** - `ViewValuesSheetComponent` uses a green `<z-alert>` for success since it stays open across actions; dialogs use `toast.success()` + close instead (see "Sheet Success/Error Handling" above)
 - ✅ **extractErrorMessage helper** - Consistent error formatting
 - ✅ **Validation errors** - Show backend and frontend validation
 
@@ -406,7 +494,7 @@ nx run admin:serve --configuration=development
 - ✅ **Confirmation dialogs** - For destructive actions
 - ✅ **Loading states** - Show loaders during operations
 - ✅ **Empty states** - Helpful messages when no data
-- ✅ **Success feedback** - Green alerts for successful operations
+- ✅ **Success feedback** - Toast on dialog success; green inline alert on sheet success
 - ✅ **Data reload** - Auto-refresh after CRUD operations
 
 ### Code Organization
@@ -421,22 +509,24 @@ nx run admin:serve --configuration=development
 
 ## ❌ Common Mistakes to Avoid
 
-### Wrong: Toast in sheets/dialogs
+### Wrong: Toast for success in a sheet that stays open (e.g. `ViewValuesSheetComponent`)
 
 ```typescript
-// ❌ WRONG - Toast hidden behind sheet
+// ❌ WRONG in a sheet - Toast hidden behind sheet / missed between actions
 this._service.operation(data).subscribe({
   next: () => toast.success('Success'),
 });
 ```
 
 ```typescript
-// ✅ CORRECT - Inline success message
+// ✅ CORRECT in a sheet - Inline success message
 const context = new HttpContext().set(SKIP_ERROR_TOAST, true);
 this._service.operation(data, context).subscribe({
   next: () => this.successMessage.set('Success'),
 });
 ```
+
+> This applies to sheets specifically. Dialogs in this feature (`AddEditKeyDialogComponent`, `ExportDialogComponent`, `ImportDialogComponent`) correctly use `toast.success(...)` immediately before closing — that is the current project-wide convention for dialogs, not a mistake to avoid.
 
 ### Wrong: Tight coupling with callbacks
 
@@ -511,13 +601,25 @@ this._alertDialogService.confirm({
 - [ ] Form closes after successful add/edit
 - [ ] Global/Tenant badges display correctly
 
+### Import / Export
+
+- [ ] Export dialog downloads a `.json` file for the selected language
+- [ ] Export with a category filter downloads only that category's translations
+- [ ] Import accepts multiple files at once (drag-and-drop and multi-select browse)
+- [ ] Import auto-detects each file's language from its filename, overridable per file
+- [ ] Import previews detected `#tenantId#`-prefixed keys before submit
+- [ ] Import processes all selected files in parallel and reports an aggregated success toast
+- [ ] A failing file (invalid JSON or backend error) stays in the list with its own inline error while other files still succeed
+- [ ] Import dialog closes only once every file has succeeded
+- [ ] Data reloads after a successful import
+
 ### Error Handling
 
 - [ ] Backend validation errors display inline
-- [ ] Network errors display inline in sheets/dialogs
-- [ ] Toast shows for delete operations in main page
-- [ ] No toast shows in sheets/dialogs
-- [ ] Success messages use green alert variant
+- [ ] Network errors display inline in sheets and in dialogs
+- [ ] Toast shows for delete/archive operations in main page and for dialog success (add/edit key, export, import)
+- [ ] No toast shows for the success case inside `ViewValuesSheetComponent` (inline alert only)
+- [ ] Success messages use green alert variant (sheet) or toast (dialog)
 - [ ] Error messages use destructive alert variant
 
 ---
@@ -533,27 +635,32 @@ this._alertDialogService.confirm({
 
 - **Error Handling**: [ERROR_HANDLER_USAGE_GUIDE.md](./ERROR_HANDLER_USAGE_GUIDE.md)
 - **Zardui Components**: [ZARDUI_AI_REFERENCE.md](./ZARDUI_AI_REFERENCE.md)
-- **Angular Patterns**: `.github/instructions/Angular.instructions.md`
+- **Angular Patterns**: `.claude/instructions/Angular.instructions.md`
 - **Component Guide**: [COMPONENT_USAGE_GUIDE.md](./COMPONENT_USAGE_GUIDE.md)
+- **Translation System / RTL**: [TRANSLATION_SYSTEM_GUIDE.md](./TRANSLATION_SYSTEM_GUIDE.md)
+- **Resolver & Pipe**: [TRANSLATION_RESOLVER_PIPE_GUIDE.md](./TRANSLATION_RESOLVER_PIPE_GUIDE.md)
 
 ---
 
 ## ✨ Summary
 
-**Complete CRUD implementation for translation management:**
+**Complete CRUD + import/export implementation for translation management:**
 
 1. ✅ Create Translation Key - Dialog with validation
-2. ✅ Read Translation Keys - Paginated list with filters
+2. ✅ Read Translation Keys - Paginated list with filters (search, category, tenant, archived)
 3. ✅ Update Translation Key - Dialog with validation
-4. ✅ Delete Translation Key - With confirmation
-5. ✅ Create Translation Value - Inline form in sheet
-6. ✅ Update Translation Value - Inline form in sheet
-7. ✅ Delete Translation Value - With confirmation
+4. ✅ Archive / Unarchive Translation Key - Soft-delete alternative with confirmation
+5. ✅ Delete Translation Key - With confirmation
+6. ✅ Create Translation Value - Inline form in sheet
+7. ✅ Update Translation Value - Inline form in sheet
+8. ✅ Delete Translation Value - With confirmation
+9. ✅ Export Translations - Download a language/category as `.json`
+10. ✅ Import Translations - Multi-file drag-and-drop import with per-file language and parallel processing
 
 **Key Achievements:**
 
 - ✅ Event-driven architecture with TranslationEventsService
-- ✅ No hidden toast messages in sheets/dialogs
+- ✅ Toast-on-success for dialogs; inline success alert for the long-lived values sheet
 - ✅ Green success alerts with proper styling
 - ✅ Consistent error handling throughout
 - ✅ Data reloads after all operations
@@ -563,6 +670,10 @@ this._alertDialogService.confirm({
 
 ---
 
-**Version:** 1.0  
-**Last Updated:** January 28, 2026  
+**Version:** 1.1
+**Last Updated:** August 13, 2026
 **Status:** ✅ Production Ready
+
+### Changelog
+
+- **1.1 (Aug 13, 2026):** Audited the whole feature against current source (`apps/admin/src/app/features/translation/`, `libs/core/src/lib/translation/`) and corrected several stale/missing items: file structure (actual nested `translations/` folder, `export-dialog/`, `import-dialog/`, `translation.routes.ts` not `translations.routes.ts`); documented the Archive/Unarchive key action (`toggleArchive`), Export dialog, and the multi-file Import dialog (per-file language auto-detection, tenant-key preview, parallel `forkJoin` import, partial-failure retry) that were missing entirely; fixed the API endpoints table to the real versioned Gateway paths (`/api/v1/translations/...`) and added the missing `toggle-archive` and `import` endpoints; corrected `TranslationService`'s method list/signatures (`getTranslations(language, category?)` not a query object; deletes return `Observable<boolean>` not `void`); fixed the Add/Edit Value form's validators (no length restriction on `language`; added the undocumented `tenantId` field); clarified that dialogs use `toast.success()` + close while only the values sheet uses an inline success alert (previous wording blanket-banned toast in "sheets/dialogs," which no longer matches `AddEditKeyDialogComponent`/`ExportDialogComponent`/`ImportDialogComponent`); fixed a dead `.github/instructions/Angular.instructions.md` link to the real `.claude/instructions/Angular.instructions.md` path.

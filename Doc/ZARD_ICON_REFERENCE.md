@@ -22,6 +22,10 @@ All icons are imported from `@ihsan/ui` and must use one of the valid icon names
 - `arrow-up` - Up arrow
 - `arrow-up-right` - Diagonal up-right arrow
 - `ellipsis` - More options menu
+- `external-link` - Opens in a new tab/window
+- `map` - Map/location view
+- `refresh-cw` - Refresh/reload action
+- `rotate-ccw` - Undo/revert action
 
 ### User & Account Icons
 
@@ -30,6 +34,9 @@ All icons are imported from `@ihsan/ui` and must use one of the valid icon names
 - `log-out` - Logout action
 - `shield` - Security/permissions
 - `badge-check` - Verified/approved status
+- `user-plus` - Add user/invite
+- `square-user` - User profile card
+- `pencil` - Edit action
 
 ### Navigation & Structure
 
@@ -50,6 +57,22 @@ All icons are imported from `@ihsan/ui` and must use one of the valid icon names
 - `file-text` - Text/document file
 - `archive` - Archive/compressed file
 - `clipboard` - Copy/clipboard
+- `folder-tree` - Hierarchical folder/category tree
+- `list` - Plain list view
+- `list-checks` - Checklist/task list
+
+### Cloud & Storage
+
+- `cloud` - Cloud/remote storage
+- `cloud-upload` - Upload to cloud
+- `cloud-off` - Offline/cloud disconnected
+
+### Media & Audio
+
+- `mic` - Microphone/recording
+- `music` - Audio/song
+- `play` - Play media
+- `pause` - Pause media
 
 ### Search & Input
 
@@ -112,6 +135,8 @@ All icons are imported from `@ihsan/ui` and must use one of the valid icon names
 
 - `sun` - Light mode
 - `moon` - Dark mode
+- `sun-moon` - Theme toggle (light/dark)
+- `dark-mode` - Dark mode (alternate glyph)
 - `lightbulb` - Ideas/tips
 - `lightbulb-off` - Dark mode/off
 - `palette` - Color/theme customization
@@ -129,6 +154,15 @@ All icons are imported from `@ihsan/ui` and must use one of the valid icon names
 - `star` - Rating/favorites
 - `zap` - Power/energy/speed
 - `popcorn` - Entertainment/fun
+- `activity` - Activity/analytics indicator
+- `shapes` - Shapes/design elements
+- `square` - Generic square/checkbox glyph
+- `plus-circle` - Add action (circled)
+
+### Finance
+
+- `dollar-sign` - Currency/price
+- `credit-card` - Payment/billing
 
 ## Usage Examples
 
@@ -194,4 +228,4 @@ If you need an icon that's not currently available:
 
 ---
 
-**Last Updated:** January 18, 2026
+**Last Updated:** August 13, 2026 — added 24 icons that were registered in `ZARD_ICONS` and already used in real templates but missing from this list (`map`, `external-link`, `refresh-cw`, `rotate-ccw`, `user-plus`, `square-user`, `pencil`, `folder-tree`, `list`, `list-checks`, `cloud`, `cloud-upload`, `cloud-off`, `mic`, `music`, `play`, `pause`, `sun-moon`, `dark-mode`, `activity`, `shapes`, `square`, `plus-circle`, `dollar-sign`, `credit-card`).

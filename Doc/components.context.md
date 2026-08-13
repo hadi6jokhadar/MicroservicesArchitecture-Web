@@ -825,46 +825,115 @@ this.dialog.create({
 
 ## dropdown
 
-**Selector:** `<z-dropdown-menu>`
+**⚠️ This library ships two independent dropdown APIs.** The directive + content pattern below is the one actually used across the app (150+ usages across ~21 feature files: tenant, translation, notification, backup, AI settings/system-prompts, nasheed songs/artists/ingestion, polysnap snap-requests, test-components). The `<z-dropdown-menu>` self-contained component further down exists and is exported from `libs/ui`, but has zero usages in `apps/` today — treat it as a legitimate alternate API, not the default choice.
+
+### Primary pattern — `[z-dropdown]` directive + `<z-dropdown-menu-content>`
+
+**Selectors:** `[z-dropdown]`, `[zDropdown]` (`ZardDropdownDirective`, put on the trigger element) · `<z-dropdown-menu-content>` (`ZardDropdownMenuContentComponent`) · `<z-dropdown-menu-item>`, `[z-dropdown-menu-item]` (`ZardDropdownMenuItemComponent`)
 **Category:** Navigation / Overlay
 **Forms compatible:** No
-**Purpose:** Context menu that opens in a CDK overlay, triggered by projected content.
+**Purpose:** Context menu opened through the app-wide `ZardDropdownService` (CDK overlay, only one instance open at a time). The trigger and its menu content are declared as siblings — the trigger's `[zDropdownMenu]` input points at the content via a template reference variable; there is no wrapping element.
 
-### Inputs
+#### `[z-dropdown]` / `[zDropdown]` directive inputs
+
+| Input           | Binding            | Type                                | Default     | Description                                                                          |
+| --------------- | ------------------- | ------------------------------------ | ----------- | --------------------------------------------------------------------------------------- |
+| `zDropdownMenu` | `[zDropdownMenu]`   | `ZardDropdownMenuContentComponent`   | `undefined` | The `<z-dropdown-menu-content>` to open, referenced via `#ref="zDropdownMenuContent"` |
+| `zTrigger`      | `[zTrigger]`        | `'click' \| 'hover'`                 | `'click'`   | Open trigger mode                                                                        |
+| `zDisabled`     | `[zDisabled]`       | `boolean`                            | `false`     | Disable the trigger                                                                     |
+
+`exportAs: 'zDropdown'`
+
+#### `<z-dropdown-menu-content>` inputs
+
+| Input   | Binding   | Type         | Default | Description       |
+| ------- | --------- | ------------ | ------- | ----------------- |
+| `class` | `[class]` | `ClassValue` | `''`    | Extra CSS classes |
+
+`exportAs: 'zDropdownMenuContent'` — must be captured with a template reference variable (e.g. `#actionsMenu="zDropdownMenuContent"`) and passed into the trigger's `[zDropdownMenu]`.
+
+#### `<z-dropdown-menu-item>` / `[z-dropdown-menu-item]` inputs
+
+| Input      | Binding      | Type                          | Default     | Description        |
+| ---------- | ------------ | ------------------------------ | ----------- | ------------------- |
+| `variant`  | `[variant]`  | `'default' \| 'destructive'`  | `'default'` | Color theme          |
+| `inset`    | `[inset]`    | `boolean`                      | `false`     | Adds `pl-8` indent   |
+| `disabled` | `[disabled]` | `boolean`                      | `false`     | Disabled state       |
+| `class`    | `[class]`    | `ClassValue`                   | `''`        | Extra CSS classes    |
+
+`exportAs: 'zDropdownMenuItem'`
+
+#### Visual Notes
+
+- `ZardDropdownService` (singleton) owns the CDK overlay, outside-click dismissal, and keyboard navigation (ArrowUp/Down, Enter/Space, Escape, Home/End) — the directive and content component don't manage their own overlay.
+- Clicking a `z-dropdown-menu-item` auto-closes the dropdown after the click handler runs.
+- `dropdownItemVariants`: `variant='default'|'destructive'`; `inset=true` adds `pl-8`.
+
+#### Usage Examples (real pattern — from `tenant-list.component.html`)
+
+```html
+<button z-button zType="outline" zSize="sm" z-dropdown [zDropdownMenu]="actionsMenu">
+  <z-icon zType="ellipsis" />
+</button>
+<z-dropdown-menu-content #actionsMenu="zDropdownMenuContent">
+  <z-dropdown-menu-item (click)="onEdit(item)">
+    <z-icon zType="file-text" />
+    Edit
+  </z-dropdown-menu-item>
+  <z-dropdown-menu-item (click)="onDelete(item)" class="delete-action">
+    <z-icon zType="trash" />
+    Delete
+  </z-dropdown-menu-item>
+</z-dropdown-menu-content>
+```
+
+---
+
+### Alternate pattern — `<z-dropdown-menu>` (exists in `libs/ui`, currently unused in `apps/`)
+
+**Selector:** `<z-dropdown-menu>` (`ZardDropdownMenuComponent`)
+**Category:** Navigation / Overlay
+**Forms compatible:** No
+**Purpose:** Self-contained dropdown that owns its own CDK overlay and projects its own trigger via `[dropdown-trigger]` — no external service wiring or template-reference variable needed, at the cost of not sharing the app-wide single-open-instance behavior of the primary pattern.
+
+#### Inputs
 
 | Input      | Binding      | Type         | Default | Description       |
 | ---------- | ------------ | ------------ | ------- | ----------------- |
 | `disabled` | `[disabled]` | `boolean`    | `false` | Disable trigger   |
 | `class`    | `[class]`    | `ClassValue` | `''`    | Extra CSS classes |
 
-### Outputs
+#### Outputs
 
 | Output       | Emits     | Description                         |
 | ------------ | --------- | ----------------------------------- |
 | `openChange` | `boolean` | Fires when dropdown opens or closes |
 
-### Content Projection
+#### Content Projection
 
-| Slot                 | Description                            |
-| -------------------- | -------------------------------------- |
-| `[dropdown-trigger]` | The element that triggers the dropdown |
-| Default              | Menu item content                      |
+| Slot                 | Description                              |
+| -------------------- | ------------------------------------------ |
+| `[dropdown-trigger]` | The element that triggers the dropdown     |
+| Default              | Menu item content (`<z-dropdown-menu-item>`) |
 
-### Visual Notes
+`exportAs: 'zDropdownMenu'`
 
-- Menu panel: `z-50 min-w-32 rounded-md border bg-popover p-2`.
-- Keyboard: ArrowDown/Up navigates, Enter/Space selects, Escape/Home/End supported.
-- `dropdownItemVariants`: `variant='default'|'destructive'`; `inset=true` adds `pl-8`.
+#### Visual Notes
 
-### Usage Examples
+- Menu panel uses the same `dropdownContentVariants()` classes as `<z-dropdown-menu-content>`.
+- Keyboard: ArrowDown/Up navigates, Enter/Space selects, Escape/Home/End supported — implemented internally by this component rather than by `ZardDropdownService`.
+
+#### Usage Examples
 
 ```html
 <z-dropdown-menu (openChange)="onOpen($event)">
   <button dropdown-trigger z-button zType="outline">Options</button>
-  <button [z-menu-item]>Edit</button>
-  <button [z-menu-item] zType="destructive">Delete</button>
+  <z-dropdown-menu-item (click)="edit()">Edit</z-dropdown-menu-item>
+  <z-dropdown-menu-item variant="destructive" (click)="delete()">Delete</z-dropdown-menu-item>
 </z-dropdown-menu>
 ```
+
+> **Prefer the `[z-dropdown]` + `[zDropdownMenu]` + `<z-dropdown-menu-content>` pattern above for new code** — it is the pattern used consistently everywhere else in the codebase.
 
 ---
 
