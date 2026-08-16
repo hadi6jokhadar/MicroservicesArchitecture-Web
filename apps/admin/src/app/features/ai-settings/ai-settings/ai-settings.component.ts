@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -8,8 +8,10 @@ import {
   AiSettingsService,
   IAiProviderSetting,
   MODEL_TYPE_OPTIONS,
+  queryParamNumber,
   TranslatePipe,
   TranslationService,
+  updateQueryParams,
 } from '@ihsan/core';
 import {
   ZardAlertDialogService,
@@ -70,6 +72,7 @@ export class AiSettingsComponent {
   private readonly _alertDialogService = inject(ZardAlertDialogService);
   private readonly _dialogService = inject(ZardDialogService);
   private readonly _eventsService = inject(AiSettingsEventsService);
+  private readonly _router = inject(Router);
 
   readonly isLoading = signal(false);
   readonly settings = signal<IAiProviderSetting[]>(
@@ -149,6 +152,55 @@ export class AiSettingsComponent {
         this.currentPage.set(totalPages);
       }
     });
+
+    // `scope` is server-only (no client-side equivalent in `filteredSettings`),
+    // so restoring it from a different value than currently loaded must
+    // refetch; page-only navigation (scope unchanged) must not, since paging
+    // is purely a client-side slice over the already-fetched `settings`.
+    this._route.queryParamMap
+      .pipe(takeUntilDestroyed())
+      .subscribe((map) => this.restoreFromQueryParams(map));
+  }
+
+  private restoreFromQueryParams(map: ParamMap): void {
+    const previousScope = this.filterForm.controls.scope.value;
+    this.currentPage.set(queryParamNumber(map, 'page', 1));
+    const restoredScope = (map.get('scope') as AiSettingsScopeFilter) || 'all';
+    this.filterForm.patchValue(
+      {
+        searchTerm: map.get('searchTerm') ?? '',
+        provider: map.get('provider') ?? '',
+        modelType: map.get('modelType') ?? '__all__',
+        scope: restoredScope,
+      },
+      { emitEvent: false }
+    );
+    this.filterValues.set(this.filterForm.getRawValue());
+    if (restoredScope !== previousScope) {
+      this.loadData();
+    }
+  }
+
+  private writeStateToUrl(replaceUrl = true): void {
+    const { searchTerm, provider, modelType, scope } =
+      this.filterForm.getRawValue();
+    updateQueryParams(
+      this._router,
+      this._route,
+      {
+        page: this.currentPage() > 1 ? this.currentPage() : undefined,
+        searchTerm: searchTerm || undefined,
+        provider: provider || undefined,
+        modelType: modelType !== '__all__' ? modelType : undefined,
+        scope: scope !== 'all' ? scope : undefined,
+      },
+      replaceUrl
+    );
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage.set(page);
+    this.writeStateToUrl(false);
   }
 
   loadData(): void {
@@ -173,6 +225,7 @@ export class AiSettingsComponent {
   onSearch(): void {
     this.loadData();
     this.currentPage.set(1);
+    this.writeStateToUrl();
   }
 
   onClearFilters(): void {
@@ -184,6 +237,7 @@ export class AiSettingsComponent {
     });
     this.loadData();
     this.currentPage.set(1);
+    this.writeStateToUrl();
   }
 
   onAddSetting(): void {

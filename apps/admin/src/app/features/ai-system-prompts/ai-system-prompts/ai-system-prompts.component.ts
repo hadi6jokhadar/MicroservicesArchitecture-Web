@@ -1,14 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   AiSystemPromptsService,
   IAiSystemPrompt,
+  queryParamNumber,
   SystemPromptScopeFilter,
   TranslatePipe,
   TranslationService,
+  updateQueryParams,
 } from '@ihsan/core';
 import {
   ZardAlertDialogService,
@@ -70,6 +72,7 @@ export class AiSystemPromptsComponent {
   private readonly _dialogService = inject(ZardDialogService);
   private readonly _sheetService = inject(ZardSheetService);
   private readonly _eventsService = inject(AiSystemPromptsEventsService);
+  private readonly _router = inject(Router);
 
   readonly isLoading = signal(false);
   readonly prompts = signal<IAiSystemPrompt[]>(
@@ -138,6 +141,47 @@ export class AiSystemPromptsComponent {
         this.currentPage.set(totalPages);
       }
     });
+
+    // `scope` is server-only (no client-side equivalent in `filteredPrompts`),
+    // so restoring it from a different value than currently loaded must
+    // refetch; page-only navigation (scope unchanged) must not, since paging
+    // is purely a client-side slice over the already-fetched `prompts`.
+    this._route.queryParamMap
+      .pipe(takeUntilDestroyed())
+      .subscribe((map) => this.restoreFromQueryParams(map));
+  }
+
+  private restoreFromQueryParams(map: ParamMap): void {
+    const previousScope = this.filterForm.controls.scope.value;
+    this.currentPage.set(queryParamNumber(map, 'page', 1));
+    const restoredScope = (map.get('scope') as SystemPromptScopeFilter) || 'all';
+    this.filterForm.patchValue(
+      { searchTerm: map.get('searchTerm') ?? '', scope: restoredScope },
+      { emitEvent: false }
+    );
+    this.filterValues.set(this.filterForm.getRawValue());
+    if (restoredScope !== previousScope) {
+      this.loadData();
+    }
+  }
+
+  private writeStateToUrl(replaceUrl = true): void {
+    const { searchTerm, scope } = this.filterForm.getRawValue();
+    updateQueryParams(
+      this._router,
+      this._route,
+      {
+        page: this.currentPage() > 1 ? this.currentPage() : undefined,
+        searchTerm: searchTerm || undefined,
+        scope: scope !== 'all' ? scope : undefined,
+      },
+      replaceUrl
+    );
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage.set(page);
+    this.writeStateToUrl(false);
   }
 
   loadData(): void {
@@ -162,6 +206,7 @@ export class AiSystemPromptsComponent {
   onSearch(): void {
     this.loadData();
     this.currentPage.set(1);
+    this.writeStateToUrl();
   }
 
   onClearFilters(): void {
@@ -171,6 +216,7 @@ export class AiSystemPromptsComponent {
     });
     this.loadData();
     this.currentPage.set(1);
+    this.writeStateToUrl();
   }
 
   onAddPrompt(): void {

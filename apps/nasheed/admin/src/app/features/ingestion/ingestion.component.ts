@@ -2,7 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslatePipe, TranslationService, RtlService } from '@ihsan/core';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import {
+  TranslatePipe,
+  TranslationService,
+  RtlService,
+  queryParamNumber,
+  updateQueryParams,
+} from '@ihsan/core';
 import {
   ZardButtonComponent,
   ZardCardComponent,
@@ -81,6 +88,8 @@ export class IngestionComponent {
   private readonly _rtlService = inject(RtlService);
   private readonly _alertDialogService = inject(ZardAlertDialogService);
   private readonly _translationService = inject(TranslationService);
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _router = inject(Router);
 
   readonly data = signal<IngestionJobModel[]>([]);
   readonly isLoading = signal(false);
@@ -142,16 +151,52 @@ export class IngestionComponent {
   });
 
   constructor() {
-    this.loadData();
-
     this.filterForm.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
       this.currentPage.set(1);
-      this.loadData();
+      this.writeStateToUrl();
     });
 
     this._ingestionEventsService.dataChanged$
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.loadData());
+
+    // Sole source of truth for fetching: restores state from the URL (initial
+    // load, in-app changes, and browser back/forward alike) then loads data.
+    this._route.queryParamMap
+      .pipe(takeUntilDestroyed())
+      .subscribe((map) => {
+        this.restoreFromQueryParams(map);
+        this.loadData();
+      });
+  }
+
+  private restoreFromQueryParams(map: ParamMap): void {
+    this.currentPage.set(queryParamNumber(map, 'page', 1));
+    const rawStatus = map.get('status');
+    const parsedStatus = rawStatus !== null ? Number(rawStatus) : NaN;
+    const rawType = map.get('type');
+    const parsedType = rawType !== null ? Number(rawType) : NaN;
+    this.filterForm.patchValue(
+      {
+        status: Number.isFinite(parsedStatus) ? String(parsedStatus) : 'all',
+        type: Number.isFinite(parsedType) ? String(parsedType) : 'all',
+      },
+      { emitEvent: false },
+    );
+  }
+
+  private writeStateToUrl(replaceUrl = true): void {
+    const { status, type } = this.filterForm.getRawValue();
+    updateQueryParams(
+      this._router,
+      this._route,
+      {
+        page: this.currentPage() > 1 ? this.currentPage() : undefined,
+        status: status !== 'all' ? status : undefined,
+        type: type !== 'all' ? type : undefined,
+      },
+      replaceUrl,
+    );
   }
 
   loadData(): void {
@@ -184,7 +229,7 @@ export class IngestionComponent {
 
   onPageChange(page: number): void {
     this.currentPage.set(page);
-    this.loadData();
+    this.writeStateToUrl(false);
   }
 
   onViewJob(job: IngestionJobModel): void {
@@ -279,6 +324,68 @@ export class IngestionComponent {
             description: `${this._translationService.getCachedTranslation('#anashid#.ingestion.analysisStatus.songState')}: ${this._translationService.getCachedTranslation(songStateKey)} | ${this._translationService.getCachedTranslation('#anashid#.ingestion.analysisStatus.searchIndex')}: ${this._translationService.getCachedTranslation(searchIndexKey)}`,
           },
         );
+      },
+    });
+  }
+
+  onRetryAllFailed(): void {
+    this._alertDialogService.confirm({
+      zTitle: this._translationService.getCachedTranslation(
+        '#anashid#.ingestion.dialog.retryAllFailedTitle',
+      ),
+      zDescription: this._translationService.getCachedTranslation(
+        '#anashid#.ingestion.dialog.retryAllFailedDescription',
+      ),
+      zOkText: this._translationService.getCachedTranslation(
+        '#anashid#.ingestion.actions.retryAllFailed',
+      ),
+      zCancelText:
+        this._translationService.getCachedTranslation('common.cancel'),
+      zOnOk: () => {
+        this._ingestionService.retryAllFailed().subscribe({
+          next: (result) => {
+            toast.success(
+              this._translationService.getCachedTranslation(
+                '#anashid#.ingestion.messages.retriedAllResult',
+                undefined,
+                {
+                  retried: result.retriedCount,
+                  skipped: result.skippedCount,
+                },
+              ),
+            );
+            this.loadData();
+          },
+        });
+      },
+    });
+  }
+
+  onRemoveAllFailed(): void {
+    this._alertDialogService.confirm({
+      zTitle: this._translationService.getCachedTranslation(
+        '#anashid#.ingestion.dialog.removeAllFailedTitle',
+      ),
+      zDescription: this._translationService.getCachedTranslation(
+        '#anashid#.ingestion.dialog.removeAllFailedDescription',
+      ),
+      zOkText: this._translationService.getCachedTranslation('common.delete'),
+      zCancelText:
+        this._translationService.getCachedTranslation('common.cancel'),
+      zOkDestructive: true,
+      zOnOk: () => {
+        this._ingestionService.removeAllFailed().subscribe({
+          next: (result) => {
+            toast.success(
+              this._translationService.getCachedTranslation(
+                '#anashid#.ingestion.messages.removedAllResult',
+                undefined,
+                { count: result.removedCount },
+              ),
+            );
+            this.loadData();
+          },
+        });
       },
     });
   }

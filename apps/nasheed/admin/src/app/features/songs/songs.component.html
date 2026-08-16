@@ -32,7 +32,7 @@
           #s="zardId"
         >
           <label z-form-label [for]="s.id()">
-            {{ 'common.title' | translate }}
+            {{ 'common.search' | translate }}
           </label>
           <z-form-control>
             <div class="search-input-wrapper">
@@ -43,7 +43,7 @@
                 type="text"
                 formControlName="searchTerm"
                 [placeholder]="
-                  '#anashid#.songs.filter.titlePlaceholder' | translate
+                  '#anashid#.songs.filter.searchPlaceholder' | translate
                 "
                 (keyup.enter)="onSearch()"
               />

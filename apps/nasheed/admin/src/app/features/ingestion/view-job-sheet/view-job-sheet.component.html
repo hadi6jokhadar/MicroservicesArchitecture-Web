@@ -38,9 +38,18 @@
         <div class="detail-group">
           <span class="detail-label">
             <z-icon zType="music" class="label-icon" />
-            {{ '#anashid#.ingestion.sheet.songId' | translate }}
+            {{ '#anashid#.ingestion.sheet.song' | translate }}
           </span>
-          <span class="detail-value mono">{{ job.songId }}</span>
+          <span class="detail-value">
+            @if (job.songTitle) {
+              {{ job.songTitle }}
+              <span class="detail-value mono song-id-suffix"
+                >(#{{ job.songId }})</span
+              >
+            } @else {
+              <span class="mono">{{ job.songId }}</span>
+            }
+          </span>
         </div>
 
         <div class="detail-group">

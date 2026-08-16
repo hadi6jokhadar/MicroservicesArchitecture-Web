@@ -6,16 +6,38 @@
         <h1>{{ '#anashid#.ingestion.title' | translate }}</h1>
         <p>{{ '#anashid#.ingestion.subtitle' | translate }}</p>
       </div>
-      <button
-        z-button
-        zType="outline"
-        zSize="lg"
-        (click)="loadData()"
-        id="refresh-jobs-button"
-      >
-        <z-icon zType="loader-circle" />
-        {{ 'common.refresh' | translate }}
-      </button>
+      <div class="header-actions">
+        <button
+          z-button
+          zType="outline"
+          zSize="lg"
+          (click)="onRetryAllFailed()"
+          id="retry-all-failed-button"
+        >
+          <z-icon zType="refresh-cw" />
+          {{ '#anashid#.ingestion.actions.retryAllFailed' | translate }}
+        </button>
+        <button
+          z-button
+          zType="destructive"
+          zSize="lg"
+          (click)="onRemoveAllFailed()"
+          id="remove-all-failed-button"
+        >
+          <z-icon zType="trash" />
+          {{ '#anashid#.ingestion.actions.removeAllFailed' | translate }}
+        </button>
+        <button
+          z-button
+          zType="outline"
+          zSize="lg"
+          (click)="loadData()"
+          id="refresh-jobs-button"
+        >
+          <z-icon zType="loader-circle" />
+          {{ 'common.refresh' | translate }}
+        </button>
+      </div>
     </div>
   </div>
 

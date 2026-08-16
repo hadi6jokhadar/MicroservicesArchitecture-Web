@@ -1,11 +1,13 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import {
   CategoryService,
   ICategoryDto,
   TranslatePipe,
   TranslationService,
+  updateQueryParams,
 } from '@ihsan/core';
 import {
   ZardAlertDialogService,
@@ -50,12 +52,14 @@ interface ICategoryFilterForm {
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.scss'],
 })
-export class CategoriesComponent implements OnInit {
+export class CategoriesComponent {
   private readonly _categoryService = inject(CategoryService);
   private readonly _alertDialogService = inject(ZardAlertDialogService);
   private readonly _dialogService = inject(ZardDialogService);
   private readonly _translationService = inject(TranslationService);
   private readonly _categoryEvents = inject(CategoryEventsService);
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _router = inject(Router);
 
   readonly categories = signal<ICategoryDto[]>([]);
   readonly isLoading = signal(false);
@@ -85,11 +89,30 @@ export class CategoriesComponent implements OnInit {
         distinctUntilChanged(),
         takeUntilDestroyed(),
       )
-      .subscribe((term) => this.loadTree(term));
+      .subscribe(() => this.writeStateToUrl());
+
+    // Sole source of truth for fetching: restores state from the URL (initial
+    // load, in-app changes, and browser back/forward alike) then loads data.
+    this._route.queryParamMap
+      .pipe(takeUntilDestroyed())
+      .subscribe((map) => {
+        this.restoreFromQueryParams(map);
+        this.loadTree(this.filterForm.getRawValue().searchTerm);
+      });
   }
 
-  ngOnInit(): void {
-    this.loadTree();
+  private restoreFromQueryParams(map: ParamMap): void {
+    this.filterForm.patchValue(
+      { searchTerm: map.get('searchTerm') ?? '' },
+      { emitEvent: false },
+    );
+  }
+
+  private writeStateToUrl(): void {
+    const { searchTerm } = this.filterForm.getRawValue();
+    updateQueryParams(this._router, this._route, {
+      searchTerm: searchTerm || undefined,
+    });
   }
 
   loadTree(textFilter?: string): void {

@@ -223,7 +223,8 @@
       <div class="pagination-container">
         <z-pagination
           [zTotal]="totalPages()"
-          [(zPageIndex)]="currentPage"
+          [zPageIndex]="currentPage()"
+          (zPageIndexChange)="onPageChange($event)"
         ></z-pagination>
       </div>
     </div>

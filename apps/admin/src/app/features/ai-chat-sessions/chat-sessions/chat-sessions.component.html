@@ -191,7 +191,11 @@
 
       @if (totalPages() > 1) {
       <div class="pagination-container">
-        <z-pagination [zTotal]="totalPages()" [(zPageIndex)]="currentPage" />
+        <z-pagination
+          [zTotal]="totalPages()"
+          [zPageIndex]="currentPage()"
+          (zPageIndexChange)="onPageChange($event)"
+        />
       </div>
       }
     </div>

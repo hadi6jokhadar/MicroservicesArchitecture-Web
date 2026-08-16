@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import {
   AuditLogService,
   AuditLogSource,
@@ -15,6 +16,8 @@ import {
   IPaginatedResponse,
   TranslatePipe,
   TranslationService,
+  queryParamNumber,
+  updateQueryParams,
 } from '@ihsan/core';
 import {
   ZardBadgeComponent,
@@ -74,6 +77,8 @@ interface IAuditLogFilterForm {
 export class AuditLogListComponent {
   private readonly _auditLogService = inject(AuditLogService);
   private readonly _translationService = inject(TranslationService);
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _router = inject(Router);
 
   readonly isLoading = signal(false);
   readonly logs = signal<IAuditLog[]>([]);
@@ -121,10 +126,72 @@ export class AuditLogListComponent {
       .subscribe((src) => {
         this.selectedSource.set(src);
         this.currentPage.set(1);
-        this.loadData();
+        this.writeStateToUrl();
       });
 
-    this.loadData();
+    // Sole source of truth for fetching: restores state from the URL (initial
+    // load, in-app changes, and browser back/forward alike) then loads data.
+    this._route.queryParamMap
+      .pipe(takeUntilDestroyed())
+      .subscribe((map) => {
+        this.restoreFromQueryParams(map);
+        this.loadData();
+      });
+  }
+
+  private restoreFromQueryParams(map: ParamMap): void {
+    this.currentPage.set(queryParamNumber(map, 'page', 1));
+
+    const source = (map.get('source') as AuditLogSource | null) ?? 'identity';
+    this.sourceForm.patchValue({ source }, { emitEvent: false });
+    this.selectedSource.set(source);
+
+    this.filterForm.patchValue(
+      {
+        userId: map.get('userId') ?? '',
+        action: map.get('action') ?? '',
+        entityType: map.get('entityType') ?? '',
+        startDate: map.get('startDate')
+          ? new Date(map.get('startDate') as string)
+          : null,
+        endDate: map.get('endDate')
+          ? new Date(map.get('endDate') as string)
+          : null,
+        sortBy: map.get('sortBy') ?? 'timestamp',
+        sortDescending: map.get('sortDescending') ?? 'true',
+      },
+      { emitEvent: false },
+    );
+  }
+
+  private writeStateToUrl(replaceUrl = true): void {
+    const {
+      userId,
+      action,
+      entityType,
+      startDate,
+      endDate,
+      sortBy,
+      sortDescending,
+    } = this.filterForm.getRawValue();
+    const source = this.sourceForm.controls.source.value;
+
+    updateQueryParams(
+      this._router,
+      this._route,
+      {
+        page: this.currentPage() > 1 ? this.currentPage() : undefined,
+        source: source !== 'identity' ? source : undefined,
+        userId: userId || undefined,
+        action: action || undefined,
+        entityType: entityType || undefined,
+        startDate: startDate ? startDate.toISOString() : undefined,
+        endDate: endDate ? endDate.toISOString() : undefined,
+        sortBy: sortBy !== 'timestamp' ? sortBy : undefined,
+        sortDescending: sortDescending !== 'true' ? sortDescending : undefined,
+      },
+      replaceUrl,
+    );
   }
 
   loadData(): void {
@@ -163,7 +230,7 @@ export class AuditLogListComponent {
 
   onSearch(): void {
     this.currentPage.set(1);
-    this.loadData();
+    this.writeStateToUrl();
   }
 
   onClearFilters(): void {
@@ -177,12 +244,12 @@ export class AuditLogListComponent {
       sortDescending: 'true',
     });
     this.currentPage.set(1);
-    this.loadData();
+    this.writeStateToUrl();
   }
 
   onPageChange(page: number): void {
     this.currentPage.set(page);
-    this.loadData();
+    this.writeStateToUrl(false);
   }
 
   readonly expandedLogId = signal<string | null>(null);

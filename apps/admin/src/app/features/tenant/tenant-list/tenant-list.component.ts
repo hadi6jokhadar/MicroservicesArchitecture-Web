@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import {
   ENVIRONMENT,
   ITenant,
@@ -9,6 +10,9 @@ import {
   TenantService,
   TranslatePipe,
   TranslationService,
+  queryParamBoolean,
+  queryParamNumber,
+  updateQueryParams,
 } from '@ihsan/core';
 import {
   ZardAlertDialogService,
@@ -85,6 +89,8 @@ export class TenantListComponent {
   private readonly _translationService = inject(TranslationService);
   private readonly _eventsService = inject(TenantEventsService);
   private readonly _sheetService = inject(ZardSheetService);
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _router = inject(Router);
   protected readonly _env = inject(ENVIRONMENT);
 
   // Signals
@@ -109,23 +115,59 @@ export class TenantListComponent {
   private previousIsArchived = '__all__';
 
   constructor() {
-    // Watch for page changes
-    effect(() => {
-      this.loadData();
-    });
-
     // Watch for filter changes
     this.filterForm.valueChanges
       .pipe(takeUntilDestroyed(), debounceTime(300))
       .subscribe(() => {
         this.currentPage.set(1);
-        this.loadData();
+        this.writeStateToUrl();
       });
 
     // Listen for events
     this._eventsService.dataChanged$
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.loadData());
+
+    // Sole source of truth for fetching: restores state from the URL (initial
+    // load, in-app changes, and browser back/forward alike) then loads data.
+    this._route.queryParamMap
+      .pipe(takeUntilDestroyed())
+      .subscribe((map) => {
+        this.restoreFromQueryParams(map);
+        this.loadData();
+      });
+  }
+
+  private restoreFromQueryParams(map: ParamMap): void {
+    this.currentPage.set(queryParamNumber(map, 'page', 1));
+    this.filterForm.patchValue(
+      {
+        searchTerm: map.get('searchTerm') ?? '',
+        isActive: map.get('isActive') ?? '__all__',
+        isArchived: queryParamBoolean(map, 'isArchived', false),
+      },
+      { emitEvent: false }
+    );
+  }
+
+  private writeStateToUrl(replaceUrl = true): void {
+    const { searchTerm, isActive, isArchived } = this.filterForm.getRawValue();
+    updateQueryParams(
+      this._router,
+      this._route,
+      {
+        page: this.currentPage() > 1 ? this.currentPage() : undefined,
+        searchTerm: searchTerm || undefined,
+        isActive: isActive !== '__all__' ? isActive : undefined,
+        isArchived: isArchived ? 'true' : undefined,
+      },
+      replaceUrl
+    );
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage.set(page);
+    this.writeStateToUrl(false);
   }
 
   loadData(): void {
@@ -161,7 +203,7 @@ export class TenantListComponent {
 
   onSearch(): void {
     this.currentPage.set(1);
-    this.loadData();
+    this.writeStateToUrl();
   }
 
   onClearFilters(): void {

@@ -8,6 +8,8 @@ import {
   IngestionJobModel,
   mapIngestionJobFromApi,
   PaginatedList,
+  RemoveAllFailedIngestionJobsResult,
+  RetryAllFailedIngestionJobsResult,
   SongModel,
 } from '../models';
 import { IIngestionJobQuery } from '../interfaces';
@@ -63,6 +65,19 @@ export class IngestionJobService {
 
   remove(id: number): Observable<void> {
     return this._http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  retryAllFailed(): Observable<RetryAllFailedIngestionJobsResult> {
+    return this._http.post<RetryAllFailedIngestionJobsResult>(
+      `${this.baseUrl}/failed/retry-all`,
+      {},
+    );
+  }
+
+  removeAllFailed(): Observable<RemoveAllFailedIngestionJobsResult> {
+    return this._http.delete<RemoveAllFailedIngestionJobsResult>(
+      `${this.baseUrl}/failed`,
+    );
   }
 
   reindex(songId: number): Observable<IngestionJobModel> {

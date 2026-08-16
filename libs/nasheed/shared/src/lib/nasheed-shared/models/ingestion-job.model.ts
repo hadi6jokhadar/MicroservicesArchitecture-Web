@@ -4,6 +4,7 @@ import { IngestionJobStatus } from '../enums/ingestion-job-status.enum';
 export interface IngestionJobModel {
   id: number;
   songId: number;
+  songTitle?: string;
   fileId: number;
   type: IngestionJobType;
   status: IngestionJobStatus;
@@ -18,6 +19,7 @@ export interface IngestionJobModel {
 export interface IngestionJobApiModel {
   id: number;
   songId: number;
+  songTitle?: string | null;
   fileId: number;
   jobType: IngestionJobType;
   jobStatus: IngestionJobStatus;
@@ -29,12 +31,22 @@ export interface IngestionJobApiModel {
   created: string;
 }
 
+export interface RetryAllFailedIngestionJobsResult {
+  retriedCount: number;
+  skippedCount: number;
+}
+
+export interface RemoveAllFailedIngestionJobsResult {
+  removedCount: number;
+}
+
 export function mapIngestionJobFromApi(
   job: IngestionJobApiModel,
 ): IngestionJobModel {
   return {
     id: job.id,
     songId: job.songId,
+    songTitle: job.songTitle ?? undefined,
     fileId: job.fileId,
     type: job.jobType,
     status: job.jobStatus,

@@ -1,6 +1,6 @@
 # Frontend Documentation Index
 
-**Last Updated:** August 13, 2026  
+**Last Updated:** August 16, 2026  
 **Purpose:** Central entry point for all Angular frontend documentation
 
 ---
@@ -20,6 +20,7 @@
 | **HTTP Interceptors**  | [ERROR_HANDLER_USAGE_GUIDE → HTTP Interceptors Reference](#error-handler-usage-guide)                                                       |
 | **Design Patterns**    | [PAGE_CONTAINER_DESIGN_PATTERN](#page-container-design-pattern)                                                                             |
 | **Real-Time / SignalR** | [REALTIME_NOTIFICATIONS_GUIDE](#realtime-notifications-guide)                                                                              |
+| **URL / Routing State** | [URL_QUERY_PARAM_SYNC_GUIDE](#url_query_param_sync_guide)                                                                                   |
 
 ---
 
@@ -344,6 +345,28 @@
 
 ---
 
+### URL / Routing State
+
+#### URL_QUERY_PARAM_SYNC_GUIDE.md
+
+**Purpose:** How every list/table page's filters and pagination sync to the URL's query params, so a link to a filtered+paginated view can be shared/bookmarked, and browser back/forward works
+**Read When:**
+
+- Creating a new list/table page
+- Adding a new filter field to an existing list page
+- Debugging why a shared link doesn't reproduce the expected filtered view, or why pagination/back-forward behaves unexpectedly
+- Deciding whether a page's data-loading is genuinely server-paginated vs client-side filtered over a resolver-preloaded dataset
+
+**Key Topics:**
+
+- Why `ActivatedRoute.queryParamMap` (not `ngOnInit`) must be the sole fetch trigger, given the default route-reuse strategy
+- The shared `@ihsan/core` utility (`updateQueryParams`, `queryParamNumber`, `queryParamBoolean`)
+- `replaceUrl` convention (filters vs page changes)
+- The client-side-filtered-page variant (resolver-preloaded datasets, server-only fields like `scope`)
+- Multi-mount consideration for the shared identity feature lib
+
+---
+
 ### Error Handling & HTTP Interceptors
 
 #### ERROR_HANDLER_USAGE_GUIDE.md
@@ -387,7 +410,7 @@
 - ❌ `IMPLEMENTATION_SUMMARY_FRONTEND_ERROR_INTERCEPTOR.md` - Temporary summary (removed)
 
 **Total files removed:** 10  
-**Current file count:** 18, plus this index (verified against `Doc/*.md` on disk, August 2026)
+**Current file count:** 19, plus this index (verified against `Doc/*.md` on disk, August 2026)
 
 ---
 
@@ -437,6 +460,7 @@ Each documentation file should have:
 | Gate a page/button by a Permission claim (not a role) | PERMISSIONS_GUIDE.md                     |
 | Hide/show UI or a route by tenant feature flag   | FEATURE_FLAGS_GUIDE.md                        |
 | Connect to the SignalR notification hub          | REALTIME_NOTIFICATIONS_GUIDE.md               |
+| Sync a list page's filters/pagination to the URL | URL_QUERY_PARAM_SYNC_GUIDE.md                 |
 
 ---
 

@@ -1,7 +1,8 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import {
   NotificationService,
   IQueueItemDto,
@@ -12,6 +13,9 @@ import {
   QueueStatus,
   TranslatePipe,
   RtlService,
+  queryParamBoolean,
+  queryParamNumber,
+  updateQueryParams,
 } from '@ihsan/core';
 import {
   ZardAlertDialogService,
@@ -67,7 +71,7 @@ interface INotificationFilterForm {
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.scss'],
 })
-export class NotificationsComponent implements OnInit {
+export class NotificationsComponent {
   private readonly _notificationService = inject(NotificationService);
   private readonly _translationService = inject(TranslationService);
   private readonly _alertDialogService = inject(ZardAlertDialogService);
@@ -75,6 +79,8 @@ export class NotificationsComponent implements OnInit {
   private readonly _dialogService = inject(ZardDialogService);
   private readonly _rtlService = inject(RtlService);
   private readonly _notificationEvents = inject(NotificationEventsService);
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _router = inject(Router);
 
   readonly queueItems = signal<IQueueItemDto[]>([]);
   readonly isLoading = signal(false);
@@ -89,19 +95,12 @@ export class NotificationsComponent implements OnInit {
   });
 
   constructor() {
-    effect(() => {
-      const page = this.currentPage();
-      if (page > 1) {
-        this.loadQueueItems();
-      }
-    });
-
     this.filterForm
       .get('isArchived')
       ?.valueChanges.pipe(takeUntilDestroyed())
       .subscribe(() => {
         this.currentPage.set(1);
-        this.loadQueueItems();
+        this.writeStateToUrl();
       });
 
     this._notificationEvents.dataChanged$
@@ -109,10 +108,45 @@ export class NotificationsComponent implements OnInit {
       .subscribe(() => {
         this.loadQueueItems();
       });
+
+    // Sole source of truth for fetching: restores state from the URL (initial
+    // load, in-app changes, and browser back/forward alike) then loads data.
+    this._route.queryParamMap
+      .pipe(takeUntilDestroyed())
+      .subscribe((map) => {
+        this.restoreFromQueryParams(map);
+        this.loadQueueItems();
+      });
   }
 
-  ngOnInit(): void {
-    this.loadQueueItems();
+  private restoreFromQueryParams(map: ParamMap): void {
+    this.currentPage.set(queryParamNumber(map, 'page', 1));
+    this.filterForm.patchValue(
+      {
+        searchTerm: map.get('searchTerm') ?? '',
+        isArchived: queryParamBoolean(map, 'isArchived', false),
+      },
+      { emitEvent: false }
+    );
+  }
+
+  private writeStateToUrl(replaceUrl = true): void {
+    const { searchTerm, isArchived } = this.filterForm.getRawValue();
+    updateQueryParams(
+      this._router,
+      this._route,
+      {
+        page: this.currentPage() > 1 ? this.currentPage() : undefined,
+        searchTerm: searchTerm || undefined,
+        isArchived: isArchived ? 'true' : undefined,
+      },
+      replaceUrl
+    );
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage.set(page);
+    this.writeStateToUrl(false);
   }
 
   loadQueueItems(): void {
@@ -147,7 +181,7 @@ export class NotificationsComponent implements OnInit {
 
   onSearch(): void {
     this.currentPage.set(1);
-    this.loadQueueItems();
+    this.writeStateToUrl();
   }
 
   onClearFilters(): void {
@@ -156,7 +190,7 @@ export class NotificationsComponent implements OnInit {
       isArchived: false,
     });
     this.currentPage.set(1);
-    this.loadQueueItems();
+    this.writeStateToUrl();
   }
 
   onSendNotification(): void {

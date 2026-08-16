@@ -1,12 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import {
   ClaimService,
   IRole,
   RoleService,
   TranslatePipe,
   TranslationService,
+  updateQueryParams,
 } from '@ihsan/core';
 import {
   ZardAlertDialogService,
@@ -69,6 +71,8 @@ export class RolesComponent {
   private readonly _translationService = inject(TranslationService);
   private readonly _dialogService = inject(ZardDialogService);
   private readonly _alertDialogService = inject(ZardAlertDialogService);
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _router = inject(Router);
 
   readonly isLoading = signal(false);
   readonly roles = signal<IRole[]>([]);
@@ -79,14 +83,37 @@ export class RolesComponent {
   });
 
   constructor() {
-    this.loadRoles();
-
     // Watch for search term changes using takeUntilDestroyed for proper cleanup
     this.filterForm.controls.searchTerm.valueChanges
       .pipe(takeUntilDestroyed())
       .subscribe(() => {
-        this.applyFilter();
+        this.writeStateToUrl();
       });
+
+    // Sole source of truth for fetching: restores state from the URL (initial
+    // load, in-app changes, and browser back/forward alike) then loads data.
+    this._route.queryParamMap
+      .pipe(takeUntilDestroyed())
+      .subscribe((map) => {
+        this.restoreFromQueryParams(map);
+        this.loadRoles();
+      });
+  }
+
+  private restoreFromQueryParams(map: ParamMap): void {
+    this.filterForm.patchValue(
+      {
+        searchTerm: map.get('searchTerm') ?? '',
+      },
+      { emitEvent: false },
+    );
+  }
+
+  private writeStateToUrl(): void {
+    const { searchTerm } = this.filterForm.getRawValue();
+    updateQueryParams(this._router, this._route, {
+      searchTerm: searchTerm || undefined,
+    });
   }
 
   private applyFilter(): void {

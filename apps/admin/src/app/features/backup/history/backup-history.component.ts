@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
 import {
   BackupService,
@@ -10,6 +11,8 @@ import {
   IRestoreRun,
   TranslatePipe,
   TranslationService,
+  queryParamNumber,
+  updateQueryParams,
 } from '@ihsan/core';
 import {
   ZardButtonComponent,
@@ -84,6 +87,8 @@ export class BackupHistoryComponent {
   private readonly _sheetService = inject(ZardSheetService);
   private readonly _backupEvents = inject(BackupEventsService);
   private readonly _translationService = inject(TranslationService);
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _router = inject(Router);
 
   // Tab state
   readonly activeTab = signal<'backups' | 'restores'>('backups');
@@ -118,22 +123,12 @@ export class BackupHistoryComponent {
   });
 
   constructor() {
-    // Watch for page changes (backups)
-    effect(() => {
-      this.loadData();
-    });
-
-    // Watch for page changes (restores)
-    effect(() => {
-      this.loadRestoreData();
-    });
-
     // Watch for filter changes
     this.filterForm.valueChanges
       .pipe(takeUntilDestroyed(), debounceTime(300))
       .subscribe(() => {
         this.currentPage.set(1);
-        this.loadData();
+        this.writeStateToUrl();
       });
 
     // Listen for events triggered elsewhere (overview page, sheet, dialog)
@@ -143,6 +138,60 @@ export class BackupHistoryComponent {
         this.loadData();
         this.loadRestoreData();
       });
+
+    // Sole source of truth for fetching: restores state from the URL (initial
+    // load, in-app changes, and browser back/forward alike) then loads data.
+    this._route.queryParamMap
+      .pipe(takeUntilDestroyed())
+      .subscribe((map) => {
+        this.restoreFromQueryParams(map);
+        this.loadData();
+        this.loadRestoreData();
+      });
+  }
+
+  private restoreFromQueryParams(map: ParamMap): void {
+    this.activeTab.set(map.get('tab') === 'restores' ? 'restores' : 'backups');
+    this.currentPage.set(queryParamNumber(map, 'page', 1));
+    this.restoreCurrentPage.set(queryParamNumber(map, 'restorePage', 1));
+    this.filterForm.patchValue(
+      {
+        scope: map.get('scope') ?? 'all',
+        status: map.get('status') ?? 'all',
+        serviceName: map.get('serviceName') ?? '',
+        tenantId: map.get('tenantId') ?? '',
+      },
+      { emitEvent: false }
+    );
+  }
+
+  private writeStateToUrl(replaceUrl = true): void {
+    const { scope, status, serviceName, tenantId } = this.filterForm.getRawValue();
+    updateQueryParams(
+      this._router,
+      this._route,
+      {
+        tab: this.activeTab() === 'restores' ? 'restores' : undefined,
+        page: this.currentPage() > 1 ? this.currentPage() : undefined,
+        restorePage:
+          this.restoreCurrentPage() > 1 ? this.restoreCurrentPage() : undefined,
+        scope: scope !== 'all' ? scope : undefined,
+        status: status !== 'all' ? status : undefined,
+        serviceName: serviceName || undefined,
+        tenantId: tenantId || undefined,
+      },
+      replaceUrl
+    );
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage.set(page);
+    this.writeStateToUrl(false);
+  }
+
+  onRestorePageChange(page: number): void {
+    this.restoreCurrentPage.set(page);
+    this.writeStateToUrl(false);
   }
 
   loadData(): void {
@@ -171,11 +220,12 @@ export class BackupHistoryComponent {
 
   onTabChange(tab: 'backups' | 'restores'): void {
     this.activeTab.set(tab);
+    this.writeStateToUrl();
   }
 
   onSearch(): void {
     this.currentPage.set(1);
-    this.loadData();
+    this.writeStateToUrl();
   }
 
   onClearFilters(): void {

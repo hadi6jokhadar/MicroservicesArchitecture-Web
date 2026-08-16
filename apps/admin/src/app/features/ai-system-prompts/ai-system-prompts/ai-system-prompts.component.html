@@ -260,7 +260,8 @@
         <z-pagination
           zSize="sm"
           [zTotal]="totalPages()"
-          [(zPageIndex)]="currentPage"
+          [zPageIndex]="currentPage()"
+          (zPageIndexChange)="onPageChange($event)"
         />
       </div>
       }

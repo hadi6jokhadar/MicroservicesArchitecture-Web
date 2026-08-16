@@ -2,13 +2,15 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import {
   AiChatService,
   IAiChatSession,
+  queryParamNumber,
   RtlService,
   TranslatePipe,
   TranslationService,
+  updateQueryParams,
 } from '@ihsan/core';
 import {
   ZardBadgeComponent,
@@ -61,6 +63,7 @@ export class ChatSessionsComponent {
   private readonly _translationService = inject(TranslationService);
   private readonly _sheetService = inject(ZardSheetService);
   private readonly _rtlService = inject(RtlService);
+  private readonly _router = inject(Router);
 
   readonly isLoading = signal(false);
   readonly sessions = signal<IAiChatSession[]>(
@@ -112,6 +115,7 @@ export class ChatSessionsComponent {
     this.filterForm.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
       this.filterValues.set(this.filterForm.getRawValue());
       this.currentPage.set(1);
+      this.writeStateToUrl();
     });
 
     effect(() => {
@@ -119,6 +123,42 @@ export class ChatSessionsComponent {
         this.currentPage.set(this.totalPages());
       }
     });
+
+    // Data is client-side filtered/paginated over the resolver-preloaded
+    // `sessions` signal — restoring from the URL needs no HTTP call, the
+    // `computed()`s below react to the restored form/page state automatically.
+    this._route.queryParamMap
+      .pipe(takeUntilDestroyed())
+      .subscribe((map) => this.restoreFromQueryParams(map));
+  }
+
+  private restoreFromQueryParams(map: ParamMap): void {
+    this.currentPage.set(queryParamNumber(map, 'page', 1));
+    const restored = {
+      searchTerm: map.get('searchTerm') ?? '',
+      userId: map.get('userId') ?? '',
+    };
+    this.filterForm.patchValue(restored, { emitEvent: false });
+    this.filterValues.set(this.filterForm.getRawValue());
+  }
+
+  private writeStateToUrl(replaceUrl = true): void {
+    const { searchTerm, userId } = this.filterForm.getRawValue();
+    updateQueryParams(
+      this._router,
+      this._route,
+      {
+        page: this.currentPage() > 1 ? this.currentPage() : undefined,
+        searchTerm: searchTerm || undefined,
+        userId: userId || undefined,
+      },
+      replaceUrl
+    );
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage.set(page);
+    this.writeStateToUrl(false);
   }
 
   loadData(): void {
@@ -145,12 +185,14 @@ export class ChatSessionsComponent {
   onSearch(): void {
     this.loadData();
     this.currentPage.set(1);
+    this.writeStateToUrl();
   }
 
   onClearFilters(): void {
     this.filterForm.reset({ searchTerm: '', userId: '' });
     this.loadData();
     this.currentPage.set(1);
+    this.writeStateToUrl();
   }
 
   onViewSession(session: IAiChatSession): void {

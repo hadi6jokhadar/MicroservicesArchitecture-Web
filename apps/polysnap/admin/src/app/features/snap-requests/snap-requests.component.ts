@@ -1,8 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { RtlService, TranslatePipe, TranslationService } from '@ihsan/core';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import {
+  queryParamNumber,
+  RtlService,
+  TranslatePipe,
+  TranslationService,
+  updateQueryParams,
+} from '@ihsan/core';
 import {
   ZardAlertDialogService,
   ZardBadgeComponent,
@@ -54,7 +61,7 @@ interface ISnapRequestFilterForm {
   templateUrl: './snap-requests.component.html',
   styleUrls: ['./snap-requests.component.scss'],
 })
-export class SnapRequestsComponent implements OnInit {
+export class SnapRequestsComponent {
   private readonly _snapRequestService = inject(SnapRequestService);
   private readonly _alertDialogService = inject(ZardAlertDialogService);
   private readonly _sheetService = inject(ZardSheetService);
@@ -62,6 +69,8 @@ export class SnapRequestsComponent implements OnInit {
   private readonly _rtlService = inject(RtlService);
   private readonly _translationService = inject(TranslationService);
   private readonly _snapRequestEvents = inject(SnapRequestEventsService);
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _router = inject(Router);
 
   // Signals
   readonly snapRequests = signal<ISnapRequestDto[]>([]);
@@ -77,24 +86,47 @@ export class SnapRequestsComponent implements OnInit {
   });
 
   constructor() {
-    // Watch for page changes and reload snap requests
-    effect(() => {
-      const page = this.currentPage();
-      if (page > 1) {
-        this.loadSnapRequests();
-      }
-    });
-
     // Reload on dialog/sheet success events
     this._snapRequestEvents.snapRequestsChanged$
       .pipe(takeUntilDestroyed())
       .subscribe(() => {
         this.loadSnapRequests();
       });
+
+    // Sole source of truth for fetching: restores state from the URL (initial
+    // load, in-app changes, and browser back/forward alike) then loads data.
+    this._route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((map) => {
+      this.restoreFromQueryParams(map);
+      this.loadSnapRequests();
+    });
   }
 
-  ngOnInit(): void {
-    this.loadSnapRequests();
+  private restoreFromQueryParams(map: ParamMap): void {
+    this.currentPage.set(queryParamNumber(map, 'page', 1));
+    this.filterForm.patchValue(
+      {
+        searchTerm: map.get('searchTerm') ?? '',
+      },
+      { emitEvent: false }
+    );
+  }
+
+  private writeStateToUrl(replaceUrl = true): void {
+    const { searchTerm } = this.filterForm.getRawValue();
+    updateQueryParams(
+      this._router,
+      this._route,
+      {
+        page: this.currentPage() > 1 ? this.currentPage() : undefined,
+        searchTerm: searchTerm || undefined,
+      },
+      replaceUrl
+    );
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage.set(page);
+    this.writeStateToUrl(false);
   }
 
   loadSnapRequests(): void {
@@ -129,13 +161,13 @@ export class SnapRequestsComponent implements OnInit {
 
   onSearch(): void {
     this.currentPage.set(1);
-    this.loadSnapRequests();
+    this.writeStateToUrl();
   }
 
   onClearFilters(): void {
     this.filterForm.reset({ searchTerm: '' });
     this.currentPage.set(1);
-    this.loadSnapRequests();
+    this.writeStateToUrl();
   }
 
   onAddSnapRequest(): void {

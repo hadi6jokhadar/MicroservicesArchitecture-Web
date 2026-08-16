@@ -38,42 +38,64 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 ### TypeScript Logic
 
-1. Inject services (`Service`, `DialogService`, `SheetService`, `EventsService`)
+1. Inject services (`Service`, `DialogService`, `SheetService`, `EventsService`), plus `ActivatedRoute`/`Router` from `@angular/router`
 2. Define Signals: `data`, `isLoading`, `currentPage`, `totalPages`, `totalCount`
 3. Define `readonly pageSize = 10` as a plain number (not a signal)
 4. Create a Reactive Form for filters
 5. In `constructor()`:
-   - Use `effect()` to watch `currentPage` — but only call `loadData()` when `page > 1` (initial load comes from `ngOnInit`)
-   - Subscribe to specific filter controls with `valueChanges.pipe(takeUntilDestroyed())` to reset page and reload
-   - Subscribe to `eventsService.[feature]Changed$` with `takeUntilDestroyed()` to reload on external changes
-6. Call `loadData()` from `ngOnInit()` for the first load
+   - Subscribe to specific filter controls with `valueChanges.pipe(takeUntilDestroyed())` — terminal action is `writeStateToUrl()`, not `loadData()` directly
+   - Subscribe to `eventsService.[feature]Changed$` with `takeUntilDestroyed()` to reload on external changes (this one calls `loadData()` directly — it's a mutation refetch, not a state change, so it must not touch the URL)
+   - Subscribe to `this._route.queryParamMap` with `takeUntilDestroyed()` — this is the SOLE trigger for `loadData()`, covering initial load, in-app filter/page changes, and browser back/forward alike (Angular's default route-reuse strategy keeps the component alive across query-param-only navigations, so `ngOnInit` never reruns and can't be used for this)
+6. No `ngOnInit()` — the `queryParamMap` subscription's first emission is the initial load
 
 ```typescript
 constructor() {
-  // Watch page changes — skip page 1 (ngOnInit handles initial load)
-  effect(() => {
-    const page = this.currentPage();
-    if (page > 1) {
-      this.loadData();
-    }
-  });
-
-  // Watch specific filter controls
+  // Watch specific filter controls — write to URL, don't load directly
   this.filterForm.get('searchType')?.valueChanges
     .pipe(takeUntilDestroyed())
     .subscribe(() => {
       this.currentPage.set(1);
-      this.loadData();
+      this.writeStateToUrl();
     });
 
-  // Reload on dialog/sheet success events
+  // Reload on dialog/sheet success events (mutation refetch — never touches the URL)
   this._eventsService.[feature]Changed$
     .pipe(takeUntilDestroyed())
     .subscribe(() => this.loadData());
+
+  // Sole trigger for loadData(): initial load, in-app changes, back/forward
+  this._route.queryParamMap
+    .pipe(takeUntilDestroyed())
+    .subscribe((map) => {
+      this.restoreFromQueryParams(map);
+      this.loadData();
+    });
 }
 
-ngOnInit(): void {
-  this.loadData();
+private restoreFromQueryParams(map: ParamMap): void {
+  this.currentPage.set(queryParamNumber(map, 'page', 1));
+  this.filterForm.patchValue(
+    { searchTerm: map.get('searchTerm') ?? '' },
+    { emitEvent: false }
+  );
+}
+
+private writeStateToUrl(replaceUrl = true): void {
+  const { searchTerm } = this.filterForm.getRawValue();
+  updateQueryParams(
+    this._router,
+    this._route,
+    {
+      page: this.currentPage() > 1 ? this.currentPage() : undefined,
+      searchTerm: searchTerm || undefined,
+    },
+    replaceUrl
+  );
+}
+
+onPageChange(page: number): void {
+  this.currentPage.set(page);
+  this.writeStateToUrl(false);
 }
 
 loadData(): void {
@@ -97,6 +119,8 @@ loadData(): void {
   });
 }
 ```
+
+`updateQueryParams`/`queryParamNumber`/`queryParamBoolean` come from `@ihsan/core` (`libs/core/src/lib/utils/query-params.util.ts`). Full pattern and reasoning: `.claude/instructions/Angular.instructions.md` section "2d. URL-Synced List/Filter State". Reference: `apps/admin/src/app/features/translation/translations/translations.component.ts`.
 
 ### Template Structure
 

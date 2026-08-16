@@ -2,8 +2,16 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { forkJoin, of, switchMap, map } from 'rxjs';
-import { AuthService, TranslatePipe, TranslationService, RtlService } from '@ihsan/core';
+import {
+  AuthService,
+  TranslatePipe,
+  TranslationService,
+  RtlService,
+  queryParamNumber,
+  updateQueryParams,
+} from '@ihsan/core';
 import {
   ZardButtonComponent,
   ZardCardComponent,
@@ -94,6 +102,8 @@ export class SongsComponent {
   private readonly _alertDialogService = inject(ZardAlertDialogService);
   private readonly _translationService = inject(TranslationService);
   private readonly _authService = inject(AuthService);
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _router = inject(Router);
 
   private static readonly ADMIN_ROLES = ['Admin', 'Superadmin', 'SuperAdmin'];
 
@@ -153,16 +163,70 @@ export class SongsComponent {
 
   constructor() {
     this.loadArtists();
-    this.loadData();
 
     this.filterForm.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
       this.currentPage.set(1);
-      this.loadData();
+      this.writeStateToUrl();
     });
 
     this._songEventsService.dataChanged$
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.loadData());
+
+    // Sole source of truth for fetching: restores state from the URL (initial
+    // load, in-app changes, and browser back/forward alike) then loads data.
+    this._route.queryParamMap
+      .pipe(takeUntilDestroyed())
+      .subscribe((paramMap) => {
+        this.restoreFromQueryParams(paramMap);
+        this.loadData();
+      });
+  }
+
+  private restoreFromQueryParams(paramMap: ParamMap): void {
+    this.currentPage.set(queryParamNumber(paramMap, 'page', 1));
+    const rawSongState = paramMap.get('songState');
+    const parsedSongState = rawSongState !== null ? Number(rawSongState) : NaN;
+    this.filterForm.patchValue(
+      {
+        searchTerm: paramMap.get('searchTerm') ?? '',
+        artistId: paramMap.get('artistId') ?? 'all',
+        songState: Number.isFinite(parsedSongState)
+          ? String(parsedSongState)
+          : 'all',
+        copyrightRiskLevel: paramMap.get('copyrightRiskLevel') ?? 'all',
+        contentSafetyFlag: paramMap.get('contentSafetyFlag') ?? 'all',
+        lyricsVerified: paramMap.get('lyricsVerified') ?? 'all',
+      },
+      { emitEvent: false },
+    );
+  }
+
+  private writeStateToUrl(replaceUrl = true): void {
+    const {
+      searchTerm,
+      artistId,
+      songState,
+      copyrightRiskLevel,
+      contentSafetyFlag,
+      lyricsVerified,
+    } = this.filterForm.getRawValue();
+    updateQueryParams(
+      this._router,
+      this._route,
+      {
+        page: this.currentPage() > 1 ? this.currentPage() : undefined,
+        searchTerm: searchTerm || undefined,
+        artistId: artistId !== 'all' ? artistId : undefined,
+        songState: songState !== 'all' ? songState : undefined,
+        copyrightRiskLevel:
+          copyrightRiskLevel !== 'all' ? copyrightRiskLevel : undefined,
+        contentSafetyFlag:
+          contentSafetyFlag !== 'all' ? contentSafetyFlag : undefined,
+        lyricsVerified: lyricsVerified !== 'all' ? lyricsVerified : undefined,
+      },
+      replaceUrl,
+    );
   }
 
   private loadArtists(): void {
@@ -224,7 +288,7 @@ export class SongsComponent {
 
   onPageChange(page: number): void {
     this.currentPage.set(page);
-    this.loadData();
+    this.writeStateToUrl(false);
   }
 
   /** Admins may edit any song; everyone else only the songs they created. */
@@ -469,7 +533,7 @@ export class SongsComponent {
 
   onSearch(): void {
     this.currentPage.set(1);
-    this.loadData();
+    this.writeStateToUrl();
   }
 
   onClearFilters(): void {

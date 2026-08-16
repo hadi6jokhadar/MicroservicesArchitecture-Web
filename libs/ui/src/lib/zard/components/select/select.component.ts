@@ -7,13 +7,13 @@ import {
 import { TemplatePortal } from '@angular/cdk/portal';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
-  type AfterContentInit,
   afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   contentChildren,
   DestroyRef,
+  effect,
   ElementRef,
   forwardRef,
   inject,
@@ -126,7 +126,7 @@ const COMPACT_MODE_WIDTH_THRESHOLD = 100;
   },
 })
 export class ZardSelectComponent
-  implements ControlValueAccessor, AfterContentInit, OnDestroy
+  implements ControlValueAccessor, OnDestroy
 {
   private readonly destroyRef = inject(DestroyRef);
   private readonly elementRef = inject(ElementRef<HTMLElement>);
@@ -197,28 +197,35 @@ export class ZardSelectComponent
     )
   );
 
-  ngAfterContentInit() {
-    const hostWidth = this.elementRef.nativeElement.offsetWidth || 0;
-    // Setup select host reference for each item
-    let i = 0;
-    for (const item of this.selectItems()) {
-      item.setSelectHost({
-        selectedValue: () =>
-          this.zMultiple()
-            ? (this.zValue() as string[])
-            : [this.zValue() as string],
-        selectItem: (value: string, label: string) =>
-          this.selectItem(value, label),
-        navigateTo: () => this.navigateTo(item, i),
-      });
-      item.zSize.set(this.zSize());
-      i++;
+  constructor() {
+    // Wires each projected item to this select as an effect (not a one-time
+    // ngAfterContentInit hook) so items added after initial content-init —
+    // e.g. options rendered from an async-loaded signal, like a list fetched
+    // over HTTP — still get their click handler wired up. `contentChildren()`
+    // updates reactively as projected content changes, but a one-time hook
+    // only ever sees whatever was already rendered at that first tick.
+    effect(() => {
+      const hostWidth = this.elementRef.nativeElement.offsetWidth || 0;
+      let i = 0;
+      for (const item of this.selectItems()) {
+        item.setSelectHost({
+          selectedValue: () =>
+            this.zMultiple()
+              ? (this.zValue() as string[])
+              : [this.zValue() as string],
+          selectItem: (value: string, label: string) =>
+            this.selectItem(value, label),
+          navigateTo: () => this.navigateTo(item, i),
+        });
+        item.zSize.set(this.zSize());
+        i++;
 
-      if (hostWidth <= COMPACT_MODE_WIDTH_THRESHOLD) {
-        this.isCompact.set(true);
-        item.zMode.set('compact');
+        if (hostWidth <= COMPACT_MODE_WIDTH_THRESHOLD) {
+          this.isCompact.set(true);
+          item.zMode.set('compact');
+        }
       }
-    }
+    });
   }
 
   ngOnDestroy() {

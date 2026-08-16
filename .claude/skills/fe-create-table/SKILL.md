@@ -73,12 +73,18 @@ import {
       </div>
 
       <div class="pagination-container">
-        <z-pagination [zTotal]="totalPages()" [(zPageIndex)]="currentPage" />
+        <z-pagination [zTotal]="totalPages()" [zPageIndex]="currentPage()" (zPageIndexChange)="onPageChange($event)" />
       </div>
     </div>
   }
 </z-card>
 ```
+
+> Use the explicit `(zPageIndexChange)` handler form, not the two-way `[(zPageIndex)]` banana binding — page changes must also write to the URL (see "URL Query-Param Sync" below), which the two-way binding can't hook into. `onPageChange(page: number)` sets the signal and calls `writeStateToUrl(false)`.
+
+## 5. URL Query-Param Sync (MANDATORY)
+
+Every paginated/filtered table must sync its state to the URL so a link reproduces that exact view, and browser back/forward works. Full pattern and reasoning: `.claude/instructions/Angular.instructions.md` section "2d. URL-Synced List/Filter State". Reference implementation: `apps/admin/src/app/features/translation/translations/translations.component.ts`. Shared helper: `@ihsan/core`'s `query-params.util.ts` (`updateQueryParams`, `queryParamNumber`, `queryParamBoolean`).
 
 ## 3. Table Inputs
 

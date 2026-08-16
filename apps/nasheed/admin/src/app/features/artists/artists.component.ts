@@ -2,7 +2,15 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AuthService, TranslatePipe, TranslationService, RtlService } from '@ihsan/core';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import {
+  AuthService,
+  TranslatePipe,
+  TranslationService,
+  RtlService,
+  queryParamNumber,
+  updateQueryParams,
+} from '@ihsan/core';
 import {
   ZardButtonComponent,
   ZardCardComponent,
@@ -79,6 +87,8 @@ export class ArtistsComponent {
   private readonly _alertDialogService = inject(ZardAlertDialogService);
   private readonly _translationService = inject(TranslationService);
   private readonly _authService = inject(AuthService);
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _router = inject(Router);
 
   private static readonly ADMIN_ROLES = ['Admin', 'Superadmin', 'SuperAdmin'];
 
@@ -109,18 +119,48 @@ export class ArtistsComponent {
   });
 
   constructor() {
-    this.loadData();
-
     this.filterForm.controls.searchTerm.valueChanges
       .pipe(takeUntilDestroyed())
       .subscribe(() => {
         this.currentPage.set(1);
-        this.loadData();
+        this.writeStateToUrl();
       });
 
     this._artistEventsService.dataChanged$
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.loadData());
+
+    // Sole source of truth for fetching: restores state from the URL (initial
+    // load, in-app changes, and browser back/forward alike) then loads data.
+    this._route.queryParamMap
+      .pipe(takeUntilDestroyed())
+      .subscribe((map) => {
+        this.restoreFromQueryParams(map);
+        this.loadData();
+      });
+  }
+
+  private restoreFromQueryParams(map: ParamMap): void {
+    this.currentPage.set(queryParamNumber(map, 'page', 1));
+    this.filterForm.patchValue(
+      {
+        searchTerm: map.get('searchTerm') ?? '',
+      },
+      { emitEvent: false },
+    );
+  }
+
+  private writeStateToUrl(replaceUrl = true): void {
+    const { searchTerm } = this.filterForm.getRawValue();
+    updateQueryParams(
+      this._router,
+      this._route,
+      {
+        page: this.currentPage() > 1 ? this.currentPage() : undefined,
+        searchTerm: searchTerm || undefined,
+      },
+      replaceUrl,
+    );
   }
 
   loadData(): void {
@@ -146,7 +186,7 @@ export class ArtistsComponent {
 
   onPageChange(page: number): void {
     this.currentPage.set(page);
-    this.loadData();
+    this.writeStateToUrl(false);
   }
 
   onAddArtist(): void {
@@ -229,7 +269,7 @@ export class ArtistsComponent {
 
   onSearch(): void {
     this.currentPage.set(1);
-    this.loadData();
+    this.writeStateToUrl();
   }
 
   onClearFilters(): void {

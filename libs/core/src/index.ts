@@ -49,3 +49,6 @@ export * from './lib/core/environment.token';
 
 // Models
 export * from './lib/models/common';
+
+// Utils
+export * from './lib/utils/query-params.util';

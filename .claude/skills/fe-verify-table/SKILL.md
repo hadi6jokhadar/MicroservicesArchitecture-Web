@@ -56,3 +56,14 @@ If the table does not match the standard:
 - [ ] **HTML**: Switch wrapped in `<div class="filter-field switch-field">`.
 - [ ] **TypeScript**: `isArchived` form control initialized as `boolean` (`false`), not `string`.
 - [ ] **SCSS**: `.switch-field` with `width: fit-content` and `align-items: center`.
+
+## 7. Verify URL Query-Param Sync (MANDATORY for paginated/filtered pages)
+
+Full pattern: `.claude/instructions/Angular.instructions.md` section "2d. URL-Synced List/Filter State". Reference: `apps/admin/src/app/features/translation/translations/translations.component.ts`.
+
+- [ ] **Pagination binding**: `<z-pagination [zTotal]="totalPages()" [zPageIndex]="currentPage()" (zPageIndexChange)="onPageChange($event)" />` — NOT the two-way `[(zPageIndex)]="currentPage"` banana binding.
+- [ ] **Sole fetch trigger**: constructor subscribes to `this._route.queryParamMap` (`takeUntilDestroyed()`), calling `restoreFromQueryParams(map)` then `loadData()` — no `ngOnInit()` load call, no `effect()` page-guard.
+- [ ] **`restoreFromQueryParams(map: ParamMap)`** patches the filter form with `{ emitEvent: false }` and sets `currentPage` via `queryParamNumber`.
+- [ ] **`writeStateToUrl(replaceUrl = true)`** exists and is the terminal call for every existing filter trigger (`valueChanges`, explicit search button, `onClearFilters()`), using `updateQueryParams` from `@ihsan/core`; fields at their default (including `'all'`/`'__all__'` sentinels) are passed as `undefined`.
+- [ ] **`onPageChange(page)`** calls `writeStateToUrl(false)` (normal history entry); filter-triggered writes use the default `replaceUrl: true` (no history spam per keystroke).
+- [ ] **Client-side-filtered pages** (resolver preloads the full dataset, filtering is local `computed()`s): the `queryParamMap` subscription calls `restoreFromQueryParams()` only, not an unconditional `loadData()` — unless a field is genuinely server-only, in which case `loadData()` fires only when that field's restored value differs from what's already loaded.
